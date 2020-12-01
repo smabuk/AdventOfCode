@@ -216,18 +216,48 @@ namespace AdventOfCode
 				1705
 			};
 
-		public static long Day01_01()
+		public static long Day01_Part1()
 		{
-			var values = Find2SumsEqualTo2020(_expenseValues);
-
-			return (values[0] * values[1]);
+			var values = FindSumsEqualTo(2020, _expenseValues.ToList(), 2);
+			return values.Aggregate(1, (product, entry) => product * entry);
 		}
 
-		public static long Day01_02()
+		public static long Day01_Part2()
 		{
-			var values = Find3SumsEqualTo2020(_expenseValues);
+			var values = FindSumsEqualTo(2020, _expenseValues.ToList(), 3);
+			return values.Aggregate(1, (product, entry) => product * entry);
+		}
 
-			return (values[0] * values[1] * values[2]);
+
+		public static List<int> FindSumsEqualTo(int value, List<int> expenseValues, int noOfEntries)
+		{
+			List<int> result = new();
+
+			foreach (int entry in expenseValues)
+			{
+				if (noOfEntries > 2)
+				{
+					List<int> x = new List<int> { entry };
+					List<int> resultT = FindSumsEqualTo(value - entry, expenseValues.Except(x).ToList(), noOfEntries - 1);
+					if (resultT.Count != 0)
+					{
+						result.Add(entry);
+						result.AddRange(resultT);
+						return result;
+					}
+				} else
+				{
+					int matchValue = expenseValues.Where(e => e == value - entry).FirstOrDefault();
+					if (matchValue != 0)
+					{
+						result.Add(entry);
+						result.Add(matchValue);
+						return result;
+					}
+				}
+			}
+
+			return result;
 		}
 
 		public static List<int> Find2SumsEqualTo2020(int[] expenseValues)

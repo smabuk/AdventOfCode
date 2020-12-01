@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using AdventOfCode;
 
@@ -22,6 +23,16 @@ namespace AdventOfCode2020.Tests
 				675,
 				1456
 			};
+
+		[Theory]
+		[InlineData(2020, 2)]
+		[InlineData(2020, 3)]
+		public void Valid_FindSumsEqualTo(int sum, int noOfEntries)
+		{
+			List<int> actual = Day01.FindSumsEqualTo(sum, _input.ToList(), noOfEntries);
+			Assert.Equal(noOfEntries, actual.Count);
+			Assert.Equal(sum, actual.Sum());
+		}
 
 		[Fact]
 		public void Day01_01_Test()
