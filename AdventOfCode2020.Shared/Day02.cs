@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode
-{
+namespace AdventOfCode2020.Shared {
 	/// <summary>
 	/// Day 2: Password Philosophy
 	/// https://adventofcode.com/2020/day/2
@@ -1013,12 +1012,12 @@ namespace AdventOfCode
 			"8-9 m: pkccwcgjpcxn"
 		};
 
-		public static long Day02_Part1()
+		public static long Part1()
 		{
 			return CountValidPasswords_Part1(_passwordList);
 		}
 
-		public static long Day02_Part2()
+		public static long Part2()
 		{
 			return CountValidPasswords_Part2(_passwordList);
 		}

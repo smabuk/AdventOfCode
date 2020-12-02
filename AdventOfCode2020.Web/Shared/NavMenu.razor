@@ -1,0 +1,154 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Advent of Code 2020</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day01">
+                <span class="oi oi-thumb-up" aria-hidden="true"></span> Day 01
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day02">
+                <span class="oi oi-thumb-up" aria-hidden="true"></span> Day 02
+            </NavLink>
+        </li>
+@*
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day03">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 03
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day04">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 04
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day05">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 05
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day06">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 06
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day07">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 07
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day08">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 08
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day09">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 09
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day10">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 10
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day11">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 11
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day12">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 12
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day13">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 13
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day14">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 14
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day15">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 15
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day16">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 16
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day17">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 17
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day18">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 18
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day19">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 19
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day20">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 20
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day21">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 21
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day22">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 22
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day23">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 23
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day24">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 24
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="day25">
+                <span class="oi oi-plus" aria-hidden="true"></span> Day 25
+            </NavLink>
+        </li>
+*@
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

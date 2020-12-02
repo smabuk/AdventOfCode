@@ -3,14 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode2020.Tests", "AdventOfCode2020\AdventOfCode2020.Tests.csproj", "{314DCB1E-E4DA-4EA9-8072-D9BE8D9E2714}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode", "AdventOfCode\AdventOfCode.csproj", "{CF3A5B6F-1326-4B69-861A-92C98272843A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAC3FC96-CF98-423A-A096-8871B725BBB5}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode2020.Console", "AdventOfCode2020.Console\AdventOfCode2020.Console.csproj", "{CF3A5B6F-1326-4B69-861A-92C98272843A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode2020.Shared", "AdventOfCode2020.Shared\AdventOfCode2020.Shared.csproj", "{03D0E614-3441-4A0C-8749-8B2D6C837405}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode2020.Tests", "AdventOfCode2020.Tests\AdventOfCode2020.Tests.csproj", "{314DCB1E-E4DA-4EA9-8072-D9BE8D9E2714}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode2020.Web", "AdventOfCode2020.Web\AdventOfCode2020.Web.csproj", "{F026D8F9-0780-4816-9D6E-B7763F9D9A27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +30,14 @@ Global
 		{CF3A5B6F-1326-4B69-861A-92C98272843A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF3A5B6F-1326-4B69-861A-92C98272843A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3A5B6F-1326-4B69-861A-92C98272843A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F026D8F9-0780-4816-9D6E-B7763F9D9A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F026D8F9-0780-4816-9D6E-B7763F9D9A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F026D8F9-0780-4816-9D6E-B7763F9D9A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F026D8F9-0780-4816-9D6E-B7763F9D9A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D0E614-3441-4A0C-8749-8B2D6C837405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D0E614-3441-4A0C-8749-8B2D6C837405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D0E614-3441-4A0C-8749-8B2D6C837405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D0E614-3441-4A0C-8749-8B2D6C837405}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
