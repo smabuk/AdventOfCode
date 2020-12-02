@@ -1,0 +1,26 @@
+﻿<code @ref="_codeElement">
+    @ChildContent
+</code>
+<span>
+    <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
+</span>
+
+@code {
+
+    private ElementReference _codeElement;
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    // JSObjectReference module;
+    //protected override async Task OnInitializedAsync(IJSRuntime jsRuntime) {;
+    //       module = await jsRuntime
+    //           .InvokeAsync<JSObjectReference>("import", "./exampleJsInterop.js");
+    //   }
+    //public async Task OnClick() {
+    //    await module.InvokeAsync<string>("showPrompt", "What's up?");
+    //}
+
+    private async Task CopyTextToClipboard() {
+        //await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);
+    }
+}

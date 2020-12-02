@@ -1,0 +1,19 @@
+﻿@inject IJSRuntime JSRuntime
+
+<code @ref="_codeElement">
+    @ChildContent
+</code>
+<span>
+    <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
+</span>
+
+@code {
+
+    private ElementReference _codeElement;
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private async Task CopyTextToClipboard() {
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);
+    }
+}

@@ -1,0 +1,9 @@
+@import url('blazor.css');
+
+.answer {
+    font-size: x-large;
+}
+
+.answer > code {
+    font-weight: bold;
+}
