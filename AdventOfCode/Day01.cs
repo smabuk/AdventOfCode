@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode
 {
@@ -218,63 +214,53 @@ namespace AdventOfCode
 
 		public static long Day01_Part1()
 		{
-			var values = FindSumsEqualTo(2020, _expenseValues.ToList(), 2);
-			return values.Aggregate(1, (product, entry) => product * entry);
+			FindSumsEqualTo(2020, _expenseValues.ToList(), 2, out List<int> entries);
+			return entries.Aggregate(1, (product, entry) => product * entry);
 		}
 
 		public static long Day01_Part2()
 		{
-			var values = FindSumsEqualTo(2020, _expenseValues.ToList(), 3);
-			return values.Aggregate(1, (product, entry) => product * entry);
+			FindSumsEqualTo(2020, _expenseValues.ToList(), 3, out List<int> entries);
+			return entries.Aggregate(1, (product, entry) => product * entry);
 		}
 
 
-		public static List<int> FindSumsEqualTo(int value, List<int> expenseValues, int noOfEntries)
+		public static bool FindSumsEqualTo(int value, List<int> expenseValues, int noOfEntries, out List<int> foundEntries)
 		{
-			List<int> result = new();
+			foundEntries = new();
 
-			foreach (int entry in expenseValues)
-			{
-				if (noOfEntries > 2)
-				{
+			foreach (int entry in expenseValues) {
+				if (noOfEntries > 2) {
 					List<int> x = new List<int> { entry };
-					List<int> resultT = FindSumsEqualTo(value - entry, expenseValues.Except(x).ToList(), noOfEntries - 1);
-					if (resultT.Count != 0)
-					{
-						result.Add(entry);
-						result.AddRange(resultT);
-						return result;
+					if (FindSumsEqualTo(value - entry, expenseValues.Except(x).ToList(), noOfEntries - 1, out List<int> resultT)) {
+						foundEntries.Add(entry);
+						foundEntries.AddRange(resultT);
+						return true;
 					}
-				} else
-				{
+				} else {
 					int matchValue = expenseValues.Where(e => e == value - entry).FirstOrDefault();
-					if (matchValue != 0)
-					{
-						result.Add(entry);
-						result.Add(matchValue);
-						return result;
+					if (matchValue != 0) {
+						foundEntries.Add(entry);
+						foundEntries.Add(matchValue);
+						return true;
 					}
 				}
 			}
 
-			return result;
+			return false;
 		}
 
 		public static List<int> Find2SumsEqualTo2020(int[] expenseValues)
 		{
 			List<int> result = new();
 
-			for (int i = 0; i < expenseValues.Length; i++)
-			{
-				for (int j = 0; j < expenseValues.Length; j++)
-				{
-					if (i == j)
-					{
+			for (int i = 0; i < expenseValues.Length; i++) {
+				for (int j = 0; j < expenseValues.Length; j++) {
+					if (i == j) {
 						continue;
 					}
 
-					if (expenseValues[i] + expenseValues[j] == 2020)
-					{
+					if (expenseValues[i] + expenseValues[j] == 2020) {
 						result.Add(expenseValues[i]);
 						result.Add(expenseValues[j]);
 						return result;
@@ -289,19 +275,14 @@ namespace AdventOfCode
 		{
 			List<int> result = new();
 
-			for (int i = 0; i < expenseValues.Length; i++)
-			{
-				for (int j = 0; j < expenseValues.Length; j++)
-				{
-					for (int k = 0; k < expenseValues.Length; k++)
-					{
-						if (i == j || i == k || j == k)
-						{
+			for (int i = 0; i < expenseValues.Length; i++) {
+				for (int j = 0; j < expenseValues.Length; j++) {
+					for (int k = 0; k < expenseValues.Length; k++) {
+						if (i == j || i == k || j == k) {
 							continue;
 						}
 
-						if (expenseValues[i] + expenseValues[j] + expenseValues[k] == 2020)
-						{
+						if (expenseValues[i] + expenseValues[j] + expenseValues[k] == 2020) {
 							result.Add(expenseValues[i]);
 							result.Add(expenseValues[j]);
 							result.Add(expenseValues[k]);
