@@ -335,22 +335,40 @@ namespace AdventOfCode2020.Shared {
 			".#..##.##.#......#....##..#...."
 		};
 
-		public static int Part1()
+		public static long Part1()
 		{
-			return 0;
+			return CalculateNoOfTrees(_tobogganInput, 3, 1);
 		}
 
-		public static int Part2()
+		public static long Part2()
 		{
-			return 0;
+			List<long> resultArray = new();
+			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 1, 1));
+			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 3, 1));
+			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 5, 1));
+			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 7, 1));
+			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 1, 2));
+
+			return resultArray.Aggregate(1, (long treeProduct, long treeCount) => treeProduct * treeCount);
 		}
+
+
+		public const char TREE = '#';
+		public const char SPACE = '.';
 
 		public static int CalculateNoOfTrees(string[] map, int right, int down) {
+			int currentColumn = 0;
+			int mapWidth = map[0].Length;
+			int noOfTreesHit = 0;
 
+			for (int currentRow = 0; currentRow < map.Length; currentRow += down) {
+				if (map[currentRow][currentColumn] == TREE) {
+					noOfTreesHit++;
+				}
+				currentColumn = (currentColumn + right) % mapWidth;
+			}
 
-
-
-			return 0;
+			return noOfTreesHit;
 		}
 
 	}
