@@ -1,4 +1,5 @@
-﻿@page "/day/3"
+﻿@page "/{year:int}/day/3"
+@page "/day/3"
 @page "/day03"
 
 <article class="day-desc">
@@ -66,3 +67,10 @@
 </article>
 
 <p class="answer">Your puzzle answer is <Answer>@Day03.Part2()</Answer></p>
+
+<InputData Year="Year" Day="Day" />
+
+@code {
+    [Parameter] public int Year { get; set; }
+    [Parameter] public int Day { get; set; } = 3;
+}

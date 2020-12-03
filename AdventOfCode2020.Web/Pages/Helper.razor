@@ -1,0 +1,10 @@
+﻿@page "/helper/{year:int}/day/{day:int}"
+
+<ProblemDescription ShowCopyButton="true" Year="Year" Day="Day" ProblemNo="1" />
+<ProblemDescription ShowCopyButton="true" Year="Year" Day="Day" ProblemNo="2" />
+<InputData Year="Year" Day="Day" />
+
+@code {
+    [Parameter] public int Year { get; set; }
+    [Parameter] public int Day { get; set; }
+} 

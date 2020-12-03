@@ -1,0 +1,28 @@
+﻿@inject IAocClient aocClient
+@inject SessionState Session
+<h4>@UserName <span>@(isLoaded ? NoOfStars : "")⭐</span> </h4>
+
+@code {
+    [Parameter]
+    public int Year { get; set; }
+
+    public int Day { get; set; } = 1;
+    public int NoOfStars { get; set; }
+    public string UserName { get; set; } = "";
+    private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
+
+    // To stop this running twice - setting render-mode="Server" in _Host.cshtml
+    protected async override Task OnParametersSetAsync() {
+        if (Session.IsSummaryLoaded(Year)) {
+            UserName = Session.UserName;
+            NoOfStars = Session.GetNoOfStars(Year);
+        } else {
+            if (Year >= 2015) {
+                (UserName, NoOfStars) = await aocClient.GetSummaryInfo(Year);
+                Session.UserName = UserName;
+                Session.SetNoOfStars(Year, NoOfStars);
+            }
+        }
+    }
+
+}

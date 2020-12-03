@@ -24,6 +24,13 @@ namespace AdventOfCode2020.Web {
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
+
+			// AocClient settings
+			services.Configure<AocClientSettings>(Configuration.GetSection(nameof(AocClientSettings)));
+			services.AddHttpClient<IAocClient, AocClient>();
+
+			services.AddScoped<SessionState>();
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,5 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Advent of Code 2020</a>
+    <a class="navbar-brand" href="">@Brand</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -8,144 +8,39 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="2020" Match="NavLinkMatch.All">
+                <span class="oi oi-calendar" aria-hidden="true"></span> Year 2020
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/1">
-                <span class="oi oi-thumb-up" aria-hidden="true"></span> Day 01
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/2">
-                <span class="oi oi-thumb-up" aria-hidden="true"></span> Day 02
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/3">
-                <span class="oi oi-thumb-up" aria-hidden="true"></span> Day 03
-            </NavLink>
-        </li>
-        @*
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/4">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 04
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/5">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 05
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/6">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 06
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/7">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 07
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/8">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 08
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/9">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 09
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/10">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 10
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/11">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 11
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/12">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 12
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/13">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 13
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/14">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 14
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/15">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 15
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/16">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 16
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/17">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 17
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/18">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 18
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/19">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 19
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/20">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 20
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/21">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 21
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/22">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 22
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/23">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 23
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/24">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 24
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="day/25">
-                <span class="oi oi-plus" aria-hidden="true"></span> Day 25
-            </NavLink>
-        </li>
-        *@
+        @if (Year != 0) {
+            for (int i = 1; i <= 25; i++) {
+                int day = i;
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="@($"{Year}/day/{day}")">
+                        <span class="oi oi-thumb-up" aria-hidden="true"></span> Day @day
+                    </NavLink>
+                </li>
+            }
+        }
+        @for (int i = 2015; i < 2020; i++) {
+            int yr = i;
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="@yr" Match="NavLinkMatch.All">
+                    <span class="oi oi-calendar" aria-hidden="true"></span> Year @yr
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
 @code {
+    [Parameter] public int Year { get; set; }
+
+    public string Brand => $"Advent of Code {(Year == 0 ? "" : Year)} ";
+
     private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {

@@ -2,12 +2,13 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
+        <NavMenu Year="@Year"/>
     </div>
 
     <div class="main">
         <div class="top-row">
-            <h3>Advent of Code 2020</h3>
+            <MainHeader Year="@Year" />
+            <h3>Advent of Code @(Year == 0 ? "" : Year)</h3>
         </div>
 
         <div class="content px-4">
@@ -15,3 +16,25 @@
         </div>
     </div>
 </div>
+
+@code {
+
+    public int Year { get; set; }
+    public int Day { get; set; }
+
+    protected override void OnParametersSet() {
+        // pull out the "Year" parameter from the route data
+        var routeValues = (this.Body?.Target as RouteView)?.RouteData.RouteValues;
+        object? objTemp = null;
+        if (routeValues?.TryGetValue("year", out objTemp) == true) {
+            if (int.TryParse(objTemp?.ToString(), out int year)) {
+                Year = year;
+            }
+        }
+        if (routeValues?.TryGetValue("day", out objTemp) == true) {
+            if(int.TryParse(objTemp?.ToString(), out int day)) {
+                Day = day;
+            }
+        }
+    }
+}
