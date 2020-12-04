@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace AdventOfCode.Shared {
 	/// <summary>
 	/// Day 2: Password Philosophy
 	/// https://adventofcode.com/2020/day/2
 	/// </summary>
-	public static class Day02
-	{
+	public static class Solution_2020_02 {
 		static readonly string[] _passwordList =
 		{
 			"1-4 j: jjjqzmgbjwpj",
@@ -1012,18 +1010,15 @@ namespace AdventOfCode.Shared {
 			"8-9 m: pkccwcgjpcxn"
 		};
 
-		public static long Part1()
-		{
+		public static long Part1() {
 			return CountValidPasswords_Part1(_passwordList);
 		}
 
-		public static long Part2()
-		{
+		public static long Part2() {
 			return CountValidPasswords_Part2(_passwordList);
 		}
 
-		public static long CountValidPasswords_Part1(string[] passwordList)
-		{
+		public static long CountValidPasswords_Part1(string[] passwordList) {
 			int validPasswordCount = 0;
 
 			foreach (string entry in passwordList) {
@@ -1041,8 +1036,7 @@ namespace AdventOfCode.Shared {
 			return validPasswordCount;
 		}
 
-		public static long CountValidPasswords_Part2(string[] passwordList)
-		{
+		public static long CountValidPasswords_Part2(string[] passwordList) {
 			int validPasswordCount = 0;
 
 			foreach (string entry in passwordList) {
@@ -1054,7 +1048,7 @@ namespace AdventOfCode.Shared {
 				char letterPos1 = components[2][pos1 - 1];
 				char letterPos2 = components[2][pos2 - 1];
 
-				if (letterPos1 != letterPos2 && (letterPos1 == letter || letterPos2 == letter )) {
+				if (letterPos1 != letterPos2 && (letterPos1 == letter || letterPos2 == letter)) {
 					validPasswordCount++;
 				}
 			}

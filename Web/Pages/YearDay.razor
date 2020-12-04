@@ -1,0 +1,12 @@
+﻿@page "/{year:int}/day/{day:int}"
+
+<ProblemDescription ShowCopyButton="false" Year="Year" Day="Day" ProblemNo="1" />
+<Answer Year="Year" Day="Day" ProblemNo="1" />
+<ProblemDescription ShowCopyButton="false" Year="Year" Day="Day" ProblemNo="2" />
+<Answer Year="Year" Day="Day" ProblemNo="2" />
+<InputData Year="Year" Day="Day" />
+
+@code {
+    [Parameter] public int Year { get; set; }
+    [Parameter] public int Day { get; set; }
+} 

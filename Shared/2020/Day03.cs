@@ -6,8 +6,7 @@ namespace AdventOfCode.Shared {
 	/// Day 3: Toboggan Trajectory
 	/// https://adventofcode.com/2020/day/3
 	/// </summary>
-	public static class Day03
-	{
+	public static class Solution_2020_03 {
 		static readonly string[] _tobogganInput =
 		{
 			".....##.#.....#........#....##.",

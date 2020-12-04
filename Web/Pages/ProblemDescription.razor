@@ -22,7 +22,7 @@
 
     private ElementReference _articleElement;
 
-    protected async override Task OnInitializedAsync() {
+    protected async override Task OnParametersSetAsync() {
         if (isLoaded && Session.ProblemDescriptions.ContainsKey(new(Year, Day, ProblemNo))) {
             Article = Session.GetProblemDescription(Year, Day, ProblemNo);
         } else {

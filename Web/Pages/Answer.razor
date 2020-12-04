@@ -1,17 +1,33 @@
 ﻿@inject IJSRuntime JSRuntime
+@inject IOptions<AocClientSettings> aocSettings
+@using Microsoft.Extensions.Options
 
-<code @ref="_codeElement">
+<p class="answer">
     @ChildContent
-</code>
-<span>
-    <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
-</span>
+    Your puzzle answer is
+    <code @ref="_codeElement">@PuzzleAnswer</code>
+    <span>
+        <button type="button" class="btn btn-primary" hidden="@string.IsNullOrWhiteSpace(PuzzleAnswer)" @onclick="CopyTextToClipboard">Copy</button>
+    </span>
+    <span>
+        <a class="btn btn-primary" href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")" target="_blank">Jump</a>
+    </span>
+</p>
 
 @code {
+    [Parameter] public int Year { get; set; }
+    [Parameter] public int Day { get; set; }
+    [Parameter] public int ProblemNo { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    public string PuzzleAnswer { get; set; } = "";
 
     private ElementReference _codeElement;
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnParametersSet() {
+        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo);
+    }
 
     private async Task CopyTextToClipboard() {
         await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);

@@ -6,7 +6,7 @@ namespace AdventOfCode.Shared
 	/// <summary>
 	/// https://adventofcode.com/2020/day/1
 	/// </summary>
-	public static class Day01
+	public static class Solution_2020_01
 	{
 		public static long Part1()
 		{

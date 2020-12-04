@@ -1,4 +1,7 @@
-﻿<article class="day-desc">
+﻿@inject SessionState Session
+@inject IAocClient aocClient
+@inject IJSRuntime JSRuntime
+<article class="day-desc">
     <h2>--- Input --- <span><button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputData()">Get Input Data</button></span><button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button></h2>
     <pre><code @ref="_codeElement">
 @Input
@@ -6,15 +9,6 @@
 </article>
 
 @code {
-    [Inject]
-    public SessionState Session { get; set; }
-
-    [Inject]
-    public IAocClient aocClient { get; set; }
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; }
-
     [Parameter]
     public int Year { get; set; }
 
@@ -23,14 +17,16 @@
 
     private string Input { get; set; } = "";
     private bool IsGetDisabled => IsLoading || IsLoaded == true;
-    private bool IsCopyDisabled => IsLoaded == false;
+    private bool IsCopyDisabled => string.IsNullOrEmpty(Input);
     private bool IsLoaded = false;
     private bool IsLoading = false;
 
     private ElementReference _codeElement;
 
-    protected override void OnInitialized() {
-        if (!IsLoaded && Session.DoesProblemInputExist(Year, Day)) {
+    protected override void OnParametersSet() {
+        IsLoaded = false;
+        Input = "";
+        if (Session.DoesProblemInputExist(Year, Day)) {
             Input = Session.GetProblemInput(Year, Day);
             IsLoaded = true;
         }
