@@ -10,7 +10,7 @@ namespace AdventOfCode.Tests
 	/// <summary>
 	/// https://adventofcode.com/2020/day/1
 	/// </summary>
-	public class Day01Tests
+	public class Tests_2020_01
 	{
 		static readonly int[] _input =
 			{
@@ -27,7 +27,7 @@ namespace AdventOfCode.Tests
 		[InlineData(2020, 3)]
 		public void Valid_FindSumsEqualTo(int sum, int noOfEntries)
 		{
-			bool successful = Day01.FindSumsEqualTo(sum, _input.ToList(), noOfEntries, out List<int> actual);
+			bool successful = Solution_2020_01.FindSumsEqualTo(sum, _input.ToList(), noOfEntries, out List<int> actual);
 			Assert.True(successful);
 			Assert.Equal(noOfEntries, actual.Count);
 			Assert.Equal(sum, actual.Sum());
@@ -36,7 +36,7 @@ namespace AdventOfCode.Tests
 		[Fact]
 		public void Day01_01_Test()
 		{
-			List<int> actual = Day01.Find2SumsEqualTo2020(_input);
+			List<int> actual = Solution_2020_01.Find2SumsEqualTo2020(_input);
 			Assert.Equal(2, actual.Count);
 			Assert.Equal(2020, actual[0] + actual[1]);
 		}
@@ -44,7 +44,7 @@ namespace AdventOfCode.Tests
 		[Fact]
 		public void Day01_02_Test()
 		{
-			List<int> actual = Day01.Find3SumsEqualTo2020(_input);
+			List<int> actual = Solution_2020_01.Find3SumsEqualTo2020(_input);
 			Assert.Equal(3, actual.Count);
 			Assert.Equal(2020, actual[0] + actual[1] + actual[2]);
 		}

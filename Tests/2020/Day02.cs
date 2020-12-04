@@ -10,7 +10,7 @@ namespace AdventOfCode.Tests
 	/// <summary>
 	/// https://adventofcode.com/2020/day/2
 	/// </summary>
-	public class Day02Tests
+	public class Tests_2020_02
 	{
 		static readonly string[] _input =
 		{
@@ -22,14 +22,14 @@ namespace AdventOfCode.Tests
 		[Fact]
 		public void Valid_CountOfValidPasswords_Part1()
 		{
-			long actual = Day02.CountValidPasswords_Part1(_input);
+			long actual = Solution_2020_02.CountValidPasswords_Part1(_input);
 			Assert.Equal(2, actual);
 		}
 
 		[Fact]
 		public void Valid_CountOfValidPasswords_Part2()
 		{
-			long actual = Day02.CountValidPasswords_Part2(_input);
+			long actual = Solution_2020_02.CountValidPasswords_Part2(_input);
 			Assert.Equal(1, actual);
 		}
 

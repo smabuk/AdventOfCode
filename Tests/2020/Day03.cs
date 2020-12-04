@@ -10,7 +10,7 @@ namespace AdventOfCode.Tests
 	/// <summary>
 	/// https://adventofcode.com/2020/day/3
 	/// </summary>
-	public class Day03Tests
+	public class Tests_2020_03
 	{
 		static readonly string[] _input =
 		{
@@ -32,7 +32,7 @@ namespace AdventOfCode.Tests
 		{
 			int right = 3;
 			int down = 1;
-			long actual = Day03.CalculateNoOfTrees(_input, right, down);
+			long actual = Solution_2020_03.CalculateNoOfTrees(_input, right, down);
 			Assert.Equal(7, actual);
 		}
 
@@ -44,7 +44,7 @@ namespace AdventOfCode.Tests
 		[InlineData(1, 2, 2)]
 		public void Toboggan_Trajectory_Part2(int right, int down, int expected)
 		{
-			long actual = Day03.CalculateNoOfTrees(_input, right, down);
+			long actual = Solution_2020_03.CalculateNoOfTrees(_input, right, down);
 			Assert.Equal(expected, actual);
 		}
 

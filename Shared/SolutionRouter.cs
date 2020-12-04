@@ -15,6 +15,8 @@
 				(2, 2) => Solution_2020_02.Part2().ToString(),
 				(3, 1) => Solution_2020_03.Part1().ToString(),
 				(3, 2) => Solution_2020_03.Part2().ToString(),
+				(4, 1) => Solution_2020_04.Part1().ToString(),
+				(4, 2) => Solution_2020_04.Part2().ToString(),
 				_ => ""
 			};
 		}
