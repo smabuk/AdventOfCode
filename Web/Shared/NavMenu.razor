@@ -7,28 +7,30 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="2020" Match="NavLinkMatch.All">
-                <span class="oi oi-calendar" aria-hidden="true"></span> Year 2020
-            </NavLink>
-        </li>
         @if (Year != 0) {
-            for (int i = 1; i <= 25; i++) {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="@Year" Match="NavLinkMatch.All">
+                    <span class="oi oi-calendar" aria-hidden="true"></span> Year @Year
+                </NavLink>
+            </li>
+            <li class="aoc-grid">
+                @for (int i = 1; i <= 25; i++) {
                 int day = i;
+                bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
+                <NavLink disabled="@tooEarly" class="nav-link" href="@($"{Year}/day/{day}")">
+                    <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece") text-white" aria-hidden="true"></span>@day
+                </NavLink>
+            }</li>
+        }
+        @for (int i = DateTime.UtcNow.AddMonths(-11).Year; i >= 2015 ; i--) {
+            int yr = i;
+            if (yr != Year) {
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="@($"{Year}/day/{day}")">
-                        <span class="oi oi-puzzle-piece" aria-hidden="true"></span> Day @day
+                    <NavLink class="nav-link" href="@yr" Match="NavLinkMatch.All">
+                        <span class="oi oi-calendar" aria-hidden="true"></span> Year @yr
                     </NavLink>
                 </li>
             }
-        }
-        @for (int i = 2015; i < 2020; i++) {
-            int yr = i;
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="@yr" Match="NavLinkMatch.All">
-                    <span class="oi oi-calendar" aria-hidden="true"></span> Year @yr
-                </NavLink>
-            </li>
         }
     </ul>
 </div>

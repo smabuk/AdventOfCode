@@ -1,4 +1,6 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@implements IDisposable
+@inject SessionState Session
+@inject IJSRuntime JSRuntime
 @inject IOptions<AocClientSettings> aocSettings
 @using Microsoft.Extensions.Options
 
@@ -25,11 +27,26 @@
     private ElementReference _codeElement;
 
 
+    protected override void OnInitialized() {
+        Session.OnProblemInputChange += DataHasChanged;
+    }
+
     protected override void OnParametersSet() {
-        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo);
+        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+            Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+    }
+
+    protected void DataHasChanged() {
+        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+            Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+        StateHasChanged();
     }
 
     private async Task CopyTextToClipboard() {
         await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);
+    }
+
+    public void Dispose() {
+        Session.OnChange -= DataHasChanged;
     }
 }

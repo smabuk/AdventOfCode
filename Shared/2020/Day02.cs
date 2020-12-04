@@ -6,7 +6,7 @@ namespace AdventOfCode.Shared {
 	/// https://adventofcode.com/2020/day/2
 	/// </summary>
 	public static class Solution_2020_02 {
-		static readonly string[] _passwordList =
+		static readonly string[] _inputLines =
 		{
 			"1-4 j: jjjqzmgbjwpj",
 			"2-4 w: sckwwf",
@@ -1010,12 +1010,14 @@ namespace AdventOfCode.Shared {
 			"8-9 m: pkccwcgjpcxn"
 		};
 
-		public static long Part1() {
-			return CountValidPasswords_Part1(_passwordList);
+		public static long Part1(string[]? input = null) {
+			input ??= _inputLines;
+			return CountValidPasswords_Part1(input);
 		}
 
-		public static long Part2() {
-			return CountValidPasswords_Part2(_passwordList);
+		public static long Part2(string[]? input = null) {
+			input ??= _inputLines;
+			return CountValidPasswords_Part2(input);
 		}
 
 		public static long CountValidPasswords_Part1(string[] passwordList) {

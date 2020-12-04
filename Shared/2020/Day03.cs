@@ -7,7 +7,7 @@ namespace AdventOfCode.Shared {
 	/// https://adventofcode.com/2020/day/3
 	/// </summary>
 	public static class Solution_2020_03 {
-		static readonly string[] _tobogganInput =
+		static readonly string[] _inputLines =
 		{
 			".....##.#.....#........#....##.",
 			"....#...#...#.#.......#........",
@@ -334,19 +334,26 @@ namespace AdventOfCode.Shared {
 			".#..##.##.#......#....##..#...."
 		};
 
-		public static long Part1()
-		{
-			return CalculateNoOfTrees(_tobogganInput, 3, 1);
+		public static long Part1(string[]? input = null) {
+			input ??= _inputLines;
+			if (input[^1] == "") {
+				input = input[..^1];
+			}
+			return CalculateNoOfTrees(input, 3, 1);
 		}
 
-		public static long Part2()
-		{
+		public static long Part2(string[]? input = null) {
+			input ??= _inputLines;
+			if (input[^1] == "") {
+				input = input[..^1];
+			}
+
 			List<long> resultArray = new();
-			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 1, 1));
-			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 3, 1));
-			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 5, 1));
-			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 7, 1));
-			resultArray.Add(CalculateNoOfTrees(_tobogganInput, 1, 2));
+			resultArray.Add(CalculateNoOfTrees(input, 1, 1));
+			resultArray.Add(CalculateNoOfTrees(input, 3, 1));
+			resultArray.Add(CalculateNoOfTrees(input, 5, 1));
+			resultArray.Add(CalculateNoOfTrees(input, 7, 1));
+			resultArray.Add(CalculateNoOfTrees(input, 1, 2));
 
 			return resultArray.Aggregate(1, (long treeProduct, long treeCount) => treeProduct * treeCount);
 		}

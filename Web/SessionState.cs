@@ -8,11 +8,15 @@ namespace AdventOfCode.Web
 {
     public class SessionState
     {
+		public event Action? OnChange;
+		private void NotifyStateChanged() => OnChange?.Invoke();
+
 		public string UserName { get; set; } = "";
 		public Dictionary<int, int> NoOfStars { get; set; } = new();
 		public bool IsSummaryLoaded(int year) => NoOfStars.ContainsKey(year);
 		public Dictionary<Tuple<int, int, int>, string> ProblemDescriptions { get; set; } = new();
 		public Dictionary<Tuple<int, int>, string> ProblemInputs { get; set; } = new();
+		public Dictionary<Tuple<int, int>, string[]> ProblemRawInputs { get; set; } = new();
 
 
 		public bool DoesNOfStarsExist(int year) => NoOfStars.ContainsKey(year);
@@ -23,6 +27,7 @@ namespace AdventOfCode.Web
 			} else {
 				NoOfStars.Add(year, value);
 			}
+			NotifyStateChanged();
 		}
 
 		public bool DoesProblemDescriptionExist(int year, int day, int problemNo) => ProblemDescriptions.ContainsKey(new(year, day, problemNo));
@@ -34,17 +39,28 @@ namespace AdventOfCode.Web
 			} else {
 				ProblemDescriptions.Add(key, value);
 			}
+			NotifyStateChanged();
 		}
 
+		public event Action? OnProblemInputChange;
+		private void NotifyProblemInputChanged() => OnProblemInputChange?.Invoke();
 		public bool DoesProblemInputExist(int year, int day) => ProblemInputs.ContainsKey(new(year, day));
-		public string GetProblemInput(int year, int day) => ProblemInputs.ContainsKey(new (year, day)) ? ProblemInputs[new(year, day)] : "";
+		public string GetProblemInputAsString(int year, int day) => ProblemInputs.ContainsKey(new (year, day)) ? ProblemInputs[new(year, day)] : "";
+		public string[]? GetProblemInputAsArray(int year, int day) => ProblemInputs.ContainsKey(new(year, day)) ? ProblemRawInputs[new(year, day)] : null;
 		public void SetProblemInput(int year, int day, string value) {
+			if (string.IsNullOrWhiteSpace(value)) {
+				return;
+			}
+			string[] rawValue = value.Split("\n");
 			Tuple<int, int> key = new(year, day);
 			if (ProblemInputs.ContainsKey(key)) {
 				ProblemInputs[key] = value;
+				ProblemRawInputs[key] = rawValue;
 			} else {
 				ProblemInputs.Add(key, value);
+				ProblemRawInputs.Add(key, rawValue);
 			}
+			NotifyProblemInputChanged();
 		}
 
 	}

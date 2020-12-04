@@ -17,10 +17,12 @@ namespace AdventOfCode.Web {
 		public async Task<string> GetInputData(int year, int day) {
 			var response = await _httpClient.GetAsync($"{year}/day/{day}/input");
 
-			return response.IsSuccessStatusCode switch {
+			string value = response.IsSuccessStatusCode switch {
 				false => "",
 				_ => await response.Content.ReadAsStringAsync()
 			};
+			value = value[..^1] ?? "";
+			return value;
 		}
 
 		public async Task<string> GetProblemDescription(int year, int day, int problemNo = 1) {

@@ -50,6 +50,21 @@
     color: white;
 }
 
+.aoc-grid {
+    color: white;
+    display: grid;
+    grid-gap: 0.0rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 0.0rem;
+}
+
+    .aoc-grid .nav-link {
+        color: yellow;
+        padding: 0.5rem 0.5rem;
+    }
+
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;

@@ -7,7 +7,7 @@ namespace AdventOfCode.Shared {
 	/// https://adventofcode.com/2020/day/4
 	/// </summary>
 	public static class Solution_2020_04 {
-		static readonly string[] _input =
+		static readonly string[] _inputLines =
 		{
 			"eyr:2033",
 			"hgt:177cm pid:173cm",
@@ -1115,12 +1115,14 @@ namespace AdventOfCode.Shared {
 			"hgt:183cm cid:187 byr:2019 ecl:xry iyr:2013 pid:164cm hcl:#18171d eyr:2021"
 		};
 
-		public static string Part1() {
-			return CountValidPassports(_input, 1).ToString();
+		public static string Part1(string[]? input = null) {
+			input ??= _inputLines;
+			return CountValidPassports(input, 1).ToString();
 		}
 
-		public static string Part2() {
-			return CountValidPassports(_input, 2).ToString();
+		public static string Part2(string[]? input = null) {
+			input ??= _inputLines;
+			return CountValidPassports(input, 2).ToString();
 		}
 
 		public static long CountValidPassports(string[] input, int problemNo) {

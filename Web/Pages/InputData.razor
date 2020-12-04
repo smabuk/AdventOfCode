@@ -1,11 +1,13 @@
 ﻿@inject SessionState Session
 @inject IAocClient aocClient
+@inject IGithubClient githubClient
 @inject IJSRuntime JSRuntime
 <article class="day-desc">
-    <h2>--- Input --- <span><button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputData()">Get Input Data</button></span><button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button></h2>
-    <pre><code @ref="_codeElement">
-@Input
-    </code></pre>
+    <EditForm Model="@inputModel" OnSubmit="@UseInputData">
+        <h2>--- Input --- <span><button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputData()">My Data</button><button class="btn btn-primary" disabled="@IsCopperBeardyGetDisabled" @onclick="() => LoadInputDataFromCopperBeardy()">Beardy Data</button></span><button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button><input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary" /></h2>
+        <textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
+    </EditForm>
+    <div hidden @ref="_codeElement">@inputModel.InputData</div>
 </article>
 
 @code {
@@ -15,31 +17,56 @@
     [Parameter]
     public int Day { get; set; }
 
-    private string Input { get; set; } = "";
-    private bool IsGetDisabled => IsLoading || IsLoaded == true;
-    private bool IsCopyDisabled => string.IsNullOrEmpty(Input);
+    public string Input { get; set; } = "";
+    private bool IsGetDisabled => IsLoading; // || IsLoaded == true;
+    private bool IsCopperBeardyGetDisabled => IsLoading; // || IsLoaded == true;
+    private bool IsCopyDisabled => string.IsNullOrEmpty(inputModel.InputData);
+    private bool IsUseDisabled => string.IsNullOrEmpty(inputModel.InputData);
     private bool IsLoaded = false;
     private bool IsLoading = false;
+
+    class InputModel {
+        public string InputData { get; set; } = "";
+    }
+    InputModel inputModel = new();
 
     private ElementReference _codeElement;
 
     protected override void OnParametersSet() {
         IsLoaded = false;
-        Input = "";
+        inputModel.InputData = "";
         if (Session.DoesProblemInputExist(Year, Day)) {
-            Input = Session.GetProblemInput(Year, Day);
+            inputModel.InputData = Session.GetProblemInputAsString(Year, Day);
+            Input = inputModel.InputData;
             IsLoaded = true;
         }
     }
 
     async void LoadInputData() {
         IsLoading = true;
-        Input = await aocClient.GetInputData(Year, Day);
+        inputModel.InputData = await aocClient.GetInputData(Year, Day);
+        Input = inputModel.InputData;
         IsLoading = false;
         IsLoaded = true;
         StateHasChanged();
-        Session.SetProblemInput(Year, Day, Input);
+        Session.SetProblemInput(Year, Day, inputModel.InputData);
 
+    }
+
+    async void LoadInputDataFromCopperBeardy() {
+        IsLoading = true;
+        inputModel.InputData = await githubClient.GetInputData("copperbeardy", Year, Day);
+        Input = inputModel.InputData;
+        IsLoading = false;
+        IsLoaded = true;
+        StateHasChanged();
+        Session.SetProblemInput(Year, Day, inputModel.InputData);
+
+    }
+
+    void UseInputData() {
+        Session.SetProblemInput(Year, Day, inputModel.InputData);
+        StateHasChanged();
     }
 
     private async Task CopyTextToClipboard() {

@@ -1,3 +1,7 @@
-﻿button {
+﻿button, input {
     margin-left: 1rem;
+}
+
+textarea {
+    width: 95%;
 }

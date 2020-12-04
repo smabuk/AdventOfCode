@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +21,8 @@ namespace AdventOfCode.Web {
 			// AocClient settings
 			services.Configure<AocClientSettings>(Configuration.GetSection(nameof(AocClientSettings)));
 			services.AddHttpClient<IAocClient, AocClient>();
+
+			services.AddHttpClient<IGithubClient, GithubClient>();
 
 			services.AddScoped<SessionState>();
 
