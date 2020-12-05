@@ -5,12 +5,11 @@ using AdventOfCode.Shared;
 
 using Xunit;
 
-namespace AdventOfCode.Tests
-{
+namespace AdventOfCode.Tests.Year2020 {
 	/// <summary>
 	/// https://adventofcode.com/2020/day/2
 	/// </summary>
-	public class Tests_2020_02
+	public class Tests_02
 	{
 		static readonly string[] _input =
 		{

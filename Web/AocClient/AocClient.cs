@@ -21,7 +21,9 @@ namespace AdventOfCode.Web {
 				false => "",
 				_ => await response.Content.ReadAsStringAsync()
 			};
-			value = value[..^1] ?? "";
+			if (value[^1] == '\n') {
+				value = value[..^1] ?? "";
+			}
 			return value;
 		}
 

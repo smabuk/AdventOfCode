@@ -9,7 +9,7 @@
     <ul class="nav flex-column">
         @if (Year != 0) {
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="@Year" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="@Year">
                     <span class="oi oi-calendar" aria-hidden="true"></span> Year @Year
                 </NavLink>
             </li>
@@ -17,8 +17,8 @@
                 @for (int i = 1; i <= 25; i++) {
                 int day = i;
                 bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
-                <NavLink disabled="@tooEarly" class="nav-link" href="@($"{Year}/day/{day}")">
-                    <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece") text-white" aria-hidden="true"></span>@day
+                <NavLink disabled="@tooEarly" class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@($"{Year}/day/{day}")">
+                    <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece")" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
                 </NavLink>
             }</li>
         }
@@ -26,7 +26,7 @@
             int yr = i;
             if (yr != Year) {
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="@yr" Match="NavLinkMatch.All">
+                    <NavLink class="nav-link" href="@yr">
                         <span class="oi oi-calendar" aria-hidden="true"></span> Year @yr
                     </NavLink>
                 </li>

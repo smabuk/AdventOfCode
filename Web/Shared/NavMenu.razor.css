@@ -1,3 +1,19 @@
+.aoc-grid {
+    color: white;
+    display: grid;
+    grid-gap: 0rem;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0rem;
+    text-align: center;
+}
+
+.day {
+}
+
+.day25 {
+    grid-column: 1 / 4;
+    text-align: center;
+}
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -49,20 +65,6 @@
     background-color: rgba(255,255,255,0.1);
     color: white;
 }
-
-.aoc-grid {
-    color: white;
-    display: grid;
-    grid-gap: 0.0rem;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    padding: 0.0rem;
-}
-
-    .aoc-grid .nav-link {
-        color: yellow;
-        padding: 0.5rem 0.5rem;
-    }
 
 
 @media (min-width: 641px) {
