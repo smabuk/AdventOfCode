@@ -1,3 +1,5 @@
+using AdventOfCode.SharedUI;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,7 @@ namespace AdventOfCode.Web {
 			services.AddHttpClient<IGithubClient, GithubClient>();
 
 			services.AddScoped<SessionState>();
+			services.AddScoped<AocJsInterop>();
 
 		}
 

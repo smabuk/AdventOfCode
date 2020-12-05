@@ -5,26 +5,29 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace AdventOfCode.SharedUI {
-	// This class provides an example of how JavaScript functionality can be wrapped
-	// in a .NET class for easy consumption. The associated JavaScript module is
-	// loaded on demand when first needed.
+	// The associated JavaScript module is loaded on demand when first needed.
 	//
-	// This class can be registered as scoped DI service and then injected into Blazor
+	// This class should be registered as scoped DI service and then injected into Blazor
 	// components for use.
 
-	public class AnswerJsInterop : IAsyncDisposable {
+	public class AocJsInterop : IAsyncDisposable {
 		private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
-		public AnswerJsInterop(IJSRuntime jsRuntime) {
+		public AocJsInterop(IJSRuntime jsRuntime) {
 			moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-			   "import", "./_content/AdventOfCode.SharedUI/answerJsInterop.js").AsTask());
+			   "import", "./_content/AdventOfCode.SharedUI/aocJsInterop.js").AsTask());
 		}
 
 		public async ValueTask<string> CopyToClipboard(ElementReference reference) {
 			var module = await moduleTask.Value;
 			return await module.InvokeAsync<string>("copyText", reference);
-			// return await module.InvokeAsync<string>("showPrompt", message);
 		}
+
+		public async ValueTask<string> ShowPrompt(string message) {
+			var module = await moduleTask.Value;
+			return await module.InvokeAsync<string>("showPrompt", message);
+		}
+
 
 		public async ValueTask DisposeAsync() {
 			if (moduleTask.IsValueCreated) {

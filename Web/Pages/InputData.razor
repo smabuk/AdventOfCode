@@ -1,7 +1,7 @@
 ﻿@inject SessionState Session
 @inject IAocClient aocClient
 @inject IGithubClient githubClient
-@inject IJSRuntime JSRuntime
+@inject AocJsInterop aocJS
 <article class="day-desc">
     <EditForm Model="@inputModel" OnSubmit="@UseInputData">
         <h2>--- Input --- <span>
@@ -76,7 +76,7 @@
     }
 
     private async Task CopyTextToClipboard() {
-        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);
+        await aocJS.CopyToClipboard(_codeElement);
     }
 
 }

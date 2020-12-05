@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
 @inject SessionState Session
-@inject IJSRuntime JSRuntime
+@inject AocJsInterop aocJS
 @inject IOptions<AocClientSettings> aocSettings
 @using Microsoft.Extensions.Options
 
@@ -43,7 +43,7 @@
     }
 
     private async Task CopyTextToClipboard() {
-        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _codeElement);
+        await aocJS.CopyToClipboard(_codeElement);
     }
 
     public void Dispose() {
