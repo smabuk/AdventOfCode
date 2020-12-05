@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using AdventOfCode.Shared.Helpers;
+
 namespace AdventOfCode.Shared
 {
 	/// <summary>
@@ -11,11 +13,10 @@ namespace AdventOfCode.Shared
 		public static long Part1(string[]? input = null)
 		{
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			List<int> expenseValues = new();
 			foreach (string item in input) {
-				try {
-					expenseValues.Add(int.Parse(item));
-				} catch (System.Exception) { }
+				expenseValues.Add(int.Parse(item));
 			}
 			FindSumsEqualTo(2020, expenseValues, 2, out List<int> entries);
 			return entries.Aggregate(1, (product, entry) => product * entry);
@@ -24,11 +25,10 @@ namespace AdventOfCode.Shared
 		public static long Part2(string[]? input = null)
 		{
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			List<int> expenseValues = new();
 			foreach (string item in input) {
-				try {
-					expenseValues.Add(int.Parse(item));
-				} catch (System.Exception) { }
+				expenseValues.Add(int.Parse(item));
 			}
 			FindSumsEqualTo(2020, expenseValues, 3, out List<int> entries);
 			return entries.Aggregate(1, (product, entry) => product * entry);

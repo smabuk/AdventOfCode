@@ -1,5 +1,7 @@
 ﻿namespace AdventOfCode.Shared {
 	static public class SolutionRouter {
+		private const string NO_SOLUTION = "** Solution not written yet **";
+
 		public static string SolveProblem(int year, int day, int problemNo, string[]? input = null) {
 			return year switch {
 				2020 => SolveProblem2020(day, problemNo, input),
@@ -8,7 +10,7 @@
 				//2017 => SolveProblem2017(day, problemNo, input),
 				//2016 => SolveProblem2016(day, problemNo, input),
 				2015 => SolveProblem2015(day, problemNo, input),
-				_ => ""
+				_ => NO_SOLUTION
 			};
 		}
 
@@ -90,7 +92,7 @@
 				(25, 1) => Solution_2020_25.Part1(input).ToString(),
 				(25, 2) => Solution_2020_25.Part2(input).ToString(),
 				*/
-				_ => ""
+				_ => NO_SOLUTION
 			};
 		}
 
@@ -173,7 +175,7 @@
 				(25, 1) => Solution_2015_25.Part1(input).ToString(),
 				(25, 2) => Solution_2015_25.Part2(input).ToString(),
 				*/
-				_ => ""
+				_ => NO_SOLUTION
 			};
 		}
 	}

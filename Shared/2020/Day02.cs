@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using AdventOfCode.Shared.Helpers;
+
 namespace AdventOfCode.Shared {
 	/// <summary>
 	/// Day 2: Password Philosophy
@@ -1012,11 +1014,13 @@ namespace AdventOfCode.Shared {
 
 		public static long Part1(string[]? input = null) {
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			return CountValidPasswords_Part1(input);
 		}
 
 		public static long Part2(string[]? input = null) {
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			return CountValidPasswords_Part2(input);
 		}
 

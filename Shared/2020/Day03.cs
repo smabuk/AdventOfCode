@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using AdventOfCode.Shared.Helpers;
+
 namespace AdventOfCode.Shared {
 	/// <summary>
 	/// Day 3: Toboggan Trajectory
@@ -336,17 +338,13 @@ namespace AdventOfCode.Shared {
 
 		public static long Part1(string[]? input = null) {
 			input ??= _inputLines;
-			if (input[^1] == "") {
-				input = input[..^1];
-			}
+			input = input.StripTrailingBlankLineOrDefault();
 			return CalculateNoOfTrees(input, 3, 1);
 		}
 
 		public static long Part2(string[]? input = null) {
 			input ??= _inputLines;
-			if (input[^1] == "") {
-				input = input[..^1];
-			}
+			input = input.StripTrailingBlankLineOrDefault();
 
 			List<long> resultArray = new();
 			resultArray.Add(CalculateNoOfTrees(input, 1, 1));

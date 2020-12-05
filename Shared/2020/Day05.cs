@@ -1,14 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AdventOfCode.Shared
-{
+using AdventOfCode.Shared.Helpers;
 
+namespace AdventOfCode.Shared {
+	/// <summary>
+	/// Day 5: Binary Boarding
+	/// https://adventofcode.com/2020/day/5
+	/// </summary>
+	public class Solution_2020_05 {
+		public static string Part1(string[]? input = null) {
+			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
+			return SolutionPart1(input).ToString();
+		}
 
-    public class Solution_2020_05 {
+		public static string Part2(string[]? input = null) {
+			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
+			return SolutionPart2(input).ToString();
+		}
+
+		private static long SolutionPart1(string[] input) {
+			int highest = 0;
+			foreach (string line in input) {
+				int row = Convert.ToInt32(line[..7].Replace("B", "1").Replace("F", "0"), 2);
+				int col = Convert.ToInt32(line[7..].Replace("R", "1").Replace("L", "0"), 2);
+				int uId = (8 * row) + col;
+				if (uId > highest) {
+					highest = uId;
+				}
+			}
+			return highest;
+		}
+
+		private static long SolutionPart2(string[] input) {
+			Dictionary<int, List<int>> map = new();
+			List<int> fullSeats = new();
+			foreach (string line in input) {
+				int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
+				int col = Convert.ToInt32(line[7..].Replace("L", "0").Replace("R", "1"), 2);
+				int uid = (8 * row) + col;
+				map.TryAdd(row, new List<int>());
+				map[row].Add(col);
+			}
+			int myUid = 0;
+			var myRow = map.OrderBy(o => o.Key).Where(f => f.Value.Count == 7).Single();
+			for (int i = 0; i < 8; i++) {
+				if (!myRow.Value.Contains(i)) {
+					myUid = (8 * myRow.Key) + i;
+					break;
+				}
+			}
+
+			return myUid;
+		}
+
+		// Problem data
 		static readonly string[] _inputLines = new string[] {
 		"BBFFBFBRLL",
 "FFFFBFBRLR",
@@ -986,55 +1035,5 @@ namespace AdventOfCode.Shared
 "FBBFFBBRRL",
 "FBBBBBBRRL"
 	};
-		public static string Part1(string[]? input = null) {
-			input ??= _inputLines;
-			return SolutionPart1(input).ToString();
-		}
-
-		public static string Part2(string[]? input = null) {
-			input ??= _inputLines;
-			return SolutionPart2(input).ToString();
-		}
-
-		private static long SolutionPart1(string[] input) {
-			int highest = 0;
-			foreach (string line in input) {
-				if (string.IsNullOrWhiteSpace(line)) {
-					break;
-				}
-				int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
-				int col = Convert.ToInt32(line[7..].Replace("R", "1").Replace("L", "0"), 2);
-				int uId = (8 * row) + col;
-				if (uId > highest) {
-					highest = uId;
-				}
-			}
-			return highest;
-		}
-
-		private static long SolutionPart2(string[] input) {
-			Dictionary<int, List<int>> map = new();
-			List<int> fullSeats = new();
-			foreach (string line in input) {
-				if (string.IsNullOrWhiteSpace(line)) {
-					break;
-				}
-				int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
-				int col = Convert.ToInt32(line[7..].Replace("L", "0").Replace("R", "1"), 2);
-				int uid = (8 * row) + col;
-				map.TryAdd(row, new List<int>());
-				map[row].Add(col);
-			}
-			int myUid = 0;
-			var myRow = map.OrderBy(o => o.Key).Where(f => f.Value.Count == 7).Single();
-			for (int i = 0; i < 8; i++) {
-				if (!myRow.Value.Contains(i)) {
-					myUid = (8 * myRow.Key) + i;
-					break;
-				}
-			}
-
-			return myUid;
-		}
 	}
 }

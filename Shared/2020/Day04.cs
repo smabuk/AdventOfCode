@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using AdventOfCode.Shared.Helpers;
+
 namespace AdventOfCode.Shared {
 	/// <summary>
 	/// Day 4: Passport Processing
@@ -1117,11 +1119,13 @@ namespace AdventOfCode.Shared {
 
 		public static string Part1(string[]? input = null) {
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			return CountValidPassports(input, 1).ToString();
 		}
 
 		public static string Part2(string[]? input = null) {
 			input ??= _inputLines;
+			input = input.StripTrailingBlankLineOrDefault();
 			return CountValidPassports(input, 2).ToString();
 		}
 

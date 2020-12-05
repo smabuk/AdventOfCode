@@ -9,9 +9,9 @@ using AdventOfCode.Shared.Helpers;
 namespace AdventOfCode.Shared {
 	/// <summary>
 	/// Day XX: Title
-	/// https://adventofcode.com/2020/day/XX
+	/// https://adventofcode.com/2015/day/XX
 	/// </summary>
-	public class Solution_2020_xx {
+	public class Solution_2015_xx {
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			input ??= _inputLines;

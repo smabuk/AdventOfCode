@@ -4,15 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using AdventOfCode.Shared.Helpers;
+
 namespace AdventOfCode.Shared {
+	/// <summary>
+	/// Day 2: I Was Told There Would Be No Math
+	/// https://adventofcode.com/2015/day/2
+	/// </summary>
 	public class Solution_2015_02 {
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
+			input = input.StripTrailingBlankLineOrDefault();
 			return Part1_Solution(input).ToString();
 		}
 
 		public static string Part2(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
+			input = input.StripTrailingBlankLineOrDefault();
 			return Part2_Solution(input).ToString();
 		}
 
