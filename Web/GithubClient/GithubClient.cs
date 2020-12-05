@@ -16,6 +16,7 @@ namespace AdventOfCode.Web {
 		public async Task<string> GetInputData(string username, int year, int day) {
 			string path = username.ToLower() switch {
 				"copperbeardy" => $"CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt",
+				"andriamanitra" => $"Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt",
 				_ => ""
 			};
 			if (string.IsNullOrEmpty(path)) {

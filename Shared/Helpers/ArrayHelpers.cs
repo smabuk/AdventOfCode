@@ -27,7 +27,6 @@ namespace AdventOfCode.Shared.Helpers
 				}
 			}
 			return value;
-			return value;
 		}
 		/// <summary>
 		/// Finds the lowest value and returns it

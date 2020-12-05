@@ -36,20 +36,20 @@ namespace AdventOfCode.Shared {
 		}
 
 		private static long SolutionPart2(string[] input) {
-			Dictionary<int, List<int>> map = new();
-			List<int> fullSeats = new();
+			List<int> map = new();
 			foreach (string line in input) {
 				int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
 				int col = Convert.ToInt32(line[7..].Replace("L", "0").Replace("R", "1"), 2);
 				int uid = (8 * row) + col;
-				map.TryAdd(row, new List<int>());
-				map[row].Add(col);
+				map.Add(uid);
 			}
 			int myUid = 0;
-			var myRow = map.OrderBy(o => o.Key).Where(f => f.Value.Count == 7).Single();
-			for (int i = 0; i < 8; i++) {
-				if (!myRow.Value.Contains(i)) {
-					myUid = (8 * myRow.Key) + i;
+			for (int seat = map.LowestValue(); seat < map.HighestValue(); seat++) {
+				if (map.Contains(seat)) {
+					continue;
+				}
+				if (map.Contains(seat + 1) && map.Contains(seat - 1)) {
+					myUid = seat;
 					break;
 				}
 			}
