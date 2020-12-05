@@ -18,3 +18,7 @@ Console.WriteLine("DAY  4 - Passport Processing");
 Console.WriteLine($"Part 1: {Solution_2020_04.Part1()}");
 Console.WriteLine($"Part 2: {Solution_2020_04.Part2()}");
 
+Console.WriteLine("DAY  5 - Binary Boarding");
+Console.WriteLine($"Part 1: {Solution_2020_05.Part1()}");
+Console.WriteLine($"Part 2: {Solution_2020_05.Part2()}");
+

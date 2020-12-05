@@ -1,6 +1,6 @@
 ﻿@inject IAocClient aocClient
 @inject SessionState Session
-<h4>@UserName <span>@(isLoaded ? NoOfStars : "")⭐</span> </h4>
+<h4>@UserName <span>@(isLoaded ? $"{NoOfStars}⭐" : "")</span></h4>
 
 @code {
     [Parameter]
