@@ -28,6 +28,15 @@ namespace AdventOfCode.Tests.HelperMethodTests {
 			int actual = ArrayHelpers.LowestValue(input);
 			Assert.Equal(expected, actual);
 		}
+
+		[Fact]
+		public void Should_FindHighest_Of_Multiple_Int_Parameters() {
+			Assert.Equal(6, ArrayHelpers.HighestValue(3, 6, 2, 4, -3, 4));
+		}
+		[Fact]
+		public void Should_FindLowestt_Of_Multiple_Int_Parameters() {
+			Assert.Equal(-3, ArrayHelpers.LowestValue(3, 6, 2, 4, -3, 4));
+		}
 	}
 
 }

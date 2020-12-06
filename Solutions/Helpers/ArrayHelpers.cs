@@ -28,6 +28,15 @@ namespace AdventOfCode.Solutions.Helpers
 			}
 			return value;
 		}
+		public static T HighestValue<T>(params T[] values)
+			where T: struct, IComparable {
+
+			return HighestValue(values.ToList());
+		}
+
+
+
+
 		/// <summary>
 		/// Finds the lowest value and returns it
 		/// </summary>
@@ -48,5 +57,11 @@ namespace AdventOfCode.Solutions.Helpers
 			}
 			return value;
 		}
+		public static T LowestValue<T>(params T[] values)
+			where T : struct, IComparable {
+
+			return LowestValue(values.ToList());
+		}
+
 	}
 }
