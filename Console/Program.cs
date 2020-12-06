@@ -32,7 +32,7 @@ using static AdventOfCode.Solutions.SolutionRouter;
 */
 
 
-void GetInputDataAndSolve(int year, int day, string title) {
+static void GetInputDataAndSolve(int year, int day, string title) {
 	string[]? input = null;
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 

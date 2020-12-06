@@ -5,7 +5,7 @@ namespace AdventOfCode.Solutions {
 		private const string NO_SOLUTION = "** Solution not written yet **";
 		private const string NO_INPUT = "** NO INPUT DATA **";
 
-		public static string SolveProblem(int year, int day, int problemNo, string[] input) {
+		public static string SolveProblem(int year, int day, int problemNo, string[]? input) {
 
 			if (input is null) {
 				return NO_INPUT;
