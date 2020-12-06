@@ -68,6 +68,24 @@ namespace AdventOfCode.Services {
 			_ = int.TryParse(page[start..(start + end)], out int noOfStars);
 			summary.NoOfStars = noOfStars;
 
+			for (int day = 1; day <= 25; day++) {
+				end = 0;
+				noOfStars = 0;
+				start = page.IndexOf($"a aria-label=\"Day {day}, ") + 21;
+				if (start > 0) {
+					if (page[start..(start + 3)] == "one") {
+						noOfStars = 1;
+					} else if (page[start..(start + 3)] == "two") {
+						noOfStars = 2;
+					}
+				}
+				DailySummary dayInfo = new() {
+					Day = day,
+					NoOfStars = noOfStars
+				};
+				summary.Days.TryAdd(day, dayInfo);
+			}
+
 			return summary;
 		}
 	}

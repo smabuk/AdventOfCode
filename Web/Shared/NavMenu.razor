@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@implements IDisposable
+@inject SessionState Session
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">@Brand</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -15,14 +17,23 @@
             </li>
             <li class="aoc-grid">
                 @for (int i = 1; i <= 25; i++) {
-                int day = i;
-                bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
-                <NavLink disabled="@tooEarly" class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@($"{Year}/day/{day}")">
-                    <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece")" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
-                </NavLink>
-            }</li>
+                    int day = i;
+                    bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
+                    string starsClass = "";
+                    if (summaryYearExists) {
+                        starsClass = Session.Summaries[Year].Days[day].NoOfStars switch {
+                            1 => "onestar",
+                            2 => "twostars",
+                            _ => ""
+                        };
+                    }
+                    <NavLink disabled="@tooEarly" class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@($"{Year}/day/{day}")">
+                        <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece") @starsClass" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
+                    </NavLink>
+                }
+            </li>
         }
-        @for (int i = DateTime.UtcNow.AddMonths(-11).Year; i >= 2015 ; i--) {
+        @for (int i = DateTime.UtcNow.AddMonths(-11).Year; i >= 2015; i--) {
             int yr = i;
             if (yr != Year) {
                 <li class="nav-item px-3">
@@ -39,13 +50,24 @@
     [Parameter] public int Year { get; set; }
 
     public string Brand => $"Advent of Code {(Year == 0 ? "" : Year)} ";
+    bool summaryYearExists => Session?.Summaries.ContainsKey(Year) ?? false;
 
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
+    protected override void OnInitialized() {
+        Session.OnSummaryChange += SummaryHasChanged;
+    }
+
+    protected void SummaryHasChanged() {
+        StateHasChanged();
+    }
+
+    public void Dispose() {
+        Session.OnSummaryChange -= SummaryHasChanged;
+    }
+    private void ToggleNavMenu() {
         collapseNavMenu = !collapseNavMenu;
     }
 }

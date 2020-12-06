@@ -14,6 +14,15 @@
     grid-column: 1 / 4;
     text-align: center;
 }
+
+.onestar {
+    color: silver;
+}
+
+.twostars {
+    color: gold;
+}
+
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }

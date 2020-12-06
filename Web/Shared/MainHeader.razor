@@ -26,6 +26,8 @@
                     NoOfStars = Summary.NoOfStars;
                     Session.UserName = Summary.UserName;
                     Session.SetNoOfStars(Year, Summary.NoOfStars);
+                    Session.SetSummary(Year, Summary);
+                    StateHasChanged();
                 }
             }
         }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using AdventOfCode.Services;
+
 namespace AdventOfCode.Web
 {
     public class SessionState
@@ -18,9 +20,23 @@ namespace AdventOfCode.Web
 		public Dictionary<Tuple<int, int>, (string InputData, string Source)> ProblemInputs { get; set; } = new();
 		public Dictionary<Tuple<int, int>, string[]> ProblemRawInputs { get; set; } = new();
 
+		public event Action? OnSummaryChange;
+		private void NotifySummaryChanged() => OnSummaryChange?.Invoke();
+		public Dictionary<int, AocSummary> Summaries { get; set; } = new();
+		public void SetSummary(int year, AocSummary value) {
+			if (Summaries.ContainsKey(year)) {
+				Summaries[year] = value;
+			} else {
+				Summaries.Add(year, value);
+			}
+			NotifySummaryChanged();
+		}
+
+
 
 		public bool DoesNOfStarsExist(int year) => NoOfStars.ContainsKey(year);
 		public int GetNoOfStars(int year) => NoOfStars.ContainsKey(year) ? NoOfStars[year] : 0;
+		public int GetNoOfStars(int year, int day) => NoOfStars.ContainsKey(year) ? NoOfStars[year] : 0;
 		public void SetNoOfStars(int year, int value) {
 			if (NoOfStars.ContainsKey(year)) {
 				NoOfStars[year] = value;
