@@ -23,6 +23,21 @@ namespace AdventOfCode.SharedUI {
 			return await module.InvokeAsync<string>("copyText", reference);
 		}
 
+		public async void CreateCookie(string name, string value, int? days = null) {
+			var module = await moduleTask.Value;
+			await module.InvokeAsync<string>("createCookie", name, value, days);
+		}
+
+		public async void DeleteCookie(string name) {
+			var module = await moduleTask.Value;
+			await module.InvokeAsync<string>("deleteCookie", name);
+		}
+
+		public async ValueTask<string> ReadCookie(string name) {
+			var module = await moduleTask.Value;
+			return await module.InvokeAsync<string>("readCookie", name);
+		}
+
 		public async ValueTask<string> ShowPrompt(string message) {
 			var module = await moduleTask.Value;
 			return await module.InvokeAsync<string>("showPrompt", message);
