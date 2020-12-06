@@ -1,11 +1,13 @@
 ﻿@inject SessionState Session
-@inject IAocClient aocClient
-@inject IGithubClient githubClient
+@inject FileSystemInputData fileClient
+@inject IAocHttpClient aocClient
+@inject IGithubHttpClient githubClient
 @inject AocJsInterop aocJS
 <article class="day-desc">
     <EditForm Model="@inputModel" OnSubmit="@UseInputData">
-        <h2>--- Input --- <span>
-                <button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputData()">My Data</button>
+        <h2>
+            --- Input --- <span>
+                <button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputDataFromAoc()">My Data</button>
                 <button class="btn btn-primary" disabled="@IsCopperBeardyGetDisabled" @onclick="@(() => LoadInputDataFromGithub("CopperBeardy"))">Beardy Data</button>
             </span>
             <button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button>
@@ -48,9 +50,13 @@
         }
     }
 
-    async void LoadInputData() {
+    async void LoadInputDataFromAoc() {
         IsLoading = true;
-        inputModel.InputData = await aocClient.GetInputData(Year, Day);
+        inputModel.InputData = fileClient.GetInputData(Year, Day);
+        if (string.IsNullOrEmpty(inputModel.InputData)) {
+            inputModel.InputData = await aocClient.GetInputData(Year, Day);
+            _ = fileClient.SaveInputData(inputModel.InputData, Year, Day);
+        }
         Input = inputModel.InputData;
         IsLoading = false;
         IsLoaded = true;
@@ -61,7 +67,11 @@
 
     async void LoadInputDataFromGithub(string userName) {
         IsLoading = true;
-        inputModel.InputData = await githubClient.GetInputData(userName, Year, Day);
+        inputModel.InputData = fileClient.GetInputData(Year, Day, userName);
+        if (string.IsNullOrEmpty(inputModel.InputData)) {
+            inputModel.InputData = await githubClient.GetInputData(Year, Day, userName);
+            _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+        }
         Input = inputModel.InputData;
         IsLoading = false;
         IsLoaded = true;
@@ -74,6 +84,11 @@
         Session.SetProblemInput(Year, Day, inputModel.InputData);
         StateHasChanged();
     }
+
+    //void SaveInputData(string? userName = null) {
+    //    Session.SetProblemInput(Year, Day, inputModel.InputData);
+    //    _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+    //}
 
     private async Task CopyTextToClipboard() {
         await aocJS.CopyToClipboard(_codeElement);

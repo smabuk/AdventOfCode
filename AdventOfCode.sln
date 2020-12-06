@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAC3FC96-CF98-423A-A096-8871B725BBB5}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Data\yyyy_dd._username.txt = Data\yyyy_dd._username.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Console", "Console\AdventOfCode.Console.csproj", "{CF3A5B6F-1326-4B69-861A-92C98272843A}"
@@ -16,7 +17,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Tests", "Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Web", "Web\AdventOfCode.Web.csproj", "{F026D8F9-0780-4816-9D6E-B7763F9D9A27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.SharedUI", "SharedUI\AdventOfCode.SharedUI.csproj", "{A9DF97C9-1C68-4ED5-A6EF-0D12EC383B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.SharedUI", "SharedUI\AdventOfCode.SharedUI.csproj", "{A9DF97C9-1C68-4ED5-A6EF-0D12EC383B4D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{16044C89-8169-4771-9B20-9780E74C8D51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{BE373B6C-BB7D-4721-9BC1-0208BB78B0D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{45A11EFE-159E-4743-8A6F-F035736B6D4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{359A3BE8-CD8E-455A-B9E8-3EC1D5D37F37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +56,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CF3A5B6F-1326-4B69-861A-92C98272843A} = {45A11EFE-159E-4743-8A6F-F035736B6D4F}
+		{03D0E614-3441-4A0C-8749-8B2D6C837405} = {16044C89-8169-4771-9B20-9780E74C8D51}
+		{314DCB1E-E4DA-4EA9-8072-D9BE8D9E2714} = {BE373B6C-BB7D-4721-9BC1-0208BB78B0D5}
+		{F026D8F9-0780-4816-9D6E-B7763F9D9A27} = {359A3BE8-CD8E-455A-B9E8-3EC1D5D37F37}
+		{A9DF97C9-1C68-4ED5-A6EF-0D12EC383B4D} = {16044C89-8169-4771-9B20-9780E74C8D51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A54B320-6F3A-4DDC-AA01-887E5AAE5660}

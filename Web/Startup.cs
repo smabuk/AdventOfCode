@@ -1,3 +1,4 @@
+using AdventOfCode.Shared;
 using AdventOfCode.SharedUI;
 
 using Microsoft.AspNetCore.Builder;
@@ -20,12 +21,13 @@ namespace AdventOfCode.Web {
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 
-			// AocClient settings
-			services.Configure<AocClientSettings>(Configuration.GetSection(nameof(AocClientSettings)));
-			services.AddHttpClient<IAocClient, AocClient>();
+			// Settings
+			services.Configure<AocSettings>(Configuration.GetSection(nameof(AocSettings)));
+			services.AddHttpClient<IAocHttpClient, AocHttpClient>();
 
-			services.AddHttpClient<IGithubClient, GithubClient>();
+			services.AddHttpClient<IGithubHttpClient, GithubHttpClient>();
 
+			services.AddScoped<FileSystemInputData>();
 			services.AddScoped<SessionState>();
 			services.AddScoped<AocJsInterop>();
 

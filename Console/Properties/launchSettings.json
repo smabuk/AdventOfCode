@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AdventOfCode.Console": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\smabr\\source\\repos\\Learn\\AdventOfCode\\Data"
+    }
+  }
+}

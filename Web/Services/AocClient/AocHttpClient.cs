@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 namespace AdventOfCode.Web {
-	public class AocClient : IAocClient {
+	public class AocHttpClient : IAocHttpClient {
 		private readonly HttpClient _httpClient;
 
-		public AocClient(HttpClient httpClient, IOptions<AocClientSettings> aocSettings) {
+		public AocHttpClient(HttpClient httpClient, IOptions<AocSettings> aocSettings) {
 			httpClient.BaseAddress = new Uri(aocSettings.Value.Site);
-			httpClient.DefaultRequestHeaders.Add("Cookie", $"session={aocSettings.Value.Session};");
+			httpClient.DefaultRequestHeaders.Add("Cookie", $"session={aocSettings.Value.HttpClientSettings.SessionCookie};");
 			_httpClient = httpClient;
 		}
 
@@ -21,9 +21,7 @@ namespace AdventOfCode.Web {
 				false => "",
 				_ => await response.Content.ReadAsStringAsync()
 			};
-			if (value[^1] == '\n') {
-				value = value[..^1] ?? "";
-			}
+
 			return value;
 		}
 

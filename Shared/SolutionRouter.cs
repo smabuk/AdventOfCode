@@ -1,8 +1,16 @@
-﻿namespace AdventOfCode.Shared {
+﻿using System.IO;
+
+namespace AdventOfCode.Shared {
 	static public class SolutionRouter {
 		private const string NO_SOLUTION = "** Solution not written yet **";
+		private const string NO_INPUT = "** NO INPUT DATA **";
 
-		public static string SolveProblem(int year, int day, int problemNo, string[]? input = null) {
+		public static string SolveProblem(int year, int day, int problemNo, string[] input) {
+
+			if (input is null) {
+				return NO_INPUT;
+			}
+
 			return year switch {
 				2020 => SolveProblem2020(day, problemNo, input),
 				//2019 => SolveProblem2019(day, problemNo, input),
