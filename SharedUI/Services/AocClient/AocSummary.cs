@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Web
-{
+namespace AdventOfCode.Services {
     public class AocSummary
     {
 		public string UserName { get; set; } = null!;

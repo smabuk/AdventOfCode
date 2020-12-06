@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AdventOfCode.Shared {
+namespace AdventOfCode.Solutions {
 	static public class SolutionRouter {
 		private const string NO_SOLUTION = "** Solution not written yet **";
 		private const string NO_INPUT = "** NO INPUT DATA **";

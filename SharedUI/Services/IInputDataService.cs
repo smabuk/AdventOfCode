@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Web {
+namespace AdventOfCode.Services {
     public interface IInputDataService
     {
 		Task<string> GetInputData(int year, int day) => throw new NotImplementedException();

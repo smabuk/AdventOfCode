@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using AdventOfCode.Shared.Helpers;
+using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Shared {
+namespace AdventOfCode.Solutions {
 	/// <summary>
 	/// Day 3: Toboggan Trajectory
 	/// https://adventofcode.com/2020/day/3

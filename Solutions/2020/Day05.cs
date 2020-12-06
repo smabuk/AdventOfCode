@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using AdventOfCode.Shared.Helpers;
+using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Shared {
+namespace AdventOfCode.Solutions {
 	/// <summary>
 	/// Day 5: Binary Boarding
 	/// https://adventofcode.com/2020/day/5

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using AdventOfCode.Shared.Helpers;
+using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Shared {
+namespace AdventOfCode.Solutions {
 	/// <summary>
 	/// Day XX: Title
 	/// https://adventofcode.com/2015/day/XX

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode.Web {
+namespace AdventOfCode.Services {
 	public class GithubHttpClient : IGithubHttpClient {
 		private readonly HttpClient _httpClient;
 

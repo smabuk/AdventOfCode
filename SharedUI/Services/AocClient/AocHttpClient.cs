@@ -4,13 +4,12 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode.Web {
+namespace AdventOfCode.Services {
 	public class AocHttpClient : IAocHttpClient {
 		private readonly HttpClient _httpClient;
 
-		public AocHttpClient(HttpClient httpClient, IOptions<AocSettings> aocSettings) {
-			httpClient.BaseAddress = new Uri(aocSettings.Value.Site);
-			httpClient.DefaultRequestHeaders.Add("Cookie", $"session={aocSettings.Value.HttpClientSettings.SessionCookie};");
+		public AocHttpClient(HttpClient httpClient) {
+			httpClient.BaseAddress = new Uri(@"https://adventofcode.com/");
 			_httpClient = httpClient;
 		}
 

@@ -7,16 +7,10 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
-namespace AdventOfCode.Web {
+namespace AdventOfCode.Services {
     public class FileSystemInputData : IInputDataService
     {
-		private readonly IOptions<AocSettings> Settings;
-		public string DataFolder { get; set; }
-
-		public FileSystemInputData(IOptions<AocSettings> aocSettings) {
-			Settings = aocSettings;
-			DataFolder = Settings.Value.LocalDataPath;
-		}
+		public string DataFolder { get; set; } = "../Data";
 
 		public string GetInputData(int year, int day, string? username = null) {
 

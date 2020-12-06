@@ -1,4 +1,4 @@
-using AdventOfCode.Shared;
+using AdventOfCode.Solutions;
 
 using Xunit;
 

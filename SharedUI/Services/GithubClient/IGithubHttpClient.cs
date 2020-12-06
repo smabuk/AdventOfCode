@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Web {
+namespace AdventOfCode.Services {
 	public interface IGithubHttpClient : IInputDataService {
 		List<string> KnownUsers { get; }
 

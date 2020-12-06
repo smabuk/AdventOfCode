@@ -1,4 +1,7 @@
-using AdventOfCode.Shared;
+using System;
+using System.Net.Http;
+
+using AdventOfCode.Services;
 using AdventOfCode.SharedUI;
 
 using Microsoft.AspNetCore.Builder;
@@ -23,9 +26,11 @@ namespace AdventOfCode.Web {
 
 			// Settings
 			services.Configure<AocSettings>(Configuration.GetSection(nameof(AocSettings)));
-			services.AddHttpClient<IAocHttpClient, AocHttpClient>();
 
-			services.AddHttpClient<IGithubHttpClient, GithubHttpClient>();
+			services.AddHttpClient<AocHttpClient>(httpClient => {
+				httpClient.DefaultRequestHeaders.Add("Cookie", $"session={Configuration["AocSettings:HttpClientSettings:SessionCookie"]};");
+			});
+			services.AddHttpClient<GithubHttpClient>();
 
 			services.AddScoped<FileSystemInputData>();
 			services.AddScoped<SessionState>();
@@ -38,7 +43,7 @@ namespace AdventOfCode.Web {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 			} else {
-				app.UseExceptionHandler("/Error");
+				app.UseExceptionHandler(" / Error");
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}

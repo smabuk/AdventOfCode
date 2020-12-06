@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using AdventOfCode.Shared.Helpers;
+using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Shared {
+namespace AdventOfCode.Solutions {
 	/// <summary>
 	/// Day 06: Custom Customs
 	/// https://adventofcode.com/2020/day/6

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Shared.Helpers
+namespace AdventOfCode.Solutions.Helpers
 {
     public static class ArrayHelpers
     {

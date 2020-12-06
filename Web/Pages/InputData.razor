@@ -1,7 +1,7 @@
 ﻿@inject SessionState Session
 @inject FileSystemInputData fileClient
-@inject IAocHttpClient aocClient
-@inject IGithubHttpClient githubClient
+@inject AocHttpClient aocClient
+@inject GithubHttpClient githubClient
 @inject AocJsInterop aocJS
 <article class="day-desc">
     <EditForm Model="@inputModel" OnSubmit="@UseInputData">

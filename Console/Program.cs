@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-using static AdventOfCode.Shared.SolutionRouter;
+using static AdventOfCode.Solutions.SolutionRouter;
 
 	GetInputDataAndSolve(2020, 01, "Report Repair");
 	GetInputDataAndSolve(2020, 02, "Password Philosphy");
@@ -42,7 +42,9 @@ void GetInputDataAndSolve(int year, int day, string title) {
 
 	Console.WriteLine();
 	Console.WriteLine($"{year} DAY {day, 2} - {title}");
-	Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input)}");
-	Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input)}");
+	if (input is not null) {
+		Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input)}");
+		Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input)}");
+	}
 }
 
