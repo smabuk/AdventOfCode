@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\AdventOfCode.Shared.csproj" />
     <ProjectReference Include="..\SharedUI\AdventOfCode.SharedUI.csproj" />
+    <ProjectReference Include="..\Solutions\AdventOfCode.Solutions.csproj" />
   </ItemGroup>
 </Project>
