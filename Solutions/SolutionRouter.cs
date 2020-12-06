@@ -39,10 +39,10 @@ namespace AdventOfCode.Shared {
 				(5, 1) => Solution_2020_05.Part1(input).ToString(),
 				(5, 2) => Solution_2020_05.Part2(input).ToString(),
 
-				/*
 				(6, 1) => Solution_2020_06.Part1(input).ToString(),
 				(6, 2) => Solution_2020_06.Part2(input).ToString(),
 
+				/*
 				(7, 1) => Solution_2020_07.Part1(input).ToString(),
 				(7, 2) => Solution_2020_07.Part2(input).ToString(),
 

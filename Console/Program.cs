@@ -8,8 +8,8 @@ using static AdventOfCode.Shared.SolutionRouter;
 	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
 	GetInputDataAndSolve(2020, 04, "Passport Processing");
 	GetInputDataAndSolve(2020, 05, "Binary Boarding");
+	GetInputDataAndSolve(2020, 06, "Custom Customs");
 /*
-	GetInputDataAndSolve(2020, 06, "");
 	GetInputDataAndSolve(2020, 07, "");
 	GetInputDataAndSolve(2020, 08, "");
 	GetInputDataAndSolve(2020, 09, "");
