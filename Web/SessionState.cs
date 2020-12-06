@@ -15,7 +15,7 @@ namespace AdventOfCode.Web
 		public Dictionary<int, int> NoOfStars { get; set; } = new();
 		public bool IsSummaryLoaded(int year) => NoOfStars.ContainsKey(year);
 		public Dictionary<Tuple<int, int, int>, string> ProblemDescriptions { get; set; } = new();
-		public Dictionary<Tuple<int, int>, string> ProblemInputs { get; set; } = new();
+		public Dictionary<Tuple<int, int>, (string InputData, string Source)> ProblemInputs { get; set; } = new();
 		public Dictionary<Tuple<int, int>, string[]> ProblemRawInputs { get; set; } = new();
 
 
@@ -45,19 +45,20 @@ namespace AdventOfCode.Web
 		public event Action? OnProblemInputChange;
 		private void NotifyProblemInputChanged() => OnProblemInputChange?.Invoke();
 		public bool DoesProblemInputExist(int year, int day) => ProblemInputs.ContainsKey(new(year, day));
-		public string GetProblemInputAsString(int year, int day) => ProblemInputs.ContainsKey(new (year, day)) ? ProblemInputs[new(year, day)] : "";
+		public (string InputData, string Source) GetProblemInputAsString(int year, int day) => ProblemInputs.ContainsKey(new (year, day)) ? ProblemInputs[new(year, day)] : ("", "");
 		public string[]? GetProblemInputAsArray(int year, int day) => ProblemInputs.ContainsKey(new(year, day)) ? ProblemRawInputs[new(year, day)] : null;
-		public void SetProblemInput(int year, int day, string value) {
+		public void SetProblemInput(int year, int day, string value, string? source = "") {
 			if (string.IsNullOrWhiteSpace(value)) {
 				return;
 			}
 			string[] rawValue = value.Split("\n");
 			Tuple<int, int> key = new(year, day);
+			source ??= "";
 			if (ProblemInputs.ContainsKey(key)) {
-				ProblemInputs[key] = value;
+				ProblemInputs[key] = (value, source);
 				ProblemRawInputs[key] = rawValue;
 			} else {
-				ProblemInputs.Add(key, value);
+				ProblemInputs.Add(key, (value, source));
 				ProblemRawInputs.Add(key, rawValue);
 			}
 			NotifyProblemInputChanged();

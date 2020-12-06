@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -13,19 +14,20 @@ namespace AdventOfCode.Web {
 			_httpClient = httpClient;
 		}
 
+		public List<string> KnownUsers => new() { "smabuk" , "CopperBeardy", "Andriamanitra" };
+
 		public async Task<string> GetInputData(int year, int day, string? username) {
 			
 			if (username is null) { return ""; }
+			if (KnownUsers.Contains(username) == false) { return ""; }
 
 			string path = username.ToLower() switch {
-				"andriamanitra" =>  $"Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt",
-				"copperbeardy" =>   $"CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt",
-				"smabuk" =>         $"smabuk/AdventOfCode/master/Data/{year}_{day:D2}.txt",
-				_ => ""
+				"andriamanitra" => $"Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt",
+				"copperbeardy" => $"CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt",
+				"smabuk" => $"smabuk/AdventOfCode/master/Data/{year}_{day:D2}.txt",
+				_ => "",
 			};
-			if (string.IsNullOrEmpty(path)) {
-				return "";
-			}
+
 			var response = await _httpClient.GetAsync(path);
 
 			return response.IsSuccessStatusCode switch {

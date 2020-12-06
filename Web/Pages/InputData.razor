@@ -7,12 +7,21 @@
     <EditForm Model="@inputModel" OnSubmit="@UseInputData">
         <h2>
             --- Input --- <span>
-                <button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputDataFromAoc()">My Data</button>
-                <button class="btn btn-primary" disabled="@IsCopperBeardyGetDisabled" @onclick="@(() => LoadInputDataFromGithub("CopperBeardy"))">Beardy Data</button>
+                <button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputDataFromAoc()">AoC</button>
+                <button class="btn btn-primary" disabled="@IsGitHubGetDisabled" @onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">@(GitHubUserSelect) GitHub</button>
             </span>
             <button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button>
             <input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary" />
         </h2>
+        <h5>
+            <InputSelect @bind-Value="GitHubUserSelect" DisplayName="User">
+                <option value="">Select a user</option>
+                @foreach (string name in githubClient.KnownUsers) {
+                    <option value="@name">@name</option>
+                }
+            </InputSelect>
+            @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
+        </h5>
         <textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
     </EditForm>
     <div hidden @ref="_codeElement">@inputModel.InputData</div>
@@ -26,11 +35,13 @@
     public int Day { get; set; }
 
     public string Input { get; set; } = "";
+    public string InputSource { get; set; } = "";
+    public string GitHubUserSelect { get; set; } = default!;
+
     private bool IsGetDisabled => IsLoading;
-    private bool IsCopperBeardyGetDisabled => IsLoading;
+    private bool IsGitHubGetDisabled => IsLoading || string.IsNullOrWhiteSpace(GitHubUserSelect);
     private bool IsCopyDisabled => string.IsNullOrEmpty(inputModel.InputData);
     private bool IsUseDisabled => string.IsNullOrEmpty(inputModel.InputData);
-    private bool IsLoaded = false;
     private bool IsLoading = false;
 
     class InputModel {
@@ -41,47 +52,48 @@
     private ElementReference _codeElement;
 
     protected override void OnParametersSet() {
-        IsLoaded = false;
         inputModel.InputData = "";
+        InputSource = "";
         if (Session.DoesProblemInputExist(Year, Day)) {
-            inputModel.InputData = Session.GetProblemInputAsString(Year, Day);
-            Input = inputModel.InputData;
-            IsLoaded = true;
+            (Input, InputSource) = Session.GetProblemInputAsString(Year, Day);
+            inputModel.InputData = Input;
         }
     }
 
     async void LoadInputDataFromAoc() {
         IsLoading = true;
         inputModel.InputData = fileClient.GetInputData(Year, Day);
+        InputSource = "cache";
         if (string.IsNullOrEmpty(inputModel.InputData)) {
             inputModel.InputData = await aocClient.GetInputData(Year, Day);
             _ = fileClient.SaveInputData(inputModel.InputData, Year, Day);
+            InputSource = "AoC";
         }
+        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
         Input = inputModel.InputData;
         IsLoading = false;
-        IsLoaded = true;
         StateHasChanged();
-        Session.SetProblemInput(Year, Day, inputModel.InputData);
 
     }
 
     async void LoadInputDataFromGithub(string userName) {
         IsLoading = true;
         inputModel.InputData = fileClient.GetInputData(Year, Day, userName);
+        InputSource = $"cache {userName}";
         if (string.IsNullOrEmpty(inputModel.InputData)) {
             inputModel.InputData = await githubClient.GetInputData(Year, Day, userName);
+            InputSource = $"github {userName}";
             _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
         }
         Input = inputModel.InputData;
         IsLoading = false;
-        IsLoaded = true;
         StateHasChanged();
         Session.SetProblemInput(Year, Day, inputModel.InputData);
 
     }
 
     void UseInputData() {
-        Session.SetProblemInput(Year, Day, inputModel.InputData);
+        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
         StateHasChanged();
     }
 

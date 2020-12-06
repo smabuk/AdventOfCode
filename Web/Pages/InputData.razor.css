@@ -2,6 +2,10 @@
     margin-left: 0rem;
 }
 
+h5 {
+    font-size: small;
+}
+
 textarea {
     width: 95%;
 }
