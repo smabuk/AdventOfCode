@@ -9,6 +9,8 @@
     public int Day { get; set; } = 1;
     public int NoOfStars { get; set; }
     public string UserName { get; set; } = "";
+    public AocSummary? Summary { get; set; } = default!;
+
     private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
 
     // To stop this running twice - setting render-mode="Server" in _Host.cshtml
@@ -18,9 +20,13 @@
             NoOfStars = Session.GetNoOfStars(Year);
         } else {
             if (Year >= 2015) {
-                (UserName, NoOfStars) = await aocClient.GetSummaryInfo(Year);
-                Session.UserName = UserName;
-                Session.SetNoOfStars(Year, NoOfStars);
+                Summary = await aocClient.GetSummaryInfo(Year);
+                if (Summary is not null) {
+                    UserName = Summary.UserName;
+                    NoOfStars = Summary.NoOfStars;
+                    Session.UserName = Summary.UserName;
+                    Session.SetNoOfStars(Year, Summary.NoOfStars);
+                }
             }
         }
     }

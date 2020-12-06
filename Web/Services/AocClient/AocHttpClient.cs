@@ -50,23 +50,26 @@ namespace AdventOfCode.Web {
 
 		}
 
-		public async Task<(string UserName, int NoOfStars)> GetSummaryInfo(int year) {
+		public async Task<AocSummary?> GetSummaryInfo(int year) {
 			var response = await _httpClient.GetAsync($"{year}");
 
-			if (!response.IsSuccessStatusCode) {
-				return ("", 0);
+			if (response.IsSuccessStatusCode == false) {
+				return null;
 			}
+			AocSummary summary = new();
 
 			string page = await response.Content.ReadAsStringAsync();
-			string userName = "";
+
 			int start = page.IndexOf("class=\"user\"") + 13;
 			int end = page[start..].IndexOf("<");
-			userName = page[start..(start + end)];
+			summary.UserName = page[start..(start + end)];
+
 			start = page.IndexOf("class=\"star-count\"") + 19;
 			end = page[start..].IndexOf("*");
 			_ = int.TryParse(page[start..(start + end)], out int noOfStars);
+			summary.NoOfStars = noOfStars;
 
-			return (userName, noOfStars);
+			return summary;
 		}
 	}
 }
