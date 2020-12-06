@@ -33,20 +33,5 @@ namespace AdventOfCode.Tests.Year2020
 			Assert.Equal(sum, actual.Sum());
 		}
 
-		[Fact]
-		public void Day01_01_Test()
-		{
-			List<int> actual = Solution_2020_01.Find2SumsEqualTo2020(_input);
-			Assert.Equal(2, actual.Count);
-			Assert.Equal(2020, actual[0] + actual[1]);
-		}
-
-		[Fact]
-		public void Day01_02_Test()
-		{
-			List<int> actual = Solution_2020_01.Find3SumsEqualTo2020(_input);
-			Assert.Equal(3, actual.Count);
-			Assert.Equal(2020, actual[0] + actual[1] + actual[2]);
-		}
 	}
 }

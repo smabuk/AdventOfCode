@@ -58,50 +58,6 @@ namespace AdventOfCode.Shared
 			return false;
 		}
 
-		public static List<int> Find2SumsEqualTo2020(int[] expenseValues)
-		{
-			List<int> result = new();
-
-			for (int i = 0; i < expenseValues.Length; i++) {
-				for (int j = 0; j < expenseValues.Length; j++) {
-					if (i == j) {
-						continue;
-					}
-
-					if (expenseValues[i] + expenseValues[j] == 2020) {
-						result.Add(expenseValues[i]);
-						result.Add(expenseValues[j]);
-						return result;
-					}
-				}
-			}
-
-			return result;
-		}
-
-		public static List<int> Find3SumsEqualTo2020(int[] expenseValues)
-		{
-			List<int> result = new();
-
-			for (int i = 0; i < expenseValues.Length; i++) {
-				for (int j = 0; j < expenseValues.Length; j++) {
-					for (int k = 0; k < expenseValues.Length; k++) {
-						if (i == j || i == k || j == k) {
-							continue;
-						}
-
-						if (expenseValues[i] + expenseValues[j] + expenseValues[k] == 2020) {
-							result.Add(expenseValues[i]);
-							result.Add(expenseValues[j]);
-							result.Add(expenseValues[k]);
-							return result;
-						}
-					}
-				}
-			}
-
-			return result;
-		}
 
 	}
 

@@ -20,7 +20,7 @@
                     <option value="@name">@name</option>
                 }
             </InputSelect>
-            @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
+            <a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
         </h5>
         <textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
     </EditForm>
