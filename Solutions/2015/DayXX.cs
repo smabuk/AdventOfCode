@@ -14,28 +14,27 @@ namespace AdventOfCode.Solutions {
 	public class Solution_2015_xx {
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
-			input ??= _inputLines;
 			input = input.StripTrailingBlankLineOrDefault();
-			return SolutionPart1(input).ToString();
+			return Solution1(input).ToString();
 		}
 
 		public static string Part2(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
-			input ??= _inputLines;
 			input = input.StripTrailingBlankLineOrDefault();
-			return SolutionPart2(input).ToString();
+			return Solution2(input).ToString();
 		}
 
-		private static string SolutionPart1(string[] input) {
+		private static string Solution1(string[] input) {
+			List<string> inputs = input.ToList();
+			//inputs.Add("");
 			return "Error: No solution yet";
 		}
 
-		private static string SolutionPart2(string[] input) {
+		private static string Solution2(string[] input) {
+			List<string> inputs = input.ToList();
+			inputs.Add("");
 			return "Error: No solution yet";
 		}
 
-		static readonly string[] _inputLines = new string[] {
-			""
-		};
 	}
 }
