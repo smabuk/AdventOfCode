@@ -116,10 +116,10 @@ namespace AdventOfCode.Solutions {
 				(3, 1) => Solution_2015_03.Part1(input).ToString(),
 				(3, 2) => Solution_2015_03.Part2(input).ToString(),
 
-				/*
 				(4, 1) => Solution_2015_04.Part1(input).ToString(),
 				(4, 2) => Solution_2015_04.Part2(input).ToString(),
 
+				/*
 				(5, 1) => Solution_2015_05.Part1(input).ToString(),
 				(5, 2) => Solution_2015_05.Part2(input).ToString(),
 
