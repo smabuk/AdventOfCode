@@ -9,8 +9,8 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2020, 04, "Passport Processing");
 	GetInputDataAndSolve(2020, 05, "Binary Boarding");
 	GetInputDataAndSolve(2020, 06, "Custom Customs");
+	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
 /*
-	GetInputDataAndSolve(2020, 07, "");
 	GetInputDataAndSolve(2020, 08, "");
 	GetInputDataAndSolve(2020, 09, "");
 	GetInputDataAndSolve(2020, 10, "");

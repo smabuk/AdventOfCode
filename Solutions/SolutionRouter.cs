@@ -42,10 +42,10 @@ namespace AdventOfCode.Solutions {
 				(6, 1) => Solution_2020_06.Part1(input).ToString(),
 				(6, 2) => Solution_2020_06.Part2(input).ToString(),
 
-				/*
 				(7, 1) => Solution_2020_07.Part1(input).ToString(),
 				(7, 2) => Solution_2020_07.Part2(input).ToString(),
 
+				/*
 				(8, 1) => Solution_2020_08.Part1(input).ToString(),
 				(8, 2) => Solution_2020_08.Part2(input).ToString(),
 
@@ -119,10 +119,10 @@ namespace AdventOfCode.Solutions {
 				(4, 1) => Solution_2015_04.Part1(input).ToString(),
 				(4, 2) => Solution_2015_04.Part2(input).ToString(),
 
-				/*
 				(5, 1) => Solution_2015_05.Part1(input).ToString(),
 				(5, 2) => Solution_2015_05.Part2(input).ToString(),
 
+				/*
 				(6, 1) => Solution_2015_06.Part1(input).ToString(),
 				(6, 2) => Solution_2015_06.Part2(input).ToString(),
 
