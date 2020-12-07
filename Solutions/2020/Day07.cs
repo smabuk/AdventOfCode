@@ -14,31 +14,17 @@ namespace AdventOfCode.Solutions {
 	/// </summary>
 	public class Solution_2020_07 {
 
+		public record BagRuleDetail(string Bag, int Number);
+		public record BagRules(string Bag, List<BagRuleDetail> Rules);
+
 		private static int Solution1(string[] input) {
 			List<string> inputs = input.ToList();
-			Dictionary<string, List<BagRuleDetail>?> rules = new();
+
+			Dictionary<string, List<BagRuleDetail>?> rules = GetAllBagRules(inputs);
+
 			List<string> foundContainers = new();
-			foreach (string rule in inputs) {
-
-				string bag = rule[..rule.IndexOf(" bag")];
-				if (rule.Contains("no other")) {
-					rules.Add(bag, null);
-					continue;
-				}
-				rules.Add(bag, GetBagRuleDetail(rule));
-			}
-
-			List<string> shinyGoldBagContainers = new();
-
-			int count = 0;
 			foreach (var item in rules) {
-				string bag = item.Key;
-
-				bool found = FindShinyGoldBag(bag, item.Value, rules, foundContainers);
-				if (found) {
-					count++;
-				}
-
+				_ = FindShinyGoldBag(item.Key, item.Value, rules, foundContainers);
 			}
 
 			return foundContainers.Distinct().Count();
@@ -46,16 +32,8 @@ namespace AdventOfCode.Solutions {
 
 		private static long Solution2(string[] input) {
 			List<string> inputs = input.ToList();
-			Dictionary<string, List<BagRuleDetail>?> rules = new();
-			List<string> foundContainers = new();
-			foreach (string rule in inputs) {
-				string bag = rule[..rule.IndexOf(" bag")];
-				if (rule.Contains("no other")) {
-					rules.Add(bag, null);
-					continue;
-				}
-				rules.Add(bag, GetBagRuleDetail(rule));
-			}
+
+			Dictionary<string, List<BagRuleDetail>?> rules = GetAllBagRules(inputs);
 
 			return CountBags(rules["shiny gold"], rules) - 1;
 		}
@@ -94,38 +72,25 @@ namespace AdventOfCode.Solutions {
 			return noOfBags;
 		}
 
-		public static List<BagRuleDetail> GetBagRuleDetail(string rule) {
+		public static Dictionary<string, List<BagRuleDetail>?> GetAllBagRules(IEnumerable<string> inputs) {
+			Dictionary<string, List<BagRuleDetail>?> rules = new();
 
-			List<int> numbers = new();
-			Match match = Regex.Match(rule, @"\d+");
-			_ = int.TryParse(match.Value, out int number);
-			numbers.Add(number);
-			while (match.Success) {
-				match = match.NextMatch();
-				_ = int.TryParse(match.Value, out number);
-				if (match.Success) {
-					numbers.Add(number);
+			foreach (string rule in inputs) {
+				string bag = rule[..rule.IndexOf(" bag")];
+				if (rule.Contains("no other")) {
+					rules.Add(bag, null);
+					continue;
 				}
+				rules.Add(bag, GetBagRuleDetail(rule));
 			}
-
-			string rule1 = rule.Replace(" bags contain ", "|")
-				.Replace(" bags, ", "|")
-				.Replace(" bag, ", "|")
-				.Replace(" bags.", "")
-				.Replace(" bag.", "");
-
-			string rule2 = new Regex(@"\d+ ").Replace(rule1, "");
-			string[] bags = rule2.Split("|");
-			List<BagRuleDetail> brds = new();
-			int i = 0;
-			foreach (string? bagname in bags[1..]) {
-				brds.Add(new BagRuleDetail(bagname, numbers[i++]));
-			}
-			return brds;
+			return rules;
 		}
 
-
-
+		public static List<BagRuleDetail> GetBagRuleDetail(string rule) {
+			MatchCollection? bagDetailRules = Regex.Matches(rule, @"(\d +)([a-z]+ [a-z]+) bag");
+			return bagDetailRules.Select(brd => new BagRuleDetail( brd.Groups[2].Value, int.Parse(brd.Groups[1].Value) )).ToList();
+		}
+		
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
@@ -139,8 +104,5 @@ namespace AdventOfCode.Solutions {
 		}
 
 	}
-	public record BagRuleDetail(string Bag, int Number);
-	public record BagRules(string Bag, List<BagRuleDetail> Rules );
-
 
 }
