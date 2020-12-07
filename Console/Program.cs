@@ -29,6 +29,12 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2020, 23, "");
 	GetInputDataAndSolve(2020, 24, "");
 	GetInputDataAndSolve(2020, 25, "");
+	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
+	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
+	GetInputDataAndSolve(2015, 03, "Perfectly Spherical Houses in a Vacuum");
+	GetInputDataAndSolve(2015, 04, "The Ideal Stocking Stuffer");
+	GetInputDataAndSolve(2015, 05, "Doesn't He Have Intern-Elves For This?");
+	GetInputDataAndSolve(2015, 06, "Probably a Fire Hazard");
 */
 
 
