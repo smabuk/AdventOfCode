@@ -2,16 +2,20 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace AdventOfCode.Services {
 	public class AocHttpClient : IAocHttpClient {
 		private readonly HttpClient _httpClient;
 
-		public AocHttpClient(HttpClient httpClient) {
+		public AocHttpClient(HttpClient httpClient, IMemoryCache memoryCache) {
 			httpClient.BaseAddress = new Uri(@"https://adventofcode.com/");
 			_httpClient = httpClient;
+			MemoryCache = memoryCache;
 		}
+
+		public IMemoryCache MemoryCache { get; }
 
 		public async Task<string> GetInputData(int year, int day) {
 			var response = await _httpClient.GetAsync($"{year}/day/{day}/input");
@@ -49,44 +53,53 @@ namespace AdventOfCode.Services {
 
 		}
 
-		public async Task<AocSummary?> GetSummaryInfo(int year) {
-			var response = await _httpClient.GetAsync($"{year}");
+		public Task<AocSummary?> GetSummaryInfo(int year) {
 
-			if (response.IsSuccessStatusCode == false) {
-				return null;
-			}
-			AocSummary summary = new();
+			return MemoryCache.GetOrCreateAsync(year, async e =>  {
+				_ = e.SetOptions(new MemoryCacheEntryOptions {
+					AbsoluteExpirationRelativeToNow =
+						TimeSpan.FromSeconds(30)
+				});
 
-			string page = await response.Content.ReadAsStringAsync();
+				var response = await _httpClient.GetAsync($"{year}");
 
-			int start = page.IndexOf("class=\"user\"") + 13;
-			int end = page[start..].IndexOf("<");
-			summary.UserName = page[start..(start + end)];
-
-			start = page.IndexOf("class=\"star-count\"") + 19;
-			end = page[start..].IndexOf("*");
-			_ = int.TryParse(page[start..(start + end)], out int noOfStars);
-			summary.NoOfStars = noOfStars;
-
-			for (int day = 1; day <= 25; day++) {
-				end = 0;
-				noOfStars = 0;
-				start = page.IndexOf($"a aria-label=\"Day {day}, ") + 21;
-				if (start > 0) {
-					if (page[start..(start + 3)] == "one") {
-						noOfStars = 1;
-					} else if (page[start..(start + 3)] == "two") {
-						noOfStars = 2;
-					}
+				if (response.IsSuccessStatusCode == false) {
+					return null;
 				}
-				DailySummary dayInfo = new() {
-					Day = day,
-					NoOfStars = noOfStars
-				};
-				summary.Days.TryAdd(day, dayInfo);
-			}
 
-			return summary;
-		}
+				AocSummary summary = new();
+
+				string page = await response.Content.ReadAsStringAsync();
+
+				int start = page.IndexOf("class=\"user\"") + 13;
+				int end = page[start..].IndexOf("<");
+				summary.UserName = page[start..(start + end)];
+
+				start = page.IndexOf("class=\"star-count\"") + 19;
+				end = page[start..].IndexOf("*");
+				_ = int.TryParse(page[start..(start + end)], out int noOfStars);
+				summary.NoOfStars = noOfStars;
+
+				for (int day = 1; day <= 25; day++) {
+					end = 0;
+					noOfStars = 0;
+					start = page.IndexOf($"a aria-label=\"Day {day}, ") + 21;
+					if (start > 0) {
+						if (page[start..(start + 3)] == "one") {
+							noOfStars = 1;
+						} else if (page[start..(start + 3)] == "two") {
+							noOfStars = 2;
+						}
+					}
+					DailySummary dayInfo = new() {
+						Day = day,
+						NoOfStars = noOfStars
+					};
+					summary.Days.TryAdd(day, dayInfo);
+				}
+
+				return summary;
+			});
+		}	
 	}
 }
