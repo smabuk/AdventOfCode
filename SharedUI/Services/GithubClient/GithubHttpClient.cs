@@ -50,6 +50,9 @@ namespace AdventOfCode.Services {
 				_ => "",
 			};
 
+			if (string.IsNullOrEmpty(path)) {
+				return "";
+			}
 			var response = await _httpClient.GetAsync(path);
 
 			return response.IsSuccessStatusCode switch {
