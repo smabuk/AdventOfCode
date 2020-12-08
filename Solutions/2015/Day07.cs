@@ -33,16 +33,18 @@ namespace AdventOfCode.Solutions.Year2015 {
 		record Instruction(Wire OutWire);
 		record NOT_Instruction(Wire OutWire, Wire InWire) : Instruction(OutWire);
 		record SHIFT_Instruction(Wire OutWire, string Direction, Wire InWire1, UInt16 ShiftAmount) : Instruction(OutWire);
-		record LOGICAL_Instruction(Wire OutWire, string Operand, Wire InWire1, UInt16 ShiftAmount) : Instruction(OutWire);
-		record NUMBER_Instruction(Wire OutWire, string Operand, Wire InWire1, UInt16 ShiftAmount) : Instruction(OutWire);
+		record LOGICAL_Instruction(Wire OutWire, string Operand, Wire InWire1, Wire InWire2) : Instruction(OutWire);
+		record NUMBER_Instruction(Wire OutWire, UInt16 InputValue) : Instruction(OutWire);
 
 
 		private static string Solution1(string[] input) {
 			List<string> inputs = input.ToList();
 			List<Instruction> instructions = input.Select(x => ParseLine(x)).ToList();
 			Dictionary<string, Wire> wireInputs = new();
-			foreach ( var wire in instructions.Where(i => i is NUMBER_Instruction).Select(i => i.wire)) {
-				wireInputs.TryAdd(wire.Identifier, wire);
+			Dictionary<string, Gate> gates = new();
+			foreach ( NUMBER_Instruction instruction in instructions.Where(i => i is NUMBER_Instruction)) {
+				instruction.OutWire.Ins.Add(instruction.InputValue);
+				wireInputs.TryAdd(instruction.OutWire.Identifier, instruction.OutWire);
 			}
 
 			throw new NotImplementedException();
@@ -54,8 +56,26 @@ namespace AdventOfCode.Solutions.Year2015 {
 		}
 
 		private static Instruction ParseLine(string input) {
-			if (true) {
-
+			string[] parts = input.Split(" -> ");
+			Wire outWire = new(parts[^1]);
+			if (char.IsDigit(input[0])) {
+				NUMBER_Instruction instruction = new(outWire, UInt16.Parse(parts[0]));
+				return instruction;
+			}
+			if (input.StartsWith("NOT")) {
+				string[] moreParts = parts[0].Split(" ");
+				NOT_Instruction instruction = new(outWire, new Wire(moreParts[1]));
+				return instruction;
+			}
+			if (input.Contains("SHIFT")) {
+				string[] moreParts = parts[0].Split(" ");
+				SHIFT_Instruction instruction = new(outWire, moreParts[1], new Wire(moreParts[0]), UInt16.Parse(moreParts[2]));
+				return instruction;
+			}
+			if (parts.Length > 0) {
+				string[] moreParts = parts[0].Split(" ");
+				LOGICAL_Instruction instruction = new(outWire, moreParts[1], new Wire(moreParts[0]),new Wire(moreParts[2]));
+				return instruction;
 			}
 
 
