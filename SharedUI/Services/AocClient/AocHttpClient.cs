@@ -48,7 +48,10 @@ namespace AdventOfCode.Services {
 				article = part[start..(start + end)];
 				part = part[(start + end + 1)..];
 			}
-
+			//string puzzleAnswerMessage = GetNonNestedHtmlPart(part, "p", 1);
+			//if (puzzleAnswerMessage.Contains("answer")) {
+			//	article += puzzleAnswerMessage;
+			//}
 			return article;
 
 		}
@@ -100,6 +103,24 @@ namespace AdventOfCode.Services {
 
 				return summary;
 			});
-		}	
+		}
+
+		private string GetNonNestedHtmlPart(string input, string name, int instanceNo) {
+			string part = input;
+			string returnString = "";
+			for (int i = 0; i < instanceNo; i++) {
+				int start = part.IndexOf($"<{name}");
+				if (start < 0) {
+					returnString = "";
+					break;
+				}
+				int end = part[start..].IndexOf($"</{name}>") + 10;
+				returnString = part[start..(start + end)];
+
+				part = part[(start + end + 1)..];
+			}
+			return returnString;
+		}
+
 	}
 }
