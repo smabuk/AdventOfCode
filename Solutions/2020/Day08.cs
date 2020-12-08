@@ -14,60 +14,59 @@ namespace AdventOfCode.Solutions {
 	/// </summary>
 	public class Solution_2020_08 {
 
-		public int Accumulator { get; set; }
-		public record Instruction(string Command, int Value);
+		private record Instruction(string Command, int Value);
 
+		private int Accumulator { get; set; }
+		
 		private int Solution1(string[] input) {
-			List<string> inputs = input.ToList();
+			List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
 			List<int> VisitedLineNos = new();
 
 			Accumulator = 0;
 			int lineNo = 0;
 			int accumulatorPreExecution;
 			do {
-				string inputLine = inputs[lineNo];
 				VisitedLineNos.Add(lineNo);
 				accumulatorPreExecution = Accumulator;
-				Instruction instruction = GetCommand(inputLine);
-				lineNo += ExecuteCommand(instruction);
+				lineNo += ExecuteCommand(program[lineNo]);
 			} while (VisitedLineNos.Contains(lineNo) == false);
 
 			return accumulatorPreExecution;
 		}
 		private int Solution2(string[] input) {
-			List<string> inputs = input.ToList();
+			List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
 
 			List<int> ChangedLines = new();
 			int lineNo;
-			Instruction instruction;
 			do {
 				Accumulator = 0;
 				lineNo = 0;
 				List<int> VisitedLineNos = new();
 				bool instructionChanged = false;
 				do {
-					string inputLine = inputs[lineNo];
-					instruction = GetCommand(inputLine);
+					Instruction instruction = program[lineNo];
 					if (ChangedLines.Contains(lineNo) == false && instructionChanged == false) {
-						instruction = instruction with
-						{
-							Command = (instruction.Command switch {
-								"jmp" => "nop",
-								"nop" => "jmp",
-								_ => instruction.Command
-							})
-						};
+						instruction = SwapJmpNop(instruction);
 						instructionChanged = true;
 						ChangedLines.Add(lineNo);
 					}
 					VisitedLineNos.Add(lineNo);
 					lineNo += ExecuteCommand(instruction);
-				} while (VisitedLineNos.Contains(lineNo) == false && lineNo < inputs.Count);
+				} while (VisitedLineNos.Contains(lineNo) == false && lineNo < program.Count);
 
-			} while (lineNo < inputs.Count);
+			} while (lineNo < program.Count);
 
 			return Accumulator;
 		}
+
+		private static Instruction SwapJmpNop(Instruction instruction) => instruction with
+		{
+			Command = (instruction.Command switch {
+				"jmp" => "nop",
+				"nop" => "jmp",
+				_ => instruction.Command
+			})
+		};
 
 		private int ExecuteCommand(Instruction instruction) {
 			int lineJump = 1;
@@ -86,7 +85,7 @@ namespace AdventOfCode.Solutions {
 		}
 
 		private static Instruction GetCommand(string input) {
-			Match? match = Regex.Match(input, @"(nop|acc|jmp) ([\+\-]\d+)");
+			Match match = Regex.Match(input, @"(nop|acc|jmp) ([\+\-]\d+)");
 			if (match.Success) {
 				return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
 			}
