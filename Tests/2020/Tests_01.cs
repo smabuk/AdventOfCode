@@ -27,7 +27,7 @@ namespace AdventOfCode.Tests.Year2020
 		[InlineData(2020, 3)]
 		public void Valid_FindSumsEqualTo(int sum, int noOfEntries)
 		{
-			bool successful = Day01.FindSumsEqualTo(sum, _input.ToList(), noOfEntries, out List<int> actual);
+			bool successful = Solutions.Year2020.Day01.FindSumsEqualTo(sum, _input.ToList(), noOfEntries, out List<int> actual);
 			Assert.True(successful);
 			Assert.Equal(noOfEntries, actual.Count);
 			Assert.Equal(sum, actual.Sum());

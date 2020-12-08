@@ -17,7 +17,7 @@ namespace AdventOfCode.Tests.HelperMethodTests
 		[InlineData(new string[] { "Line 1", "Line 2" }, new string[] { "Line 1", "Line 2" })]
 		[InlineData(null, new string[0])]
 		public void Should_RemoveBlankLineFromEnd_IfLineIsEmpty(string[] input, string[] expected) {
-			string[] actual = DataInputCleanup.RemoveBlankLineFromEnd(input);
+			string[] actual = DataInputCleanup.StripTrailingBlankLineOrDefault(input);
 			Assert.Equal(expected, actual);
 		}
 
