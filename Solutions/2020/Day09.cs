@@ -9,21 +9,20 @@ using AdventOfCode.Solutions.Helpers;
 namespace AdventOfCode.Solutions {
 	/// <summary>
 	/// Day XX: Title
-	/// https://adventofcode.com/2020/day/XX
+	/// https://adventofcode.com/2020/day/9
 	/// </summary>
-	public class Solution_2020_xx {
+	public class Solution_2020_09 {
 
-		private static string Solution1(string[] input) {
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
-		}
 
-		private static string Solution2(string[] input) {
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
-		}
+
+
+
+
+
+
+
+
+
 
 
 		public static string Part1(string[]? input) {
@@ -37,5 +36,15 @@ namespace AdventOfCode.Solutions {
 			return Solution2(input).ToString();
 		}
 
+		private static string Solution1(string[] input) {
+			List<string> inputs = input.ToList();
+			//inputs.Add("");
+			throw new NotImplementedException();
+		}
+		private static string Solution2(string[] input) {
+			List<string> inputs = input.ToList();
+			inputs.Add("");
+			throw new NotImplementedException();
+		}
 	}
 }
