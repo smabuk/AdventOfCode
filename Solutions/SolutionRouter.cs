@@ -45,10 +45,10 @@ namespace AdventOfCode.Solutions {
 				(7, 1) => Solution_2020_07.Part1(input).ToString(),
 				(7, 2) => Solution_2020_07.Part2(input).ToString(),
 
-				/*
-				(8, 1) => Solution_2020_08.Part1(input).ToString(),
-				(8, 2) => Solution_2020_08.Part2(input).ToString(),
+				(8, 1) => new Solution_2020_08().Part1(input).ToString(),
+				(8, 2) => new Solution_2020_08().Part2(input).ToString(),
 
+				/*
 				(9, 1) => Solution_2020_09.Part1(input).ToString(),
 				(9, 2) => Solution_2020_09.Part2(input).ToString(),
 
