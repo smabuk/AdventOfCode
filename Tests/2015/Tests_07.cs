@@ -6,7 +6,7 @@ namespace AdventOfCode.Tests.Year2015 {
 	public class Tests_07_Some_Assembly_Required {
 		[Theory]
 		[InlineData(new string[] {
-			"23 -> x",
+			"123 -> x",
 			"456 -> y",
 			"x AND y -> d",
 			"x OR y -> e",
@@ -22,7 +22,7 @@ namespace AdventOfCode.Tests.Year2015 {
 
 		[Theory]
 		[InlineData(new string[] {
-		"23 -> x",
+		"123 -> x",
 		"456 -> y",
 		"x AND y -> d",
 		"x OR y -> e",
