@@ -21,14 +21,14 @@ namespace AdventOfCode.Tests.Year2020 {
 		[Fact]
 		public void Valid_CountOfValidPasswords_Part1()
 		{
-			long actual = Solution_2020_02.CountValidPasswords_Part1(_input);
+			long actual = Day02.CountValidPasswords_Part1(_input);
 			Assert.Equal(2, actual);
 		}
 
 		[Fact]
 		public void Valid_CountOfValidPasswords_Part2()
 		{
-			long actual = Solution_2020_02.CountValidPasswords_Part2(_input);
+			long actual = Day02.CountValidPasswords_Part2(_input);
 			Assert.Equal(1, actual);
 		}
 

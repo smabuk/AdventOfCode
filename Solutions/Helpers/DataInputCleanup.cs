@@ -15,7 +15,7 @@ namespace AdventOfCode.Solutions.Helpers
 		/// <param name="input"></param>
 		/// <returns>The input with the final string removed if it is empty or whitespace. Returns an empty array if null.</returns>
 		public static string[] StripTrailingBlankLineOrDefault(this string[]? input) => RemoveBlankLineFromEnd(input);
-		public static string[] RemoveBlankLineFromEnd(string[]? input) {
+		private static string[] RemoveBlankLineFromEnd(string[]? input) {
 			if (input is null) { return Array.Empty<string>(); }
 			if (string.IsNullOrWhiteSpace(input[^1])) {
 				return input[..^1];

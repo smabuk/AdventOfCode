@@ -30,7 +30,7 @@ namespace AdventOfCode.Tests.Year2020 {
 
 		[Fact]
 		public void Passport_Processing_Part1() {
-			long actual = Solution_2020_04.CountValidPassports(_input, 1);
+			long actual = Day04.CountValidPassports(_input, 1);
 			Assert.Equal(2, actual);
 		}
 
@@ -66,7 +66,7 @@ namespace AdventOfCode.Tests.Year2020 {
 			}, 4)]
 		public void Passport_Processing_Part2(string[] input, long expected)
 		{
-			long actual = Solution_2020_04.CountValidPassports(input, 2);
+			long actual = Day04.CountValidPassports(input, 2);
 			Assert.Equal(expected, actual);
 		}
 

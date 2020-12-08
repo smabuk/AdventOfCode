@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 06: Custom Customs
 	/// https://adventofcode.com/2020/day/6
 	/// </summary>
-	public class Solution_2020_06 {
+	public class Day06 {
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			return SolutionPart1(input).ToString();

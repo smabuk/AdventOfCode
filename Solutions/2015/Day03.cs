@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 03: Perfectly Spherical Houses in a Vacuum
 	/// https://adventofcode.com/2015/day/3
 	/// </summary>
-	public class Solution_2015_03 {
+	public class Day03 {
 		private static int Solution1(string[] input) {
 			List<(int x, int y)> houses = new();
 			(int x, int y) santa = (0, 0);

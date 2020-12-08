@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 06: Probably a Fire Hazard
 	/// https://adventofcode.com/2015/day/6
 	/// </summary>
-	public class Solution_2015_06 {
+	public class Day06 {
 
 		public static bool[,] Lights = new bool[1000, 1000];
 		public static int [,] Lights2 = new int[1000, 1000];

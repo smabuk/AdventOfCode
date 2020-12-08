@@ -2,12 +2,12 @@
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 2: Password Philosophy
 	/// https://adventofcode.com/2020/day/2
 	/// </summary>
-	public static class Solution_2020_02 {
+	public static class Day02 {
 		public static long Part1(string[]? input = null) {
 			input = input.StripTrailingBlankLineOrDefault();
 			return CountValidPasswords_Part1(input);

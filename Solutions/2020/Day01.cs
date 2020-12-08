@@ -3,12 +3,11 @@ using System.Linq;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions
-{
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// https://adventofcode.com/2020/day/1
 	/// </summary>
-	public static class Solution_2020_01
+	public static class Day01
 	{
 		public static long Part1(string[]? input = null)
 		{

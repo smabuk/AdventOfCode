@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 04: The Ideal Stocking Stuffer
 	/// https://adventofcode.com/2015/day/4
 	/// </summary>
-	public class Solution_2015_04 {
+	public class Day04 {
 		private static long Solution1(string[] input) {
 			string secretKey = input[0];
 

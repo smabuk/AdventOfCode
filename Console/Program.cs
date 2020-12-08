@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
@@ -39,8 +40,7 @@ using static AdventOfCode.Solutions.SolutionRouter;
 */
 
 
-static void GetInputDataAndSolve(int year, int day, string title) {
-	string[]? input = null;
+static void GetInputDataAndSolve(int year, int day, string title, string[]? input = null) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 
 	if (File.Exists(filename)) {
@@ -50,8 +50,15 @@ static void GetInputDataAndSolve(int year, int day, string title) {
 	Console.WriteLine();
 	Console.WriteLine($"{year} DAY {day, 2} - {title}");
 	if (input is not null) {
-		Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input)}");
-		Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input)}");
+		Stopwatch sw = new Stopwatch();
+		sw.Start();
+		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 1: {SolveProblem(year, day, 1, input)}");
+		sw.Restart();
+		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 2: {SolveProblem(year, day, 2, input)}");
+		sw.Stop();
+	} else {
+		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
+
 }
 

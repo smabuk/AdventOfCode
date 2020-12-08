@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions
+namespace AdventOfCode.Solutions.Year2015
 {
 	/// <summary>
 	/// Day 1: Not Quite Lisp
 	/// https://adventofcode.com/2015/day/1
 	/// </summary>
-	public class Solution_2015_01 {
+	public class Day01 {
 		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();

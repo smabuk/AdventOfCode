@@ -12,7 +12,7 @@ namespace AdventOfCode.Tests
         public static string[]? GetInputData(int year, int day, string? username = "") {
 			string[]? input = null;
 
-			string filename = $"";
+			string filename;
 			if (username is null) {
 				filename = $"{year}_{day:D2}.txt";
 			} else {

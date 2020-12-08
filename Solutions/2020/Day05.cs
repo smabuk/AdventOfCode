@@ -4,12 +4,12 @@ using System.Linq;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 5: Binary Boarding
 	/// https://adventofcode.com/2020/day/5
 	/// </summary>
-	public class Solution_2020_05 {
+	public class Day05 {
 		public static string Part1(string[]? input = null) {
 			input = input.StripTrailingBlankLineOrDefault();
 			return SolutionPart1(input).ToString();

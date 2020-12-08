@@ -11,7 +11,7 @@ namespace AdventOfCode.Tests.Year2015 {
 		[InlineData(new string[] { "haegwjzuvuyypxyu" }, false)]
 		[InlineData(new string[] { "dvszwmarrgswjxmb" }, false)]
 		public void Part1(string[] input, bool expected) {
-			bool actual = Solution_2015_05.Nice_Part1(input[0]);
+			bool actual = Day05.Nice_Part1(input[0]);
 			Assert.Equal(expected, actual);
 		}
 
@@ -21,7 +21,7 @@ namespace AdventOfCode.Tests.Year2015 {
 		[InlineData(new string[] { "uurcxstgmygtbstg" }, false)]
 		[InlineData(new string[] { "ieodomkazucvgmuy" }, false)]
 		public void Part2(string[] input, bool expected) {
-			bool actual = Solution_2015_05.Nice_Part2(input[0]);
+			bool actual = Day05.Nice_Part2(input[0]);
 			Assert.Equal(expected, actual);
 		}
 	}

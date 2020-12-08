@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 08: Handheld Halting
 	/// https://adventofcode.com/2020/day/8
 	/// </summary>
-	public class Solution_2020_08 {
+	public class Day08 {
 
 		private record Instruction(string Command, int Value);
 

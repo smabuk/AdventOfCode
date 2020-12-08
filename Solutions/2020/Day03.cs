@@ -3,12 +3,12 @@ using System.Linq;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 3: Toboggan Trajectory
 	/// https://adventofcode.com/2020/day/3
 	/// </summary>
-	public static class Solution_2020_03 {
+	public static class Day03 {
 		public static long Part1(string[]? input = null) {
 			input = input.StripTrailingBlankLineOrDefault();
 			return CalculateNoOfTrees(input, 3, 1);

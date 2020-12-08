@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 05: Doesn't He Have Intern-Elves For This?
 	/// https://adventofcode.com/2015/day/5
 	/// </summary>
-	public class Solution_2015_05 {
+	public class Day05 {
 		private static int Solution1(string[] input) {
 			return input.ToList().Count(i => Nice_Part1(i));
 		}

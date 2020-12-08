@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 07: Handy Haversacks
 	/// https://adventofcode.com/2020/day/7
 	/// </summary>
-	public class Solution_2020_07 {
+	public class Day07 {
 
 		public record BagRuleDetail(string Bag, int Number);
 		public record BagRules(string Bag, List<BagRuleDetail> Rules);

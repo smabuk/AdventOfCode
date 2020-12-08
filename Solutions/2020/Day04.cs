@@ -3,12 +3,12 @@ using System.Linq;
 
 using AdventOfCode.Solutions.Helpers;
 
-namespace AdventOfCode.Solutions {
+namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 4: Passport Processing
 	/// https://adventofcode.com/2020/day/4
 	/// </summary>
-	public static class Solution_2020_04 {
+	public static class Day04 {
 
 		public static string Part1(string[]? input = null) {
 			input = input.StripTrailingBlankLineOrDefault();
