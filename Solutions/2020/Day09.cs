@@ -15,15 +15,23 @@ namespace AdventOfCode.Solutions.Year2020 {
 	public class Day09 {
 
 		private static long Solution1(string[] input, int preamble) {
-			List<string> inputs = input.ToList();
+			long[] codes = input.Select(x => long.Parse(x)).ToArray();
+			int index = FindInvalidCode(codes, preamble);
+			return codes[index];
+		}
 
-			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
+		private static long Solution2(string[] input, int preamble) {
+			long[] codes = input.Select(x => long.Parse(x)).ToArray();
+			int index = FindInvalidCode(codes, preamble);
+			return ValidSumHighPlusLow(codes[index], codes);
+		}
 
+		private static int FindInvalidCode(long[] codes, int preamble) {
 			int i = 0;
 			long[] skipped = codes.Skip(preamble).ToArray();
 			foreach (long code in skipped) {
-				if (!ValidXmas(code, codes[i..(i+preamble)])) {
-					return code; 
+				if (!ValidXmas(code, codes[i..(i + preamble)])) {
+					return i + preamble;
 				}
 				i++;
 			}
@@ -41,29 +49,11 @@ namespace AdventOfCode.Solutions.Year2020 {
 			return false;
 		}
 
-		private static long Solution2(string[] input, int preamble) {
-			List<string> inputs = input.ToList();
-
-			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
-
-			int foundPos = 0;
-			int i = 0;
-			long[] skipped = codes.Skip(preamble).ToArray();
-			foreach (long code in skipped) {
-				if (!ValidXmas(code, codes[i..(i + preamble)])) {
-					foundPos = i + preamble;
-				}
-				i++;
-			}
-
-			return ValidSumHighPlusLow(codes[foundPos], codes);
-		}
-
 		private static long ValidSumHighPlusLow(long code, long[] values) {
-			for (int i = 0; i <= values.Count(); i++) {
-				for (int j = i + 1; j <= values.Count(); j++) {
+			for (int i = 0; i <= values.Length; i++) {
+				for (int j = i + 1; j <= values.Length; j++) {
 					if (values[i..j].Sum() == code) {
-						return values[i..j].LowestValue() + values[i..j].HighestValue();
+						return values[i..j].Min() + values[i..j].Max();
 					}
 				}
 			}
