@@ -4,6 +4,7 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
+GetInputDataAndSolve(2015, 08, "Matchsticks");
 	GetInputDataAndSolve(2020, 01, "Report Repair");
 	GetInputDataAndSolve(2020, 02, "Password Philosophy");
 	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -14,7 +15,6 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2020, 08, "Handheld Halting");
 	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
 /*
-	GetInputDataAndSolve(2020, 09, "");
 	GetInputDataAndSolve(2020, 10, "");
 	GetInputDataAndSolve(2020, 11, "");
 	GetInputDataAndSolve(2020, 12, "");
@@ -31,12 +31,33 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2020, 23, "");
 	GetInputDataAndSolve(2020, 24, "");
 	GetInputDataAndSolve(2020, 25, "");
+
 	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
 	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
 	GetInputDataAndSolve(2015, 03, "Perfectly Spherical Houses in a Vacuum");
 	GetInputDataAndSolve(2015, 04, "The Ideal Stocking Stuffer");
 	GetInputDataAndSolve(2015, 05, "Doesn't He Have Intern-Elves For This?");
 	GetInputDataAndSolve(2015, 06, "Probably a Fire Hazard");
+	//GetInputDataAndSolve(2015, 07, "Some Assembly Required");
+	GetInputDataAndSolve(2015, 08, "Matchsticks");
+
+	GetInputDataAndSolve(2015, 09, "");
+	GetInputDataAndSolve(2015, 10, "");
+	GetInputDataAndSolve(2015, 11, "");
+	GetInputDataAndSolve(2015, 12, "");
+	GetInputDataAndSolve(2015, 13, "");
+	GetInputDataAndSolve(2015, 14, "");
+	GetInputDataAndSolve(2015, 15, "");
+	GetInputDataAndSolve(2015, 16, "");
+	GetInputDataAndSolve(2015, 17, "");
+	GetInputDataAndSolve(2015, 18, "");
+	GetInputDataAndSolve(2015, 19, "");
+	GetInputDataAndSolve(2015, 20, "");
+	GetInputDataAndSolve(2015, 21, "");
+	GetInputDataAndSolve(2015, 22, "");
+	GetInputDataAndSolve(2015, 23, "");
+	GetInputDataAndSolve(2015, 24, "");
+	GetInputDataAndSolve(2015, 25, "");
 */
 
 
