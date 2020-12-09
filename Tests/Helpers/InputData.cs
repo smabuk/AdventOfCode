@@ -13,7 +13,7 @@ namespace AdventOfCode.Tests
 			string[]? input = null;
 
 			string filename;
-			if (username is null) {
+			if (string.IsNullOrWhiteSpace(username)) {
 				filename = $"{year}_{day:D2}.txt";
 			} else {
 				filename = $"{year}_{day:D2}_{username}.txt";

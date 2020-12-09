@@ -28,7 +28,7 @@ namespace AdventOfCode.Tests.Year2020 {
 			"576"
 		}, 127)]
 		public void Part1(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2020, 9, 1, input), out int actual);
+			_ = int.TryParse(SolutionRouter.SolveProblem(2020, 9, 1, input, 5), out int actual);
 			Assert.Equal(expected, actual);
 		}
 
@@ -54,9 +54,9 @@ namespace AdventOfCode.Tests.Year2020 {
 "277",
 "309",
 "576"
-	  }, 8)]
+	  }, 62)]
 		public void Part2(string[] input, long expected) {
-			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 9, 2, input), out long actual);
+			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 9, 2, input, 5), out long actual);
 			Assert.Equal(expected, actual);
 		}
 

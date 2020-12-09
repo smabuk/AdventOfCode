@@ -14,21 +14,20 @@ namespace AdventOfCode.Solutions.Year2020 {
 	/// </summary>
 	public class Day09 {
 
-		private static long Solution1(string[] input) {
+		private static long Solution1(string[] input, int preamble) {
 			List<string> inputs = input.ToList();
 
-			int PreambleNo = 25;
 			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
 
 			int i = 0;
-			long[] skipped = codes.Skip(PreambleNo).ToArray();
+			long[] skipped = codes.Skip(preamble).ToArray();
 			foreach (long code in skipped) {
-				if (!ValidXmas(code, codes[i..(i+PreambleNo)])) {
+				if (!ValidXmas(code, codes[i..(i+preamble)])) {
 					return code; 
 				}
 				i++;
 			}
-			throw new ArgumentOutOfRangeException();
+			return 0;
 		}
 
 		private static bool ValidXmas(long code, IEnumerable<long> values) {
@@ -42,18 +41,17 @@ namespace AdventOfCode.Solutions.Year2020 {
 			return false;
 		}
 
-		private static long Solution2(string[] input) {
+		private static long Solution2(string[] input, int preamble) {
 			List<string> inputs = input.ToList();
 
-			int PreambleNo = 25;
 			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
 
 			int foundPos = 0;
 			int i = 0;
-			long[] skipped = codes.Skip(PreambleNo).ToArray();
+			long[] skipped = codes.Skip(preamble).ToArray();
 			foreach (long code in skipped) {
-				if (!ValidXmas(code, codes[i..(i + PreambleNo)])) {
-					foundPos = i + PreambleNo;
+				if (!ValidXmas(code, codes[i..(i + preamble)])) {
+					foundPos = i + preamble;
 				}
 				i++;
 			}
@@ -74,15 +72,27 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 
 
-		public static string Part1(string[]? input) {
+		public static string Part1(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			return Solution1(input).ToString();
+			int preamble = 0;
+			if (args is null ) {
+				preamble = 25;
+			} else if (args.Length == 1 && args[0] is int x) {
+				preamble = x;
+			}
+			return Solution1(input, preamble).ToString();
 		}
-		public static string Part2(string[]? input) {
+		public static string Part2(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			return Solution2(input).ToString();
+			int preamble = 0;
+			if (args is null) {
+				preamble = 25;
+			} else if (args.Length == 1 && args[0] is int x) {
+				preamble = x;
+			}
+			return Solution2(input, preamble).ToString();
 		}
 	}
 }

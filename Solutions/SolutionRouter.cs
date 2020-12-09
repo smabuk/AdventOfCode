@@ -3,24 +3,24 @@
 		private const string NO_SOLUTION = "** Solution not written yet **";
 		private const string NO_INPUT = "** NO INPUT DATA **";
 
-		public static string SolveProblem(int year, int day, int problemNo, string[]? input) {
+		public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
 
 			if (input is null) {
 				return NO_INPUT;
 			}
 
 			return year switch {
-				2020 => SolveProblem2020(day, problemNo, input),
+				2020 => SolveProblem2020(day, problemNo, input, args),
 				//2019 => SolveProblem2019(day, problemNo, input),
 				//2018 => SolveProblem2018(day, problemNo, input),
 				//2017 => SolveProblem2017(day, problemNo, input),
 				//2016 => SolveProblem2016(day, problemNo, input),
-				2015 => SolveProblem2015(day, problemNo, input),
+				2015 => SolveProblem2015(day, problemNo, input, args),
 				_ => NO_SOLUTION
 			};
 		}
 
-		public static string SolveProblem2020(int day, int problemNo, string[]? input = null) {
+		public static string SolveProblem2020(int day, int problemNo, string[]? input = null, params object[]? args) {
 			try {
 				return (day, problemNo) switch {
 					(1, 1) => Year2020.Day01.Part1(input).ToString(),
@@ -39,8 +39,8 @@
 					(7, 2) => Year2020.Day07.Part2(input).ToString(),
 					(8, 1) => new Year2020.Day08().Part1(input).ToString(),
 					(8, 2) => new Year2020.Day08().Part2(input).ToString(),
-					(9, 1) => Year2020.Day09.Part1(input).ToString(),
-					(9, 2) => Year2020.Day09.Part2(input).ToString(),
+					(9, 1) => Year2020.Day09.Part1(input, args).ToString(),
+					(9, 2) => Year2020.Day09.Part2(input, args).ToString(),
 					/*
 					(10, 1) => Year2020.Day10.Part1(input).ToString(),
 					(10, 2) => Year2020.Day10.Part2(input).ToString(),
@@ -85,7 +85,7 @@
 		}
 
 
-		public static string SolveProblem2015(int day, int problemNo, string[]? input = null) {
+		public static string SolveProblem2015(int day, int problemNo, string[]? input = null, params object[]? args) {
 			return (day, problemNo) switch {
 				(1, 1) => Year2015.Day01.Part1(input).ToString(),
 				(1, 2) => Year2015.Day01.Part2(input).ToString(),

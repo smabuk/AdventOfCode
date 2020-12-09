@@ -5,14 +5,14 @@ using System.IO;
 using static AdventOfCode.Solutions.SolutionRouter;
 
 	GetInputDataAndSolve(2020, 01, "Report Repair");
-	GetInputDataAndSolve(2020, 02, "Password Philosphy");
+	GetInputDataAndSolve(2020, 02, "Password Philosophy");
 	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
 	GetInputDataAndSolve(2020, 04, "Passport Processing");
 	GetInputDataAndSolve(2020, 05, "Binary Boarding");
 	GetInputDataAndSolve(2020, 06, "Custom Customs");
 	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
 	GetInputDataAndSolve(2020, 08, "Handheld Halting");
-	GetInputDataAndSolve(2020, 09, "Encoding Error");
+	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
 /*
 	GetInputDataAndSolve(2020, 09, "");
 	GetInputDataAndSolve(2020, 10, "");
@@ -40,7 +40,7 @@ using static AdventOfCode.Solutions.SolutionRouter;
 */
 
 
-static void GetInputDataAndSolve(int year, int day, string title, string[]? input = null) {
+static void GetInputDataAndSolve(int year, int day, string title, string[]? input = null, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 
 	if (File.Exists(filename)) {
@@ -52,9 +52,9 @@ static void GetInputDataAndSolve(int year, int day, string title, string[]? inpu
 	if (input is not null) {
 		Stopwatch sw = new Stopwatch();
 		sw.Start();
-		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 1: {SolveProblem(year, day, 1, input)}");
+		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 1: {SolveProblem(year, day, 1, input, args)}");
 		sw.Restart();
-		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 2: {SolveProblem(year, day, 2, input)}");
+		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 2: {SolveProblem(year, day, 2, input, args)}");
 		sw.Stop();
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
