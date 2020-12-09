@@ -80,6 +80,8 @@ namespace AdventOfCode.Solutions.Year2020 {
 				preamble = 25;
 			} else if (args.Length == 1 && args[0] is int x) {
 				preamble = x;
+			} else {
+				preamble = 25;
 			}
 			return Solution1(input, preamble).ToString();
 		}
@@ -91,6 +93,8 @@ namespace AdventOfCode.Solutions.Year2020 {
 				preamble = 25;
 			} else if (args.Length == 1 && args[0] is int x) {
 				preamble = x;
+			} else {
+				preamble = 25;
 			}
 			return Solution2(input, preamble).ToString();
 		}
