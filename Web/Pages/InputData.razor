@@ -63,11 +63,16 @@
     async void LoadInputDataFromAoc() {
         IsLoading = true;
         inputModel.InputData = fileClient.GetInputData(Year, Day);
-        InputSource = "cache";
         if (string.IsNullOrEmpty(inputModel.InputData)) {
             inputModel.InputData = await aocClient.GetInputData(Year, Day);
-            _ = fileClient.SaveInputData(inputModel.InputData, Year, Day);
-            InputSource = "AoC";
+            if (string.IsNullOrEmpty(inputModel.InputData)) {
+                InputSource = "AoC FAILED";
+            } else {
+                _ = fileClient.SaveInputData(inputModel.InputData, Year, Day);
+                InputSource = "AoC";
+            }
+        } else {
+            InputSource = "file cache";
         }
         Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
         Input = inputModel.InputData;
@@ -79,11 +84,16 @@
     async void LoadInputDataFromGithub(string userName) {
         IsLoading = true;
         inputModel.InputData = fileClient.GetInputData(Year, Day, userName);
-        InputSource = $"cache {userName}";
         if (string.IsNullOrEmpty(inputModel.InputData)) {
             inputModel.InputData = await githubClient.GetInputData(Year, Day, userName);
-            InputSource = $"github {userName}";
-            _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+            if (string.IsNullOrEmpty(inputModel.InputData)) {
+                InputSource = $"github {userName} FAILED";
+            } else {
+                InputSource = $"github {userName}";
+                _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+            }
+        } else {
+            InputSource = $"file cache {userName}";
         }
         Input = inputModel.InputData;
         IsLoading = false;
