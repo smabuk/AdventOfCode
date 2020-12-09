@@ -12,7 +12,7 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2020, 06, "Custom Customs");
 	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
 	GetInputDataAndSolve(2020, 08, "Handheld Halting");
-	GetInputDataAndSolve(2020, 09, "???");
+	GetInputDataAndSolve(2020, 09, "Encoding Error");
 /*
 	GetInputDataAndSolve(2020, 09, "");
 	GetInputDataAndSolve(2020, 10, "");

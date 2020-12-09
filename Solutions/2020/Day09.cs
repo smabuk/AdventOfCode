@@ -9,34 +9,58 @@ using AdventOfCode.Solutions.Helpers;
 
 namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
-	/// Day XX: Title
-	/// https://adventofcode.com/2020/day/XX
+	/// Day 09: Encoding Error
+	/// https://adventofcode.com/2020/day/9
 	/// </summary>
 	public class Day09 {
 
-		private static string Solution1(string[] input) {
-			//string inputLine = input[0];
+		private static long Solution1(string[] input) {
 			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
+
+			int PreambleNo = 25;
+			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
+
+			int i = 0;
+			long[] skipped = codes.Skip(PreambleNo).ToArray();
+			foreach (long code in skipped) {
+				if (!ValidXmas(code, codes[i..(i+PreambleNo)])) {
+					return code; 
+				}
+				i++;
+			}
+
+			return 0;
+
 		}
 
-		private static string Solution2(string[] input) {
-			//string inputLine = input[0];
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
+		private static bool ValidXmas(long code, IEnumerable<long> values) {
+			foreach (long i in values) {
+				foreach (long j in values) {
+					if (code == (i + j) && i != j) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
-		//private static recordType ParseLine(string input) {
-		//	MatchCollection match = Regex.Matches(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	Match match = Regex.Match(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	if (match.Success) {
-		//		return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
-		//	}
-		//	return null!;
-		//}
+		private static long Solution2(string[] input) {
+			List<string> inputs = input.ToList();
 
+			int PreambleNo = 25;
+			long[] codes = inputs.Select(x => long.Parse(x)).ToArray();
+
+			int i = 0;
+			long[] skipped = codes.Skip(PreambleNo).ToArray();
+			foreach (long code in skipped) {
+				if (!ValidXmas(code, codes[i..(i + PreambleNo)])) {
+					return code;
+				}
+				i++;
+			}
+
+			return 0;
+		}
 
 
 
