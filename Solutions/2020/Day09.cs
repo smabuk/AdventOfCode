@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 using AdventOfCode.Solutions.Helpers;
 
+using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
+
 namespace AdventOfCode.Solutions.Year2020 {
 	/// <summary>
 	/// Day 09: Encoding Error
@@ -61,32 +63,36 @@ namespace AdventOfCode.Solutions.Year2020 {
 		}
 
 
-
+		#region Problem initialisation
+		/// <summary>
+		/// Sets up the inputs for Part1 of the problem and calls Solution1
+		/// </summary>
+		/// <param name="input"></param>
+		/// Array of strings
+		/// <param name="args"></param>
+		/// Optional extra parameters that may be required as input to the problem
+		/// <returns></returns>
 		public static string Part1(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			int preamble = 0;
-			if (args is null ) {
-				preamble = 25;
-			} else if (args.Length == 1 && args[0] is int x) {
-				preamble = x;
-			} else {
-				preamble = 25;
-			}
+			int preamble = GetArgument(args, 1, 25);
 			return Solution1(input, preamble).ToString();
 		}
+
+		/// <summary>
+		/// Sets up the inputs for Part2 of the problem and calls Solution2
+		/// </summary>
+		/// <param name="input"></param>
+		/// Array of strings
+		/// <param name="args"></param>
+		/// Optional extra parameters that may be required as input to the problem
+		/// <returns></returns>
 		public static string Part2(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			int preamble = 0;
-			if (args is null) {
-				preamble = 25;
-			} else if (args.Length == 1 && args[0] is int x) {
-				preamble = x;
-			} else {
-				preamble = 25;
-			}
+			int preamble = GetArgument(args, 1, 25);
 			return Solution2(input, preamble).ToString();
 		}
+		#endregion
 	}
 }
