@@ -28,7 +28,7 @@
                         };
                     }
                     <NavLink class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@(tooEarly ? "" : $"{Year}/day/{day}")" Match="NavLinkMatch.All">
-                        <span class="oi @(tooEarly ? "oi-ban" : "oi-puzzle-piece") @starsClass" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
+                        <span class="oi @(tooEarly ? "oi-ban" : (starsClass=="" ? "oi-puzzle-piece" : "oi-star")) @starsClass" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
                     </NavLink>
                 }
             </li>
