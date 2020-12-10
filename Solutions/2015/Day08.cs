@@ -12,17 +12,15 @@ using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
 namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 08: Matchsticks
-	/// https://adventofcode.com/2015/day/08
+	/// https://adventofcode.com/2015/day/8
 	/// </summary>
 	public class Day08 {
 
 		private static int Solution1(string[] input) {
-			//string inputLine = input[0];
 			List<string> inputs = input.ToList();
-			//inputs.Add("");
+
 			int TotalChars = inputs.Sum(input => input.Length);
 			return TotalChars - inputs.Sum(input => CountCharsInMemorySneakily(input));
-			throw new NotImplementedException();
 		}
 
 		private static int CountCharsInMemorySneakily(string input) {
@@ -34,27 +32,25 @@ namespace AdventOfCode.Solutions.Year2015 {
 			strT = strT
 				.Replace(@"\\", REPLACE_CHAR)
 				.Replace(@"\""", REPLACE_CHAR);
-
-			
 			return strT.Length;
-
 		}
 
 		private static int Solution2(string[] input) {
-			//string inputLine = input[0];
 			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
+
+			int TotalChars = inputs.Sum(input => input.Length);
+			return inputs.Sum(input => CountExtraCharsEncoded(input)) - TotalChars;
 		}
 
-		//private static recordType ParseLine(string input) {
-		//	MatchCollection match = Regex.Matches(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	Match match = Regex.Match(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	if (match.Success) {
-		//		return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
-		//	}
-		//	return null!;
-		//}
+		private static int CountExtraCharsEncoded(string input) {
+			// Don't replace with what they suggest as that will cause further replacements
+			const string ENCODE_CHAR = @"__";
+			string strT = input;
+			strT = strT
+				.Replace(@"\", ENCODE_CHAR)
+				.Replace(@"""", ENCODE_CHAR);
+			return strT.Length + 2; // (the quotes on either end)
+		}
 
 
 

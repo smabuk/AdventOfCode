@@ -20,17 +20,17 @@ namespace AdventOfCode.Tests.Year2015 {
 			Assert.Equal(expected, actual);
 		}
 
-		[Theory (Skip ="This problem needs more thought")]
+		[Theory]
+		[InlineData(new string[] { @"""""" }, 4)]
+		[InlineData(new string[] { @"""abc""" }, 4)]
+		[InlineData(new string[] { @"""aaa\""aaa""" }, 6)]
+		[InlineData(new string[] { @"""\x27""" }, 5)]
 		[InlineData(new string[] {
-		"123 -> x",
-		"456 -> y",
-		"x AND y -> d",
-		"x OR y -> e",
-		"x LSHIFT 2 -> f",
-		"y RSHIFT 2 -> g",
-		"NOT x -> h",
-		"NOT y -> i",
-		},  8)]
+			@"""""",
+			@"""abc""",
+			@"""aaa\""aaa""",
+			@"""\x27"""
+		}, 19)]
 		public void Part2(string[] input, int expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2015, 8, 2, input), out long actual);
 			Assert.Equal(expected, actual);

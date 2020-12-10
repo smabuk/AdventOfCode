@@ -25,7 +25,7 @@
 				throw;
 			}
 		}
-
+		
 		public static string SolveProblem2020(int day, int problemNo, string[]? input = null, params object[]? args) {
 			return (day, problemNo) switch {
 				(1, 1) => Year2020.Day01.Part1(input).ToString(),
