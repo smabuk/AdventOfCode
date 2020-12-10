@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
-GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
-return;
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -14,8 +12,8 @@ GetInputDataAndSolve(2020, 06, "Custom Customs");
 GetInputDataAndSolve(2020, 07, "Handy Haversacks");
 GetInputDataAndSolve(2020, 08, "Handheld Halting");
 GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
+GetInputDataAndSolve(2020, 10, "Adapter Array");
 /*
-	GetInputDataAndSolve(2020, 10, "");
 	GetInputDataAndSolve(2020, 11, "");
 	GetInputDataAndSolve(2020, 12, "");
 	GetInputDataAndSolve(2020, 13, "");
