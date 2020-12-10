@@ -3,7 +3,7 @@
 using Xunit;
 
 namespace AdventOfCode.Tests.Year2015 {
-	public class Tests_10_Elves_Lok_Elves_Sayt {
+	public class Tests_10_Elves_Look_Elves_Say {
 		[Theory]
 		[InlineData(new string[] { "1" }, 2)]
 		[InlineData(new string[] { "11" }, 2)]
