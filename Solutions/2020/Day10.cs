@@ -44,7 +44,7 @@ namespace AdventOfCode.Solutions.Year2020 {
 			int device = inputs.Last() + 3;
 			inputs = inputs.Prepend(outlet).Append(device).ToList();
 			List<(int Adapter, int Count)> adapters = new();
-			//List<int> adapters = new();
+
 			for (int i = 0; i < inputs.Count - 1; i++) {
 				int item = inputs[i];
 				int nearby = inputs.Skip(i + 1)
@@ -53,9 +53,24 @@ namespace AdventOfCode.Solutions.Year2020 {
 				adapters.Add((item, nearby));
 			}
 
-			long total = 0;
+			long total = 1;
+			long multiCount = 0;
+			(int Adapter, int Count) prev = adapters[0];
+			for (int i = 0; i < adapters.Count - 1; i++) {
+				if (adapters[i].Count == 1 && multiCount > 1) {
+					if (multiCount ==2 ) {
+						multiCount++;
+					}
+					total *= (multiCount - 1);
+					multiCount = 0;
+				} else if (adapters[i].Count > 1) {
+					multiCount += adapters[i].Count;
+				}
+				prev = adapters[i];
+			}
 
 			return total;
+			;
 		}
 
 
