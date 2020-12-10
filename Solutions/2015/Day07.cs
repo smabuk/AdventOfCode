@@ -8,7 +8,7 @@ using AdventOfCode.Solutions.Helpers;
 namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 07: Some Assembly Required
-	/// https://adventofcode.com/2020/day/7
+	/// https://adventofcode.com/2015/day/7
 	/// </summary>
 	public class Day07 {
 

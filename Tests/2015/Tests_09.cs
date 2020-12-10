@@ -3,7 +3,7 @@
 using Xunit;
 
 namespace AdventOfCode.Tests.Year2015 {
-	public class Tests_09All_in_a_Single_Night {
+	public class Tests_09_All_in_a_Single_Night {
 		[Theory]
 		[InlineData(new string[] {
 			@"London to Dublin = 464",

@@ -21,8 +21,6 @@
 				};
 			} catch (System.NotImplementedException) {
 				return NO_SOLUTION;
-			} catch (System.Exception) {
-				throw;
 			}
 		}
 		
@@ -105,9 +103,9 @@
 				(8, 2) => Year2015.Day08.Part2(input).ToString(),
 				(9, 1)  => Year2015.Day09.Part1(input).ToString(),
 				(9, 2)  => Year2015.Day09.Part2(input).ToString(),
-				/*
 				(10, 1) => Year2015.Day10.Part1(input).ToString(),
 				(10, 2) => Year2015.Day10.Part2(input).ToString(),
+				/*
 				(11, 1) => Year2015.Day11.Part1(input).ToString(),
 				(11, 2) => Year2015.Day11.Part2(input).ToString(),
 				(12, 1) => Year2015.Day12.Part1(input).ToString(),

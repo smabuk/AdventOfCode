@@ -8,7 +8,7 @@ using AdventOfCode.Solutions.Helpers;
 namespace AdventOfCode.Solutions.Year2015 {
 	/// <summary>
 	/// Day 09: All in a Single Night
-	/// https://adventofcode.com/2020/day/9
+	/// https://adventofcode.com/2015/day/9
 	/// </summary>
 	public class Day09 {
 

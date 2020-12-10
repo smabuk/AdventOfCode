@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
-
+GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
+return;
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -37,11 +38,11 @@ GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
 	GetInputDataAndSolve(2015, 04, "The Ideal Stocking Stuffer");
 	GetInputDataAndSolve(2015, 05, "Doesn't He Have Intern-Elves For This?");
 	GetInputDataAndSolve(2015, 06, "Probably a Fire Hazard");
-	GetInputDataAndSolve(2015, 07, "Some Assembly Required");
+	GetInputDataAndSolve(2015, 07, "Some Assembly Required", null, "a");
 	GetInputDataAndSolve(2015, 08, "Matchsticks");
 	GetInputDataAndSolve(2015, 09, "All in a Single Night");
+	GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
 
-	GetInputDataAndSolve(2015, 10, "");
 	GetInputDataAndSolve(2015, 11, "");
 	GetInputDataAndSolve(2015, 12, "");
 	GetInputDataAndSolve(2015, 13, "");
