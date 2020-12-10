@@ -4,15 +4,15 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
-	GetInputDataAndSolve(2020, 01, "Report Repair");
-	GetInputDataAndSolve(2020, 02, "Password Philosophy");
-	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
-	GetInputDataAndSolve(2020, 04, "Passport Processing");
-	GetInputDataAndSolve(2020, 05, "Binary Boarding");
-	GetInputDataAndSolve(2020, 06, "Custom Customs");
-	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
-	GetInputDataAndSolve(2020, 08, "Handheld Halting");
-	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
+GetInputDataAndSolve(2020, 01, "Report Repair");
+GetInputDataAndSolve(2020, 02, "Password Philosophy");
+GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
+GetInputDataAndSolve(2020, 04, "Passport Processing");
+GetInputDataAndSolve(2020, 05, "Binary Boarding");
+GetInputDataAndSolve(2020, 06, "Custom Customs");
+GetInputDataAndSolve(2020, 07, "Handy Haversacks");
+GetInputDataAndSolve(2020, 08, "Handheld Halting");
+GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
 /*
 	GetInputDataAndSolve(2020, 10, "");
 	GetInputDataAndSolve(2020, 11, "");
@@ -39,8 +39,8 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2015, 06, "Probably a Fire Hazard");
 	GetInputDataAndSolve(2015, 07, "Some Assembly Required");
 	GetInputDataAndSolve(2015, 08, "Matchsticks");
+	GetInputDataAndSolve(2015, 09, "All in a Single Night");
 
-	GetInputDataAndSolve(2015, 09, "");
 	GetInputDataAndSolve(2015, 10, "");
 	GetInputDataAndSolve(2015, 11, "");
 	GetInputDataAndSolve(2015, 12, "");
