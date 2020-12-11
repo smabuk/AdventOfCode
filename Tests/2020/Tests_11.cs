@@ -24,18 +24,17 @@ namespace AdventOfCode.Tests.Year2020 {
 
 		[Theory]
 		[InlineData(new string[] {
-			"16",
-			"10",
-			"15",
-			"5",
-			"1",
-			"11",
-			"7",
-			"19",
-			"6",
-			"12",
-			"4"
-		}, 8)]
+			"L.LL.LL.LL",
+			"LLLLLLL.LL",
+			"L.L.L..L..",
+			"LLLL.LL.LL",
+			"L.LL.LL.LL",
+			"L.LLLLL.LL",
+			"..L.L.....",
+			"LLLLLLLLLL",
+			"L.LLLLLL.L",
+			"L.LLLLL.LL"
+		}, 26)]
 		public void Part2(string[] input, long expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 11, 2, input), out long actual);
 			Assert.Equal(expected, actual);

@@ -4,9 +4,6 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2020, 11, "Seating System");
-return;
-
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -75,9 +72,9 @@ static void GetInputDataAndSolve(int year, int day, string title, string[]? inpu
 	if (input is not null) {
 		Stopwatch sw = new Stopwatch();
 		sw.Start();
-		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 1: {SolveProblem(year, day, 1, input, args)}");
+		Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input, args)}");
 		sw.Restart();
-		Console.WriteLine($"  {sw.ElapsedTicks, 5} ticks   Part 2: {SolveProblem(year, day, 2, input, args)}");
+		Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input, args)}");
 		sw.Stop();
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");

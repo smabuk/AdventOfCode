@@ -15,125 +15,134 @@ namespace AdventOfCode.Solutions.Year2020 {
 		public const char FLOOR = '.';
 		public const char OCCUPIED = '#';
 
-		public enum PositionState {
-			Floor,
-			Empty,
-			Occupied
-		}
+		private static List<(int dX, int dY)> DIRECTIONS = new()
+				{ (0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1) };
 
-		public record Position {
-			public int Id { get; init; }
-
-			public int X { get; init; }
-			public int Y { get; init; }
-			public PositionState State { get; set; } = PositionState.Floor;
-			public List<Position> AdjacentPositions { get; set; } = new();
-
-			public Position(int id, int x, int y) {
-				Id = id;
-				X = x;
-				Y = y;
-			}
-			public Position(int id, int x, int y, PositionState state) {
-				Id = id;
-				X = x;
-				Y = y;
-				State = state;
-			}
-
-			public bool Occupied => State == PositionState.Occupied;
-			public bool Empty => State == PositionState.Empty;
-			public bool Floor => State == PositionState.Floor;
-
-			public (bool , Position) NextState() {
-				bool didSomething = false;
-				Position next;
-				if (Empty && !AdjacentPositions.Any(s => s.Occupied)) {
-					next = this with { State = PositionState.Occupied };
-					didSomething = true;
-				} else if (Occupied && AdjacentPositions.Count(s => s.Occupied) >= 4) {
-					next = this with { State = PositionState.Empty };
-					didSomething = true;
-				} else {
-					next = this;
-					didSomething = false;
-				}
-				return (didSomething, next);
-			}
-
-		}
-
-		public static List<Position> GetAdjacentPositions(int x, int y, IEnumerable<Position> positions) {
-			if (positions is null) {
-				throw new ArgumentNullException(nameof(positions));
-			}
-			IEnumerable<Position> adjacentSlots =
-				positions.Where(slot => slot.X >= (x - 1) && slot.X <= (x + 1) && slot.Y >= (y - 1) && slot.Y <= (y + 1));
-			IEnumerable<Position> currentSlot = positions.Where(slot => slot.X == x && slot.Y == y);
-			return adjacentSlots.Except(currentSlot).ToList();
-		}
 
 		private static int Solution1(string[] input) {
-			List<Position> room = ParseInput(input);
+			int roomWidth = input[0].Length;
+			int roomHeight = input.Length;
 
-			List<Position> nextRoom = room;
+			char[,] room = ParseInput(input);
+
+			char[,] nextRoom = room;
 			bool didSomething;
+			int countOccupied = 0;
 			do {
-				nextRoom = new();
+				countOccupied = 0;
+				nextRoom = new char[roomWidth, roomHeight];
 				didSomething = false;
 
-				foreach (Position position in room) {
-					(bool changed, Position nextPosition) = position.NextState();
-					if (changed) {
-						didSomething = true;
+				for (int y = 0; y < roomHeight; y++) {
+					for (int x = 0; x < roomWidth; x++) {
+						char current = room[x, y];
+						char next = current;
+						List<char> adjacent = GetAdjacentPositions(x, y, roomWidth, roomHeight, room);
+						if (current == EMPTY_SEAT) {
+							if (!adjacent.Any(s => s == OCCUPIED)) {
+								next = OCCUPIED;
+								didSomething = true;
+							}
+						} else if (current == OCCUPIED && adjacent.Count(s => s == OCCUPIED) >= 4) {
+							next = EMPTY_SEAT;
+							didSomething = true;
+						}
+						nextRoom[x, y] = next;
+						if (next == OCCUPIED) {
+							countOccupied++;
+						}
 					}
-					nextRoom.Add(nextPosition);
 				}
 				room = nextRoom;
-				room.ForEach(s => s.AdjacentPositions = GetAdjacentPositions(s.X, s.Y, room));
 			} while (didSomething);
 
+			return countOccupied;
+		}
+		public static List<char> GetAdjacentPositions(int X, int Y, int width, int height, char[,] room) {
+			List<char> adjacent = new();
+			foreach (var (dX, dY) in DIRECTIONS) {
+				int x = X + dX;
+				int y = Y + dY;
+				if (x >= 0 && x < width && y >= 0 && y < height) {
+					if (room[x, y] != FLOOR) {
+						adjacent.Add(room[x, y]);
+					}
+				}
+			}
+			return adjacent;
+		}
 
-			int countOccupied = room.Count(s => s.Occupied);
+		private static int Solution2(string[] input) {
+			int roomWidth = input[0].Length;
+			int roomHeight = input.Length;
+			
+			char[,] room = ParseInput(input);
+
+			char[,] nextRoom = room;
+			bool didSomething;
+			int countOccupied = 0;
+			do {
+				countOccupied = 0;
+				nextRoom = new char[roomWidth, roomHeight];
+				didSomething = false;
+
+				for (int y = 0; y < roomHeight; y++) {
+					for (int x = 0; x < roomWidth; x++) {
+						char current = room[x, y];
+						char next = current;
+						List<char> adjacent = GetAdjacentLines(x, y, roomWidth, roomHeight, room);
+						if (current == EMPTY_SEAT) {
+							if (!adjacent.Any(s => s == OCCUPIED)) {
+								next = OCCUPIED;
+								didSomething = true;
+							} 
+						} else if (current == OCCUPIED && adjacent.Count(s => s == OCCUPIED) >= 5) {
+							next = EMPTY_SEAT;
+							didSomething = true;
+						}
+						nextRoom[x, y] = next;
+						if (next == OCCUPIED) {
+							countOccupied++;
+						}
+					}
+				}
+				room = nextRoom;
+			} while (didSomething);
 
 			return countOccupied;
 		}
 
-		private static string Solution2(string[] input) {
-			//string inputLine = input[0];
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			throw new NotImplementedException();
-		}
-
-		private static List<Position> ParseInput(string[] input) {
-			List<Position> room = new();
-
-			int id = 0;
-			for (int y = 0; y < input.Length; y++) {
-				string itemLine = input[y];
-
-				for (int x = 0; x < itemLine.Length; x++) {
-					char seatInput = itemLine[x];
-					room.Add(new Position(
-						id,
-						x,
-						y,
-						seatInput switch {
-							FLOOR => PositionState.Floor,
-							EMPTY_SEAT => PositionState.Empty,
-							OCCUPIED => PositionState.Occupied,
-							_ => throw new ArgumentOutOfRangeException(nameof(Solution1), $"{nameof(seatInput)}={seatInput}")
-						}));
-					id++;
+		public static List<char> GetAdjacentLines(int X, int Y, int width, int height, char[,] room) {
+			List<char> adjacent = new();
+			foreach (var (dX, dY) in DIRECTIONS) {
+				int x = X + dX;
+				int y = Y + dY;
+				while (x >= 0 && x < width && y >= 0 && y < height) {
+					if (room[x, y] != FLOOR || x < 0 || y < 0) {
+						adjacent.Add(room[x, y]);
+						break;
+					}
+					x += dX;
+					y += dY;
 				}
 			}
-
-			//position.ForEach(s => s.AdjacentPositions = GetAdjacentPositions(s.X, s.Y, position));
-			return room;
+			return adjacent;
 		}
 
+		private static char[,] ParseInput(string[] input) {
+			int roomWidth = input[0].Length;
+			int roomHeight = input.Length;
+			char[,] room = new char[roomWidth, roomHeight];
 
+			for (int y = 0; y < roomHeight; y++) {
+				string itemLine = input[y];
+
+				for (int x = 0; x < roomWidth; x++) {
+					room[x, y] = itemLine[x];
+				}
+			}
+			return room;
+		}
 
 
 
