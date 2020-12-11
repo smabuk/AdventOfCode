@@ -17,6 +17,8 @@
 </p>
 
 @code {
+    const string SOLVING = "** Solving... **";
+
     [Parameter] public int Year { get; set; }
     [Parameter] public int Day { get; set; }
     [Parameter] public int ProblemNo { get; set; }
@@ -29,14 +31,16 @@
 
     protected override void OnInitialized() {
         Session.OnProblemInputChange += DataHasChanged;
+        PuzzleAnswer = "";
     }
-
+    
     protected override void OnParametersSet() {
-        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-            Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+        DataHasChanged();
     }
 
     protected void DataHasChanged() {
+        PuzzleAnswer = SOLVING;
+        StateHasChanged();
         PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
             Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
         StateHasChanged();
