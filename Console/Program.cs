@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
+
+GetInputDataAndSolve(2015, 11, "Corporate Policy"); return;
+
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -40,8 +43,8 @@ GetInputDataAndSolve(2020, 10, "Adapter Array");
 	GetInputDataAndSolve(2015, 08, "Matchsticks");
 	GetInputDataAndSolve(2015, 09, "All in a Single Night");
 	GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
+	GetInputDataAndSolve(2015, 11, "Corporate Policy");
 
-	GetInputDataAndSolve(2015, 11, "");
 	GetInputDataAndSolve(2015, 12, "");
 	GetInputDataAndSolve(2015, 13, "");
 	GetInputDataAndSolve(2015, 14, "");
