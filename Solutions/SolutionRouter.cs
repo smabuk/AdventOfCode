@@ -21,6 +21,8 @@
 				};
 			} catch (System.NotImplementedException) {
 				return NO_SOLUTION;
+			} catch {
+				throw;
 			}
 		}
 		
