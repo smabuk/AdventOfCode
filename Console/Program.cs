@@ -43,8 +43,8 @@ GetInputDataAndSolve(2020, 11, "Seating System");
 	GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
 	GetInputDataAndSolve(2015, 11, "Corporate Policy");
 	GetInputDataAndSolve(2015, 12, "JSAbacusFramework.io");
+	GetInputDataAndSolve(2015, 13, "Knights of the Dinner Table");
 
-	GetInputDataAndSolve(2015, 13, "");
 	GetInputDataAndSolve(2015, 14, "");
 	GetInputDataAndSolve(2015, 15, "");
 	GetInputDataAndSolve(2015, 16, "");

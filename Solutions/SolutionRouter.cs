@@ -9,21 +9,15 @@
 				return NO_INPUT;
 			}
 
-			try {
-				return year switch {
-					2020 => SolveProblem2020(day, problemNo, input, args),
-					//2019 => SolveProblem2019(day, problemNo, input),
-					//2018 => SolveProblem2018(day, problemNo, input),
-					//2017 => SolveProblem2017(day, problemNo, input),
-					//2016 => SolveProblem2016(day, problemNo, input),
-					2015 => SolveProblem2015(day, problemNo, input, args),
-					_ => NO_SOLUTION
-				};
-			} catch (System.NotImplementedException) {
-				return NO_SOLUTION;
-			} catch {
-				throw;
-			}
+			return year switch {
+				2020 => SolveProblem2020(day, problemNo, input, args),
+				//2019 => SolveProblem2019(day, problemNo, input),
+				//2018 => SolveProblem2018(day, problemNo, input),
+				//2017 => SolveProblem2017(day, problemNo, input),
+				//2016 => SolveProblem2016(day, problemNo, input),
+				2015 => SolveProblem2015(day, problemNo, input, args),
+				_ => NO_SOLUTION
+			};
 		}
 		
 		public static string SolveProblem2020(int day, int problemNo, string[]? input = null, params object[]? args) {
@@ -111,9 +105,9 @@
 				(11, 2) => Year2015.Day11.Part2(input).ToString(),
 				(12, 1) => Year2015.Day12.Part1(input).ToString(),
 				(12, 2) => Year2015.Day12.Part2(input).ToString(),
-				/*
 				(13, 1) => Year2015.Day13.Part1(input).ToString(),
 				(13, 2) => Year2015.Day13.Part2(input).ToString(),
+				/*
 				(14, 1) => Year2015.Day14.Part1(input).ToString(),
 				(14, 2) => Year2015.Day14.Part2(input).ToString(),
 				(15, 1) => Year2015.Day15.Part1(input).ToString(),
