@@ -52,7 +52,7 @@ namespace AdventOfCode.Tests.Year2015 {
 			"David would gain 46 happiness units by sitting next to Alice.",
 			"David would lose 7 happiness units by sitting next to Bob.",
 			"David would gain 41 happiness units by sitting next to Carol.",
-		}, 0)]
+		}, 286)]
 		public void Part2(string[] input, int expected) {
 			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 13, 2, input), out int actual);
 			Assert.Equal(expected, actual);

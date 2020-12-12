@@ -17,7 +17,40 @@ namespace AdventOfCode.Tests.Year2020 {
 			"6",
 			"12",
 			"4"
-		}, 127)]
+		}, 35)]
+		[InlineData(new string[] {
+			"28",
+			"33",
+			"18",
+			"42",
+			"31",
+			"14",
+			"46",
+			"20",
+			"48",
+			"47",
+			"24",
+			"23",
+			"49",
+			"45",
+			"19",
+			"38",
+			"39",
+			"11",
+			"1",
+			"32",
+			"25",
+			"35",
+			"8",
+			"17",
+			"7",
+			"9",
+			"4",
+			"2",
+			"34",
+			"10",
+			"3"
+		}, 220)]
 		public void Part1(string[] input, int expected) {
 			_ = int.TryParse(SolutionRouter.SolveProblem(2020, 10, 1, input), out int actual);
 			Assert.Equal(expected, actual);
