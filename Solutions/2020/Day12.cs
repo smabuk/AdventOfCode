@@ -79,9 +79,52 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 
 
-		private static string Solution2(string[] input) {
-			List<string> inputs = input.ToList();
-			return "** Solution not written yet **";
+		private static int Solution2(string[] input) {
+			IEnumerable<Instruction> instructions = input.Select(i => ParseLine(i));
+
+			int x = 0, y = 0;
+			int waypointX = 10, waypointY = 1;
+			foreach (Instruction? instruction in instructions) {
+				switch (instruction.Command) {
+					case "N":
+						waypointY += instruction.Value;
+						break;
+					case "S":
+						waypointY -= instruction.Value;
+						break;
+					case "E":
+						waypointX += instruction.Value;
+						break;
+					case "W":
+						waypointX -= instruction.Value;
+						break;
+					case "L":
+					case "R":
+						(waypointX, waypointY) = RotateWaypoint((waypointX, waypointY), instruction.Command, instruction.Value);
+						break;
+					case "F":
+						x += instruction.Value * waypointX;
+						y += instruction.Value * waypointY;
+						break;
+					default:
+						break;
+				}
+			}
+
+			return Math.Abs(x) + Math.Abs(y);
+		}
+
+		private static (int wayPointX, int wayPointY) RotateWaypoint((int X, int Y) waypoint, string command, int value) {
+			return (command, value) switch {
+				("R", 180) => (-waypoint.X, -waypoint.Y),
+				("L", 180) => (-waypoint.X, -waypoint.Y),
+				("R", 90) => (waypoint.Y, -waypoint.X),
+				("L", 270) => (waypoint.Y, -waypoint.X),
+				("L", 90) => (-waypoint.Y, waypoint.X),
+				("R", 270) => (-waypoint.Y, waypoint.X),
+				_ => (waypoint.X, waypoint.Y)
+			};
+
 		}
 
 		private static Instruction ParseLine(string input) {
