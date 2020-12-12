@@ -70,13 +70,23 @@ namespace AdventOfCode.Solutions.Helpers
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		public static IEnumerable<T[]> Permutate<T>(this IEnumerable<T> source) {
-			return permutate(source, Enumerable.Empty<T>());
-			IEnumerable<T[]> permutate(IEnumerable<T> reminder, IEnumerable<T> prefix) =>
-				!reminder.Any() ? new[] { prefix.ToArray() } :
-				reminder.SelectMany((c, i) => permutate(
-					reminder.Take(i).Concat(reminder.Skip(i + 1)).ToArray(),
+		public static IEnumerable<T[]> Permute<T>(this IEnumerable<T> source) {
+			return permute(source.ToArray(), Enumerable.Empty<T>());
+			IEnumerable<T[]> permute(IEnumerable<T> remainder, IEnumerable<T> prefix) =>
+				!remainder.Any() ? new[] { prefix.ToArray() } :
+				remainder.SelectMany((c, i) => permute(
+					remainder.Take(i).Concat(remainder.Skip(i + 1)).ToArray(),
 					prefix.Append(c)));
+		}
+
+
+		public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> elements, int k) {
+			return k == 0 ? new[] { Array.Empty<T>() } :
+			  elements.SelectMany((e, i) =>
+				elements.Skip(i + 1)
+						.Combinations(k - 1)
+						.Select(c => (new[] { e })
+						.Concat(c)));
 		}
 	}
 }

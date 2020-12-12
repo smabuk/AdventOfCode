@@ -31,7 +31,7 @@ namespace AdventOfCode.Solutions.Year2015 {
 			foreach (string[] legs in routes
 				.Select(r => r.Location1).Union(routes.Select(r => r.Location2))
 				.Distinct()
-				.Permutate()) {
+				.Permute()) {
 				int routeDistance = 0;
 				for (int i = 0; i < legs.Length - 1; i++) {
 					routeDistance += allRoutes[$"{legs[i]}->{legs[i+1]}"].Distance;
@@ -61,7 +61,7 @@ namespace AdventOfCode.Solutions.Year2015 {
 			foreach (string[] legs in routes
 				.Select(r => r.Location1).Union(routes.Select(r => r.Location2))
 				.Distinct()
-				.Permutate()) {
+				.Permute()) {
 				int routeDistance = 0;
 				for (int i = 0; i < legs.Length - 1; i++) {
 					routeDistance += allRoutes[$"{legs[i]}->{legs[i+1]}"].Distance;

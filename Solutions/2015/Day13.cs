@@ -27,7 +27,7 @@ namespace AdventOfCode.Solutions.Year2015 {
 				}
 				lookup.Add(item.Key, item.Value);
 			}
-			int sum = guests.Permutate().Select(t  => CalculateHappinessIncrease(t, lookup)).Max();
+			int sum = guests.Permute().Select(t  => CalculateHappinessIncrease(t, lookup)).Max();
 
 			return sum;
 		}
@@ -62,7 +62,7 @@ namespace AdventOfCode.Solutions.Year2015 {
 			}
 			guests.Add(myName);
 
-			int sum = guests.Permutate().Select(t => CalculateHappinessIncrease(t, lookup)).Max();
+			int sum = guests.Permute().Select(t => CalculateHappinessIncrease(t, lookup)).Max();
 
 			return sum;
 		}
