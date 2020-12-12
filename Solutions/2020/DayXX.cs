@@ -16,28 +16,30 @@ namespace AdventOfCode.Solutions.Year2020 {
 	/// </summary>
 	public class DayXX {
 
+		record RecordType(string Name, int Value);
+
 		private static string Solution1(string[] input) {
 			//string inputLine = input[0];
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
+			IEnumerable<RecordType> instructions = input.Select(i => ParseLine(i));
+			//List<string> inputs = input.ToList();
 			return "** Solution not written yet **";
 		}
 
 		private static string Solution2(string[] input) {
 			//string inputLine = input[0];
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
+			//List<string> inputs = input.ToList();
+			IEnumerable<RecordType> instructions = input.Select(i => ParseLine(i));
 			return "** Solution not written yet **";
 		}
 
-		//private static recordType ParseLine(string input) {
-		//	MatchCollection match = Regex.Matches(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	Match match = Regex.Match(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		//	if (match.Success) {
-		//		return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
-		//	}
-		//	return null!;
-		//}
+		private static RecordType ParseLine(string input) {
+			//MatchCollection match = Regex.Matches(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
+			Match match = Regex.Match(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
+			if (match.Success) {
+				return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
+			}
+			return null!;
+		}
 
 
 
@@ -48,14 +50,12 @@ namespace AdventOfCode.Solutions.Year2020 {
 			if (input is null) { return "Error: No data provided"; }
 			// int arg1 = GetArgument(args, 1, 25);
 			input = input.StripTrailingBlankLineOrDefault();
-			return "** Solution not written yet **";
 			return Solution1(input).ToString();
 		}
 		public static string Part2(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			// int arg1 = GetArgument(args, 1, 25);
 			input = input.StripTrailingBlankLineOrDefault();
-			return "** Solution not written yet **";
 			return Solution2(input).ToString();
 		}
 		#endregion
