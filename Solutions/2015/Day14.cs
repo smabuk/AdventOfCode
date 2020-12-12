@@ -19,8 +19,6 @@ namespace AdventOfCode.Solutions.Year2015 {
 		record Reindeer(string Name, int Speed, int FlyingTime, int RestingTime) {
 			public bool IsFlying(int noOfSeconds) =>
 				noOfSeconds % (FlyingTime + RestingTime) < FlyingTime;
-			public bool IsResting(int noOfSeconds) =>
-				!IsFlying(noOfSeconds);
 		};
 
 		private static int Solution1(string[] input, int raceTime) {
@@ -41,11 +39,30 @@ namespace AdventOfCode.Solutions.Year2015 {
 			return distances.Values.Max();
 		}
 
-		private static string Solution2(string[] input) {
-			//string inputLine = input[0];
-			List<string> inputs = input.ToList();
-			//inputs.Add("");
-			return "** Solution not written yet **";
+		private static int Solution2(string[] input, int raceTime) {
+			List<Reindeer> reindeer = input.Select(i => ParseLine(i)).ToList();
+			Dictionary<string, int> distances = new();
+			Dictionary<string, int> points = new();
+			foreach (Reindeer r in reindeer) {
+				distances.Add(r.Name, 0);
+				points.Add(r.Name, 0);
+			}
+
+			for (int i = 0; i < raceTime; i++) {
+				foreach (Reindeer r in reindeer) {
+					if (r.IsFlying(i)) {
+						distances[r.Name] += r.Speed;
+					}
+				}
+				int maxDistance = distances.Values.Max();
+				foreach (Reindeer r in reindeer) {
+					if (distances[r.Name] == maxDistance) {
+						points[r.Name]++;
+					}
+				}
+			}
+
+			return points.Values.Max();
 		}
 
 		private static Reindeer ParseLine(string input) {
@@ -75,10 +92,9 @@ namespace AdventOfCode.Solutions.Year2015 {
 		}
 		public static string Part2(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
-			// int arg1 = GetArgument(args, 1, 25);
+			int raceTime = GetArgument(args, 1, 2503);
 			input = input.StripTrailingBlankLineOrDefault();
-			return "** Solution not written yet **";
-			return Solution2(input).ToString();
+			return Solution2(input, raceTime).ToString();
 		}
 		#endregion
 

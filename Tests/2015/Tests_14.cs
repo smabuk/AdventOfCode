@@ -30,7 +30,15 @@ namespace AdventOfCode.Tests.Year2015 {
 		[InlineData(new string[] {
 			"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
 			"Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."
-		}, 1000, 0)]
+		}, 1, 1)]
+		[InlineData(new string[] {
+			"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
+			"Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."
+		}, 140, 139)]
+		[InlineData(new string[] {
+			"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
+			"Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."
+		}, 1000, 689)]
 		public void Part2(string[] input, int raceTime, int expected) {
 			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 14, 2, input, raceTime), out int actual);
 			Assert.Equal(expected, actual);
