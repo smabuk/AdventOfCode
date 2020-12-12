@@ -4,6 +4,7 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
+GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much"); return;
 
 
 GetInputDataAndSolve(2020, 01, "Report Repair");
@@ -49,8 +50,8 @@ GetInputDataAndSolve(2020, 12, "Rain Risk");
 	GetInputDataAndSolve(2015, 14, "Reindeer Olympics", 2503);
 	GetInputDataAndSolve(2015, 15, "Science for Hungry People");
 	GetInputDataAndSolve(2015, 16, "Aunt Sue");
+	GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much");
 
-	GetInputDataAndSolve(2015, 17, "");
 	GetInputDataAndSolve(2015, 18, "");
 	GetInputDataAndSolve(2015, 19, "");
 	GetInputDataAndSolve(2015, 20, "");

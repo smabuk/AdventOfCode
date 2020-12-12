@@ -113,9 +113,9 @@
 				(15, 2) => Year2015.Day15.Part2(input).ToString(),
 				(16, 1) => Year2015.Day16.Part1(input).ToString(),
 				(16, 2) => Year2015.Day16.Part2(input).ToString(),
-				/*
 				(17, 1) => Year2015.Day17.Part1(input).ToString(),
 				(17, 2) => Year2015.Day17.Part2(input).ToString(),
+				/*
 				(18, 1) => Year2015.Day18.Part1(input).ToString(),
 				(18, 2) => Year2015.Day18.Part2(input).ToString(),
 				(19, 1) => Year2015.Day19.Part1(input).ToString(),

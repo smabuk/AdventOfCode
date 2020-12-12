@@ -20,15 +20,15 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 		private static string Solution1(string[] input) {
 			//string inputLine = input[0];
-			IEnumerable<RecordType> instructions = input.Select(i => ParseLine(i));
 			//List<string> inputs = input.ToList();
+			List<RecordType> instructions = input.Select(i => ParseLine(i)).ToList();
 			return "** Solution not written yet **";
 		}
 
 		private static string Solution2(string[] input) {
 			//string inputLine = input[0];
 			//List<string> inputs = input.ToList();
-			IEnumerable<RecordType> instructions = input.Select(i => ParseLine(i));
+			List<RecordType> instructions = input.Select(i => ParseLine(i)).ToList();
 			return "** Solution not written yet **";
 		}
 
