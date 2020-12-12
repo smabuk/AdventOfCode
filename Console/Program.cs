@@ -3,6 +3,10 @@ using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
+
+//GetInputDataAndSolve(2015, 15, "Science for Hungry People");
+//return;
+
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -14,8 +18,8 @@ GetInputDataAndSolve(2020, 08, "Handheld Halting");
 GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
 GetInputDataAndSolve(2020, 10, "Adapter Array");
 GetInputDataAndSolve(2020, 11, "Seating System");
+GetInputDataAndSolve(2020, 12, "Rain Risk");
 /*
-	GetInputDataAndSolve(2020, 12, "");
 	GetInputDataAndSolve(2020, 13, "");
 	GetInputDataAndSolve(2020, 14, "");
 	GetInputDataAndSolve(2020, 15, "");
@@ -44,8 +48,8 @@ GetInputDataAndSolve(2020, 11, "Seating System");
 	GetInputDataAndSolve(2015, 12, "JSAbacusFramework.io");
 	GetInputDataAndSolve(2015, 13, "Knights of the Dinner Table");
 	GetInputDataAndSolve(2015, 14, "Reindeer Olympics", 2503);
+	GetInputDataAndSolve(2015, 15, "Science for Hungry People");
 
-	GetInputDataAndSolve(2015, 15, "");
 	GetInputDataAndSolve(2015, 16, "");
 	GetInputDataAndSolve(2015, 17, "");
 	GetInputDataAndSolve(2015, 18, "");
