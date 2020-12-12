@@ -18,7 +18,7 @@ namespace AdventOfCode.Tests.Year2015 {
 		[InlineData(new string[] {
 			"Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
 			"Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"
-		}, 286)]
+		}, 57600000)]
 		public void Part2(string[] input, int expected) {
 			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 15, 2, input), out int actual);
 			Assert.Equal(expected, actual);
