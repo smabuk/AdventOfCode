@@ -30,17 +30,13 @@ namespace AdventOfCode.Solutions.Year2020 {
 			int y = 0;
 			foreach (Instruction? instruction in instructions) {
 				switch (instruction.Command) {
-					case "N":
-						y += instruction.Value;
+					case "N": y += instruction.Value;
 						break;
-					case "S":
-						y -= instruction.Value;
+					case "S": y -= instruction.Value;
 						break;
-					case "E":
-						x += instruction.Value;
+					case "E": x += instruction.Value;
 						break;
-					case "W":
-						x -= instruction.Value;
+					case "W": x -= instruction.Value;
 						break;
 					case "L":
 					case "R":
@@ -86,17 +82,13 @@ namespace AdventOfCode.Solutions.Year2020 {
 			int waypointX = 10, waypointY = 1;
 			foreach (Instruction? instruction in instructions) {
 				switch (instruction.Command) {
-					case "N":
-						waypointY += instruction.Value;
+					case "N": waypointY += instruction.Value;
 						break;
-					case "S":
-						waypointY -= instruction.Value;
+					case "S": waypointY -= instruction.Value;
 						break;
-					case "E":
-						waypointX += instruction.Value;
+					case "E": waypointX += instruction.Value;
 						break;
-					case "W":
-						waypointX -= instruction.Value;
+					case "W": waypointX -= instruction.Value;
 						break;
 					case "L":
 					case "R":
@@ -110,18 +102,14 @@ namespace AdventOfCode.Solutions.Year2020 {
 						break;
 				}
 			}
-
 			return Math.Abs(x) + Math.Abs(y);
 		}
 
 		private static (int wayPointX, int wayPointY) RotateWaypoint((int X, int Y) waypoint, string command, int value) {
 			return (command, value) switch {
-				("R", 180) => (-waypoint.X, -waypoint.Y),
-				("L", 180) => (-waypoint.X, -waypoint.Y),
-				("R", 90) => (waypoint.Y, -waypoint.X),
-				("L", 270) => (waypoint.Y, -waypoint.X),
-				("L", 90) => (-waypoint.Y, waypoint.X),
-				("R", 270) => (-waypoint.Y, waypoint.X),
+				("_", 180) => (-waypoint.X, -waypoint.Y),
+				("R", 90) or ("L", 270) => (waypoint.Y, -waypoint.X),
+				("L", 90) or ("R", 270) => (-waypoint.Y, waypoint.X),
 				_ => (waypoint.X, waypoint.Y)
 			};
 
