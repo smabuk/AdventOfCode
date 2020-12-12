@@ -50,8 +50,8 @@ GetInputDataAndSolve(2020, 12, "Rain Risk");
 	GetInputDataAndSolve(2015, 15, "Science for Hungry People");
 	GetInputDataAndSolve(2015, 16, "Aunt Sue");
 	GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much", null, 150);
+	GetInputDataAndSolve(2015, 18, "Like a GIF For Your Yard", null, 100);
 
-	GetInputDataAndSolve(2015, 18, "");
 	GetInputDataAndSolve(2015, 19, "");
 	GetInputDataAndSolve(2015, 20, "");
 	GetInputDataAndSolve(2015, 21, "");
