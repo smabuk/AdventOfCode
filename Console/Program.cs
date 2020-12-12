@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
-
+GetInputDataAndSolve(2015, 14, "Reindeer Olympics", null, 2503);
+return;
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -44,8 +45,8 @@ GetInputDataAndSolve(2020, 11, "Seating System");
 	GetInputDataAndSolve(2015, 11, "Corporate Policy");
 	GetInputDataAndSolve(2015, 12, "JSAbacusFramework.io");
 	GetInputDataAndSolve(2015, 13, "Knights of the Dinner Table");
+	GetInputDataAndSolve(2015, 14, "Reindeer Olympics", 2503);
 
-	GetInputDataAndSolve(2015, 14, "");
 	GetInputDataAndSolve(2015, 15, "");
 	GetInputDataAndSolve(2015, 16, "");
 	GetInputDataAndSolve(2015, 17, "");
