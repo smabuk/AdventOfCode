@@ -54,7 +54,7 @@ namespace AdventOfCode.Tests.Year2020 {
 		[InlineData(new string[] {
 			"1004098",
 			"23,x,x,x,x,x,x,x,x,x,x,x,x,41,x,x,x,x,x,x,x,x,x,509,x,x,x,x,x,x,x,x,x,x,x,x,13,17,x,x,x,x,x,x,x,x,x,x,x,x,x,x,29,x,401,x,x,x,x,x,37,x,x,x,x,x,x,x,x,x,x,x,x,19"
-		}, 0)]
+		}, 225850756401039)]
 		public void Part2(string[] input, long expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 13, 2, input), out long actual);
 			Assert.Equal(expected, actual);
