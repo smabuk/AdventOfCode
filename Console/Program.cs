@@ -5,7 +5,6 @@ using System.IO;
 using static AdventOfCode.Solutions.SolutionRouter;
 
 
-
 	GetInputDataAndSolve(2020, 01, "Report Repair");
 	GetInputDataAndSolve(2020, 02, "Password Philosophy");
 	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -51,8 +50,8 @@ using static AdventOfCode.Solutions.SolutionRouter;
 	GetInputDataAndSolve(2015, 16, "Aunt Sue");
 	GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much", null, 150);
 	GetInputDataAndSolve(2015, 18, "Like a GIF For Your Yard", null, 100);
+	GetInputDataAndSolve(2015, 19, "Medicine for Rudolph");
 
-	GetInputDataAndSolve(2015, 19, "");
 	GetInputDataAndSolve(2015, 20, "");
 	GetInputDataAndSolve(2015, 21, "");
 	GetInputDataAndSolve(2015, 22, "");
