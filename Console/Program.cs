@@ -5,21 +5,21 @@ using System.IO;
 using static AdventOfCode.Solutions.SolutionRouter;
 
 
-	GetInputDataAndSolve(2020, 01, "Report Repair");
-	GetInputDataAndSolve(2020, 02, "Password Philosophy");
-	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
-	GetInputDataAndSolve(2020, 04, "Passport Processing");
-	GetInputDataAndSolve(2020, 05, "Binary Boarding");
-	GetInputDataAndSolve(2020, 06, "Custom Customs");
-	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
-	GetInputDataAndSolve(2020, 08, "Handheld Halting");
-	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
-	GetInputDataAndSolve(2020, 10, "Adapter Array");
-	GetInputDataAndSolve(2020, 11, "Seating System");
-	GetInputDataAndSolve(2020, 12, "Rain Risk");
-	GetInputDataAndSolve(2020, 13, "Shuttle Search");
+GetInputDataAndSolve(2020, 01, "Report Repair");
+GetInputDataAndSolve(2020, 02, "Password Philosophy");
+GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
+GetInputDataAndSolve(2020, 04, "Passport Processing");
+GetInputDataAndSolve(2020, 05, "Binary Boarding");
+GetInputDataAndSolve(2020, 06, "Custom Customs");
+GetInputDataAndSolve(2020, 07, "Handy Haversacks");
+GetInputDataAndSolve(2020, 08, "Handheld Halting");
+GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
+GetInputDataAndSolve(2020, 10, "Adapter Array");
+GetInputDataAndSolve(2020, 11, "Seating System");
+GetInputDataAndSolve(2020, 12, "Rain Risk");
+GetInputDataAndSolve(2020, 13, "Shuttle Search");
+GetInputDataAndSolve(2020, 14, "Docking Data");
 /*
-	GetInputDataAndSolve(2020, 14, "");
 	GetInputDataAndSolve(2020, 15, "");
 	GetInputDataAndSolve(2020, 16, "");
 	GetInputDataAndSolve(2020, 17, "");
