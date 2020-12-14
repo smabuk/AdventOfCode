@@ -24,8 +24,17 @@ namespace AdventOfCode.Tests.Year2015 {
 
 		[Theory]
 		[InlineData(new string[] {
+			"30"
+		}, 2)]
+		[InlineData(new string[] {
+			"43"
+		}, 3)]
+		[InlineData(new string[] {
+			"45"
+		}, 4)]
+		[InlineData(new string[] {
 			"36000000"
-		}, 9999)]
+		}, 884520)]
 		public void Part2(string[] input, int expected) {
 			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 20, 2, input), out int actual);
 			Assert.Equal(expected, actual);
