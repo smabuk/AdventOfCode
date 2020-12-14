@@ -18,9 +18,11 @@ namespace AdventOfCode.Tests.Year2020 {
 
 		[Theory]
 		[InlineData(new string[] {
-			"1004098",
-			"13, 17"
-		}, 169)]
+			"mask = 000000000000000000000000000000X1001X",
+			"mem[42] = 100",
+			"mask = 00000000000000000000000000000000X0XX",
+			"mem[26] = 1",
+		}, 208)]
 		public void Part2(string[] input, long expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 14, 2, input), out long actual);
 			Assert.Equal(expected, actual);
