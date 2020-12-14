@@ -51,9 +51,9 @@ GetInputDataAndSolve(2020, 14, "Docking Data");
 	GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much", null, 150);
 	GetInputDataAndSolve(2015, 18, "Like a GIF For Your Yard", null, 100);
 	GetInputDataAndSolve(2015, 19, "Medicine for Rudolph");
+	GetInputDataAndSolve(2015, 20, "Infinite Elves and Infinite Houses");
 
-	GetInputDataAndSolve(2015, 20, "");
-	GetInputDataAndSolve(2015, 21, "");
+	GetInputDataAndSolve(2015, 21, "RPG Simulator 20XX");
 	GetInputDataAndSolve(2015, 22, "");
 	GetInputDataAndSolve(2015, 23, "");
 	GetInputDataAndSolve(2015, 24, "");
