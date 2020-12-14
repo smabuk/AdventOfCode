@@ -48,9 +48,9 @@
 				(12, 2) => Year2020.Day12.Part2(input, args).ToString(),
 				(13, 1) => Year2020.Day13.Part1(input, args).ToString(),
 				(13, 2) => Year2020.Day13.Part2(input, args).ToString(),
-				/*
 				(14, 1) => Year2020.Day14.Part1(input, args).ToString(),
 				(14, 2) => Year2020.Day14.Part2(input, args).ToString(),
+				/*
 				(15, 1) => Year2020.Day15.Part1(input, args).ToString(),
 				(15, 2) => Year2020.Day15.Part2(input, args).ToString(),
 				(16, 1) => Year2020.Day16.Part1(input, args).ToString(),
