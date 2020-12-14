@@ -22,7 +22,7 @@ namespace AdventOfCode.Solutions.Year2015 {
 			int presents = 0;
 			int houseNo;
 			// Factorials
-			for (houseNo = 1; presents < target ; houseNo++) {
+			for (houseNo = 1; presents < target; houseNo++) {
 				List<int> factors = Factor(houseNo);
 				presents = factors.Sum() * 10;
 			}
@@ -45,24 +45,30 @@ namespace AdventOfCode.Solutions.Year2015 {
 			return factors;
 		}
 
-
 		private static int Solution2(string[] input) {
 			int target = int.Parse(input[0]);
 
-			int presents = 0;
-			int houseNo;
-			// Factorials
+			int noOfElves = 50;
+			int multiplier = 11;
 
-			for (houseNo = 1; presents < target; houseNo++) {
-				List<int> factors = Factor(houseNo % 50);
-				presents = factors.Sum() * 11;
+			int[] houses = new int[target / multiplier + 1];
+			for (int elf = 1; elf < houses.Length; elf++) {
+				int count = 0;
+				for (int house = elf; house < houses.Length && count < noOfElves; house += elf) {
+					houses[house] += elf * multiplier;
+					count++;
+				}
 			}
-			return houseNo - 1;
+
+			int houseNo;
+			for (houseNo = 1; houseNo < houses.Length; houseNo++) {
+				if (houses[houseNo] > target) {
+					break;
+				}
+			}
+
+			return houseNo;
 		}
-
-
-
-
 
 
 		#region Problem initialisation
