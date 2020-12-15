@@ -18,83 +18,44 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 		record Spoken(int No, int TurnNo, bool FirstTime);
 
-		private static int Solution1(string[] input) {
+		private static int Solution(string[] input, int noOfIterations) {
 			string[] inputs = input[0].Split(",");
+			
+			int newLastNo;
 			Dictionary<int, Spoken> gamePlay = new();
-			//int lastNo = 0;
+
 			Spoken lastGo = new(0,0,false);
-			for (int i = 1; i <= inputs.Length; i++) {
-				lastGo = new Spoken(int.Parse(inputs[i-1]), i, true);
+			for (int turnNo = 1; turnNo <= inputs.Length; turnNo++) {
+				lastGo = new Spoken(int.Parse(inputs[turnNo - 1]), turnNo, true);
 				gamePlay.Add(lastGo.No, lastGo);
 			}
-			int newLastNo;
-			for (int turnNo = inputs.Length + 1; turnNo <= 2020; turnNo++) {
+
+			for (int turnNo = inputs.Length + 1; turnNo <= noOfIterations; turnNo++) {
 				if (lastGo.FirstTime) {
 					newLastNo = 0;
-					gamePlay[lastGo.No] = lastGo with
-					{
-						FirstTime = false
-					};
+					gamePlay[lastGo.No] = lastGo with { FirstTime = false };
 				} else {
 					newLastNo = turnNo - 1 - gamePlay[lastGo.No].TurnNo;
-					gamePlay[lastGo.No] = lastGo with
-					{
-						TurnNo = turnNo - 1
-					};
+					gamePlay[lastGo.No] = lastGo with { TurnNo = turnNo - 1 };
 				}
 				lastGo = new(newLastNo, turnNo, !gamePlay.ContainsKey(newLastNo));
 			}
 
-
 			return lastGo.No;
 		}
-
-		private static int Solution2(string[] input) {
-			string[] inputs = input[0].Split(",");
-			Dictionary<int, Spoken> gamePlay = new();
-			Spoken lastGo = new(0, 0, false);
-			for (int i = 1; i <= inputs.Length; i++) {
-				lastGo = new Spoken(int.Parse(inputs[i - 1]), i, true);
-				gamePlay.Add(lastGo.No, lastGo);
-			}
-			int newLastNo;
-			for (int turnNo = inputs.Length + 1; turnNo <= 30000000; turnNo++) {
-				if (lastGo.FirstTime) {
-					newLastNo = 0;
-					gamePlay[lastGo.No] = lastGo with
-					{
-						FirstTime = false
-					};
-				} else {
-					newLastNo = turnNo - 1 - gamePlay[lastGo.No].TurnNo;
-					gamePlay[lastGo.No] = lastGo with
-					{
-						TurnNo = turnNo - 1
-					};
-				}
-				lastGo = new(newLastNo, turnNo, !gamePlay.ContainsKey(newLastNo));
-			}
-
-
-			return lastGo.No;
-		}
-
-
-
 
 
 		#region Problem initialisation
 		public static string Part1(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			return Solution1(input).ToString();
+			return Solution(input, 2020).ToString();
 		}
 		public static string Part2(string[]? input, params object[]? args) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
-			return Solution2(input).ToString();
+			return Solution(input, 30000000).ToString();
 		}
 		#endregion
-
 	}
 }
