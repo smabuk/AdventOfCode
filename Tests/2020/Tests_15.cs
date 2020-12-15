@@ -36,8 +36,29 @@ namespace AdventOfCode.Tests.Year2020 {
 
 		[Theory]
 		[InlineData(new string[] {
+			"0,3,6"
+		}, 175594)]
+		[InlineData(new string[] {
+			"1,3,2"
+		}, 2578)]
+		[InlineData(new string[] {
+			"2,1,3"
+		}, 3544142)]
+		[InlineData(new string[] {
+			"1,2,3"
+		}, 261214)]
+		[InlineData(new string[] {
+			"2,3,1"
+		}, 6895259)]
+		[InlineData(new string[] {
+			"3,2,1"
+		}, 18)]
+		[InlineData(new string[] {
+			"3,1,2"
+		}, 362)]
+		[InlineData(new string[] {
 			"9,12,1,4,17,0,18"
-		}, 30000000)]
+		}, 1407)]
 		public void Part2(string[] input, long expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 15, 2, input), out long actual);
 			Assert.Equal(expected, actual);
