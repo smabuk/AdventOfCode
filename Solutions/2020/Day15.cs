@@ -58,7 +58,7 @@ namespace AdventOfCode.Solutions.Year2020 {
 				gamePlay.Add(lastGo.No, lastGo);
 			}
 			int newLastNo;
-			for (int turnNo = inputs.Length + 1; turnNo <= 2020; turnNo++) {
+			for (int turnNo = inputs.Length + 1; turnNo <= 30000000; turnNo++) {
 				if (lastGo.FirstTime) {
 					newLastNo = 0;
 					gamePlay[lastGo.No] = lastGo with
