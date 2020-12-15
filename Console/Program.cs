@@ -19,8 +19,8 @@ GetInputDataAndSolve(2020, 11, "Seating System");
 GetInputDataAndSolve(2020, 12, "Rain Risk");
 GetInputDataAndSolve(2020, 13, "Shuttle Search");
 GetInputDataAndSolve(2020, 14, "Docking Data");
+GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
 /*
-	GetInputDataAndSolve(2020, 15, "");
 	GetInputDataAndSolve(2020, 16, "");
 	GetInputDataAndSolve(2020, 17, "");
 	GetInputDataAndSolve(2020, 18, "");
