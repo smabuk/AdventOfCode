@@ -4,7 +4,6 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
-
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -59,7 +58,6 @@ GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
 	GetInputDataAndSolve(2015, 24, "");
 	GetInputDataAndSolve(2015, 25, "");
 */
-
 
 static void GetInputDataAndSolve(int year, int day, string title, string[]? input = null, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
