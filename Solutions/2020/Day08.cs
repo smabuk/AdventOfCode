@@ -12,13 +12,13 @@ namespace AdventOfCode.Solutions.Year2020 {
 	/// Day 08: Handheld Halting
 	/// https://adventofcode.com/2020/day/8
 	/// </summary>
-	public class Day08 {
+	public static class Day08 {
 
 		private record Instruction(string Command, int Value);
 
-		private int Accumulator { get; set; }
+		private static int Accumulator { get; set; }
 		
-		private int Solution1(string[] input) {
+		private static int Solution1(string[] input) {
 			List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
 			List<int> VisitedLineNos = new();
 
@@ -33,7 +33,7 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 			return accumulatorPreExecution;
 		}
-		private int Solution2(string[] input) {
+		private static int Solution2(string[] input) {
 			List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
 
 			List<int> ChangedLines = new();
@@ -68,7 +68,7 @@ namespace AdventOfCode.Solutions.Year2020 {
 			})
 		};
 
-		private int ExecuteCommand(Instruction instruction) {
+		private static int ExecuteCommand(Instruction instruction) {
 			int lineJump = 1;
 			switch (instruction.Command) {
 				case "acc":
@@ -104,12 +104,12 @@ namespace AdventOfCode.Solutions.Year2020 {
 
 
 
-		public string Part1(string[]? input) {
+		public static string Part1(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
 			return Solution1(input).ToString();
 		}
-		public string Part2(string[]? input) {
+		public static string Part2(string[]? input) {
 			if (input is null) { return "Error: No data provided"; }
 			input = input.StripTrailingBlankLineOrDefault();
 			return Solution2(input).ToString();
