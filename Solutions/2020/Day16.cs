@@ -19,7 +19,7 @@ namespace AdventOfCode.Solutions.Year2020 {
 	public class Day16 {
 
 		record Input(IEnumerable<TicketField> TicketFields, Ticket YourTicket, IEnumerable<Ticket> NearbyTickets);
-		record TicketField(string Name, int Range1Lower, int Range1Upper, int Range2Lower, int Range2Upper, List<int> AllowedValues);
+		record TicketField(string Name, List<int> AllowedValues);
 		record Ticket(int[] Values);
 
 		private static int Solution1(string[] input) {
@@ -45,26 +45,28 @@ namespace AdventOfCode.Solutions.Year2020 {
 				.ToList();
 
 			List<Ticket> validTickets = new();
-			foreach (var ticket in instructions.NearbyTickets) {
+
+			foreach (Ticket ticket in instructions.NearbyTickets) {
 				if (ticket.Values.All(t => allowedValues.Contains(t))) {
 					validTickets.Add(ticket);
 				}				
 			}
 
 			int noOfFields = instructions.TicketFields.Count();
-
 			List<(string name, int position)> answers = new();
+
 			foreach (TicketField tf in instructions.TicketFields) {
-				for (int i = 1; i <= noOfFields; i++) {
-					int[] values = validTickets.Select(x => x.Values[i - 1]).ToArray();
+				for (int i = 0; i < noOfFields; i++) {
+					IEnumerable<int> values = validTickets.Select(x => x.Values[i]);
 					if (values.All(x => tf.AllowedValues.Contains(x))) {
 						answers.Add((tf.Name, i));
 					}
 				}
 			}
 
-			List<int> departurePositions = new();
-			for (int i = 1; i <= noOfFields; i++) {
+			List<long> departureValues = new();
+
+			for (int i = 0; i < noOfFields; i++) {
 				var names = answers
 					.GroupBy(x => x.name)
 					.Select(group => new { Name = group.Key, Count = group.Count() })
@@ -76,51 +78,53 @@ namespace AdventOfCode.Solutions.Year2020 {
 					answers.RemoveAll(a => a.name == item.Name);
 					answers.RemoveAll(a => a.position == position);
 					if (item.Name.StartsWith("departure")) {
-						departurePositions.Add(position);
+						departureValues.Add(instructions.YourTicket.Values[position]);
 					}
 				}
 			}
-
-			long value = 1L;
-
-			foreach (int pos in departurePositions) {
-				value *= instructions.YourTicket.Values[pos - 1];
-			}
-
-			return value;
+			return departureValues.Aggregate((long x,long y) => x * y);
 		}
 
 
 		private static Input Parse(string[] input) {
+			string line;
 			int i = 0;
 			List<TicketField> ticketFields = new();
 			List<Ticket> nearbyTickets = new();
 			while (!string.IsNullOrEmpty(input[i])) {
-				string name = input[i].Split(": ")[0];
-				string[] ranges = input[i].Split(": ")[1].Split(" or ");
-				TicketField tf = new(name,
-					int.Parse(ranges[0].Split("-")[0]),
-					int.Parse(ranges[0].Split("-")[1]),
-					int.Parse(ranges[1].Split("-")[0]),
-					int.Parse(ranges[1].Split("-")[1]),
-					new()
-					);
-				List<int> values = Enumerable.Range(tf.Range1Lower, tf.Range1Upper + 1 - tf.Range1Lower).Select(i => i)
-					.Union(Enumerable.Range(tf.Range2Lower, tf.Range2Upper + 1 - tf.Range2Lower).Select(i => i)).ToList();
-				ticketFields.Add(tf with { AllowedValues = values });
+				line = input[i];
+				Match match = Regex.Match(line, @"(?<name>[ \w]+): (?<r1lower>\d+)-(?<r1upper>\d+) or (?<r2lower>\d+)-(?<r2upper>\d+)");
+				if (match.Success) {
+					int r1lower = int.Parse(match.Groups["r1lower"].Value);
+					int r1upper = int.Parse(match.Groups["r1upper"].Value);
+					int r2lower = int.Parse(match.Groups["r2lower"].Value);
+					int r2upper = int.Parse(match.Groups["r2upper"].Value);
+					List<int> values = 
+						Enumerable.Range(r1lower, r1upper + 1 - r1lower)
+						.Select(i => i)
+						.Union(
+							Enumerable.Range(r2lower, r2upper + 1 - r2lower)
+							.Select(i => i))
+						.ToList();
+					ticketFields.Add(new (match.Groups["name"].Value, values));
+				}
 				i++;
 			}
 
 			i += 2;
-			Ticket yourTicket = new(input[i].Split(",").Select( i => int.Parse(i)).ToArray());
-
+			line = input[i];
+			Ticket yourTicket = new(line
+				.Split(",")
+				.Select( i => int.Parse(i)).ToArray());
 
 			for (i += 3; i < input.Length; i++) {
-				nearbyTickets.Add(new(input[i].Split(",").Select( i => int.Parse(i)).ToArray()));
+				line = input[i];
+				nearbyTickets.Add(new(line
+								.Split(",")
+								.Select( i => int.Parse(i)).ToArray()));
 			}
 
-			Input theInput = new(ticketFields, yourTicket, nearbyTickets);
-			return theInput;
+			return new(ticketFields, yourTicket, nearbyTickets);
 		}
 
 
