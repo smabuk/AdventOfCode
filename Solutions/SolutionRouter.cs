@@ -20,7 +20,7 @@ namespace AdventOfCode.Solutions {
 			MethodInfo? method =
 				(from a in assembly.GetTypes()
 				 from m in a.GetMethods()
-				 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName.EndsWith($"Year{year}.Day{day:D2}") ?? false)
+				 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
 				 select ((MethodInfo)m)).SingleOrDefault();
 
 			if (method is null) {
@@ -32,7 +32,7 @@ namespace AdventOfCode.Solutions {
 			return noOfParameters switch {
 				0 => NO_PARAMETERS,
 				1 => method.Invoke(0, new object[] { input })?.ToString() ?? "",
-				{ } => method.Invoke(0, new object[] { input, args })?.ToString() ?? ""
+				{ } => method.Invoke(0, new object[] { input, args! })?.ToString() ?? ""
 			};
 
 		}
