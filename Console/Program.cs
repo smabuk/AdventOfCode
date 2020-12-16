@@ -4,6 +4,7 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
+GetInputDataAndSolve(2020, 16, "Ticket Translation"); return;
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
@@ -19,8 +20,8 @@ GetInputDataAndSolve(2020, 12, "Rain Risk");
 GetInputDataAndSolve(2020, 13, "Shuttle Search");
 GetInputDataAndSolve(2020, 14, "Docking Data");
 GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
+GetInputDataAndSolve(2020, 16, "Ticket Translation");
 /*
-	GetInputDataAndSolve(2020, 16, "");
 	GetInputDataAndSolve(2020, 17, "");
 	GetInputDataAndSolve(2020, 18, "");
 	GetInputDataAndSolve(2020, 19, "");
