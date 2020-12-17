@@ -30,7 +30,17 @@ namespace AdventOfCode.Tests.Year2020 {
 			".#.",
 			"..#",
 			"###"
-		}, 9999)]
+		}, 848)]
+		[InlineData(new string[] {
+			"######.#",
+			"##.###.#",
+			"#.###.##",
+			"..#..###",
+			"##.#.#.#",
+			"##...##.",
+			"#.#.##.#",
+			".###.###"
+		}, 2236)]
 		public void Part2(string[] input, long expected) {
 			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 17, 2, input), out long actual);
 			Assert.Equal(expected, actual);

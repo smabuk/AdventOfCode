@@ -4,7 +4,6 @@ using System.IO;
 
 using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2020, 17, "Conway Cubes"); return;
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");
 GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
