@@ -21,8 +21,8 @@ GetInputDataAndSolve(2020, 14, "Docking Data");
 GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
 GetInputDataAndSolve(2020, 16, "Ticket Translation");
 GetInputDataAndSolve(2020, 17, "Conway Cubes");
+GetInputDataAndSolve(2020, 18, "Operation Order");
 /*
-	GetInputDataAndSolve(2020, 18, "");
 	GetInputDataAndSolve(2020, 19, "");
 	GetInputDataAndSolve(2020, 20, "");
 	GetInputDataAndSolve(2020, 21, "");
