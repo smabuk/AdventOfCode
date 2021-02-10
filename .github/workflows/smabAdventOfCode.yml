@@ -2,13 +2,13 @@ name: Deploy ASP.NET Core Web Application to smabAdventOfCode
 on:
   push:
     branches:
-    - master
+    - main
 env:
   AZURE_WEBAPP_NAME: smabAdventOfCode
   AZURE_WEBAPP_PACKAGE_PATH: ./published
   AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.SMABADVENTOFCODE_PUBLISH_PROFILE }}
   CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 5.0.x
+  DOTNET_CORE_VERSION: 6.0.100-preview.7.21379.14
   PROJECT_PATH: Web
 jobs:
   build:
