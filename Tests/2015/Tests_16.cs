@@ -1,16 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿namespace AdventOfCode.Tests.Year2015;
 
-using AdventOfCode.Solutions;
-
-using Xunit;
-using Xunit.Sdk;
-
-namespace AdventOfCode.Tests.Year2015 {
-	public class Tests_16_Aunt_Sue {
-		readonly string[] INPUT_DATA =
- {
+public class Tests_16_Aunt_Sue {
+	readonly string[] INPUT_DATA =
+{
 "Sue 1: children: 1, cars: 8, vizslas: 7",
 "Sue 2: akitas: 10, perfumes: 10, children: 5",
 "Sue 3: cars: 5, pomeranians: 4, vizslas: 1",
@@ -513,22 +505,21 @@ namespace AdventOfCode.Tests.Year2015 {
 "Sue 500: cars: 1, perfumes: 6, vizslas: 1"
 		};
 
-		[Fact]
-		public void Part1() {
-			string[] input = INPUT_DATA;
-			int expected = 213;
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 16, 1, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
-
-		[Fact]
-		public void Part2() {
-			string[] input = INPUT_DATA;
-			int expected = 323;
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 16, 2, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
-
-
+	[Fact]
+	public void Part1() {
+		string[] input = INPUT_DATA;
+		int expected = 213;
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 16, 1, input), out int actual);
+		Assert.Equal(expected, actual);
 	}
+
+	[Fact]
+	public void Part2() {
+		string[] input = INPUT_DATA;
+		int expected = 323;
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 16, 2, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
+
+
 }

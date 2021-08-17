@@ -1,11 +1,8 @@
-﻿using AdventOfCode.Solutions;
+﻿namespace AdventOfCode.Tests.Year2020;
 
-using Xunit;
-
-namespace AdventOfCode.Tests.Year2020 {
-	public class Tests_10_Adapter_Array {
-		[Theory]
-		[InlineData(new string[] {
+public class Tests_10_Adapter_Array {
+	[Theory]
+	[InlineData(new string[] {
 			"16",
 			"10",
 			"15",
@@ -18,7 +15,7 @@ namespace AdventOfCode.Tests.Year2020 {
 			"12",
 			"4"
 		}, 35)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"28",
 			"33",
 			"18",
@@ -51,13 +48,13 @@ namespace AdventOfCode.Tests.Year2020 {
 			"10",
 			"3"
 		}, 220)]
-		public void Part1(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2020, 10, 1, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
+	public void Part1(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2020, 10, 1, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
 
-		[Theory]
-		[InlineData(new string[] {
+	[Theory]
+	[InlineData(new string[] {
 			"16",
 			"10",
 			"15",
@@ -70,7 +67,7 @@ namespace AdventOfCode.Tests.Year2020 {
 			"12",
 			"4"
 		}, 8)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"28",
 			"33",
 			"18",
@@ -103,10 +100,9 @@ namespace AdventOfCode.Tests.Year2020 {
 			"10",
 			"3"
 		}, 19208)]
-		public void Part2(string[] input, long expected) {
-			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 10, 2, input), out long actual);
-			Assert.Equal(expected, actual);
-		}
-
+	public void Part2(string[] input, long expected) {
+		_ = long.TryParse(SolutionRouter.SolveProblem(2020, 10, 2, input), out long actual);
+		Assert.Equal(expected, actual);
 	}
+
 }

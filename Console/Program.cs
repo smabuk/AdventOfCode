@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-
-using static AdventOfCode.Solutions.SolutionRouter;
+﻿using static AdventOfCode.Solutions.SolutionRouter;
 
 GetInputDataAndSolve(2020, 01, "Report Repair");
 GetInputDataAndSolve(2020, 02, "Password Philosophy");

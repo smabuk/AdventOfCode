@@ -1,11 +1,8 @@
-﻿using AdventOfCode.Solutions;
+﻿namespace AdventOfCode.Tests.Year2020;
 
-using Xunit;
-
-namespace AdventOfCode.Tests.Year2020 {
-	public class Tests_09_Encoding_Error {
-		[Theory]
-		[InlineData(new string[] {
+public class Tests_09_Encoding_Error {
+	[Theory]
+	[InlineData(new string[] {
 			"35",
 			"20",
 			"15",
@@ -27,13 +24,13 @@ namespace AdventOfCode.Tests.Year2020 {
 			"309",
 			"576"
 		}, 127)]
-		public void Part1(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2020, 9, 1, input, 5), out int actual);
-			Assert.Equal(expected, actual);
-		}
+	public void Part1(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2020, 9, 1, input, 5), out int actual);
+		Assert.Equal(expected, actual);
+	}
 
-		[Theory]
-		[InlineData(new string[] {
+	[Theory]
+	[InlineData(new string[] {
 "35",
 "20",
 "15",
@@ -55,10 +52,9 @@ namespace AdventOfCode.Tests.Year2020 {
 "309",
 "576"
 	  }, 62)]
-		public void Part2(string[] input, long expected) {
-			_ = long.TryParse(SolutionRouter.SolveProblem(2020, 9, 2, input, 5), out long actual);
-			Assert.Equal(expected, actual);
-		}
-
+	public void Part2(string[] input, long expected) {
+		_ = long.TryParse(SolutionRouter.SolveProblem(2020, 9, 2, input, 5), out long actual);
+		Assert.Equal(expected, actual);
 	}
+
 }

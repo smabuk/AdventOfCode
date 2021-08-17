@@ -1,7 +1,6 @@
 using AdventOfCode.Services;
 using AdventOfCode.SharedUI;
 using AdventOfCode.Web;
-using Microsoft.Extensions.Configuration;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 

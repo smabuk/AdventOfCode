@@ -1,31 +1,28 @@
-﻿using AdventOfCode.Solutions;
+﻿namespace AdventOfCode.Tests.Year2015;
 
-using Xunit;
-
-namespace AdventOfCode.Tests.Year2015 {
-	public class Tests_19_Medicine_for_Rudolph {
-		[Theory]
-		[InlineData(new string[] {
+public class Tests_19_Medicine_for_Rudolph {
+	[Theory]
+	[InlineData(new string[] {
 			"H => HO",
 			"H => OH",
 			"O => HH",
 			"",
-			"HOH"       
+			"HOH"
 		}, 4)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"H => HO",
 			"H => OH",
 			"O => HH",
 			"",
-			"HOHOHO"       
+			"HOHOHO"
 		}, 7)]
-		public void Part1(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 19, 1, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
+	public void Part1(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 19, 1, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
 
-		[Theory]
-		[InlineData(new string[] {
+	[Theory]
+	[InlineData(new string[] {
 			"e => H",
 			"e => O",
 			"H => HO",
@@ -34,7 +31,7 @@ namespace AdventOfCode.Tests.Year2015 {
 			"",
 			"HOH"
 		}, 3)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"e => H",
 			"e => O",
 			"H => HO",
@@ -43,7 +40,7 @@ namespace AdventOfCode.Tests.Year2015 {
 			"",
 			"HOHOHO"
 		}, 6)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"Al => ThF",
 			"Al => ThRnFAr",
 			"B => BCa",
@@ -90,9 +87,8 @@ namespace AdventOfCode.Tests.Year2015 {
 			"",
 			"ORnPBPMgArCaCaCaSiThCaCaSiThCaCaPBSiRnFArRnFArCaCaSiThCaCaSiThCaCaCaCaCaCaSiRnFYFArSiRnMgArCaSiRnPTiTiBFYPBFArSiRnCaSiRnTiRnFArSiAlArPTiBPTiRnCaSiAlArCaPTiTiBPMgYFArPTiRnFArSiRnCaCaFArRnCaFArCaSiRnSiRnMgArFYCaSiRnMgArCaCaSiThPRnFArPBCaSiRnMgArCaCaSiThCaSiRnTiMgArFArSiThSiThCaCaSiRnMgArCaCaSiRnFArTiBPTiRnCaSiAlArCaPTiRnFArPBPBCaCaSiThCaPBSiThPRnFArSiThCaSiThCaSiThCaPTiBSiRnFYFArCaCaPRnFArPBCaCaPBSiRnTiRnFArCaPRnFArSiRnCaCaCaSiThCaRnCaFArYCaSiRnFArBCaCaCaSiThFArPBFArCaSiRnFArRnCaCaCaFArSiRnFArTiRnPMgArF",
 		}, 6)]
-		public void Part2(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 19, 2, input, true), out int actual);
-			Assert.Equal(expected, actual);
-		}
+	public void Part2(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 19, 2, input, true), out int actual);
+		Assert.Equal(expected, actual);
 	}
 }

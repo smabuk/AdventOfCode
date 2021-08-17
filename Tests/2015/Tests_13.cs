@@ -1,11 +1,8 @@
-﻿using AdventOfCode.Solutions;
+﻿namespace AdventOfCode.Tests.Year2015;
 
-using Xunit;
-
-namespace AdventOfCode.Tests.Year2015 {
-	public class Tests_13_Knights_of_the_Dinner_Table {
-		[Theory]
-		[InlineData(new string[] {
+public class Tests_13_Knights_of_the_Dinner_Table {
+	[Theory]
+	[InlineData(new string[] {
 			"Alice would gain 54 happiness units by sitting next to Bob.",
 			"Alice would lose 79 happiness units by sitting next to Carol.",
 			"Alice would lose 2 happiness units by sitting next to David.",
@@ -19,7 +16,7 @@ namespace AdventOfCode.Tests.Year2015 {
 			"David would lose 7 happiness units by sitting next to Bob.",
 			"David would gain 41 happiness units by sitting next to Carol.",
 		}, 330)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"Bob would gain 83 happiness units by sitting next to Alice.",
 			"Bob would lose 7 happiness units by sitting next to Carol.",
 			"Bob would lose 63 happiness units by sitting next to David.",
@@ -33,13 +30,13 @@ namespace AdventOfCode.Tests.Year2015 {
 			"David would lose 7 happiness units by sitting next to Bob.",
 			"David would gain 41 happiness units by sitting next to Carol.",
 		}, 330)]
-		public void Part1(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 13, 1, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
+	public void Part1(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 13, 1, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
 
-		[Theory]
-		[InlineData(new string[] {
+	[Theory]
+	[InlineData(new string[] {
 			"Alice would gain 54 happiness units by sitting next to Bob.",
 			"Alice would lose 79 happiness units by sitting next to Carol.",
 			"Alice would lose 2 happiness units by sitting next to David.",
@@ -53,11 +50,10 @@ namespace AdventOfCode.Tests.Year2015 {
 			"David would lose 7 happiness units by sitting next to Bob.",
 			"David would gain 41 happiness units by sitting next to Carol.",
 		}, 286)]
-		public void Part2(string[] input, int expected) {
-			_ = int.TryParse(SolutionRouter.SolveProblem(2015, 13, 2, input), out int actual);
-			Assert.Equal(expected, actual);
-		}
-
-
+	public void Part2(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 13, 2, input), out int actual);
+		Assert.Equal(expected, actual);
 	}
+
+
 }

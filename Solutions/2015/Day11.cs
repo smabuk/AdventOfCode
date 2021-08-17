@@ -1,76 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
-using AdventOfCode.Solutions.Helpers;
+namespace AdventOfCode.Solutions.Year2015;
 
-namespace AdventOfCode.Solutions.Year2015 {
-	/// <summary>
-	/// Day 11: Corporate Policy
-	/// https://adventofcode.com/2015/day/11
-	/// </summary>
-	public class Day11 {
+/// <summary>
+/// Day 11: Corporate Policy
+/// https://adventofcode.com/2015/day/11
+/// </summary>
+public class Day11 {
 
-		private static string Solution1(string[] input) {
-			string startingPassword = input[0];
-			int pLength = startingPassword.Length;
-			string newPassword = startingPassword;
+	private static string Solution1(string[] input) {
+		string startingPassword = input[0];
+		int pLength = startingPassword.Length;
+		string newPassword = startingPassword;
 
-			bool notValid = false;
-			do {
-				newPassword = IncrementPasswordBy(newPassword, 1);
-				notValid = true;
+		bool notValid = false;
+		do {
+			newPassword = IncrementPasswordBy(newPassword, 1);
+			notValid = true;
 
-				// i, l, o
-				int foundAt = newPassword.IndexOfAny(new char[] { 'i', 'o', 'l' });
-				int col = GetSignficantDigit(foundAt, pLength);
-				while (foundAt >= 0) {
-					newPassword = IncrementPasswordBy(newPassword, PowersOf26[col]);
-					newPassword = newPassword[..(foundAt + 1)] + new string('a', col - 1);
-					foundAt = newPassword.IndexOfAny(new char[] { 'i', 'o', 'l' });
-					col = GetSignficantDigit(foundAt, pLength);
+			// i, l, o
+			int foundAt = newPassword.IndexOfAny(new char[] { 'i', 'o', 'l' });
+			int col = GetSignficantDigit(foundAt, pLength);
+			while (foundAt >= 0) {
+				newPassword = IncrementPasswordBy(newPassword, PowersOf26[col]);
+				newPassword = newPassword[..(foundAt + 1)] + new string('a', col - 1);
+				foundAt = newPassword.IndexOfAny(new char[] { 'i', 'o', 'l' });
+				col = GetSignficantDigit(foundAt, pLength);
+			}
+
+			// double chars
+			List<(char value, int pos)> doublePos = new();
+			bool foundDoubles = false;
+			for (int i = 0; i < pLength - 1; i++) {
+				if (newPassword[i] == newPassword[i + 1]) {
+					doublePos.Add((newPassword[i], i));
 				}
+			}
+			foreach ((char value, int pos) item in doublePos) {
+				if (doublePos.Where(p => p.value != item.value && Math.Abs(p.pos - item.pos) > 1).Any()) {
+					foundDoubles = true;
+				} else {
+					notValid = true;
+					continue;
+				}
+			}
 
-				// double chars
-				List<(char value, int pos)> doublePos = new();
-				bool foundDoubles = false;
-				for (int i = 0; i < pLength - 1; i++) {
-					if (newPassword[i] == newPassword[i + 1]) {
-						doublePos.Add((newPassword[i], i));
+			if (foundDoubles) {
+				// consecutive run of 3
+				for (int i = 0; i < pLength - 2; i++) {
+					if (newPassword[i] == newPassword[i + 1] - 1
+						&& newPassword[i] == newPassword[i + 2] - 2) {
+						notValid = false;
+						break;
 					}
 				}
-				foreach ((char value, int pos) item in doublePos) {
-					if (doublePos.Where(p => p.value != item.value && Math.Abs(p.pos - item.pos) > 1).Any()) {
-						foundDoubles = true;
-					} else {
-						notValid = true;
-						continue;
-					}
-				}
+			}
 
-				if (foundDoubles) {
-					// consecutive run of 3
-					for (int i = 0; i < pLength - 2; i++) {
-						if (newPassword[i] == newPassword[i + 1] - 1
-							&& newPassword[i] == newPassword[i + 2] - 2) {
-							notValid = false;
-							break;
-						}
-					}
-				}
+		} while (notValid);
 
-			} while (notValid);
+		return newPassword;
+	}
 
-			return newPassword;
-		}
-
-		private static int GetSignficantDigit(int foundAt, int pLength) => pLength - foundAt;
+	private static int GetSignficantDigit(int foundAt, int pLength) => pLength - foundAt;
 
 
 
-		/* https://www.minus40.info/sky/powers64.html */
-		protected static readonly long[] PowersOf26 = {
+	/* https://www.minus40.info/sky/powers64.html */
+	protected static readonly long[] PowersOf26 = {
 			0,
 			1,
 			26,
@@ -85,72 +81,71 @@ namespace AdventOfCode.Solutions.Year2015 {
 			141167095653376
 		};
 
-		public static string IncrementPasswordBy(string password, long increment) {
-			// a = 0 -> z = 25
-			int pLength = password.Length;
+	public static string IncrementPasswordBy(string password, long increment) {
+		// a = 0 -> z = 25
+		int pLength = password.Length;
 
-			long value = 0;
-			for (int i = 1; i <= pLength; i++) {
-				int v = password[pLength - i] - 'a';
-				value += v * PowersOf26[i];
-			}
-
-			value += increment;
-			int[] values = new int[pLength];
-			for (int i = pLength; i >= 1; i--) {
-				int v = (int)(value % 26);
-				values[i - 1] = 'a' + v;
-				value /= 26;
-			}
-
-			StringBuilder sb = new();
-			for (int i = 0; i < values.Length; i++) {
-				sb.Append((char)values[i]);
-			}
-
-			return sb.ToString();
+		long value = 0;
+		for (int i = 1; i <= pLength; i++) {
+			int v = password[pLength - i] - 'a';
+			value += v * PowersOf26[i];
 		}
 
-		private static string Solution2(string[] input) {
-			string startingPassword = input[0];
-			string newPassword = startingPassword;
-
-			newPassword = Solution1(new string[] { newPassword });
-			newPassword = Solution1(new string[] { newPassword });
-
-			return newPassword;
+		value += increment;
+		int[] values = new int[pLength];
+		for (int i = pLength; i >= 1; i--) {
+			int v = (int)(value % 26);
+			values[i - 1] = 'a' + v;
+			value /= 26;
 		}
 
-
-
-		#region Problem initialisation
-		/// <summary>
-		/// Sets up the inputs for Part1 of the problem and calls Solution1
-		/// </summary>
-		/// <param name="input"></param>
-		/// Array of strings
-		/// <param name="args"></param>
-		/// Optional extra parameters that may be required as input to the problem
-		/// <returns></returns>
-		public static string Part1(string[]? input, params object[]? args) {
-			if (input is null) { return "Error: No data provided"; }
-			input = input.StripTrailingBlankLineOrDefault();
-			return Solution1(input).ToString();
+		StringBuilder sb = new();
+		for (int i = 0; i < values.Length; i++) {
+			sb.Append((char)values[i]);
 		}
-		/// <summary>
-		/// Sets up the inputs for Part2 of the problem and calls Solution2
-		/// </summary>
-		/// <param name="input"></param>
-		/// Array of strings
-		/// <param name="args"></param>
-		/// Optional extra parameters that may be required as input to the problem
-		/// <returns></returns>
-		public static string Part2(string[]? input, params object[]? args) {
-			if (input is null) { return "Error: No data provided"; }
-			input = input.StripTrailingBlankLineOrDefault();
-			return Solution2(input).ToString();
-		}
-		#endregion
 
+		return sb.ToString();
 	}
+
+	private static string Solution2(string[] input) {
+		string startingPassword = input[0];
+		string newPassword = startingPassword;
+
+		newPassword = Solution1(new string[] { newPassword });
+		newPassword = Solution1(new string[] { newPassword });
+
+		return newPassword;
+	}
+
+
+
+	#region Problem initialisation
+	/// <summary>
+	/// Sets up the inputs for Part1 of the problem and calls Solution1
+	/// </summary>
+	/// <param name="input"></param>
+	/// Array of strings
+	/// <param name="args"></param>
+	/// Optional extra parameters that may be required as input to the problem
+	/// <returns></returns>
+	public static string Part1(string[]? input, params object[]? args) {
+		if (input is null) { return "Error: No data provided"; }
+		input = input.StripTrailingBlankLineOrDefault();
+		return Solution1(input).ToString();
+	}
+	/// <summary>
+	/// Sets up the inputs for Part2 of the problem and calls Solution2
+	/// </summary>
+	/// <param name="input"></param>
+	/// Array of strings
+	/// <param name="args"></param>
+	/// Optional extra parameters that may be required as input to the problem
+	/// <returns></returns>
+	public static string Part2(string[]? input, params object[]? args) {
+		if (input is null) { return "Error: No data provided"; }
+		input = input.StripTrailingBlankLineOrDefault();
+		return Solution2(input).ToString();
+	}
+	#endregion
+
 }

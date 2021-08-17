@@ -1,17 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
+namespace AdventOfCode.Tests.Year2020;
 
-using AdventOfCode.Solutions;
-
-using Xunit;
-
-namespace AdventOfCode.Tests.Year2020 {
-	/// <summary>
-	/// https://adventofcode.com/2020/day/4
-	/// </summary>
-	public class Tests_04 {
-		static readonly string[] _input =
-		{
+/// <summary>
+/// https://adventofcode.com/2020/day/4
+/// </summary>
+public class Tests_04 {
+	static readonly string[] _input =
+	{
 			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
 			"byr:1937 iyr:2017 cid:147 hgt:183cm",
 			"",
@@ -28,14 +22,14 @@ namespace AdventOfCode.Tests.Year2020 {
 		};
 
 
-		[Fact]
-		public void Passport_Processing_Part1() {
-			long actual = Solutions.Year2020.Day04.CountValidPassports(_input, 1);
-			Assert.Equal(2, actual);
-		}
+	[Fact]
+	public void Passport_Processing_Part1() {
+		long actual = Solutions.Year2020.Day04.CountValidPassports(_input, 1);
+		Assert.Equal(2, actual);
+	}
 
-		[Theory]
-		[InlineData(new string[] {
+	[Theory]
+	[InlineData(new string[] {
 			"eyr:1972 cid:100",
 			"hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926",
 			"",
@@ -50,7 +44,7 @@ namespace AdventOfCode.Tests.Year2020 {
 			"eyr:2038 hcl:74454a iyr:2023",
 			"pid:3556412378 byr:2007"
 			}, 0)]
-		[InlineData(new string[] {
+	[InlineData(new string[] {
 			"pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980",
 			"hcl:#623a2f",
 			"",
@@ -64,11 +58,9 @@ namespace AdventOfCode.Tests.Year2020 {
 			"",
 			"iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719"
 			}, 4)]
-		public void Passport_Processing_Part2(string[] input, long expected)
-		{
-			long actual = Solutions.Year2020.Day04.CountValidPassports(input, 2);
-			Assert.Equal(expected, actual);
-		}
-
+	public void Passport_Processing_Part2(string[] input, long expected) {
+		long actual = Solutions.Year2020.Day04.CountValidPassports(input, 2);
+		Assert.Equal(expected, actual);
 	}
+
 }

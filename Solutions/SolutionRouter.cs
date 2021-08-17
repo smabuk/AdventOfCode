@@ -1,40 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace AdventOfCode.Solutions {
-	static public class SolutionRouter {
-		private const string NO_SOLUTION = "** Solution not written yet **";
-		private const string NO_INPUT = "** NO INPUT DATA **";
-		private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
+namespace AdventOfCode.Solutions;
 
-		public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
+static public class SolutionRouter {
+	private const string NO_SOLUTION = "** Solution not written yet **";
+	private const string NO_INPUT = "** NO INPUT DATA **";
+	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
-			if (input is null) {
-				return NO_INPUT;
-			}
+	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
 
-			Assembly assembly = Assembly.GetExecutingAssembly();
-
-			MethodInfo? method =
-				(from a in assembly.GetTypes()
-				 from m in a.GetMethods()
-				 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
-				 select ((MethodInfo)m)).SingleOrDefault();
-
-			if (method is null) {
-				return NO_SOLUTION;
-			}
-
-			int noOfParameters = method.GetParameters().Length;
-
-			return noOfParameters switch {
-				0 => NO_PARAMETERS,
-				1 => method.Invoke(0, new object[] { input })?.ToString() ?? "",
-				{ } => method.Invoke(0, new object[] { input, args! })?.ToString() ?? ""
-			};
-
+		if (input is null) {
+			return NO_INPUT;
 		}
+
+		Assembly assembly = Assembly.GetExecutingAssembly();
+
+		MethodInfo? method =
+			(from a in assembly.GetTypes()
+			 from m in a.GetMethods()
+			 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
+			 select ((MethodInfo)m)).SingleOrDefault();
+
+		if (method is null) {
+			return NO_SOLUTION;
+		}
+
+		int noOfParameters = method.GetParameters().Length;
+
+		return noOfParameters switch {
+			0 => NO_PARAMETERS,
+			1 => method.Invoke(0, new object[] { input })?.ToString() ?? "", { } => method.Invoke(0, new object[] { input, args! })?.ToString() ?? ""
+		};
+
 	}
 }

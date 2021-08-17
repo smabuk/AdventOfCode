@@ -1,38 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿namespace AdventOfCode.Solutions.Year2015;
 
-using AdventOfCode.Solutions.Helpers;
+/// <summary>
+/// Day 21: RPG Simulator 20XX
+/// https://adventofcode.com/2015/day/21
+/// </summary>
+public class Day21 {
 
-using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
+	record Item(string Name, int Cost, int Damage, int Armor);
+	record Weapon(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
+	record Armor(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
+	record Ring(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
 
-namespace AdventOfCode.Solutions.Year2015 {
-	/// <summary>
-	/// Day 21: RPG Simulator 20XX
-	/// https://adventofcode.com/2015/day/21
-	/// </summary>
-	public class Day21 {
+	record Inventory(Weapon Weapon, Armor Armor, List<Ring> Rings) {
+		public int DamageValue => Weapon.Damage + Armor.Damage + Rings.Sum(r => r.Damage);
+		public int ArmorValue => Weapon.Armor + Armor.Armor + Rings.Sum(r => r.Armor);
+		public int Cost => Weapon.Cost + Armor.Cost + Rings.Sum(r => r.Cost);
+	}
 
-		record Item(string Name, int Cost, int Damage, int Armor);
-		record Weapon(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
-		record Armor(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
-		record Ring(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
+	record Player(string Name, int HitPoints, int Damage, int Armor);
 
-		record Inventory(Weapon Weapon, Armor Armor, List<Ring> Rings) {
-			public int DamageValue => Weapon.Damage + Armor.Damage + Rings.Sum(r => r.Damage);
-			public int ArmorValue => Weapon.Armor + Armor.Armor + Rings.Sum(r => r.Armor);
-			public int Cost => Weapon.Cost + Armor.Cost + Rings.Sum(r => r.Cost);
-		}
-
-		record Player(string Name, int HitPoints, int Damage, int Armor);
-
-		const int PLAYER_HIT_POINTS = 100;
-		static readonly Item[] SHOP = {
+	const int PLAYER_HIT_POINTS = 100;
+	static readonly Item[] SHOP = {
 			new Weapon("Dagger", 8, 4, 0),
 			new Weapon("Shortsword", 10, 5, 0),
 			new Weapon("Warhammer", 25, 6, 0),
@@ -58,105 +46,104 @@ namespace AdventOfCode.Solutions.Year2015 {
 
 
 
-		private static int Solution1(string[] input) {
-			int bossHitPoints = int.Parse(input[0].Split(": ")[1]);
-			int bossDamage = int.Parse(input[1].Split(": ")[1]);
-			int bossArmor = int.Parse(input[2].Split(": ")[1]);
-			Player boss = new("Boss", bossHitPoints, bossDamage, bossArmor);
+	private static int Solution1(string[] input) {
+		int bossHitPoints = int.Parse(input[0].Split(": ")[1]);
+		int bossDamage = int.Parse(input[1].Split(": ")[1]);
+		int bossArmor = int.Parse(input[2].Split(": ")[1]);
+		Player boss = new("Boss", bossHitPoints, bossDamage, bossArmor);
 
-			List<Inventory> attempts = GetAttempts().ToList();
+		List<Inventory> attempts = GetAttempts().ToList();
 
-			int leastGold = int.MaxValue;
-			foreach (Inventory attempt in attempts) {
-				Player player = new("Player", PLAYER_HIT_POINTS, attempt.DamageValue, attempt.ArmorValue);
-				if (PlayTheGame(player, boss)) {
-					if (leastGold > attempt.Cost) {
-						leastGold = attempt.Cost;
-					}
+		int leastGold = int.MaxValue;
+		foreach (Inventory attempt in attempts) {
+			Player player = new("Player", PLAYER_HIT_POINTS, attempt.DamageValue, attempt.ArmorValue);
+			if (PlayTheGame(player, boss)) {
+				if (leastGold > attempt.Cost) {
+					leastGold = attempt.Cost;
 				}
 			}
-
-			return leastGold;
 		}
 
-		private static int Solution2(string[] input) {
-			int bossHitPoints = int.Parse(input[0].Split(": ")[1]);
-			int bossDamage = int.Parse(input[1].Split(": ")[1]);
-			int bossArmor = int.Parse(input[2].Split(": ")[1]);
-			Player boss = new("Boss", bossHitPoints, bossDamage, bossArmor);
-
-			List<Inventory> attempts = GetAttempts().ToList();
-
-			int mostGold = 0;
-			foreach (Inventory attempt in attempts) {
-				Player player = new("Player", PLAYER_HIT_POINTS, attempt.DamageValue, attempt.ArmorValue);
-				if (PlayTheGame(player, boss) == false) {
-					if (mostGold < attempt.Cost) {
-						mostGold = attempt.Cost;
-					}
-				}
-			}
-
-			return mostGold;
-		}
-
-		private static bool PlayTheGame(Player player, Player boss) {
-			bool playersTurn = false;
-			do {
-				playersTurn = !playersTurn;
-				if (playersTurn) {
-					int damageDone = player.Damage - boss.Armor;
-					if (damageDone <= 0) {
-						damageDone = 1;
-					}
-					boss = boss with { HitPoints = boss.HitPoints - damageDone };
-				} else {
-					int damageDone = boss.Damage - player.Armor;
-					if (damageDone <= 0) {
-						damageDone = 1;
-					}
-					player = player with { HitPoints = player.HitPoints - damageDone };
-				}
-
-			} while (player.HitPoints > 0 && boss.HitPoints > 0);
-
-			return player.HitPoints > 0; // Player wins
-		}
-
-		private static IEnumerable<Inventory> GetAttempts() {
-			return SHOP.Where(x => x is Weapon)
-				.SelectMany(weapon => SHOP.Where(x => x is Armor)
-				.SelectMany(armor => SHOP.Where(x => x is Ring).Combinations(2).ToArray()
-				.Select(rings => new Inventory((Weapon)weapon, (Armor)armor, rings.Cast<Ring>().ToList()))));
-		}
-
-		//private static IEnumerable<Inventory> GetAttemptsV1() {
-		//	foreach (Weapon weapon in SHOP.Where(x => x is Weapon)) {
-		//		foreach (Armor armor in SHOP.Where(x => x is Armor)) {
-		//			foreach (var rings in SHOP.Where(x => x is Ring).Combinations(2).ToArray()) {
-		//				yield return new Inventory(weapon, armor, rings.Cast<Ring>().ToList());
-		//			}
-		//		}
-		//	}
-		//}
-
-
-
-
-
-		#region Problem initialisation
-		public static string Part1(string[]? input, params object[]? args) {
-			if (input is null) { return "Error: No data provided"; }
-			input = input.StripTrailingBlankLineOrDefault();
-			return Solution1(input).ToString();
-		}
-		public static string Part2(string[]? input, params object[]? args) {
-			if (input is null) { return "Error: No data provided"; }
-			// int arg1 = GetArgument(args, 1, 25);
-			input = input.StripTrailingBlankLineOrDefault();
-			return Solution2(input).ToString();
-		}
-		#endregion
-
+		return leastGold;
 	}
+
+	private static int Solution2(string[] input) {
+		int bossHitPoints = int.Parse(input[0].Split(": ")[1]);
+		int bossDamage = int.Parse(input[1].Split(": ")[1]);
+		int bossArmor = int.Parse(input[2].Split(": ")[1]);
+		Player boss = new("Boss", bossHitPoints, bossDamage, bossArmor);
+
+		List<Inventory> attempts = GetAttempts().ToList();
+
+		int mostGold = 0;
+		foreach (Inventory attempt in attempts) {
+			Player player = new("Player", PLAYER_HIT_POINTS, attempt.DamageValue, attempt.ArmorValue);
+			if (PlayTheGame(player, boss) == false) {
+				if (mostGold < attempt.Cost) {
+					mostGold = attempt.Cost;
+				}
+			}
+		}
+
+		return mostGold;
+	}
+
+	private static bool PlayTheGame(Player player, Player boss) {
+		bool playersTurn = false;
+		do {
+			playersTurn = !playersTurn;
+			if (playersTurn) {
+				int damageDone = player.Damage - boss.Armor;
+				if (damageDone <= 0) {
+					damageDone = 1;
+				}
+				boss = boss with { HitPoints = boss.HitPoints - damageDone };
+			} else {
+				int damageDone = boss.Damage - player.Armor;
+				if (damageDone <= 0) {
+					damageDone = 1;
+				}
+				player = player with { HitPoints = player.HitPoints - damageDone };
+			}
+
+		} while (player.HitPoints > 0 && boss.HitPoints > 0);
+
+		return player.HitPoints > 0; // Player wins
+	}
+
+	private static IEnumerable<Inventory> GetAttempts() {
+		return SHOP.Where(x => x is Weapon)
+			.SelectMany(weapon => SHOP.Where(x => x is Armor)
+			.SelectMany(armor => SHOP.Where(x => x is Ring).Combinations(2).ToArray()
+			.Select(rings => new Inventory((Weapon)weapon, (Armor)armor, rings.Cast<Ring>().ToList()))));
+	}
+
+	//private static IEnumerable<Inventory> GetAttemptsV1() {
+	//	foreach (Weapon weapon in SHOP.Where(x => x is Weapon)) {
+	//		foreach (Armor armor in SHOP.Where(x => x is Armor)) {
+	//			foreach (var rings in SHOP.Where(x => x is Ring).Combinations(2).ToArray()) {
+	//				yield return new Inventory(weapon, armor, rings.Cast<Ring>().ToList());
+	//			}
+	//		}
+	//	}
+	//}
+
+
+
+
+
+	#region Problem initialisation
+	public static string Part1(string[]? input, params object[]? args) {
+		if (input is null) { return "Error: No data provided"; }
+		input = input.StripTrailingBlankLineOrDefault();
+		return Solution1(input).ToString();
+	}
+	public static string Part2(string[]? input, params object[]? args) {
+		if (input is null) { return "Error: No data provided"; }
+		// int arg1 = GetArgument(args, 1, 25);
+		input = input.StripTrailingBlankLineOrDefault();
+		return Solution2(input).ToString();
+	}
+	#endregion
+
 }

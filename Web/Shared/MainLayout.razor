@@ -5,7 +5,7 @@
         <NavMenu Year="@Year"/>
     </div>
 
-    <div class="main">
+    <main>
         <div class="top-row">
             <MainHeader Year="@Year" />
             <h3>Advent of Code @(Year == 0 ? "" : Year)</h3>
@@ -14,7 +14,7 @@
         <div class="content px-4">
             @Body
         </div>
-    </div>
+    </main>
 </div>
 
 @code {
