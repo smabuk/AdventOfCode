@@ -71,6 +71,10 @@ public class AocHttpClient : IAocHttpClient {
 			string page = await response.Content.ReadAsStringAsync();
 
 			int start = page.IndexOf("class=\"user\"") + 13;
+			if (start - 13 <= 0) {
+				return null;
+			}
+
 			int end = page[start..].IndexOf("<");
 			summary.UserName = page[start..(start + end)];
 
