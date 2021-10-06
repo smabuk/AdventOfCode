@@ -1,0 +1,20 @@
+﻿:root {
+    --bg-color: #fff;
+    --text-color: #424242;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #3a0647;
+        --text-color: #e1e1ff;
+    }
+
+    pre code  {
+	    color: var(--text-color);
+    }
+}
+
+html, body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}

@@ -8,4 +8,11 @@ h5 {
 
 textarea {
     width: 95%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+select {
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
