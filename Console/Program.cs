@@ -1,24 +1,26 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2020, 01, "Report Repair");
-GetInputDataAndSolve(2020, 02, "Password Philosophy");
-GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
-GetInputDataAndSolve(2020, 04, "Passport Processing");
-GetInputDataAndSolve(2020, 05, "Binary Boarding");
-GetInputDataAndSolve(2020, 06, "Custom Customs");
-GetInputDataAndSolve(2020, 07, "Handy Haversacks");
-GetInputDataAndSolve(2020, 08, "Handheld Halting");
-GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
-GetInputDataAndSolve(2020, 10, "Adapter Array");
-GetInputDataAndSolve(2020, 11, "Seating System");
-GetInputDataAndSolve(2020, 12, "Rain Risk");
-GetInputDataAndSolve(2020, 13, "Shuttle Search");
-GetInputDataAndSolve(2020, 14, "Docking Data");
-GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
-GetInputDataAndSolve(2020, 16, "Ticket Translation");
-GetInputDataAndSolve(2020, 17, "Conway Cubes");
-GetInputDataAndSolve(2020, 18, "Operation Order");
+GetInputDataAndSolve(2021, 01, "Day 1");
+
 /*
+	GetInputDataAndSolve(2020, 01, "Report Repair");
+	GetInputDataAndSolve(2020, 02, "Password Philosophy");
+	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
+	GetInputDataAndSolve(2020, 04, "Passport Processing");
+	GetInputDataAndSolve(2020, 05, "Binary Boarding");
+	GetInputDataAndSolve(2020, 06, "Custom Customs");
+	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
+	GetInputDataAndSolve(2020, 08, "Handheld Halting");
+	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
+	GetInputDataAndSolve(2020, 10, "Adapter Array");
+	GetInputDataAndSolve(2020, 11, "Seating System");
+	GetInputDataAndSolve(2020, 12, "Rain Risk");
+	GetInputDataAndSolve(2020, 13, "Shuttle Search");
+	GetInputDataAndSolve(2020, 14, "Docking Data");
+	GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
+	GetInputDataAndSolve(2020, 16, "Ticket Translation");
+	GetInputDataAndSolve(2020, 17, "Conway Cubes");
+	GetInputDataAndSolve(2020, 18, "Operation Order");
 	GetInputDataAndSolve(2020, 19, "");
 	GetInputDataAndSolve(2020, 20, "");
 	GetInputDataAndSolve(2020, 21, "");
@@ -63,7 +65,7 @@ static void GetInputDataAndSolve(int year, int day, string title, string[]? inpu
 	}
 
 	Console.WriteLine();
-	Console.WriteLine($"{year} DAY {day, 2} - {title}");
+	Console.WriteLine($"{year} DAY {day,2} - {title}");
 	if (input is not null) {
 		Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input, args)}");
 		Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input, args)}");
@@ -71,5 +73,8 @@ static void GetInputDataAndSolve(int year, int day, string title, string[]? inpu
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
 
+	Console.WriteLine();
+	Console.Write("Press a key to continue ... ");
+	Console.ReadKey();
 }
 

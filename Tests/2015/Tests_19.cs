@@ -21,7 +21,7 @@ public class Tests_19_Medicine_for_Rudolph {
 		Assert.Equal(expected, actual);
 	}
 
-	[Theory]
+	[Theory(Skip = "Not yet solved and not being actively worked on")]
 	[InlineData(new string[] {
 			"e => H",
 			"e => O",
