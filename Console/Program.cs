@@ -29,6 +29,9 @@ GetInputDataAndSolve(2021, 01, "Day 1");
 	GetInputDataAndSolve(2020, 24, "");
 	GetInputDataAndSolve(2020, 25, "");
 
+	GetInputDataAndSolve(2019, 01, "The Tyranny of the Rocket Equation");
+	GetInputDataAndSolve(2019, 02, "1202 Program Alarm");
+
 	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
 	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
 	GetInputDataAndSolve(2015, 03, "Perfectly Spherical Houses in a Vacuum");
