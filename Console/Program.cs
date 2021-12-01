@@ -1,6 +1,6 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2021, 01, "Day 1");
+GetInputDataAndSolve(2021, 01, "Sonar Sweep");
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
