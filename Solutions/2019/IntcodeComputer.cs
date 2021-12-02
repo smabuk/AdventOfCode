@@ -12,6 +12,10 @@ public class IntcodeComputer {
 		Multiply = 2,
 		Input = 3,
 		Output = 4,
+		JumpIfTrue = 5,
+		JumpIfFalse = 6,
+		LessThan = 7,
+		Equals = 8,
 		Halt = 99
 	}
 
@@ -69,12 +73,42 @@ public class IntcodeComputer {
 					i += 1;
 					break;
 				case OpCode.Output:
-					// outputs the value of its only parameter
-					outputList.Add(program[program[i + 1]]);
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					outputList.Add(value1);
 					i += 1;
 					break;
-				default:
+				case OpCode.JumpIfTrue:
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					if (value1 != 0) {
+						i = value2 - 1;
+					} else {
+						i += 2;
+					}
 					break;
+				case OpCode.JumpIfFalse:
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					if (value1 == 0) {
+						i = value2 - 1;
+					} else {
+						i += 2;
+					}
+					break;
+				case OpCode.LessThan:
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					program[program[i + 3]] = value1 < value2 ? 1 : 0;
+					i += 3;
+					break;
+				case OpCode.Equals:
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					program[program[i + 3]] = value1 == value2 ? 1 : 0;
+					i += 3;
+					break;
+				default:
+					throw new Exception();
 			}
 		}
 
