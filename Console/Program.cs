@@ -2,6 +2,7 @@
 
 GetInputDataAndSolve(2021, 01, "Sonar Sweep");
 GetInputDataAndSolve(2021, 02, "Dive!");
+GetInputDataAndSolve(2021, 03, "Day 03");
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
@@ -34,6 +35,8 @@ GetInputDataAndSolve(2021, 02, "Dive!");
 	GetInputDataAndSolve(2019, 02, "1202 Program Alarm");
 	GetInputDataAndSolve(2019, 03, "Crossed Wires");
 	GetInputDataAndSolve(2019, 04, "Secure Container");
+	GetInputDataAndSolve(2019, 05, "Sunny with a Chance of Asteroids");
+	GetInputDataAndSolve(2019, 06, "Universal Orbit Map");
 
 	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
 	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
