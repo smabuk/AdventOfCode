@@ -12,7 +12,7 @@ public class Tests_05_Sunny_with_a_Chance_of_Asteroids {
 	[Theory]
 	[InlineData(new int[] { 1002, 4, 3, 4, 33 }, new int[] { 1 }, new int[] { 1002, 4, 3, 4, 99 })]
 	public void IntcodeComputerTests(int[] program, int[] input, int[] expected) {
-		int[] result = IntcodeComputer.ExecuteIntcodeProgram(program, input, out int[] actual);
+		int[] actual = IntcodeComputer.ExecuteIntcodeProgram(program, input, out int[] _);
 		Assert.Equal(expected, actual);
 	}
 

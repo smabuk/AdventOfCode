@@ -20,9 +20,14 @@ public class IntcodeComputer {
 		public static Instruction Parse(int instruction) {
 			const int noOfDigits = 10;
 
-			// GetLastDigit
 			int opCode = instruction % 100;
+			string instructionString = instruction.ToString();
 			ParameterMode[] parameterModes = new ParameterMode[noOfDigits];
+			for (int i = 0; i < instructionString.Length - 2; i++) {
+				if (instructionString[i] == '1') {
+					parameterModes[instructionString.Length - 3 - i] = ParameterMode.Immediate;
+				}
+			}
 
 			return new Instruction((OpCode)opCode, parameterModes);
 		}
@@ -37,15 +42,21 @@ public class IntcodeComputer {
 
 		for (int i = 0; i < program.Length && program[i] != 99; i++) {
 			Instruction instruction = Instruction.Parse(program[i]);
+			int value1;
+			int value2;
 			switch (instruction.OpCode) {
 				case OpCode.Halt:
 					break;
 				case OpCode.Add:
-					program[program[i + 3]] = program[program[i + 1]] + program[program[i + 2]];
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					program[program[i + 3]] = value1 + value2;
 					i += 3;
 					break;
 				case OpCode.Multiply:
-					program[program[i + 3]] = program[program[i + 1]] * program[program[i + 2]];
+					value1 = instruction.ParameterModes[0] == ParameterMode.Position ? program[program[i + 1]] : program[i + 1];
+					value2 = instruction.ParameterModes[1] == ParameterMode.Position ? program[program[i + 2]] : program[i + 2];
+					program[program[i + 3]] = value1 * value2;
 					i += 3;
 					break;
 				case OpCode.Input:

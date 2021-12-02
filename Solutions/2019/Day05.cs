@@ -13,7 +13,7 @@ public class Day05 {
 		int[] program = inputLine.Split(",").Select(i => int.Parse(i)).ToArray();
 
 		int[] newProgram = IntcodeComputer.ExecuteIntcodeProgram(program, programInput, out int[] output);
-		return output[0].ToString();
+		return output[^1].ToString();
 	}
 
 	private static string Solution2(string[] input) {
@@ -39,7 +39,7 @@ public class Day05 {
 	#region Problem initialisation
 	public static string Part1(string[]? input, params object[]? args) {
 		if (input is null) { return "Error: No data provided"; }
-		int[] programInput = GetArgument(args, 1, Array.Empty<int>());
+		int[] programInput = GetArgument(args, 1, new int[] { 1 });
 		input = input.StripTrailingBlankLineOrDefault();
 		return Solution1(input, programInput).ToString();
 	}
