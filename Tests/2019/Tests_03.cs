@@ -17,7 +17,7 @@ public class Tests_03_Crossed_Wires {
 		"U98,R91,D20,R16,D67,R40,U7,R15,U6,R7" 
 		}, 135)]
 	public void Part1(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 3, 1, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 3, 1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -35,7 +35,7 @@ public class Tests_03_Crossed_Wires {
 		"U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
 		}, 410)]
 	public void Part2(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 3, 2, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 3, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 

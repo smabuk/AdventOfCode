@@ -10,14 +10,14 @@ public class Day01 {
 		List<int> inputs = input.ToList().Select(x => int.Parse(x)).ToList();
 		int count = inputs.Zip(inputs.Skip(1), (d1, d2) => d2 - d1).Count(increase => increase > 0);
 		return count.ToString();
-		}
+	}
 
 	private static string Solution2(string[] input) {
 		int[] inputs = input.ToList().Select(x => int.Parse(x)).ToArray();
 		int current = inputs[0..3].Sum();
 		int count = 0;
 		for (int i = 1; i < inputs.Length - 2; i++) {
-			int depth = inputs[i..(i+3)].Sum();
+			int depth = inputs[i..(i + 3)].Sum();
 			if (depth > current) {
 				count++;
 			}

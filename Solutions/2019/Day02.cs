@@ -15,27 +15,7 @@ public class Day02 {
 			inputs[2] = 2;
 		}
 
-		return ExecuteIntcodeProgram(inputs);
-	}
-
-	private static string ExecuteIntcodeProgram(int[] inputs) {
-		for (int i = 0; i < inputs.Length && inputs[i] != 99; i++) {
-			switch (inputs[i]) {
-				case 99:
-					break;
-				case 1:
-					inputs[inputs[i + 3]] = inputs[inputs[i + 1]] + inputs[inputs[i + 2]];
-					i += 3;
-					break;
-				case 2:
-					inputs[inputs[i + 3]] = inputs[inputs[i + 1]] * inputs[inputs[i + 2]];
-					i += 3;
-					break;
-				default:
-					break;
-			}
-		}
-		return String.Join(",", inputs);
+		return String.Join(",", IntcodeComputer.ExecuteIntcodeProgram(inputs)).ToString();
 	}
 
 	private static int Solution2(string[] input) {
@@ -48,7 +28,7 @@ public class Day02 {
 				int[] newInputs = (int[])inputs.Clone();
 				newInputs[1] = noun;
 				newInputs[2] = verb;
-				int result = int.Parse(ExecuteIntcodeProgram(newInputs).Split(",").First());
+				int result = IntcodeComputer.ExecuteIntcodeProgram(newInputs)[0];
 				if (result == ExpectedResult) {
 					return 100 * noun + verb;
 				};

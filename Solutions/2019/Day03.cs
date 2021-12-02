@@ -1,6 +1,4 @@
-﻿using static AdventOfCode.Solutions.Year2015.Day06;
-
-namespace AdventOfCode.Solutions.Year2019;
+﻿namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 03: Crossed Wires

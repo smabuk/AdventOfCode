@@ -8,7 +8,7 @@ public class Tests_04_Secure_Container{
 	[InlineData(new string[] { "123789-123789" }, 0)]
 	[InlineData(new string[] { "172930-683082" }, 1675)]
 	public void Part1(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 4, 1, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 4, 1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -18,7 +18,7 @@ public class Tests_04_Secure_Container{
 	[InlineData(new string[] { "111122-111122" }, 1)]
 	[InlineData(new string[] { "172930-683082" }, 1142)]
 	public void Part2(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 4, 2, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 4, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
