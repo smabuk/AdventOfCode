@@ -12,11 +12,25 @@ public class GithubHttpClient : IGithubHttpClient {
 		"smabuk",
 		"encse",
 		"glombek",
+		"pseale",
 		"CopperBeardy",
 		"Rollerss",
 		"KevinSjoberg",
 		"Andriamanitra",
 		"Bassel-T"
+	};
+
+	public string UserLanguages(string username) => username switch {
+			"smabuk" => "c#",
+			"encse" => "c#",
+			"glombek" => "c#",
+			"pseale" => "c#",
+			"CopperBeardy" => "c#",
+			"Rollerss" => "c#",
+			"KevinSjoberg" => "crystal",
+			"Andriamanitra" => "multi",
+			"Bassel-T" => "c#",
+			_ => ""
 	};
 
 	public string GetSolutionHref(int year, int day, string username) {
@@ -33,6 +47,7 @@ public class GithubHttpClient : IGithubHttpClient {
 			"glombek" => $"{GITHUB}glombek/advent-of-code-{year % 1000}/blob/main/Days/Day{day}.cs",
 			//"ians-au" => $"{GITHUB}ians-au/AdventOfCode{year}/blob/main/day{day:D2}.cs",
 			"kevinsjoberg" => $"{GITHUB}KevinSjoberg/aoc-{year}/blob/main/{day:D2}/day{day:D2}.cr",
+			"pseale" => $"{GITHUB}pseale/advent-of-code/blob/main/{year}-csharp/Day{day:D2}/Program.cs",
 			"rollerss" => $"{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs",
 			"smabuk" => $"{GITHUB}smabuk/AdventOfCode/tree/master/Solutions/{year}/Day{day:D2}.cs",
 			_ => "",
@@ -54,6 +69,7 @@ public class GithubHttpClient : IGithubHttpClient {
 			//"ians-au" => $"",
 			"kevinsjoberg" => $"KevinSjoberg/aoc-{year}/main/{day:D2}/input.txt",
 			"rollerss" => $"Rollerss/AOC_{year}/master/AOC/InputData/AOCDay{day:D2}.txt",
+			"pseale" => $"pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt",
 			"smabuk" => $"smabuk/AdventOfCode/master/Data/{year}_{day:D2}.txt",
 			_ => "",
 		};

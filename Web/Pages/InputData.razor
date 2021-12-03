@@ -17,7 +17,7 @@
             <InputSelect @bind-Value="GitHubUserSelect" DisplayName="User">
                 <option value="">Select a user</option>
                 @foreach (string name in githubClient.KnownUsers) {
-                    <option value="@name">@name</option>
+                    <option value="@name">@name (@githubClient.UserLanguages(name))</option>
                 }
             </InputSelect>
             <a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
