@@ -2,7 +2,7 @@
 
 GetInputDataAndSolve(2021, 01, "Sonar Sweep");
 GetInputDataAndSolve(2021, 02, "Dive!");
-GetInputDataAndSolve(2021, 03, "Day 03");
+GetInputDataAndSolve(2021, 03, "Binary Diagnostic");
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
