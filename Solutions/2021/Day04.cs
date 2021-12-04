@@ -11,18 +11,20 @@ public class Day04 {
 		readonly List<int> _unmarkedNos = new();
 
 		public bool IsWin = false;
-		public int SumOfUnmarkedNos => _unmarkedNos.Sum();
-	
+		public int WinningValue;
+
 		public BingoBoard(List<int> boardNos) {
 			_unmarkedNos = boardNos;
 
 			for (int i = 0; i < 5; i++) {
+				// Rows
 				_lines.Add(boardNos.Skip(i * 5).Take(5).ToList());
-				List<int> column = new();
-				for (int j = 0; j < 5; j++) {
-					column.Add(boardNos.ElementAt(j * 5 + i));
-				}
-				_lines.Add(column);
+				// Columns
+				_lines.Add(
+					Enumerable.Range(0, 5)
+					.Select(col => boardNos.ElementAt((col * 5) + i))
+					.ToList()
+				);
 			}
 		}
 
@@ -32,6 +34,7 @@ public class Day04 {
 				line.Remove(number);
 				if (line.Count == 0) {
 					IsWin = true;
+					WinningValue = number * _unmarkedNos.Sum();
 				}
 			}
 			return IsWin;
@@ -45,7 +48,7 @@ public class Day04 {
 		foreach (int no in numberOrder) {
 			foreach (BingoBoard board in bingoBoards) {
 				if (board.MarkNo(no)) {
-					return (no * board.SumOfUnmarkedNos).ToString();
+					return board.WinningValue.ToString();
 				}
 			}
 		}
@@ -61,7 +64,7 @@ public class Day04 {
 		foreach (int no in numberOrder) {
 			foreach (BingoBoard board in bingoBoards) {
 				if (board.MarkNo(no)) {
-					lastWinningBoardResult = no * board.SumOfUnmarkedNos;
+					lastWinningBoardResult = board.WinningValue;
 				}
 			}
 			bingoBoards.RemoveAll(b => b.IsWin);
@@ -73,15 +76,13 @@ public class Day04 {
 	private static List<BingoBoard> ParseBingoBoards(string[] input) {
 		List<BingoBoard> bingoBoards = new();
 		for (int boardNo = 0; boardNo < ((input.Length + 1) / 6); boardNo++) {
-			List<int> boardNos = new();
-			for (int rowNo = 0; rowNo < 5; rowNo++) {
-				boardNos.AddRange(input[(boardNo * 6) + rowNo]
-					.Trim()
-					.Replace("  ", " ")
-					.Split(" ")
-					.Select(x => int.Parse(x))
-					.ToList());
-			}
+			List<int> boardNos = Enumerable
+				.Range(0, 5)
+				.SelectMany(rowNo =>
+					input[(boardNo * 6) + rowNo]
+					.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+					.Select(x => int.Parse(x)))
+				.ToList();
 			bingoBoards.Add(new BingoBoard(boardNos));
 		}
 		return bingoBoards;
