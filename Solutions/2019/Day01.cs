@@ -6,33 +6,27 @@
 /// </summary>
 public class Day01 {
 
-	private static long Solution1(string[] input) {
-		List<string> inputs = input.ToList();
+	private static int Solution1(string[] input) {
+		List<int> moduleMasses = input.Select(x => int.Parse(x)).ToList();
 
-		long sum = 0;
-		foreach (string item in inputs) {
-			long mass = long.Parse(item);
-			sum += CalculateFuelFromMass(mass);
-		}
-		return sum;
+		return moduleMasses
+			.Select(m => CalculateFuelFromMass(m))
+			.Sum();
 	}
 
-	private static long CalculateFuelFromMass(long mass) => (long)Math.Floor(mass / 3.0) - 2;
+	private static int CalculateFuelFromMass(int mass) => (int)Math.Floor(mass / 3.0) - 2;
 
-	private static long Solution2(string[] input) {
-		List<string> inputs = input.ToList();
+	private static int Solution2(string[] input) {
+		List<int> moduleMasses = input.Select(x => int.Parse(x)).ToList();
 
-		long sum = 0;
-		foreach (string item in inputs) {
-			long mass = long.Parse(item);
-			sum += CalculateFuelFromMassPart2(mass);
-		}
-		return sum;
+		return moduleMasses
+			.Select(m => CalculateFuelFromMassPart2(m))
+			.Sum();
 	}
 
-	private static long CalculateFuelFromMassPart2(long mass) {
-		long sum = 0;
-		long fuel = CalculateFuelFromMass(mass);
+	private static int CalculateFuelFromMassPart2(int mass) {
+		int sum = 0;
+		int fuel = CalculateFuelFromMass(mass);
 		while (fuel > 0) {
 			sum += fuel;
 			fuel = CalculateFuelFromMass(fuel);

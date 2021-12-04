@@ -7,9 +7,7 @@
 public class Day04 {
 
 	private static string Solution1(string[] input) {
-		string[] inputs = input[0].Split("-");
-		int start = int.Parse(inputs[0]);
-		int end = int.Parse(inputs[1]);
+		(int start, int end) = ParseInputs(input);
 
 		int count = 0;
 		for (int i = start; i <= end; i++) {
@@ -42,9 +40,7 @@ public class Day04 {
 	}
 
 	private static string Solution2(string[] input) {
-		string[] inputs = input[0].Split("-");
-		int start = int.Parse(inputs[0]);
-		int end = int.Parse(inputs[1]);
+		(int start, int end) = ParseInputs(input);
 
 		int count = 0;
 		for (int i = start; i <= end; i++) {
@@ -81,6 +77,13 @@ public class Day04 {
 
 		return false;
 	}
+	private static (int start, int end) ParseInputs(string[] input) {
+		string[] inputs = input[0].Split("-");
+		int start = int.Parse(inputs[0]);
+		int end = int.Parse(inputs[1]);
+		return (start, end);
+	}
+
 
 
 

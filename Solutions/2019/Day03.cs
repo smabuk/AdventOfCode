@@ -29,9 +29,9 @@ public class Day03 {
 			wire2.AddRange(GetPoints(wire2.Last(), instruction));
 		}
 
-		wire1.Remove(startPos);
 		return wire1
 			.Intersect(wire2)
+			.Where(p => p != startPos)
 			.MinBy(p => p.ManhattanDistance(startPos))!
 			.ManhattanDistance(startPos)
 			.ToString();
@@ -70,8 +70,7 @@ public class Day03 {
 			wire2.AddRange(GetPoints(wire2.Last(), instruction));
 		}
 
-		List<Point> pointsCrossOver = wire1.Intersect(wire2).ToList();
-		pointsCrossOver.Remove(startPos);
+		List<Point> pointsCrossOver = wire1.Intersect(wire2).Where(p => p != startPos).ToList();
 
 		int shortestDistance = int.MaxValue;
 		foreach (var point in pointsCrossOver) {
@@ -93,7 +92,7 @@ public class Day03 {
 		if (match.Success) {
 			return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
 		}
-		return null!;
+		throw new Exception();
 	}
 
 

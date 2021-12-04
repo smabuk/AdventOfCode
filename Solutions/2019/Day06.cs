@@ -8,21 +8,17 @@ namespace AdventOfCode.Solutions.Year2019;
 /// </summary>
 public class Day06 {
 
-	record OrbitRecord(string Name, string Orbits) {
-		public int DirectCount { get; set; } = 0;
-		public int IndirectCount { get; set; } = 0;
-	};
+	record OrbitRecord(string Name, string Orbits);
 
 	private static string Solution1(string[] input) {
-		List<OrbitRecord> orbitMap = input.Select(i => ParseLine(i)).ToList();
-		Dictionary<string, OrbitRecord> orbits = orbitMap.ToDictionary(o => o.Name);
+		(List<OrbitRecord> orbitMap, Dictionary<string, OrbitRecord> orbits) = ParseInputs(input);
 
 		IEnumerable<string> objects = orbitMap.Select(o => o.Name)
 			.Union(orbitMap.Select(o => o.Orbits).Where(o => o != "COM"))
 			.Distinct();
 
 		int count = 0;
-		foreach (string objectName  in objects) {
+		foreach (string objectName in objects) {
 			string currObject = objectName;
 			while (currObject != "COM") {
 				currObject = orbits[currObject].Orbits;
@@ -34,8 +30,8 @@ public class Day06 {
 	}
 
 	private static string Solution2(string[] input) {
-		List<OrbitRecord> orbitMap = input.Select(i => ParseLine(i)).ToList();
-		Dictionary<string, OrbitRecord> orbits = orbitMap.ToDictionary(o => o.Name);
+		(_, Dictionary<string, OrbitRecord> orbits) = ParseInputs(input);
+		
 		List<string> startList = new();
 		List<string> finishList = new();
 
@@ -55,6 +51,13 @@ public class Day06 {
 		int count = startList.IndexOf(sharedNode) + finishList.IndexOf(sharedNode);
 
 		return count.ToString();
+	}
+
+
+	private static (List<OrbitRecord> orbitMap, Dictionary<string, OrbitRecord> orbits) ParseInputs(string[] input) {
+		List<OrbitRecord> orbitMap = input.Select(i => ParseLine(i)).ToList();
+		Dictionary<string, OrbitRecord> orbits = orbitMap.ToDictionary(o => o.Name);
+		return (orbitMap, orbits);
 	}
 
 	private static OrbitRecord ParseLine(string input) {
