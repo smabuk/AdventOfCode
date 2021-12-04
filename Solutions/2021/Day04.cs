@@ -13,16 +13,16 @@ public class Day04 {
 		public bool IsWin = false;
 		public int WinningValue;
 
-		public BingoBoard(List<int> boardNos) {
-			_unmarkedNos = boardNos;
+		public BingoBoard(List<int> numbers) {
+			_unmarkedNos = numbers;
 
 			for (int i = 0; i < 5; i++) {
 				// Rows
-				_lines.Add(boardNos.Skip(i * 5).Take(5).ToList());
+				_lines.Add(numbers.Skip(i * 5).Take(5).ToList());
 				// Columns
 				_lines.Add(
 					Enumerable.Range(0, 5)
-					.Select(col => boardNos.ElementAt((col * 5) + i))
+					.Select(col => numbers.ElementAt((col * 5) + i))
 					.ToList()
 				);
 			}
@@ -31,8 +31,7 @@ public class Day04 {
 		public bool MarkNo(int number) {
 			_unmarkedNos.Remove(number);
 			foreach (List<int> line in _lines) {
-				line.Remove(number);
-				if (line.Count == 0) {
+				if (line.Remove(number) && line.Count == 0) {
 					IsWin = true;
 					WinningValue = number * _unmarkedNos.Sum();
 				}
@@ -41,49 +40,49 @@ public class Day04 {
 		}
 	};
 
-	private static string Solution1(string[] input) {
+	private static int Solution1(string[] input) {
 		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
 		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
 
-		foreach (int no in numberOrder) {
+		foreach (int number in numberOrder) {
 			foreach (BingoBoard board in bingoBoards) {
-				if (board.MarkNo(no)) {
-					return board.WinningValue.ToString();
+				if (board.MarkNo(number)) {
+					return board.WinningValue;
 				}
 			}
 		}
 
-		return "** MISTAKE **";
+		return -1;
 	}
 
-	private static string Solution2(string[] input) {
+	private static int Solution2(string[] input) {
 		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
 		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
 
 		int lastWinningBoardResult = 0;
-		foreach (int no in numberOrder) {
+		foreach (int number in numberOrder) {
 			foreach (BingoBoard board in bingoBoards) {
-				if (board.MarkNo(no)) {
+				if (board.MarkNo(number)) {
 					lastWinningBoardResult = board.WinningValue;
 				}
 			}
 			bingoBoards.RemoveAll(b => b.IsWin);
 		}
 
-		return lastWinningBoardResult.ToString();
+		return lastWinningBoardResult;
 	}
 
 	private static List<BingoBoard> ParseBingoBoards(string[] input) {
 		List<BingoBoard> bingoBoards = new();
-		for (int boardNo = 0; boardNo < ((input.Length + 1) / 6); boardNo++) {
-			List<int> boardNos = Enumerable
+		for (int i = 0; i < ((input.Length + 1) / 6); i++) {
+			List<int> numbers = Enumerable
 				.Range(0, 5)
 				.SelectMany(rowNo =>
-					input[(boardNo * 6) + rowNo]
+					input[(i * 6) + rowNo]
 					.Split(" ", StringSplitOptions.RemoveEmptyEntries)
 					.Select(x => int.Parse(x)))
 				.ToList();
-			bingoBoards.Add(new BingoBoard(boardNos));
+			bingoBoards.Add(new BingoBoard(numbers));
 		}
 		return bingoBoards;
 	}

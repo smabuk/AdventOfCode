@@ -9,7 +9,7 @@ public class Day02 {
 	record Instruction(string Direction, int Value);
 	record Position(int Horizontal, int Depth, int Aim = 0);
 
-	private static string Solution1(string[] input) {
+	private static int Solution1(string[] input) {
 		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
 
 		Position position = new(0, 0);
@@ -22,10 +22,10 @@ public class Day02 {
 			};
 		}
 
-		return (position.Horizontal * position.Depth).ToString();
+		return position.Horizontal * position.Depth;
 	}
 
-	private static string Solution2(string[] input) {
+	private static int Solution2(string[] input) {
 		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
 
 		Position position = new(0, 0, 0);
@@ -38,7 +38,7 @@ public class Day02 {
 			};
 		}
 
-		return (position.Horizontal * position.Depth).ToString();
+		return position.Horizontal * position.Depth;
 	}
 
 	private static Instruction ParseLine(string input) {

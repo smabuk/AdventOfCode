@@ -6,24 +6,26 @@
 /// </summary>
 public class Day01 {
 
-	private static string Solution1(string[] input) {
-		List<int> inputs = input.ToList().Select(x => int.Parse(x)).ToList();
-		int count = inputs.Zip(inputs.Skip(1), (d1, d2) => d2 - d1).Count(increase => increase > 0);
-		return count.ToString();
+	private static int Solution1(string[] input) {
+		List<int> depths = input.ToList().Select(x => int.Parse(x)).ToList();
+
+		return depths.Zip(depths.Skip(1), (d1, d2) => d2 - d1)
+			.Count(increase => increase > 0);
 	}
 
-	private static string Solution2(string[] input) {
-		int[] inputs = input.ToList().Select(x => int.Parse(x)).ToArray();
-		int current = inputs[0..3].Sum();
+	private static int Solution2(string[] input) {
+		int[] depths = input.ToList().Select(x => int.Parse(x)).ToArray();
+
+		int current = depths[0..3].Sum();
 		int count = 0;
-		for (int i = 1; i < inputs.Length - 2; i++) {
-			int depth = inputs[i..(i + 3)].Sum();
+		for (int i = 1; i < depths.Length - 2; i++) {
+			int depth = depths[i..(i + 3)].Sum();
 			if (depth > current) {
 				count++;
 			}
 			current = depth;
 		}
-		return count.ToString();
+		return count;
 	}
 
 

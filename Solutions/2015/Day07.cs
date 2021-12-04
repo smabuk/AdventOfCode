@@ -11,7 +11,7 @@ public class Day07 {
 		public List<object> Ins { get; set; } = new();
 		public List<object> Outs { get; set; } = new();
 
-		private int myVar;
+		//private int myVar;
 
 		internal ushort GetOutputValue() => throw new NotImplementedException();
 
@@ -26,7 +26,9 @@ public class Day07 {
 	};
 	class Gate {
 		public Gate() {
-
+			// just to get rid of warnings
+			GateType = "";
+			OutputWire = "";
 		}
 		public Gate(string gateType, string outputWire) {
 			if (string.IsNullOrEmpty(gateType)) {
