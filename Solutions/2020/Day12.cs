@@ -4,6 +4,7 @@
 /// Day 12: Rain Risk
 /// https://adventofcode.com/2020/day/12
 /// </summary>
+[Description("Rain Risk")]
 public class Day12 {
 
 	record Instruction(string Command, int Value);

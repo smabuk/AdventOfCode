@@ -4,6 +4,7 @@
 /// Day 09: All in a Single Night
 /// https://adventofcode.com/2015/day/9
 /// </summary>
+[Description("All in a Single Night")]
 public class Day09 {
 
 	record Route(string Location1, string Location2, int Distance);

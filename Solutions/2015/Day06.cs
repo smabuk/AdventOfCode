@@ -4,6 +4,7 @@
 /// Day 06: Probably a Fire Hazard
 /// https://adventofcode.com/2015/day/6
 /// </summary>
+[Description("Probably a Fire Hazard")]
 public class Day06 {
 
 	public static bool[,] Lights = new bool[1000, 1000];

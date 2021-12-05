@@ -6,6 +6,7 @@ namespace AdventOfCode.Solutions.Year2015;
 /// Day 11: Corporate Policy
 /// https://adventofcode.com/2015/day/11
 /// </summary>
+[Description("Corporate Policy")]
 public class Day11 {
 
 	private static string Solution1(string[] input) {

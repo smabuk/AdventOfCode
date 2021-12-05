@@ -4,6 +4,7 @@
 /// Day 20: Infinite Elves and Infinite Houses
 /// https://adventofcode.com/2015/day/XX
 /// </summary>
+[Description("")]
 public class Day20 {
 
 	private static int Solution1(string[] input) {

@@ -4,6 +4,7 @@
 /// Day 08: Handheld Halting
 /// https://adventofcode.com/2020/day/8
 /// </summary>
+[Description("Handheld Halting")]
 public static class Day08 {
 
 	private record Instruction(string Command, int Value);

@@ -1,11 +1,10 @@
-﻿using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
-
-namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
 /// Day 18: Like a GIF For Your Yard
 /// https://adventofcode.com/2015/day/18
 /// </summary>
+[Description("Like a GIF For Your Yard")]
 public class Day18 {
 
 	public const char OFF = '.';

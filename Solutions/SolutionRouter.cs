@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 
 namespace AdventOfCode.Solutions;
 
@@ -7,6 +8,24 @@ static public class SolutionRouter {
 	private const string NO_INPUT = "** NO INPUT DATA **";
 	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
+	public static string? GetProblemDescription(int year, int day) {
+		Assembly assembly = Assembly.GetExecutingAssembly();
+
+		Type? type =
+			(from a in assembly.GetTypes()
+			 from m in a.GetMethods()
+			 where m.Name == $"Part1" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
+			 select ((MethodInfo)m)).SingleOrDefault()?.DeclaringType;
+
+		if (type is null) {
+			return NO_SOLUTION;
+		}
+
+		DescriptionAttribute[] descriptionAttributes = (DescriptionAttribute[])type.GetCustomAttributes(typeof(DescriptionAttribute), false);
+		return descriptionAttributes.Length > 0
+			? ((DescriptionAttribute)descriptionAttributes.First()).Description
+			: NO_SOLUTION;
+	}
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
 
 		if (input is null) {

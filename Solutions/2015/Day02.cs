@@ -4,6 +4,7 @@
 /// Day 2: I Was Told There Would Be No Math
 /// https://adventofcode.com/2015/day/2
 /// </summary>
+[Description("I Was Told There Would Be No Math")]
 public class Day02 {
 	public static string Part1(string[]? input) {
 		if (input is null) { return "Error: No data provided"; }

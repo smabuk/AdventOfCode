@@ -6,6 +6,7 @@ namespace AdventOfCode.Solutions.Year2020;
 /// Day 09: Encoding Error
 /// https://adventofcode.com/2020/day/9
 /// </summary>
+[Description("Encoding Error")]
 public class Day09 {
 
 	private static long Solution1(string[] input, int preamble) {

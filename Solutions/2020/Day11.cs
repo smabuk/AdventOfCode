@@ -4,6 +4,7 @@
 /// Day 11: Seating System
 /// https://adventofcode.com/2020/day/11
 /// </summary>
+[Description("Seating System")]
 public static class Day11 {
 
 	public const char EMPTY_SEAT = 'L';

@@ -3,7 +3,7 @@
 public class FileSystemInputData : IInputDataService {
 	public string DataFolder { get; set; } = "../Data";
 
-	public string GetInputData(int year, int day, string? username = null) {
+	public async Task<string> GetInputData(int year, int day, string? username = null) {
 
 		string filename = string.IsNullOrWhiteSpace(username) switch {
 			true => Path.GetFullPath(Path.Combine(DataFolder, $"{year}_{day:D2}.txt")),
@@ -11,13 +11,13 @@ public class FileSystemInputData : IInputDataService {
 		};
 
 		if (File.Exists(filename)) {
-			return File.ReadAllText(filename);
+			return await File.ReadAllTextAsync(filename);
 		}
 
 		return "";
 	}
 
-	public bool SaveInputData(string data, int year, int day, string? username = null) {
+	public async Task<bool> SaveInputData(string data, int year, int day, string? username = null) {
 
 		if (string.IsNullOrWhiteSpace(data)) {
 			return false;
@@ -34,7 +34,7 @@ public class FileSystemInputData : IInputDataService {
 
 		// Don't overwrite the file
 		if (!File.Exists(filename)) {
-			File.WriteAllText(filename, data);
+			await File.WriteAllTextAsync(filename, data);
 			return true;
 		}
 

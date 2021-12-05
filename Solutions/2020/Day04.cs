@@ -4,6 +4,7 @@
 /// Day 4: Passport Processing
 /// https://adventofcode.com/2020/day/4
 /// </summary>
+[Description("Passport Processing")]
 public static class Day04 {
 
 	public static string Part1(string[]? input = null) {

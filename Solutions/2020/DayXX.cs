@@ -7,6 +7,7 @@ namespace AdventOfCode.Solutions.Year2020;
 /// Day XX: Title
 /// https://adventofcode.com/2020/day/XX
 /// </summary>
+[Description("")]
 public class DayXX {
 
 	record RecordType(string Name, int Value);

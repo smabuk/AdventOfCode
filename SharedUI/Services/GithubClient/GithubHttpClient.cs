@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Services;
 
-public class GithubHttpClient : IGithubHttpClient {
+public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 	private readonly HttpClient _httpClient;
 
 	public GithubHttpClient(HttpClient httpClient) {
@@ -52,7 +52,7 @@ public class GithubHttpClient : IGithubHttpClient {
 			"kevinsjoberg" => $"{GITHUB}KevinSjoberg/aoc-{year}/blob/main/{day:D2}/day{day:D2}.cr",
 			"pseale" => $"{GITHUB}pseale/advent-of-code/blob/main/{year}-csharp/Day{day:D2}/Program.cs",
 			"rollerss" => $"{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs",
-			"smabuk" => $"{GITHUB}smabuk/AdventOfCode/tree/master/Solutions/{year}/Day{day:D2}.cs",
+			"smabuk" => $"{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs",
 			_ => "",
 		};
 
@@ -74,7 +74,7 @@ public class GithubHttpClient : IGithubHttpClient {
 			"kevinsjoberg" => $"KevinSjoberg/aoc-{year}/main/{day:D2}/input.txt",
 			"rollerss" => $"Rollerss/AOC_{year}/master/AOC/InputData/AOCDay{day:D2}.txt",
 			"pseale" => $"pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt",
-			"smabuk" => $"smabuk/AdventOfCode/master/Data/{year}_{day:D2}.txt",
+			"smabuk" => $"smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt",
 			_ => "",
 		};
 

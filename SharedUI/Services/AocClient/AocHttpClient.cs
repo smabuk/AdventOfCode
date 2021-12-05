@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Services;
 
-public class AocHttpClient : IAocHttpClient {
+public class AocHttpClient : IAocHttpClient, IInputDataService {
 	private readonly HttpClient _httpClient;
 
 	public AocHttpClient(HttpClient httpClient, IMemoryCache memoryCache) {
@@ -13,7 +13,7 @@ public class AocHttpClient : IAocHttpClient {
 
 	public IMemoryCache MemoryCache { get; }
 
-	public async Task<string> GetInputData(int year, int day) {
+	public async Task<string> GetInputData(int year, int day, string? _) {
 		var response = await _httpClient.GetAsync($"{year}/day/{day}/input");
 
 		string value = response.IsSuccessStatusCode switch {

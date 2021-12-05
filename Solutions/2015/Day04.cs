@@ -7,6 +7,7 @@ namespace AdventOfCode.Solutions.Year2015;
 /// Day 04: The Ideal Stocking Stuffer
 /// https://adventofcode.com/2015/day/4
 /// </summary>
+[Description("The Ideal Stocking Stuffer")]
 public class Day04 {
 	private static long Solution1(string[] input) {
 		string secretKey = input[0];

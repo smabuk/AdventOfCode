@@ -4,6 +4,7 @@
 /// Day 10: Adapter Array
 /// https://adventofcode.com/2020/day/10
 /// </summary>
+[Description("Adapter Array")]
 public class Day10 {
 
 	private static int Solution1(string[] input) {

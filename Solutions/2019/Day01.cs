@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 01: The Tyranny of the Rocket Equation
 /// https://adventofcode.com/2019/day/1
 /// </summary>
+[Description("The Tyranny of the Rocket Equation")]
 public class Day01 {
 
 	private static int Solution1(string[] input) {

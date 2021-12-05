@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 02: 1202 Program Alarm
 /// https://adventofcode.com/2019/day/XX
 /// </summary>
+[Description("1202 Program Alarm")]
 public class Day02 {
 
 	private static string Solution1(string[] input, bool testing = false) {

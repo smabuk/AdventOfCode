@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 05: Sunny with a Chance of Asteroids
 /// https://adventofcode.com/2019/day/5
 /// </summary>
+[Description("Sunny with a Chance of Asteroids")]
 public class Day05 {
 
 	record RecordType(string Name, int Value);

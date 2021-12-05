@@ -6,6 +6,7 @@ namespace AdventOfCode.Solutions.Year2015;
 /// Day 12: JSAbacusFramework.io
 /// https://adventofcode.com/2015/day/12
 /// </summary>
+[Description("JSAbacusFramework.io")]
 public class Day12 {
 
 	private static int Solution1(string[] input) {

@@ -1,11 +1,10 @@
-﻿using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
-
-namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
 /// Day 14: Reindeer Olympics
 /// https://adventofcode.com/2015/day/14
 /// </summary>
+[Description("Reindeer Olympics")]
 public class Day14 {
 
 	record Reindeer(string Name, int Speed, int FlyingTime, int RestingTime) {

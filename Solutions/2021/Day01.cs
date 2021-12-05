@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2021;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 01: Sonar Sweep
 /// https://adventofcode.com/2021/day/1
 /// </summary>
+[Description("Sonar Sweep")]
 public class Day01 {
 
 	private static int Solution1(string[] input) {

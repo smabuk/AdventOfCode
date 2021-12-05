@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2021;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 05: Hydrothermal Venture
 /// https://adventofcode.com/2021/day/5
 /// </summary>
+[Description("Hydrothermal Venture")]
 public class Day05 {
 
 	record Line(Point Start, Point End);

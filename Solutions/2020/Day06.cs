@@ -4,6 +4,7 @@
 /// Day 06: Custom Customs
 /// https://adventofcode.com/2020/day/6
 /// </summary>
+[Description("Custom Customs")]
 public class Day06 {
 	public static string Part1(string[]? input) {
 		if (input is null) { return "Error: No data provided"; }

@@ -4,6 +4,7 @@
 /// Day 5: Binary Boarding
 /// https://adventofcode.com/2020/day/5
 /// </summary>
+[Description("Binary Boarding")]
 public class Day05 {
 	public static string Part1(string[]? input = null) {
 		input = input.StripTrailingBlankLineOrDefault();

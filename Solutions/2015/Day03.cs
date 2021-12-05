@@ -4,6 +4,7 @@
 /// Day 03: Perfectly Spherical Houses in a Vacuum
 /// https://adventofcode.com/2015/day/3
 /// </summary>
+[Description("Perfectly Spherical Houses in a Vacuum")]
 public class Day03 {
 	private static int Solution1(string[] input) {
 		List<(int x, int y)> houses = new();

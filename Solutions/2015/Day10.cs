@@ -3,9 +3,10 @@
 namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
-/// Day 10: Title
+/// Day 10: Elves Look, Elves Say
 /// https://adventofcode.com/2015/day/10
 /// </summary>
+[Description("Elves Look, Elves Say")]
 public class Day10 {
 
 	private static long Solution1(string[] input) {

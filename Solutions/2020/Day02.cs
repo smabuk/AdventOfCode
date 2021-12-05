@@ -4,6 +4,7 @@
 /// Day 2: Password Philosophy
 /// https://adventofcode.com/2020/day/2
 /// </summary>
+[Description("Password Philosophy")]
 public static class Day02 {
 	public static long Part1(string[]? input = null) {
 		input = input.StripTrailingBlankLineOrDefault();

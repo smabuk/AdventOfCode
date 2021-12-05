@@ -1,9 +1,10 @@
 ﻿namespace AdventOfCode.Solutions.Year2020;
 
 /// <summary>
-/// Day XX: Docking Data
+/// Day 14: Docking Data
 /// https://adventofcode.com/2020/day/14
 /// </summary>
+[Description("Docking Data")]
 public class Day14 {
 
 	record Instruction(string Mask, long MemoryAddress, long Value);

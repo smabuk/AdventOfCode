@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 03: Crossed Wires
 /// https://adventofcode.com/2019/day/3
 /// </summary>
+[Description("Crossed Wires")]
 public class Day03 {
 
 	record WireRoute(string Direction, int Value);

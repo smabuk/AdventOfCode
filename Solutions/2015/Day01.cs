@@ -4,6 +4,7 @@
 /// Day 1: Not Quite Lisp
 /// https://adventofcode.com/2015/day/1
 /// </summary>
+[Description("Not Quite Lisp")]
 public class Day01 {
 	public static string Part1(string[]? input) {
 		if (input is null) { return "Error: No data provided"; }

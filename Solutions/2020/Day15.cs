@@ -4,6 +4,7 @@
 /// Day 15: Rambunctious Recitation
 /// https://adventofcode.com/2020/day/15
 /// </summary>
+[Description("Rambunctious Recitation")]
 public class Day15 {
 
 	record Spoken(int No, int TurnNo, bool FirstTime);

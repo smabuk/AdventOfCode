@@ -4,6 +4,7 @@
 /// Day 17: Conway Cubes
 /// https://adventofcode.com/2020/day/17
 /// </summary>
+[Description("Conway Cubes")]
 public class Day17 {
 
 	public const char OFF = '.';

@@ -4,6 +4,7 @@
 /// Day 16: Aunt Sue
 /// https://adventofcode.com/2015/day/16
 /// </summary>
+[Description("Aunt Sue")]
 public class Day16 {
 
 	record Sue(int No, List<Fact> Facts);

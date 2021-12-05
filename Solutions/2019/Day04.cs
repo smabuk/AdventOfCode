@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 04: Secure Container
 /// https://adventofcode.com/2019/day/4
 /// </summary>
+[Description("Secure Container")]
 public class Day04 {
 
 	private static string Solution1(string[] input) {

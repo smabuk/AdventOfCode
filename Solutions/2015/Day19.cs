@@ -1,11 +1,10 @@
-﻿using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
-
-namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
 /// Day 19: Medicine for Rudolph
 /// https://adventofcode.com/2015/day/19
 /// </summary>
+[Description("Medicine for Rudolph")]
 public class Day19 {
 
 	record Replacement(string From, string To);

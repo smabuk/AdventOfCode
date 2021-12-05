@@ -4,6 +4,7 @@
 /// Day 08: Matchsticks
 /// https://adventofcode.com/2015/day/8
 /// </summary>
+[Description("Matchsticks")]
 public class Day08 {
 
 	private static int Solution1(string[] input) {

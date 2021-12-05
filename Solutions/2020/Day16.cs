@@ -4,6 +4,7 @@
 /// Day 16: Ticket Translation
 /// https://adventofcode.com/2020/day/16
 /// </summary>
+[Description("Ticket Translation")]
 public class Day16 {
 
 	record Input(IEnumerable<TicketField> TicketFields, Ticket YourTicket, IEnumerable<Ticket> NearbyTickets);

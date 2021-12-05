@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2021;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 03: Binary Diagnostic
 /// https://adventofcode.com/2021/day/3
 /// </summary>
+[Description("Binary Diagnostic")]
 public class Day03 {
 
 	private static int Solution1(string[] input) {

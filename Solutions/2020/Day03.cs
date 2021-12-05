@@ -4,6 +4,7 @@
 /// Day 3: Toboggan Trajectory
 /// https://adventofcode.com/2020/day/3
 /// </summary>
+[Description("Toboggan Trajectory")]
 public static class Day03 {
 	public static long Part1(string[]? input = null) {
 		input = input.StripTrailingBlankLineOrDefault();

@@ -4,6 +4,7 @@
 /// Day 07: Handy Haversacks
 /// https://adventofcode.com/2020/day/7
 /// </summary>
+[Description("Handy Haversacks")]
 public class Day07 {
 
 	public record BagRuleDetail(string Bag, int Number);

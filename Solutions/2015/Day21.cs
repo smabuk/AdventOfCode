@@ -1,9 +1,10 @@
 ﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
-/// Day 21: RPG Simulator 20XX
+/// Day 21: 
 /// https://adventofcode.com/2015/day/21
 /// </summary>
+[Description("RPG Simulator 20XX")]
 public class Day21 {
 
 	record Item(string Name, int Cost, int Damage, int Armor);

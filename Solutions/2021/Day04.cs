@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2021;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 04: Giant Squid
 /// https://adventofcode.com/2021/day/4
 /// </summary>
+[Description("Giant Squid")]
 public class Day04 {
 
 	class BingoBoard {

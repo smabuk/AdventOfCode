@@ -1,9 +1,10 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2021, 01, "Sonar Sweep");
-GetInputDataAndSolve(2021, 02, "Dive!");
-GetInputDataAndSolve(2021, 03, "Binary Diagnostic");
-GetInputDataAndSolve(2021, 04, "Giant Squid");
+GetInputDataAndSolve(2021, 01);
+GetInputDataAndSolve(2021, 02);
+GetInputDataAndSolve(2021, 03);
+GetInputDataAndSolve(2021, 04);
+GetInputDataAndSolve(2021, 05);
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
@@ -32,12 +33,12 @@ GetInputDataAndSolve(2021, 04, "Giant Squid");
 	GetInputDataAndSolve(2020, 24, "");
 	GetInputDataAndSolve(2020, 25, "");
 
-	GetInputDataAndSolve(2019, 01, "The Tyranny of the Rocket Equation");
-	GetInputDataAndSolve(2019, 02, "1202 Program Alarm");
-	GetInputDataAndSolve(2019, 03, "Crossed Wires");
-	GetInputDataAndSolve(2019, 04, "Secure Container");
-	GetInputDataAndSolve(2019, 05, "Sunny with a Chance of Asteroids");
-	GetInputDataAndSolve(2019, 06, "Universal Orbit Map");
+	GetInputDataAndSolve(2019, 01);
+	GetInputDataAndSolve(2019, 02);
+	GetInputDataAndSolve(2019, 03);
+	GetInputDataAndSolve(2019, 04);
+	GetInputDataAndSolve(2019, 05);
+	GetInputDataAndSolve(2019, 06);
 
 	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
 	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
@@ -72,19 +73,22 @@ Console.WriteLine();
 Console.Write("Press a key to continue ... ");
 Console.ReadKey();
 
-
-static void GetInputDataAndSolve(int year, int day, string title, string[]? input = null, params object[]? args) {
+static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 
 	if (File.Exists(filename)) {
 		input = File.ReadAllText(filename).Split("\n");
 	}
 
+	if (String.IsNullOrWhiteSpace(title)) {
+		title = GetProblemDescription(year, day) ?? $"";
+	}
+
 	Console.WriteLine();
 	Console.WriteLine($"{year} DAY {day,2} - {title}");
 	if (input is not null) {
-		Console.WriteLine($"     Part 1: {SolveProblem(year, day, 1, input, args)}");
-		Console.WriteLine($"     Part 2: {SolveProblem(year, day, 2, input, args)}");
+		Console.WriteLine($"     Part 1:  {SolveProblem(year, day, 1, input, args)}");
+		Console.WriteLine($"     Part 2:  {SolveProblem(year, day, 2, input, args)}");
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}

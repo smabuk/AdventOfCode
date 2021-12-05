@@ -1,8 +1,10 @@
 ﻿namespace AdventOfCode.Solutions.Year2020;
 
 /// <summary>
+/// Day 01: Report Repair
 /// https://adventofcode.com/2020/day/1
 /// </summary>
+[Description("Report Repair")]
 public static class Day01 {
 	public static long Part1(string[]? input = null) {
 		input = input.StripTrailingBlankLineOrDefault();

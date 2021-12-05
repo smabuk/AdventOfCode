@@ -1,9 +1,12 @@
-﻿namespace AdventOfCode.Solutions.Year2019;
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day XX: Title
 /// https://adventofcode.com/2019/day/XX
 /// </summary>
+[Description("")]
 public class DayXX {
 
 	record RecordType(string Name, int Value);

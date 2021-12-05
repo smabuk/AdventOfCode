@@ -4,6 +4,7 @@
 /// Day 07: Some Assembly Required
 /// https://adventofcode.com/2015/day/7
 /// </summary>
+[Description("Some Assembly Required")]
 public class Day07 {
 
 	record Wire(string Identifier) {

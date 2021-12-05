@@ -1,11 +1,10 @@
-﻿using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
-
-namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
 /// Day 17: No Such Thing as Too Much
 /// https://adventofcode.com/2015/day/17
 /// </summary>
+[Description("No Such Thing as Too Much")]
 public class Day17 {
 
 	private static int Solution1(string[] input, int noOfLiters) {

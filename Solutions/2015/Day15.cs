@@ -4,6 +4,7 @@
 /// Day 15: Science for Hungry People
 /// https://adventofcode.com/2015/day/15
 /// </summary>
+[Description("Science for Hungry People")]
 public class Day15 {
 
 	record Ingredient(string Name, int Capacity, int Durability, int Flavour, int Texture, int Calories) {

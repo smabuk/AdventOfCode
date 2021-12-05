@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿using System.ComponentModel;
+
+using Microsoft.VisualBasic;
 
 namespace AdventOfCode.Solutions.Year2019;
 
@@ -6,6 +8,7 @@ namespace AdventOfCode.Solutions.Year2019;
 /// Day XX: Universal Orbit Map
 /// https://adventofcode.com/2019/day/6
 /// </summary>
+[Description("Universal Orbit Map")]
 public class Day06 {
 
 	record OrbitRecord(string Name, string Orbits);
