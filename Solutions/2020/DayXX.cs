@@ -1,7 +1,4 @@
-﻿
-using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
-
-namespace AdventOfCode.Solutions.Year2020;
+﻿namespace AdventOfCode.Solutions.Year2020;
 
 /// <summary>
 /// Day XX: Title

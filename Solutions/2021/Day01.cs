@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AdventOfCode.Solutions.Year2021;
+﻿namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 01: Sonar Sweep
