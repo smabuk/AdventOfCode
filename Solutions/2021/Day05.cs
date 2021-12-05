@@ -10,88 +10,38 @@ public class Day05 {
 	record Point(int X, int Y);
 
 	private static int Solution1(string[] input) {
-		List<Line> lines = input.Select(i => ParseLine(i)).ToList();
-		List<Point> points = new();
+		IEnumerable<Line> lines = input.Select(i => ParseLine(i))
+			.Where(l => l.Start.X == l.End.X || l.Start.Y == l.End.Y);
 
-		foreach (Line line in lines) {
-			Point start, end;
-			if (line.Start.X == line.End.X) {
-				if (line.Start.Y <= line.End.Y) {
-					start = line.Start;
-					end = line.End;
-				} else {
-					start = line.End;
-					end = line.Start;
-				}
-				for (int y = start.Y; y <= end.Y; y++) {
-					points.Add(new(start.X, y));
-				}
-			} else if (line.Start.Y == line.End.Y) {
-				if (line.Start.X <= line.End.X) {
-					start = line.Start;
-					end = line.End;
-				} else {
-					start = line.End;
-					end = line.Start;
-				}
-				for (int x = start.X; x <= end.X; x++) {
-					points.Add(new(x, start.Y));
-				}
-			}
-		}
+		IEnumerable<Point> points = GetPointsFromLine(lines);
 
-		return points.GroupBy(p => p).Select(g => new { Count = g.Count() }).Count(x => x.Count > 1);
+		return points
+			.GroupBy(p => p)
+			.Select(g => new { Count = g.Count() })
+			.Count(x => x.Count > 1);
 	}
 
 	private static int Solution2(string[] input) {
-		List<Line> lines = input.Select(i => ParseLine(i)).ToList();
-		List<Point> points = new();
+		IEnumerable<Line> lines = input.Select(i => ParseLine(i)).ToList();
 
-		foreach (Line line in lines) {
-			Point start, end;
-			int direction;
-			if (line.Start.X == line.End.X) {
-				if (line.Start.Y <= line.End.Y) {
-					start = line.Start;
-					end = line.End;
-				} else {
-					start = line.End;
-					end = line.Start;
-				}
-				for (int y = start.Y; y <= end.Y; y++) {
-					points.Add(new(start.X, y));
-				}
-			} else if (line.Start.Y == line.End.Y) {
-				if (line.Start.X <= line.End.X) {
-					start = line.Start;
-					end = line.End;
-				} else {
-					start = line.End;
-					end = line.Start;
-				}
-				for (int x = start.X; x <= end.X; x++) {
-					points.Add(new(x, start.Y));
-				}
-			} else {
-				if (line.Start.X <= line.End.X) {
-					start = line.Start;
-					end = line.End;
-				} else {
-					start = line.End;
-					end = line.Start;
-				}
-				if (start.Y <= end.Y) {
-					direction = 1;
-				} else {
-					direction = -1;
-				}
-				for ((int x, int y) = start; x <= end.X; x++, y += direction) {
-					points.Add(new(x, y));
-				}
+		IEnumerable<Point> points = GetPointsFromLine(lines);
+
+		return points
+			.GroupBy(p => p)
+			.Select(g => new { Count = g.Count() })
+			.Count(x => x.Count > 1);
+	}
+
+
+	private static IEnumerable<Point> GetPointsFromLine(IEnumerable<Line> lines) {
+		foreach ((Point start, Point end) in lines) {
+			int dX = Math.Sign(end.X - start.X);
+			int dY = Math.Sign(end.Y - start.Y);
+			for (Point p = start; p != end; p = p with { X = p.X + dX, Y = p.Y + dY }) {
+				yield return p;
 			}
+			yield return end;
 		}
-
-		return points.GroupBy(p => p).Select(g => new { Count = g.Count() }).Count(x => x.Count > 1);
 	}
 
 	private static Line ParseLine(string input) {
@@ -99,9 +49,8 @@ public class Day05 {
 		if (match.Success) {
 			return new(new(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)), new(int.Parse(match.Groups[3].Value), int.Parse(match.Groups[4].Value)));
 		}
-		return null!;
+		throw new ArgumentException($"Invalid input line: {input}", nameof(input));
 	}
-
 
 
 
