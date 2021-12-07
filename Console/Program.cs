@@ -6,6 +6,7 @@ GetInputDataAndSolve(2021, 03);
 GetInputDataAndSolve(2021, 04);
 GetInputDataAndSolve(2021, 05);
 GetInputDataAndSolve(2021, 06);
+GetInputDataAndSolve(2021, 07);
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
