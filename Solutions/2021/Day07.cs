@@ -42,12 +42,9 @@ public class Day07 {
 		return minFuel;
 	}
 
-	static int FuelCost(int n) =>
-		n switch {
-			0 => 0,
-			1 => 1,
-			_ => n + FuelCost(n - 1)
-		};
+	static int FuelCost(int n) => SequenceHelpers.TriangularNumber(n);
+
+
 
 
 
