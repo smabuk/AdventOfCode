@@ -1,6 +1,34 @@
 ﻿namespace AdventOfCode.Solutions.Helpers;
 
 public static class ArrayHelpers {
+	public static T[,] AsArray<T>(this T[] input, int cols, int? rows = null) {
+		int inputLength = input.Length;
+		rows ??= inputLength % cols == 0 ? inputLength / cols : (inputLength / cols) + 1;
+		T[,] result = new T[cols, (int)rows];
+		int i = 0;
+		for (int r = 0; r < rows; r++) {
+			for (int c = 0; c < cols; c++) {
+				result[c, r] = input[i++];
+				if (i >= inputLength) {
+					return result;
+				}
+			}
+		}
+		return result;
+	}
+
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width) where T: struct {
+		for (int r = 0; r <= input.GetUpperBound(1); r++) {
+			string line = "";
+			for (int c = 0; c <= input.GetUpperBound(0); c++) {
+				string cell = input[c, r].ToString() ?? "";
+				line += $"{new string(' ', width - cell.Length)}{cell}";
+			}
+			yield return line;
+		}
+	}
+
+
 	/// <summary>
 	/// Finds the highest value and returns it
 	/// </summary>
