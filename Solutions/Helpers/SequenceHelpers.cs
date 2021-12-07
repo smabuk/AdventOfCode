@@ -17,27 +17,21 @@ public static class SequenceHelpers {
 			yield return TriangularNumber(n);
 		};
 	}
+	public static int TriangularNumber(int n) => (1 + n) * n / 2;
 
-	public static int TriangularNumber(int n) =>
-	n switch {
-		<0 => throw new ArgumentException($"n must be a positive integer: n={n}"),
-		0 => 0,
-		1 => 1,
-		_ => n + TriangularNumber(n - 1)
-	};
+	//public static int TriangularNumber(int n) =>
+	//	n switch {
+	//		< 0 => throw new ArgumentException($"n must be a positive integer: n={n}"),
+	//		0 => 0,
+	//		1 => 1,
+	//		_ => n + TriangularNumber(n - 1)
+	//	};
 
 
 
 
-	public static IEnumerable<long> FactorialNumbers(int count, bool startAtZero = false) {
-		if (startAtZero) {
-			yield return 0;
-			count--;
-		}
-		for (int n = 1; n <= count; n++) {
-			yield return Factorial(n);
-		};
-	}
+	public static IEnumerable<long> FactorialNumbers(int count) =>
+		Enumerable.Range(1, count).Select(n => Factorial(n));
 
 	public static long Factorial(int n) =>
 		Enumerable.Range(1, n).Aggregate(1, (p, item) => p * item);
@@ -45,16 +39,10 @@ public static class SequenceHelpers {
 
 
 
-	public static IEnumerable<long> FibonacciNumbers(int count, bool startAtZero = true) {
-		if (startAtZero) {
-			yield return 0;
-			count--;
-		}
-		yield return 1;
-		yield return 1;
-		long prev = 1;
+	public static IEnumerable<long> FibonacciNumbers(int count) {
+		long prev = -1;
 		long next = 1;
-		for (int n = 3; n <= count; n++) {
+		for (int n = 1; n <= count; n++) {
 			long sum = prev + next;
 			prev = next;
 			next = sum;

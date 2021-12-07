@@ -1,7 +1,4 @@
-﻿
-using AdventOfCode.Solutions.Helpers;
-
-namespace AdventOfCode.Tests.HelperMethodTests;
+﻿namespace AdventOfCode.Tests.HelperMethodTests;
 
 public class ArrayHelperTests {
 	[Theory]
