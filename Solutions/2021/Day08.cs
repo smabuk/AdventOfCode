@@ -12,10 +12,9 @@ public class Day08 {
 		public int GetFourDigitDisplay() {
 			List<string> signalPatterns = SignalPatterns;
 
-			Dictionary<string, int>? numbers = signalPatterns
-				.ToDictionary(sp => sp, _ => -1);
+			Dictionary<string, int>? numbers = signalPatterns.ToDictionary(sp => sp, _ => -1);
 			string[] patterns = new string[10];
-			
+
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 2).Single(), 1);
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 3).Single(), 7);
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 4).Single(), 4);
@@ -54,10 +53,11 @@ public class Day08 {
 			}
 		}
 
-		public int OneFourSevenEightTotal => 
-			OutputValues.Count(o => new int[] { 2, 3, 4, 7 }.Contains(o.Length));
+		public int OneFourSevenEightTotal =>
+			OutputValues.Count(o => o.Length is 2 or 3 or 4 or 7);
 
 	}
+
 	private static int Solution1(string[] input) {
 		List<FourDigitDisplay> fourDigitDisplays = input.Select(i => ParseLine(i)).ToList();
 
