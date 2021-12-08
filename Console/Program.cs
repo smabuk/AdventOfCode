@@ -80,7 +80,7 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 
 	if (File.Exists(filename)) {
-		input = File.ReadAllText(filename).Split("\n");
+		input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
 	}
 
 	if (String.IsNullOrWhiteSpace(title)) {
