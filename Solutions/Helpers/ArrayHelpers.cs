@@ -17,7 +17,7 @@ public static class ArrayHelpers {
 		return result;
 	}
 
-	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width) where T: struct {
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width) where T : struct {
 		for (int r = 0; r <= input.GetUpperBound(1); r++) {
 			string line = "";
 			for (int c = 0; c <= input.GetUpperBound(0); c++) {
@@ -25,6 +25,55 @@ public static class ArrayHelpers {
 				line += $"{new string(' ', width - cell.Length)}{cell}";
 			}
 			yield return line;
+		}
+	}
+
+	/// <summary>
+	/// Finds the mean average and returns it as a double
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static double Mean<T>(this T[] numbers) =>
+		numbers.Select(n => Convert.ToDouble(n)).ToArray().Average();
+
+	/// <summary>
+	/// Finds the Median value and returns it
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static double Median<T>(this T[] numbers) {
+		IOrderedEnumerable<T> sortedNumbers = numbers.OrderBy(n => n);
+		int midPoint = numbers.Length / 2;
+		return (numbers.Length % 2) switch {
+			0 => (Convert.ToDouble(sortedNumbers.ElementAt(midPoint))
+				+ Convert.ToDouble(sortedNumbers.ElementAt(midPoint - 1)))
+				/ 2.0
+,
+			_ => Convert.ToDouble(sortedNumbers.ElementAt(midPoint))
+		};
+	}
+
+	/// <summary>
+	/// Returns the values occuring the most times
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="array"></param>
+	/// <returns></returns>
+	public static IEnumerable<T> Modes<T>(this T[] array) {
+		(T Key, int Count)[] counts = array.GroupBy(n => n)
+				.Select(g =>  (g.Key, Count: g.Count()))
+				.ToArray();
+
+		int maxCount = counts.Max(c => c.Count);
+
+		IEnumerable<T>? modes = counts
+			.Where(m => m.Count == maxCount)
+			.Select(item => item.Key);
+
+		foreach (T item in modes) {
+			yield return item;
 		}
 	}
 

@@ -75,6 +75,31 @@ public class ArrayHelperTests {
 		Assert.Equal(expected, actual);
 	}
 
+	[Theory]
+	[InlineData(new int[] { 2, 5, 4, 4, 4, 4, 3, 2, 2, 2 }, 3.2)]
+	[InlineData(new int[] { 5 }, 5)]
+	public void Should_Find_Mean(int[] input, double expected) {
+		double actual = ArrayHelpers.Mean<int>(input);
+		Assert.Equal(expected, actual);
+	}
+
+	[Theory]
+	[InlineData(new int[] { 2, 5, 4, 4, 4, 4, 3, 2, 2, 2 }, 3.5)]
+	[InlineData(new int[] { 5, 1, 3 }, 3)]
+	public void Should_Find_Median(int[] input, double expected) {
+		double actual = ArrayHelpers.Median<int>(input);
+		Assert.Equal(expected, actual);
+	}
+
+	[Theory]
+	[InlineData(new int[] { 1, 5, 4, 4, 4, 4, 3, 2, 2, 2 }, new int[] { 4 })]
+	[InlineData(new int[] { 2, 5, 4, 4, 4, 4, 3, 2, 2, 2 }, new int[] { 2, 4 })]
+	[InlineData(new int[] { 5, 1, 3 }, new int[] { 5, 1, 3 })]
+	public void Should_Find_Mode(int[] input, int[] expected) {
+		int[] actual = ArrayHelpers.Modes(input).ToArray();
+		Assert.Equal(expected, actual);
+	}
+
 	[Fact]
 	public void Should_FindHighest_Of_Multiple_Int_Parameters() {
 		Assert.Equal(6, ArrayHelpers.HighestValue(3, 6, 2, 4, -3, 4));
