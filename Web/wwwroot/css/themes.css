@@ -1,6 +1,7 @@
 ﻿:root {
     --bg-color: #fff;
     --text-color: #424242;
+    --text-emphasis: #019dd1;
 }
 
 @media (prefers-color-scheme: dark) {
