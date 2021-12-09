@@ -17,17 +17,17 @@ public class Day09 {
 	};
 
 	private static int Solution1(string[] input) {
-		int[,] heatMap = input.Select(i => ParseLine(i)).SelectMany(i => i).AsArray(input[0].Length);
+		int[,] heightMap = input.Select(i => ParseLine(i)).SelectMany(i => i).As2dArray(input[0].Length);
 
-		int cols = heatMap.GetUpperBound(0);
-		int rows = heatMap.GetUpperBound(1);
+		int cols = heightMap.GetUpperBound(0);
+		int rows = heightMap.GetUpperBound(1);
 
 		List<int> lowPoints = new();
 
 		for (int y = 0; y <= rows; y++) {
 			for (int x = 0; x <= cols; x++) {
-				if (IsLowPoint(x, y, heatMap)) {
-					lowPoints.Add(heatMap[x, y]);
+				if (IsLowPoint(heightMap, x, y)) {
+					lowPoints.Add(heightMap[x, y]);
 				}
 			}
 		}
@@ -35,7 +35,7 @@ public class Day09 {
 		return lowPoints.Sum(lp => lp + 1);
 	}
 
-	static bool IsLowPoint(int col, int row, int[,] array) {
+	static bool IsLowPoint(int[,] array, int col, int row) {
 		bool lowPoint = true;
 		int cols = array.GetUpperBound(0);
 		int rows = array.GetUpperBound(1);
@@ -53,18 +53,18 @@ public class Day09 {
 	}
 
 	private static long Solution2(string[] input) {
-		int[,] heatMap = input.Select(i => ParseLine(i)).SelectMany(i => i).AsArray(input[0].Length);
+		int[,] heightMap = input.Select(i => ParseLine(i)).SelectMany(i => i).As2dArray(input[0].Length);
 
-		int cols = heatMap.GetUpperBound(0);
-		int rows = heatMap.GetUpperBound(1);
+		int cols = heightMap.GetUpperBound(0);
+		int rows = heightMap.GetUpperBound(1);
 
 		List<Basin> basins = new();
 
 		for (int y = 0; y <= rows; y++) {
 			for (int x = 0; x <= cols; x++) {
-				if (IsLowPoint(x, y, heatMap)) {
+				if (IsLowPoint(heightMap, x, y)) {
 					Point lowPoint = new(x, y);
-					Basin basin = new(lowPoint, GetAjacentBasinPoints(lowPoint, heatMap, new() { lowPoint }));
+					Basin basin = new(lowPoint, GetAdjacentBasinPoints(lowPoint, heightMap, new() { lowPoint }));
 					basins.Add(basin);
 				}
 			}
@@ -77,7 +77,7 @@ public class Day09 {
 			.Aggregate((a, b) => a * b);
 	}
 
-	static List<Point> GetAjacentBasinPoints(Point p, int[,] array, List<Point> knownPoints) {
+	static List<Point> GetAdjacentBasinPoints(Point p, int[,] array, List<Point> knownPoints) {
 		int cols = array.GetUpperBound(0);
 		int rows = array.GetUpperBound(1);
 		foreach ((int dX, int dY) in DIRECTIONS) {
@@ -88,7 +88,7 @@ public class Day09 {
 				if (newX >= 0 && newX <= cols && newY >= 0 && newY <= rows) {
 					if (array[newX, newY] < 9) {
 						knownPoints.Add(newP);
-						knownPoints = GetAjacentBasinPoints(newP, array, knownPoints);
+						knownPoints = GetAdjacentBasinPoints(newP, array, knownPoints);
 					}
 				}
 			}
