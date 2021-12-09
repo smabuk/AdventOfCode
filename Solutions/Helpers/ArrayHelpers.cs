@@ -16,6 +16,9 @@ public static class ArrayHelpers {
 		}
 		return result;
 	}
+	public static T[,] AsArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
+		return AsArray<T>(input.ToArray(), cols, rows);
+	}
 
 	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width) where T : struct {
 		for (int r = 0; r <= input.GetUpperBound(1); r++) {
@@ -63,7 +66,7 @@ public static class ArrayHelpers {
 	/// <returns></returns>
 	public static IEnumerable<T> Modes<T>(this T[] array) {
 		(T Key, int Count)[] counts = array.GroupBy(n => n)
-				.Select(g =>  (g.Key, Count: g.Count()))
+				.Select(g => (g.Key, Count: g.Count()))
 				.ToArray();
 
 		int maxCount = counts.Max(c => c.Count);
