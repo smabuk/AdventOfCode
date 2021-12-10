@@ -8,7 +8,6 @@
 public class Day10 {
 
 	static readonly char[] OPEN_CHARS = "([{<".ToCharArray();
-	static readonly char[] CLOSE_CHARS = ")]}>".ToCharArray();
 
 	private static long Solution1(string[] input) {
 		return input
@@ -22,13 +21,13 @@ public class Day10 {
 		foreach (char character in line) {
 			if (OPEN_CHARS.Contains(character)) {
 				openChars.Push(character);
-			} else if (CLOSE_CHARS.Contains(character)) {
+			} else {
 				(char expectedChar, int value) = character switch {
 					')' => ('(', 3),
 					']' => ('[', 57),
 					'}' => ('{', 1197),
 					'>' => ('<', 25137),
-					_ => throw new ArgumentOutOfRangeException()
+					_ => throw new NotImplementedException(),
 				};
 				if (expectedChar != openChars.Pop()) {
 					return value;
@@ -40,14 +39,10 @@ public class Day10 {
 	}
 
 	private static long Solution2(string[] input) {
-		List<long> scores = input
+		return input
 			.Where(line => FindFirstIllegalCharacterValue(line) == 0)
 			.Select(line => FindClosingCharacterValues(line))
-			.ToList();
-
-		return scores
-			.OrderBy(o => o)
-			.ElementAt(scores.Count / 2);
+			.Median();
 	}
 
 	private static long FindClosingCharacterValues(string line) {
@@ -68,7 +63,7 @@ public class Day10 {
 				'[' => 2,
 				'{' => 3,
 				'<' => 4,
-				_ => throw new ArgumentOutOfRangeException()
+				_ => throw new NotImplementedException()
 			};
 			total = 5 * total + score;
 		}

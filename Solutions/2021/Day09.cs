@@ -12,7 +12,7 @@ public class Day09 {
 	};
 
 	private static int Solution1(string[] input) {
-		int[,] heightMap = input.Select(i =>i.AsDigits()).SelectMany(i => i).As2dArray(input[0].Length);
+		int[,] heightMap = input.Select(i =>i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
 
 		int cols = heightMap.GetUpperBound(0);
 		int rows = heightMap.GetUpperBound(1);
@@ -41,7 +41,7 @@ public class Day09 {
 	}
 
 	private static long Solution2(string[] input) {
-		int[,] heightMap = input.Select(i => i.AsDigits()).SelectMany(i => i).As2dArray(input[0].Length);
+		int[,] heightMap = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
 
 		int cols = heightMap.GetUpperBound(0);
 		int rows = heightMap.GetUpperBound(1);

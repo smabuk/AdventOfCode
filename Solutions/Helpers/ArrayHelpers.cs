@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AdventOfCode.Solutions.Helpers;
+﻿namespace AdventOfCode.Solutions.Helpers;
 
 public static class ArrayHelpers {
 	public record struct Point(int X, int Y) {
@@ -16,7 +14,7 @@ public static class ArrayHelpers {
 	{ (-1, -1), (-1, 1), (1, 1), (1, -1) };
 	public static readonly List<(int dX, int dY)> ALL_DIRECTIONS = CARDINAL_DIRECTIONS.Union(ORDINAL_DIRECTIONS).ToList();
 
-	public static T[,] As2dArray<T>(this T[] input, int cols, int? rows = null) {
+	public static T[,] To2dArray<T>(this T[] input, int cols, int? rows = null) {
 		int inputLength = input.Length;
 		rows ??= inputLength % cols == 0 ? inputLength / cols : (inputLength / cols) + 1;
 		T[,] result = new T[cols, (int)rows];
@@ -31,8 +29,8 @@ public static class ArrayHelpers {
 		}
 		return result;
 	}
-	public static T[,] As2dArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
-		return As2dArray<T>(input.ToArray(), cols, rows);
+	public static T[,] To2dArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
+		return To2dArray<T>(input.ToArray(), cols, rows);
 	}
 
 	public static IEnumerable<(int x, int y, T value)> GetAdjacentCells<T>(this T[,] array, int x, int y, bool includeDiagonals = false) {
@@ -42,7 +40,7 @@ public static class ArrayHelpers {
 			true => ALL_DIRECTIONS,
 			false => CARDINAL_DIRECTIONS,
 		};
-		
+
 		foreach ((int dX, int dY) in DIRECTIONS) {
 			int newX = x + dX;
 			int newY = y + dY;
@@ -56,12 +54,12 @@ public static class ArrayHelpers {
 	}
 
 
-	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width = 0) where T : struct {
-		for (int r = 0; r <= input.GetUpperBound(1); r++) {
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] array, int width = 0) where T : struct {
+		for (int r = 0; r <= array.GetUpperBound(1); r++) {
 			string line = "";
-			for (int c = 0; c <= input.GetUpperBound(0); c++) {
-				string cell = input[c, r].ToString() ?? "";
-				line += $"{new string(' ', width - cell.Length)}{cell}";
+			for (int c = 0; c <= array.GetUpperBound(0); c++) {
+				string cell = array[c, r].ToString() ?? "";
+				line += $"{new string(' ', width == 0 ? 1 : width - cell.Length)}{cell}";
 			}
 			yield return line;
 		}
@@ -73,26 +71,63 @@ public static class ArrayHelpers {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="numbers"></param>
 	/// <returns></returns>
-	public static double Mean<T>(this T[] numbers) =>
+	public static double Mean<T>(this T[] numbers) where T : struct =>
 		numbers.Select(n => Convert.ToDouble(n)).ToArray().Average();
 
 	/// <summary>
-	/// Finds the Median value and returns it
+	/// Finds the mean average and returns it as a double
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="numbers"></param>
 	/// <returns></returns>
-	public static double Median<T>(this T[] numbers) {
+	public static double Mean<T>(this IEnumerable<T> numbers) where T : struct =>
+		numbers.Select(n => Convert.ToDouble(n)).ToArray().Average();
+
+	/// <summary>
+	/// Finds the Median value and returns it as double
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static double Median<T>(this T[] numbers) where T : struct {
 		IOrderedEnumerable<T> sortedNumbers = numbers.OrderBy(n => n);
 		int midPoint = numbers.Length / 2;
 		return (numbers.Length % 2) switch {
 			0 => (Convert.ToDouble(sortedNumbers.ElementAt(midPoint))
 				+ Convert.ToDouble(sortedNumbers.ElementAt(midPoint - 1)))
-				/ 2.0
-,
+				/ 2.0,
 			_ => Convert.ToDouble(sortedNumbers.ElementAt(midPoint))
 		};
 	}
+
+	/// <summary>
+	/// Finds the Median value and returns it as double
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static double Median<T>(this IEnumerable<T> numbers) where T : struct {
+		return numbers.ToArray().Median();
+	}
+
+	/// <summary>
+	/// Finds the Median value and returns it as an int
+	/// </summary>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static int Median(this IEnumerable<int> numbers) {
+		return Convert.ToInt32(numbers.ToArray().Median());
+	}
+
+	/// <summary>
+	/// Finds the Median value and returns it as a long
+	/// </summary>
+	/// <param name="numbers"></param>
+	/// <returns></returns>
+	public static long Median(this IEnumerable<long> numbers) {
+		return Convert.ToInt64(numbers.ToArray().Median());
+	}
+
 
 	/// <summary>
 	/// Returns the values occuring the most times
