@@ -1,10 +1,10 @@
 ﻿namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
-/// Day 10: 
+/// Day 10: Syntax Scoring
 /// https://adventofcode.com/2021/day/10
 /// </summary>
-[Description("")]
+[Description("Syntax Scoring")]
 public class Day10 {
 
 	static readonly char[] OPEN_CHARS = "([{<".ToCharArray();
@@ -77,13 +77,11 @@ public class Day10 {
 	#region Problem initialisation
 	public static string Part1(string[]? input, params object[]? args) {
 		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
 		input = input.StripTrailingBlankLineOrDefault();
 		return Solution1(input).ToString();
 	}
 	public static string Part2(string[]? input, params object[]? args) {
 		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
 		input = input.StripTrailingBlankLineOrDefault();
 		return Solution2(input).ToString();
 	}

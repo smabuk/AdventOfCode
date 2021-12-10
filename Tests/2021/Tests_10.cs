@@ -20,6 +20,11 @@ public class Tests_10_Syntax_Scoring {
 	}
 
 	[Theory]
+	[InlineData(new string[] { "[({(<(())[]>[[{[]{<()<>>" }, 288957 )]
+	[InlineData(new string[] { "[(()[<>])]({[<{<<[]>>(" }, 5566 )]
+	[InlineData(new string[] { "(((({<>}<{<{<>}{[]{[]{}" }, 1480781 )]
+	[InlineData(new string[] { "{<[[]]>}<{[{[{[]{()[[[]" }, 995444 )]
+	[InlineData(new string[] { "<{([{{}}[<[[[<>{}]]]>[]]" }, 294 )]
 	[InlineData(new string[] {
 		"[({(<(())[]>[[{[]{<()<>>",
 		"[(()[<>])]({[<{<<[]>>(",
