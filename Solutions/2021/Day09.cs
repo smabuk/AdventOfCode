@@ -7,17 +7,12 @@
 [Description("Smoke Basin")]
 public class Day09 {
 
-	private static readonly List<(int dX, int dY)> DIRECTIONS = new()
-		{ (0, -1), (0, 1), (-1, 0), (1, 0) };
-
-	record Point(int X, int Y);
-
 	record Basin(Point LowPoint, List<Point> Locations) {
 		public int Size => Locations.Count;
 	};
 
 	private static int Solution1(string[] input) {
-		int[,] heightMap = input.Select(i => ParseLine(i)).SelectMany(i => i).As2dArray(input[0].Length);
+		int[,] heightMap = input.Select(i =>i.AsDigits()).SelectMany(i => i).As2dArray(input[0].Length);
 
 		int cols = heightMap.GetUpperBound(0);
 		int rows = heightMap.GetUpperBound(1);
@@ -36,24 +31,17 @@ public class Day09 {
 	}
 
 	static bool IsLowPoint(int[,] array, int col, int row) {
-		bool lowPoint = true;
-		int cols = array.GetUpperBound(0);
-		int rows = array.GetUpperBound(1);
-		int value = array[col, row];
-		foreach ((int dX, int dY) in DIRECTIONS) {
-			int newX = col + dX;
-			int newY = row + dY;
-			if (newX >= 0 && newX <= cols && newY >= 0 && newY <= rows) {
-				if (array[newX, newY] <= value) {
-					return false;
-				}
+		int currValue = array[col, row];
+		foreach ((_, _, int value) in array.GetAdjacentCells(col, row)) {
+			if (value <= currValue) {
+				return false;
 			}
 		}
-		return lowPoint;
+		return true;
 	}
 
 	private static long Solution2(string[] input) {
-		int[,] heightMap = input.Select(i => ParseLine(i)).SelectMany(i => i).As2dArray(input[0].Length);
+		int[,] heightMap = input.Select(i => i.AsDigits()).SelectMany(i => i).As2dArray(input[0].Length);
 
 		int cols = heightMap.GetUpperBound(0);
 		int rows = heightMap.GetUpperBound(1);
@@ -78,33 +66,17 @@ public class Day09 {
 	}
 
 	static List<Point> GetAdjacentBasinPoints(Point p, int[,] array, List<Point> knownPoints) {
-		int cols = array.GetUpperBound(0);
-		int rows = array.GetUpperBound(1);
-		foreach ((int dX, int dY) in DIRECTIONS) {
-			int newX = p.X + dX;
-			int newY = p.Y + dY;
-			Point newP = new(newX, newY);
+		foreach ((int x, int y, int value) in array.GetAdjacentCells(p)) {
+			Point newP = new(x, y);
 			if (!knownPoints.Contains(newP)) {
-				if (newX >= 0 && newX <= cols && newY >= 0 && newY <= rows) {
-					if (array[newX, newY] < 9) {
-						knownPoints.Add(newP);
-						knownPoints = GetAdjacentBasinPoints(newP, array, knownPoints);
-					}
+				if (value < 9) {
+					knownPoints.Add(newP);
+					knownPoints = GetAdjacentBasinPoints(newP, array, knownPoints);
 				}
 			}
 		}
 		return knownPoints;
 	}
-
-
-	private static IEnumerable<int> ParseLine(string input) {
-		foreach (char c in input) {
-			yield return int.Parse($"{c}");
-		}
-	}
-
-
-
 
 
 	#region Problem initialisation

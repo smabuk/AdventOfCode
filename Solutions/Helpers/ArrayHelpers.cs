@@ -1,7 +1,22 @@
-﻿namespace AdventOfCode.Solutions.Helpers;
+﻿using System;
+
+namespace AdventOfCode.Solutions.Helpers;
 
 public static class ArrayHelpers {
-	public static T[,] AsArray<T>(this T[] input, int cols, int? rows = null) {
+	public record struct Point(int X, int Y) {
+		public static implicit operator (int x, int y)(Point p) {
+			p.Deconstruct(out int x, out int y);
+			return (x, y);
+		}
+	};
+
+	public static readonly List<(int dX, int dY)> CARDINAL_DIRECTIONS = new()
+	{ (0, -1), (0, 1), (-1, 0), (1, 0) };
+	public static readonly List<(int dX, int dY)> ORDINAL_DIRECTIONS = new()
+	{ (-1, -1), (-1, 1), (1, 1), (1, -1) };
+	public static readonly List<(int dX, int dY)> ALL_DIRECTIONS = CARDINAL_DIRECTIONS.Union(ORDINAL_DIRECTIONS).ToList();
+
+	public static T[,] As2dArray<T>(this T[] input, int cols, int? rows = null) {
 		int inputLength = input.Length;
 		rows ??= inputLength % cols == 0 ? inputLength / cols : (inputLength / cols) + 1;
 		T[,] result = new T[cols, (int)rows];
@@ -16,11 +31,32 @@ public static class ArrayHelpers {
 		}
 		return result;
 	}
-	public static T[,] AsArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
-		return AsArray<T>(input.ToArray(), cols, rows);
+	public static T[,] As2dArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
+		return As2dArray<T>(input.ToArray(), cols, rows);
 	}
 
-	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width) where T : struct {
+	public static IEnumerable<(int x, int y, T value)> GetAdjacentCells<T>(this T[,] array, int x, int y, bool includeDiagonals = false) {
+		int cols = array.GetUpperBound(0);
+		int rows = array.GetUpperBound(1);
+		IEnumerable<(int dX, int dY)> DIRECTIONS = includeDiagonals switch {
+			true => ALL_DIRECTIONS,
+			false => CARDINAL_DIRECTIONS,
+		};
+		
+		foreach ((int dX, int dY) in DIRECTIONS) {
+			int newX = x + dX;
+			int newY = y + dY;
+			if (newX >= 0 && newX <= cols && newY >= 0 && newY <= rows) {
+				yield return (newX, newY, array[newX, newY]);
+			}
+		}
+	}
+	public static IEnumerable<(int x, int y, T value)> GetAdjacentCells<T>(this T[,] array, (int x, int y) point, bool includeDiagonals = false) {
+		return GetAdjacentCells<T>(array, point.x, point.y, includeDiagonals);
+	}
+
+
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] input, int width = 0) where T : struct {
 		for (int r = 0; r <= input.GetUpperBound(1); r++) {
 			string line = "";
 			for (int c = 0; c <= input.GetUpperBound(0); c++) {

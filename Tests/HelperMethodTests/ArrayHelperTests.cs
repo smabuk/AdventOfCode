@@ -16,7 +16,7 @@ public class ArrayHelperTests {
 		, 5, 2, 10)]
 	public void AsArray_Int_Should_Have_Shape(int[] input, int cols, int? rows,
 		int expectedCols, int expectedRows, int expectedLength) {
-		int[,] array = input.AsArray<int>(cols, rows);
+		int[,] array = input.As2dArray<int>(cols, rows);
 		Assert.Equal(expectedLength, array.Length);
 		Assert.Equal(expectedCols, array.GetUpperBound(0) + 1);
 		Assert.Equal(expectedRows, array.GetUpperBound(1) + 1);
@@ -29,21 +29,21 @@ public class ArrayHelperTests {
 		for (int i = 0; i < input.GetUpperBound(0); i++) {
 			input[i] = new((char)(65 + i), i + 1);
 		}
-		(char, int)[,] array = input.AsArray<(char, int)>(4, 2);
+		(char, int)[,] array = input.As2dArray<(char, int)>(4, 2);
 		Assert.Equal(8, array.Length);
 		Assert.Equal(4, array.GetUpperBound(0) + 1);
 		Assert.Equal(2, array.GetUpperBound(1) + 1);
 		Assert.Equal(('E', 5), array[0, 1]);
 
 		Array.Clear(array);
-		array = input.AsArray<(char, int)>(2);
+		array = input.As2dArray<(char, int)>(2);
 		Assert.Equal(8, array.Length);
 		Assert.Equal(2, array.GetUpperBound(0) + 1);
 		Assert.Equal(4, array.GetUpperBound(1) + 1);
 		Assert.Equal(('C', 3), array[0, 1]);
 
 		Array.Clear(array);
-		array = input.AsArray<(char, int)>(3);
+		array = input.As2dArray<(char, int)>(3);
 		Assert.Equal(9, array.Length);
 		Assert.Equal(3, array.GetUpperBound(0) + 1);
 		Assert.Equal(3, array.GetUpperBound(1) + 1);
@@ -60,7 +60,7 @@ public class ArrayHelperTests {
 		, "   1   2")]
 	public void PrintAsStringArray_Int_Should_Have_Shape(int[] input, int cols, int? rows, int width,
 		string expected) {
-		string[] actual = input.AsArray<int>(cols, rows).PrintAsStringArray<int>(width).ToArray();
+		string[] actual = input.As2dArray<int>(cols, rows).PrintAsStringArray<int>(width).ToArray();
 		Assert.Equal(expected, actual[0]);
 	}
 
