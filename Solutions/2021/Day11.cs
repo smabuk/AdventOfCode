@@ -10,21 +10,17 @@ public class Day11 {
 	private static int Solution1(string[] input, int steps) {
 		int[,] grid = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
 
-		int cols = grid.GetUpperBound(0);
-		int rows = grid.GetUpperBound(1);
-
-		int totalNoOfFlashes = 0;
-
-		for (int step = 1; step <= steps; step++) {
-			totalNoOfFlashes += GenerateStep(grid, cols, rows);
-		}
-
-		return totalNoOfFlashes;
+		return Enumerable.Range(1, steps)
+			.Select(i => GenerateStep(grid))
+			.Sum();
 	}
 
-	private static int GenerateStep(int[,] grid, int cols, int rows) {
+	private static int GenerateStep(int[,] grid) {
 		HashSet<Point> flashedPoints = new();
 		int flashesPerStep = 0;
+
+		int cols = grid.GetUpperBound(0);
+		int rows = grid.GetUpperBound(1);
 
 		for (int row = 0; row <= rows; row++) {
 			for (int col = 0; col <= cols; col++) {
@@ -58,8 +54,8 @@ public class Day11 {
 			grid[x, y]++;
 		}
 
-		foreach ((int x, int y, _) in grid.GetAdjacentCells(col, row, includeDiagonals: true)) {
-			if (grid[x, y] > 9 && flashedPoints.Add(new(x, y))) {
+		foreach ((int x, int y, int energyValue) in grid.GetAdjacentCells(col, row, includeDiagonals: true)) {
+			if (energyValue > 9 && flashedPoints.Add(new(x, y))) {
 				flashes += 1 + CalculateAdjacentChanges(x, y, grid, flashedPoints);
 			}
 		}
@@ -71,11 +67,8 @@ public class Day11 {
 	private static int Solution2(string[] input) {
 		int[,] grid = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
 
-		int cols = grid.GetUpperBound(0);
-		int rows = grid.GetUpperBound(1);
-
 		int step = 1;
-		while (GenerateStep(grid, cols, rows) != 100) {
+		while (GenerateStep(grid) != grid.LongLength) {
 			step++;
 		}
 
