@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-
-using Microsoft.VisualBasic;
-
-namespace AdventOfCode.Solutions.Year2019;
+﻿namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day XX: Universal Orbit Map

@@ -1,79 +1,24 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-//GetInputDataAndSolve(2021, 01);
-//GetInputDataAndSolve(2021, 02);
-//GetInputDataAndSolve(2021, 03);
-//GetInputDataAndSolve(2021, 04);
-//GetInputDataAndSolve(2021, 05);
-//GetInputDataAndSolve(2021, 06);
-//GetInputDataAndSolve(2021, 07);
-//GetInputDataAndSolve(2021, 08);
-//GetInputDataAndSolve(2021, 09);
-//GetInputDataAndSolve(2021, 10);
-GetInputDataAndSolve(2021, 11);
+DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
+if (args.Length == 2) {
+	if (int.TryParse(args[0], out int year) && int.TryParse(args[1], out int day)) {
+		date = new(year, 12, day);
+	}
+}
+if (args.Length == 1) {
+	if (int.TryParse(args[0], out int year)) {
+		date = new(year, 1, 1);
+	}
+}
 
-/*
-	GetInputDataAndSolve(2020, 01, "Report Repair");
-	GetInputDataAndSolve(2020, 02, "Password Philosophy");
-	GetInputDataAndSolve(2020, 03, "Toboggan Trajectory");
-	GetInputDataAndSolve(2020, 04, "Passport Processing");
-	GetInputDataAndSolve(2020, 05, "Binary Boarding");
-	GetInputDataAndSolve(2020, 06, "Custom Customs");
-	GetInputDataAndSolve(2020, 07, "Handy Haversacks");
-	GetInputDataAndSolve(2020, 08, "Handheld Halting");
-	GetInputDataAndSolve(2020, 09, "Encoding Error",null, 25);
-	GetInputDataAndSolve(2020, 10, "Adapter Array");
-	GetInputDataAndSolve(2020, 11, "Seating System");
-	GetInputDataAndSolve(2020, 12, "Rain Risk");
-	GetInputDataAndSolve(2020, 13, "Shuttle Search");
-	GetInputDataAndSolve(2020, 14, "Docking Data");
-	GetInputDataAndSolve(2020, 15, "Rambunctious Recitation");
-	GetInputDataAndSolve(2020, 16, "Ticket Translation");
-	GetInputDataAndSolve(2020, 17, "Conway Cubes");
-	GetInputDataAndSolve(2020, 18, "Operation Order");
-	GetInputDataAndSolve(2020, 19, "");
-	GetInputDataAndSolve(2020, 20, "");
-	GetInputDataAndSolve(2020, 21, "");
-	GetInputDataAndSolve(2020, 22, "");
-	GetInputDataAndSolve(2020, 23, "");
-	GetInputDataAndSolve(2020, 24, "");
-	GetInputDataAndSolve(2020, 25, "");
-
-	GetInputDataAndSolve(2019, 01);
-	GetInputDataAndSolve(2019, 02);
-	GetInputDataAndSolve(2019, 03);
-	GetInputDataAndSolve(2019, 04);
-	GetInputDataAndSolve(2019, 05);
-	GetInputDataAndSolve(2019, 06);
-
-	GetInputDataAndSolve(2015, 01, "Not Quite Lisp");
-	GetInputDataAndSolve(2015, 02, "I Was Told There Would Be No Math");
-	GetInputDataAndSolve(2015, 03, "Perfectly Spherical Houses in a Vacuum");
-	GetInputDataAndSolve(2015, 04, "The Ideal Stocking Stuffer");
-	GetInputDataAndSolve(2015, 05, "Doesn't He Have Intern-Elves For This?");
-	GetInputDataAndSolve(2015, 06, "Probably a Fire Hazard");
-	GetInputDataAndSolve(2015, 07, "Some Assembly Required", null, "a");
-	GetInputDataAndSolve(2015, 08, "Matchsticks");
-	GetInputDataAndSolve(2015, 09, "All in a Single Night");
-	GetInputDataAndSolve(2015, 10, "Elves Look, Elves Say");
-	GetInputDataAndSolve(2015, 11, "Corporate Policy");
-	GetInputDataAndSolve(2015, 12, "JSAbacusFramework.io");
-	GetInputDataAndSolve(2015, 13, "Knights of the Dinner Table");
-	GetInputDataAndSolve(2015, 14, "Reindeer Olympics", 2503);
-	GetInputDataAndSolve(2015, 15, "Science for Hungry People");
-	GetInputDataAndSolve(2015, 16, "Aunt Sue");
-	GetInputDataAndSolve(2015, 17, "No Such Thing as Too Much", null, 150);
-	GetInputDataAndSolve(2015, 18, "Like a GIF For Your Yard", null, 100);
-	GetInputDataAndSolve(2015, 19, "Medicine for Rudolph");
-	GetInputDataAndSolve(2015, 20, "Infinite Elves and Infinite Houses");
-
-	GetInputDataAndSolve(2015, 21, "RPG Simulator 20XX");
-	GetInputDataAndSolve(2015, 22, "");
-	GetInputDataAndSolve(2015, 23, "");
-	GetInputDataAndSolve(2015, 24, "");
-	GetInputDataAndSolve(2015, 25, "");
-*/
-
+if (date.Month == 12 && date.Day <= 25) {
+	GetInputDataAndSolve(date.Year, date.Day);
+} else {
+	for (int day = 1; day <= 25; day++) {
+		GetInputDataAndSolve(date.Year, day);
+	}
+}
 
 Console.WriteLine();
 Console.Write("Press a key to continue ... ");
@@ -84,16 +29,21 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 
 	if (File.Exists(filename)) {
 		input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+	} else {
+		filename = Path.GetFullPath(Path.Combine($"../Data/{year}_{day:D2}.txt"));
+		if (File.Exists(filename)) {
+			input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+		}
 	}
 
 	if (String.IsNullOrWhiteSpace(title)) {
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
-	Console.WriteLine();
-	Console.WriteLine($"{year} DAY {day,2} - {title}");
+	//Console.WriteLine();
+	Console.Write($"{year} DAY {day,2} - {title,-35}");
 	if (input is not null) {
-		Console.WriteLine($"     Part 1:  {SolveProblem(year, day, 1, input, args)}");
+		Console.Write($"  Part 1:  {SolveProblem(year, day, 1, input, args),-15}");
 		Console.WriteLine($"     Part 2:  {SolveProblem(year, day, 2, input, args)}");
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");

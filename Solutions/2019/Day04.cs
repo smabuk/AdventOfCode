@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AdventOfCode.Solutions.Year2019;
+﻿namespace AdventOfCode.Solutions.Year2019;
 
 /// <summary>
 /// Day 04: Secure Container
