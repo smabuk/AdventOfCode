@@ -1,15 +1,16 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-GetInputDataAndSolve(2021, 01);
-GetInputDataAndSolve(2021, 02);
-GetInputDataAndSolve(2021, 03);
-GetInputDataAndSolve(2021, 04);
-GetInputDataAndSolve(2021, 05);
-GetInputDataAndSolve(2021, 06);
-GetInputDataAndSolve(2021, 07);
-GetInputDataAndSolve(2021, 08);
-GetInputDataAndSolve(2021, 09);
-GetInputDataAndSolve(2021, 10);
+//GetInputDataAndSolve(2021, 01);
+//GetInputDataAndSolve(2021, 02);
+//GetInputDataAndSolve(2021, 03);
+//GetInputDataAndSolve(2021, 04);
+//GetInputDataAndSolve(2021, 05);
+//GetInputDataAndSolve(2021, 06);
+//GetInputDataAndSolve(2021, 07);
+//GetInputDataAndSolve(2021, 08);
+//GetInputDataAndSolve(2021, 09);
+//GetInputDataAndSolve(2021, 10);
+GetInputDataAndSolve(2021, 11);
 
 /*
 	GetInputDataAndSolve(2020, 01, "Report Repair");
