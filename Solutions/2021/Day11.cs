@@ -15,12 +15,20 @@ public class Day11 {
 			.Sum();
 	}
 
+	private static int Solution2(string[] input) {
+		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+
+		int step = 1;
+		while (GenerateStep(grid) != grid.LongLength) {
+			step++;
+		}
+
+		return step;
+	}
+
 	private static int GenerateStep(int[,] grid) {
 		HashSet<Point> flashedPoints = new();
 		int flashesPerStep = 0;
-
-		int cols = grid.GetUpperBound(0);
-		int rows = grid.GetUpperBound(1);
 
 		foreach ((int x, int y) in grid.Walk2dArray()) {
 			grid[x, y]++;
@@ -58,18 +66,6 @@ public class Day11 {
 	}
 
 
-	private static int Solution2(string[] input) {
-		int[,] grid = input
-			.SelectMany(i => i.AsDigits())
-			.To2dArray(input[0].Length);
-
-		int step = 1;
-		while (GenerateStep(grid) != grid.LongLength) {
-			step++;
-		}
-
-		return step;
-	}
 
 
 	#region Problem initialisation

@@ -36,6 +36,9 @@ public class DayXX {
 
 
 
+	/******************************************************************
+	 *          P R O B L E M    I N I T I A L I S A T I O N          *
+	 ******************************************************************/
 	#region Problem initialisation
 	public static string Part1(string[]? input, params object[]? args) {
 		if (input is null) { return "Error: No data provided"; }

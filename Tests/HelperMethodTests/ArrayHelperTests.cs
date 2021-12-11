@@ -14,17 +14,16 @@ public class ArrayHelperTests {
 	[InlineData(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 }
 		, 5, null
 		, 5, 2, 10)]
-	public void AsArray_Int_Should_Have_Shape(int[] input, int cols, int? rows,
+	public void To2dArray_Int_Should_Have_Shape(int[] input, int cols, int? rows,
 		int expectedCols, int expectedRows, int expectedLength) {
 		int[,] array = input.To2dArray<int>(cols, rows);
 		Assert.Equal(expectedLength, array.Length);
 		Assert.Equal(expectedCols, array.GetUpperBound(0) + 1);
 		Assert.Equal(expectedRows, array.GetUpperBound(1) + 1);
-		//Assert.Equal(expected, actual);
 	}
 
 	[Fact]
-	public void AsArray_Tuple_Should_HaveShape() {
+	public void To2dArray_Tuple_Should_HaveShape() {
 		(char, int)[] input = new (char, int)[8];
 		for (int i = 0; i < input.GetUpperBound(0); i++) {
 			input[i] = new((char)(65 + i), i + 1);
@@ -50,6 +49,37 @@ public class ArrayHelperTests {
 		Assert.Equal(('G', 7), array[0, 2]);
 	}
 
+	[Fact]
+	public void Walk2dArray_Should_Walk_Across_Then_Down() {
+		Point expectedPoint;
+		(char, int)[] input = new (char, int)[26];
+		for (int i = 0; i < input.GetUpperBound(0); i++) {
+			input[i] = new((char)(65 + i), i + 1);
+		}
+		(char, int)[,] array = input.To2dArray<(char, int)>(5);
+		expectedPoint = array.Walk2dArray().Select(p => new Point(p.X, p.Y)).Skip(7).First();
+		Assert.Equal((2, 1), expectedPoint);
+		(int x, int y, (char, int) value) = array.Walk2dArrayWithValues().Skip(7).First();
+		Assert.Equal(2, x);
+		Assert.Equal(1, y);
+		Assert.Equal('H', value.Item1);
+		Assert.Equal(8, value.Item2);
+	}
+
+	[Theory]
+	[InlineData(0, 0, false, 2)]
+	[InlineData(0, 0, true, 3)]
+	[InlineData(1, 1, false, 4)]
+	[InlineData(1, 1, true, 8)]
+	public void GetAdjacentCells_Should_Have(int X, int Y, bool includeDiagonals, int expected) {
+		(char, int)[] input = new (char, int)[26];
+		for (int i = 0; i < input.GetUpperBound(0); i++) {
+			input[i] = new((char)(65 + i), i + 1);
+		}
+		(char, int)[,] array = input.To2dArray<(char, int)>(5);
+		var points = array.GetAdjacentCells((X, Y), includeDiagonals: includeDiagonals);
+		Assert.Equal(points.Count(), expected);
+	}
 
 	[Theory]
 	[InlineData(new int[] { 1, 2, 3, 4, 5, 6 }
@@ -87,7 +117,7 @@ public class ArrayHelperTests {
 	[InlineData(new int[] { 2, 5, 4, 4, 4, 4, 3, 2, 2, 2 }, 3.5)]
 	[InlineData(new int[] { 5, 1, 3 }, 3)]
 	public void Should_Find_Median(int[] input, double expected) {
-		double actual = ArrayHelpers.Median<int>(input);
+		double actual = ArrayHelpers.MedianAsDouble<int>(input);
 		Assert.Equal(expected, actual);
 	}
 

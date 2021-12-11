@@ -7,13 +7,20 @@
 [Description("Syntax Scoring")]
 public class Day10 {
 
-	static readonly char[] OPEN_CHARS = "([{<".ToCharArray();
-
 	private static long Solution1(string[] input) {
 		return input
 			.Select(line => FindFirstIllegalCharacterValue(line))
 			.Sum();
 	}
+
+	private static long Solution2(string[] input) {
+		return input
+			.Where(line => FindFirstIllegalCharacterValue(line) == 0)
+			.Select(line => FindClosingCharacterValues(line))
+			.Median();
+	}
+
+	static readonly string OPEN_CHARS = "([{<";
 
 	private static long FindFirstIllegalCharacterValue(string line) {
 		Stack<char> openChars = new();
@@ -27,7 +34,7 @@ public class Day10 {
 					']' => ('[', 57),
 					'}' => ('{', 1197),
 					'>' => ('<', 25137),
-					_ => throw new NotImplementedException(),
+					_ => throw new Exception(),
 				};
 				if (expectedChar != openChars.Pop()) {
 					return value;
@@ -36,13 +43,6 @@ public class Day10 {
 		}
 
 		return 0;
-	}
-
-	private static long Solution2(string[] input) {
-		return input
-			.Where(line => FindFirstIllegalCharacterValue(line) == 0)
-			.Select(line => FindClosingCharacterValues(line))
-			.Median();
 	}
 
 	private static long FindClosingCharacterValues(string line) {
@@ -63,7 +63,7 @@ public class Day10 {
 				'[' => 2,
 				'{' => 3,
 				'<' => 4,
-				_ => throw new NotImplementedException()
+				_ => throw new Exception()
 			};
 			total = 5 * total + score;
 		}
@@ -73,7 +73,9 @@ public class Day10 {
 
 
 
-
+	/******************************************************************
+	 *          P R O B L E M    I N I T I A L I S A T I O N          *
+	 ******************************************************************/
 	#region Problem initialisation
 	public static string Part1(string[]? input, params object[]? args) {
 		if (input is null) { return "Error: No data provided"; }
