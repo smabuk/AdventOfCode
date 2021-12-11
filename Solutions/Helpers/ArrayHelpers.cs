@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Helpers;
+﻿using System;
+
+namespace AdventOfCode.Solutions.Helpers;
 
 public static class ArrayHelpers {
 	public record struct Point(int X, int Y) {
@@ -32,6 +34,29 @@ public static class ArrayHelpers {
 	public static T[,] To2dArray<T>(this IEnumerable<T> input, int cols, int? rows = null) {
 		return To2dArray<T>(input.ToArray(), cols, rows);
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="array"></param>
+	/// <returns></returns>
+	public static IEnumerable<(int X, int Y, T Value)> Walk2dArrayWithValues<T>(this T[,] array) {
+		int cols = array.GetUpperBound(0);
+		int rows = array.GetUpperBound(1);
+
+		for (int row = 0; row <= rows; row++) {
+			for (int col = 0; col <= cols; col++) {
+				yield return new(col, row, array[col, row]);
+			}
+		}
+	}
+	public static IEnumerable<(int X, int Y)> Walk2dArray<T>(this T[,] array) {
+		return array
+			.Walk2dArrayWithValues()
+			.Select(cell => (cell.X, cell.Y));
+	}
+
 
 	public static IEnumerable<(int x, int y, T value)> GetAdjacentCells<T>(this T[,] array, int x, int y, bool includeDiagonals = false) {
 		int cols = array.GetUpperBound(0);

@@ -8,7 +8,7 @@
 public class Day11 {
 
 	private static int Solution1(string[] input, int steps) {
-		int[,] grid = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
+		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
 
 		return Enumerable.Range(1, steps)
 			.Select(i => GenerateStep(grid))
@@ -22,25 +22,19 @@ public class Day11 {
 		int cols = grid.GetUpperBound(0);
 		int rows = grid.GetUpperBound(1);
 
-		for (int row = 0; row <= rows; row++) {
-			for (int col = 0; col <= cols; col++) {
-				grid[col, row]++;
+		foreach ((int x, int y) in grid.Walk2dArray()) {
+			grid[x, y]++;
+		}
+
+		foreach ((int x, int y, int energy) in grid.Walk2dArrayWithValues()) {
+			if (energy > 9 && flashedPoints.Add(new(x, y))) {
+				flashesPerStep += 1 + CalculateAdjacentChanges(x, y, grid, flashedPoints);
 			}
 		}
 
-		for (int row = 0; row <= rows; row++) {
-			for (int col = 0; col <= cols; col++) {
-				if (grid[col, row] > 9 && flashedPoints.Add(new(col, row))) {
-					flashesPerStep += 1 + CalculateAdjacentChanges(col, row, grid, flashedPoints);
-				}
-			}
-		}
-
-		for (int row = 0; row <= rows; row++) {
-			for (int col = 0; col <= cols; col++) {
-				if (grid[col, row] > 9) {
-					grid[col, row] = 0;
-				}
+		foreach ((int x, int y, int energy) in grid.Walk2dArrayWithValues()) {
+			if (energy > 9) {
+				grid[x, y] = 0;
 			}
 		}
 
@@ -65,7 +59,9 @@ public class Day11 {
 
 
 	private static int Solution2(string[] input) {
-		int[,] grid = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
+		int[,] grid = input
+			.SelectMany(i => i.AsDigits())
+			.To2dArray(input[0].Length);
 
 		int step = 1;
 		while (GenerateStep(grid) != grid.LongLength) {

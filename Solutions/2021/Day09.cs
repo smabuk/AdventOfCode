@@ -7,27 +7,18 @@
 [Description("Smoke Basin")]
 public class Day09 {
 
-	record Basin(Point LowPoint, List<Point> Locations) {
-		public int Size => Locations.Count;
-	};
+	record Basin(Point LowPoint, List<Point> Locations);
 
 	private static int Solution1(string[] input) {
-		int[,] heightMap = input.Select(i =>i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
+		int[,] heightMap = input
+			.SelectMany(i =>i.AsDigits())
+			.To2dArray(input[0].Length);
 
-		int cols = heightMap.GetUpperBound(0);
-		int rows = heightMap.GetUpperBound(1);
-
-		List<int> lowPoints = new();
-
-		for (int y = 0; y <= rows; y++) {
-			for (int x = 0; x <= cols; x++) {
-				if (IsLowPoint(heightMap, x, y)) {
-					lowPoints.Add(heightMap[x, y]);
-				}
-			}
-		}
-
-		return lowPoints.Sum(lp => lp + 1);
+		return heightMap
+			.Walk2dArrayWithValues()
+			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
+			.Select(cell => cell.Value)
+			.Sum(height => height + 1);
 	}
 
 	static bool IsLowPoint(int[,] array, int col, int row) {
@@ -41,27 +32,20 @@ public class Day09 {
 	}
 
 	private static long Solution2(string[] input) {
-		int[,] heightMap = input.Select(i => i.AsDigits()).SelectMany(i => i).To2dArray(input[0].Length);
+		int[,] heightMap = input
+			.SelectMany(i => i.AsDigits())
+			.To2dArray(input[0].Length);
 
-		int cols = heightMap.GetUpperBound(0);
-		int rows = heightMap.GetUpperBound(1);
-
-		List<Basin> basins = new();
-
-		for (int y = 0; y <= rows; y++) {
-			for (int x = 0; x <= cols; x++) {
-				if (IsLowPoint(heightMap, x, y)) {
-					Point lowPoint = new(x, y);
-					Basin basin = new(lowPoint, GetAdjacentBasinPoints(lowPoint, heightMap, new() { lowPoint }));
-					basins.Add(basin);
-				}
-			}
-		}
-
-		return basins
-			.OrderByDescending(b => b.Size)
+		return heightMap
+			.Walk2dArray()
+			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
+			.AsPoints()
+			.Select(location => 
+				new Basin(location, GetAdjacentBasinPoints(location, heightMap, new List<Point>() { location }))
+				.Locations
+				.Count)
+			.OrderByDescending(x => x)
 			.Take(3)
-			.Select(b => b.Size)
 			.Aggregate((a, b) => a * b);
 	}
 
