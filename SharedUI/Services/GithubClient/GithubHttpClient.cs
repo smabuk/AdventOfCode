@@ -12,6 +12,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		"smabuk",
 		"encse",
 		"glombek",
+		"dylanbeattie",
 		"internetbird",
 		"pseale",
 		"CopperBeardy",
@@ -22,17 +23,18 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 	};
 
 	public string UserLanguages(string username) => username switch {
-			"smabuk" => "c#",
-			"encse" => "c#",
-			"glombek" => "c#",
-			"internetbird" => "c#",
-			"pseale" => "c#",
-			"CopperBeardy" => "c#",
-			"Rollerss" => "c#",
-			"KevinSjoberg" => "crystal",
-			"Andriamanitra" => "multi",
-			"Bassel-T" => "c#",
-			_ => ""
+		"smabuk" => "c#",
+		"encse" => "c#",
+		"glombek" => "c#",
+		"dylanbeattie" => "c#",
+		"internetbird" => "c#",
+		"pseale" => "c#",
+		"CopperBeardy" => "c#",
+		"Rollerss" => "c#",
+		"KevinSjoberg" => "crystal",
+		"Andriamanitra" => "multi",
+		"Bassel-T" => "c#",
+		_ => ""
 	};
 
 	public string GetSolutionHref(int year, int day, string username) {
@@ -45,6 +47,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 			"andriamanitra" => $"{GITHUB}Andriamanitra/adventofcode{year}/blob/main/day{day:D2}",
 			"bassel-t" => $"{GITHUB}Bassel-T/AdventOfCode{year}-CS/blob/main/AdventOfCode{year}/Day{day}.cs",
 			"copperbeardy" => $"{GITHUB}CopperBeardy/AdventOfCode{year}/blob/main/AdventOfCode{year}/AdventOfCode{year}/Days/Day{day}.cs",
+			"dylanbeattie" => $"{GITHUB}dylanbeattie/advent-of-code-{year}/blob/main/day{day}/Program.cs",
 			"encse" => $"{GITHUB}encse/adventofcode/blob/master/{year}/Day{day:D2}/Solution.cs",
 			"glombek" => $"{GITHUB}glombek/advent-of-code-{year % 1000}/blob/main/Days/Day{day}.cs",
 			"internetbird" => $"{GITHUB}internetbird/AOC{year}/blob/master/PuzzleSolvers/Day{day}PuzzleSolver.cs",
@@ -67,6 +70,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 			"andriamanitra" => $"Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt",
 			"bassel-t" => "",
 			"copperbeardy" => $"CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt",
+			"dylanbeattie" => $"dylanbeattie/advent-of-code-{year}/main/day{day}/input.txt",
 			"encse" => $"encse/adventofcode/master/{year}/Day{day:D2}/input.in",
 			"glombek" => $"glombek/advent-of-code-{year % 1000}/main/Inputs/Day{day}/input.txt",
 			"internetbird" => $"internetbird/AOC{year}/master/InputFiles/day{day}.txt",
