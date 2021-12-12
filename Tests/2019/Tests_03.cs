@@ -1,5 +1,3 @@
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-
 namespace AdventOfCode.Tests.Year2019;
 
 public class Tests_03_Crossed_Wires {

@@ -1,4 +1,3 @@
-using AdventOfCode.Solutions.Year2019;
 namespace AdventOfCode.Tests.Year2019;
 
 public class Tests_05_Sunny_with_a_Chance_of_Asteroids {
@@ -6,13 +5,6 @@ public class Tests_05_Sunny_with_a_Chance_of_Asteroids {
 	[InlineData(new string[] { "3,0,4,0,99" }, new int[] { 1 }, 1)]
 	public void Part1(string[] program, int[] input, int expected) {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 5, 1, program, input), out int actual);
-		Assert.Equal(expected, actual);
-	}
-
-	[Theory]
-	[InlineData(new int[] { 1002, 4, 3, 4, 33 }, new int[] { 1 }, new int[] { 1002, 4, 3, 4, 99 })]
-	public void IntcodeComputerTests(int[] program, int[] input, int[] expected) {
-		int[] actual = IntcodeComputer.ExecuteIntcodeProgram(program, input, out int[] _);
 		Assert.Equal(expected, actual);
 	}
 

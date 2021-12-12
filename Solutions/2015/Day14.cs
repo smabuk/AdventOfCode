@@ -7,6 +7,16 @@
 [Description("Reindeer Olympics")]
 public class Day14 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int raceTime = GetArgument(args, 1, 2503);
+		return Solution1(input, raceTime).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? args) {
+		int raceTime = GetArgument(args, 1, 2503);
+		return Solution2(input, raceTime).ToString();
+	}
+
 	record Reindeer(string Name, int Speed, int FlyingTime, int RestingTime) {
 		public bool IsFlying(int noOfSeconds) =>
 			noOfSeconds % (FlyingTime + RestingTime) < FlyingTime;
@@ -68,25 +78,4 @@ public class Day14 {
 		}
 		return null!;
 	}
-
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int raceTime = GetArgument(args, 1, 2503);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input, raceTime).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int raceTime = GetArgument(args, 1, 2503);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input, raceTime).ToString();
-	}
-	#endregion
-
 }

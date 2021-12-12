@@ -3,7 +3,7 @@ namespace AdventOfCode.Tests.Year2020;
 /// <summary>
 /// https://adventofcode.com/2020/day/3
 /// </summary>
-public class Tests_03 {
+public class Tests_03_Toboggan_Trajectory {
 	static readonly string[] _input =
 	{
 			"..##.......",

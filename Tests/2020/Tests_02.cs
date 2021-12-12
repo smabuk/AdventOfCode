@@ -3,7 +3,7 @@ namespace AdventOfCode.Tests.Year2020;
 /// <summary>
 /// https://adventofcode.com/2020/day/2
 /// </summary>
-public class Tests_02 {
+public class Tests_02_Password_Philosophy {
 	static readonly string[] _input =
 	{
 			"1-3 a: abcde",

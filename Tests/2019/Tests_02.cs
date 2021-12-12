@@ -1,5 +1,3 @@
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-
 namespace AdventOfCode.Tests.Year2019;
 
 public class Tests_02_1202_Program_Alarm {
@@ -10,7 +8,7 @@ public class Tests_02_1202_Program_Alarm {
 	[InlineData(new string[] { "1,1,1,4,99,5,6,0,99" }, "30,1,1,4,2,5,6,0,99")]
 	[InlineData(new string[] { "1,9,10,3,2,3,11,0,99,30,40,50" }, "3500,9,10,70,2,3,11,0,99,30,40,50")]
 	public void Part1(string[] input, string expected) {
-		string actual = SolutionRouter.SolveProblem(2019, 2, 1, input, true);
+		string actual = SolutionRouter.SolveProblem(2019, 2, 1, input, new int[] { });
 		Assert.Equal(expected, actual);
 	}
 

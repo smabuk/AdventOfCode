@@ -6,6 +6,9 @@
 /// </summary>
 [Description("Perfectly Spherical Houses in a Vacuum")]
 public class Day03 {
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static int Solution1(string[] input) {
 		List<(int x, int y)> houses = new();
 		(int x, int y) santa = (0, 0);
@@ -51,17 +54,4 @@ public class Day03 {
 		}
 		return houses.Distinct().Count();
 	}
-
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-
 }

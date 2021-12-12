@@ -7,6 +7,9 @@
 [Description("Handheld Halting")]
 public static class Day08 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private record Instruction(string Command, int Value);
 
 	private static int Accumulator { get; set; }
@@ -83,28 +86,4 @@ public static class Day08 {
 		}
 		return null!;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-
 }

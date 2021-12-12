@@ -9,6 +9,9 @@ namespace AdventOfCode.Solutions.Year2015;
 /// </summary>
 [Description("The Ideal Stocking Stuffer")]
 public class Day04 {
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static long Solution1(string[] input) {
 		string secretKey = input[0];
 
@@ -40,17 +43,4 @@ public class Day04 {
 		}
 		return i;
 	}
-
-
-
-	public static string Part1(string[]? input) {
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input) {
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-
 }

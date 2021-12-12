@@ -7,6 +7,16 @@
 [Description("Sunny with a Chance of Asteroids")]
 public class Day05 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int[] programInput = GetArgument(args, 1, new int[] { 1 });
+		return Solution1(input, programInput).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? args) {
+		int[] programInput = GetArgument(args, 1, new int[] { 5 });
+		return Solution2(input, programInput).ToString();
+	}
+
 	record RecordType(string Name, int Value);
 
 	private static string Solution1(string[] input, int[] programInput) {
@@ -26,20 +36,4 @@ public class Day05 {
 
 		return output[^1].ToString();
 	}
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int[] programInput = GetArgument(args, 1, new int[] { 1 });
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input, programInput).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int[] programInput = GetArgument(args, 1, new int[] { 5 });
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input, programInput).ToString();
-	}
-	#endregion
-
 }

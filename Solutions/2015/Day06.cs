@@ -6,13 +6,14 @@
 /// </summary>
 [Description("Probably a Fire Hazard")]
 public class Day06 {
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	public static bool[,] Lights = new bool[1000, 1000];
-	public static int[,] Lights2 = new int[1000, 1000];
+	private static bool[,] Lights = new bool[1000, 1000];
+	private static int[,] Lights2 = new int[1000, 1000];
 
 	public record Point(int X, int Y);
 	public record Instruction(string Command, Point Point1, Point Point2);
-
 
 	public static long Solution1(string[] input) {
 		List<string> inputs = input.ToList();
@@ -35,8 +36,6 @@ public class Day06 {
 		}
 		return Lights2.Cast<int>().Sum();
 	}
-
-
 
 	public static Instruction GetInstruction(string input) {
 		Match? match = Regex.Match(input, @"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
@@ -94,17 +93,5 @@ public class Day06 {
 				}
 			}
 		}
-	}
-
-
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
 	}
 }

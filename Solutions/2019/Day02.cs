@@ -2,18 +2,24 @@
 
 /// <summary>
 /// Day 02: 1202 Program Alarm
-/// https://adventofcode.com/2019/day/XX
+/// https://adventofcode.com/2019/day/2
 /// </summary>
 [Description("1202 Program Alarm")]
 public class Day02 {
 
-	private static string Solution1(string[] input, bool testing = false) {
+	public static string Part1(string[] input, params object[]? args) {
+		int[] programInput = GetArgument(args, 1, new int[] { 12, 2 });
+		return Solution1(input, programInput).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	private static string Solution1(string[] input, int[] programReplacements) {
 		string inputLine = input[0];
 		int[] inputs = inputLine.Split(",").Select(i => int.Parse(i)).ToArray();
 
-		if (testing == false) {
-			inputs[1] = 12;
-			inputs[2] = 2;
+		for (int i = 0; i < programReplacements.Length; i++) {
+			inputs[i + 1] = programReplacements[i];
 		}
 
 		return String.Join(",", IntcodeComputer.ExecuteIntcodeProgram(inputs)).ToString();
@@ -38,23 +44,4 @@ public class Day02 {
 
 		throw new Exception();
 	}
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		bool testing = GetArgument(args, 1, false);
-		if (testing is false)
-			{ return Solution1(input).Split(",").First().ToString(); }
-		return Solution1(input, testing).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

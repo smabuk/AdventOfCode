@@ -7,6 +7,15 @@
 [Description("Rambunctious Recitation")]
 public class Day15 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int noOfIterations = GetArgument(args, 1, 2020);
+		return Solution(input, noOfIterations).ToString();
+	}
+	public static string Part2(string[] input, params object[]? args) {
+		int noOfIterations = GetArgument(args, 1, 30000000);
+		return Solution(input, noOfIterations).ToString();
+	}
+
 	record Spoken(int No, int TurnNo, bool FirstTime);
 
 	private static int Solution(string[] input, int noOfIterations) {
@@ -34,18 +43,4 @@ public class Day15 {
 
 		return lastGo.No;
 	}
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution(input, 2020).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution(input, 30000000).ToString();
-	}
-	#endregion
 }

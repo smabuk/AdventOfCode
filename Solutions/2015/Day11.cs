@@ -9,6 +9,9 @@ namespace AdventOfCode.Solutions.Year2015;
 [Description("Corporate Policy")]
 public class Day11 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static string Solution1(string[] input) {
 		string startingPassword = input[0];
 		int pLength = startingPassword.Length;
@@ -62,8 +65,17 @@ public class Day11 {
 		return newPassword;
 	}
 
-	private static int GetSignficantDigit(int foundAt, int pLength) => pLength - foundAt;
+	private static string Solution2(string[] input) {
+		string startingPassword = input[0];
+		string newPassword = startingPassword;
 
+		newPassword = Solution1(new string[] { newPassword });
+		newPassword = Solution1(new string[] { newPassword });
+
+		return newPassword;
+	}
+
+	private static int GetSignficantDigit(int foundAt, int pLength) => pLength - foundAt;
 
 
 	/* https://www.minus40.info/sky/powers64.html */
@@ -107,46 +119,4 @@ public class Day11 {
 
 		return sb.ToString();
 	}
-
-	private static string Solution2(string[] input) {
-		string startingPassword = input[0];
-		string newPassword = startingPassword;
-
-		newPassword = Solution1(new string[] { newPassword });
-		newPassword = Solution1(new string[] { newPassword });
-
-		return newPassword;
-	}
-
-
-
-	#region Problem initialisation
-	/// <summary>
-	/// Sets up the inputs for Part1 of the problem and calls Solution1
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	/// <summary>
-	/// Sets up the inputs for Part2 of the problem and calls Solution2
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

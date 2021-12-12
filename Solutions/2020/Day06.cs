@@ -6,18 +6,10 @@
 /// </summary>
 [Description("Custom Customs")]
 public class Day06 {
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		return SolutionPart1(input).ToString();
-	}
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return SolutionPart2(input).ToString();
-	}
-
-	private static int SolutionPart1(string[] input) {
+	private static int Solution1(string[] input) {
 		List<string> inputs = input.ToList();
 		inputs.Add("");
 
@@ -39,7 +31,7 @@ public class Day06 {
 		return totalCount;
 	}
 
-	private static int SolutionPart2(string[] input) {
+	private static int Solution2(string[] input) {
 		List<string> inputs = input.ToList();
 		inputs.Add("");
 

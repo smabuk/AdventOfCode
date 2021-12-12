@@ -7,13 +7,14 @@
 [Description("Passport Processing")]
 public static class Day04 {
 
-	public static string Part1(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static string Solution1(string[] input) {
 		return CountValidPassports(input, 1).ToString();
 	}
 
-	public static string Part2(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static string Solution2(string[] input) {
 		return CountValidPassports(input, 2).ToString();
 	}
 
@@ -43,8 +44,6 @@ public static class Day04 {
 			_ => passports.Count(p => p.IsValidPart1)
 		};
 	}
-
-
 
 	public record Passport(Dictionary<string, string> Fields) {
 		public bool IsValidPart1 {
@@ -119,9 +118,4 @@ public static class Day04 {
 		}
 		return (intValue, strValue, units);
 	}
-
-
-	//record PassportField(string Key, string value);
-
-
 }

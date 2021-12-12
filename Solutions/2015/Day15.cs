@@ -7,8 +7,11 @@
 [Description("Science for Hungry People")]
 public class Day15 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record Ingredient(string Name, int Capacity, int Durability, int Flavour, int Texture, int Calories) {
-		public long TotalScore => 0;
+		public static long TotalScore => 0;
 	};
 
 	private static long Solution1(string[] input) {
@@ -78,11 +81,6 @@ public class Day15 {
 				}
 			}
 		}
-
-
-
-
-
 
 		return highScore;
 	}
@@ -170,11 +168,6 @@ public class Day15 {
 			}
 		}
 
-
-
-
-
-
 		return highScore;
 	}
 
@@ -192,23 +185,4 @@ public class Day15 {
 		}
 		return null!;
 	}
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

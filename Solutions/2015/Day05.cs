@@ -6,6 +6,9 @@
 /// </summary>
 [Description("Doesn't He Have Intern-Elves For This?")]
 public class Day05 {
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static int Solution1(string[] input) {
 		return input.ToList().Count(i => Nice_Part1(i));
 	}
@@ -58,19 +61,5 @@ public class Day05 {
 		}
 
 		return nice;
-	}
-
-
-
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
 	}
 }

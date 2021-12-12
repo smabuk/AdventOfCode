@@ -6,14 +6,14 @@
 /// </summary>
 [Description("Toboggan Trajectory")]
 public static class Day03 {
-	public static long Part1(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static long Solution1(string[] input) {
 		return CalculateNoOfTrees(input, 3, 1);
 	}
 
-	public static long Part2(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
-
+	public static long Solution2(string[] input) {
 		List<long> resultArray = new();
 		resultArray.Add(CalculateNoOfTrees(input, 1, 1));
 		resultArray.Add(CalculateNoOfTrees(input, 3, 1));
@@ -23,7 +23,6 @@ public static class Day03 {
 
 		return resultArray.Aggregate(1, (long treeProduct, long treeCount) => treeProduct * treeCount);
 	}
-
 
 	public const char TREE = '#';
 	public const char SPACE = '.';
@@ -42,5 +41,4 @@ public static class Day03 {
 
 		return noOfTreesHit;
 	}
-
 }

@@ -7,6 +7,9 @@
 [Description("Handy Haversacks")]
 public class Day07 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	public record BagRuleDetail(string Bag, int Number);
 	public record BagRules(string Bag, List<BagRuleDetail> Rules);
 
@@ -83,17 +86,4 @@ public class Day07 {
 		MatchCollection? bagDetailRules = Regex.Matches(rule, @"(\d +)([a-z]+ [a-z]+) bag");
 		return bagDetailRules.Select(brd => new BagRuleDetail(brd.Groups[2].Value, int.Parse(brd.Groups[1].Value))).ToList();
 	}
-
-	public static string Part1(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-
 }

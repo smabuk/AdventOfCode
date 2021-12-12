@@ -1,11 +1,14 @@
 ﻿namespace AdventOfCode.Solutions.Year2015;
 
 /// <summary>
-/// Day 21: 
+/// Day 21: RPG Simulator 20XX
 /// https://adventofcode.com/2015/day/21
 /// </summary>
 [Description("RPG Simulator 20XX")]
 public class Day21 {
+
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	record Item(string Name, int Cost, int Damage, int Armor);
 	record Weapon(string Name, int Cost, int Damage, int Armor) : Item(Name, Cost, Damage, Armor);
@@ -44,8 +47,6 @@ public class Day21 {
 			new Ring("Defense +2", 40, 0, 2),
 			new Ring("Defense +3", 80, 0, 3)
 		};
-
-
 
 	private static int Solution1(string[] input) {
 		int bossHitPoints = int.Parse(input[0].Split(": ")[1]);
@@ -128,23 +129,4 @@ public class Day21 {
 	//		}
 	//	}
 	//}
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

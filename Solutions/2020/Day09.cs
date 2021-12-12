@@ -7,6 +7,16 @@
 [Description("Encoding Error")]
 public class Day09 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int preamble = GetArgument(args, 1, 25);
+		return Solution1(input, preamble).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? args) {
+		int preamble = GetArgument(args, 1, 25);
+		return Solution2(input, preamble).ToString();
+	}
+
 	private static long Solution1(string[] input, int preamble) {
 		long[] codes = input.Select(x => long.Parse(x)).ToArray();
 		int index = FindInvalidCode(codes, preamble);
@@ -52,37 +62,4 @@ public class Day09 {
 		}
 		return 0;
 	}
-
-
-	#region Problem initialisation
-	/// <summary>
-	/// Sets up the inputs for Part1 of the problem and calls Solution1
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		int preamble = GetArgument(args, 1, 25);
-		return Solution1(input, preamble).ToString();
-	}
-
-	/// <summary>
-	/// Sets up the inputs for Part2 of the problem and calls Solution2
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		int preamble = GetArgument(args, 1, 25);
-		return Solution2(input, preamble).ToString();
-	}
-	#endregion
 }

@@ -7,6 +7,16 @@
 [Description("No Such Thing as Too Much")]
 public class Day17 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int noOfLiters = GetArgument(args, 1, 150);
+		return Solution1(input, noOfLiters).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? args) {
+		int noOfLiters = GetArgument(args, 1, 150);
+		return Solution2(input, noOfLiters).ToString();
+	}
+
 	private static int Solution1(string[] input, int noOfLiters) {
 		int[] containers = input.Select(i => int.Parse(i)).ToArray();
 
@@ -34,21 +44,4 @@ public class Day17 {
 
 		return noOfCombinations;
 	}
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int noOfLiters = GetArgument(args, 1, 150);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input, noOfLiters).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int noOfLiters = GetArgument(args, 1, 150);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input, noOfLiters).ToString();
-	}
-	#endregion
-
 }

@@ -7,6 +7,16 @@
 [Description("Like a GIF For Your Yard")]
 public class Day18 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int noOfIterations = GetArgument(args, 1, 100);
+		return Solution1(input, noOfIterations).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? args) {
+		int noOfIterations = GetArgument(args, 1, 100);
+		return Solution2(input, noOfIterations).ToString();
+	}
+
 	public const char OFF = '.';
 	public const char ON = '#';
 
@@ -51,33 +61,6 @@ public class Day18 {
 		}
 
 		return countOn;
-	}
-
-	private static char[,] ParseInput(string[] input) {
-		int width = input[0].Length;
-		int height = input.Length;
-		char[,] lights = new char[width, height];
-
-		for (int y = 0; y < height; y++) {
-			string itemLine = input[y];
-
-			for (int x = 0; x < width; x++) {
-				lights[x, y] = itemLine[x];
-			}
-		}
-		return lights;
-	}
-
-	public static List<char> GetAdjacentLights(int X, int Y, int width, int height, char[,] lights) {
-		List<char> adjacent = new();
-		foreach (var (dX, dY) in DIRECTIONS) {
-			int x = X + dX;
-			int y = Y + dY;
-			if (x >= 0 && x < width && y >= 0 && y < height) {
-				adjacent.Add(lights[x, y]);
-			}
-		}
-		return adjacent;
 	}
 
 	private static int Solution2(string[] input, int noOfIterations) {
@@ -137,22 +120,30 @@ public class Day18 {
 		return countOn;
 	}
 
+	private static char[,] ParseInput(string[] input) {
+		int width = input[0].Length;
+		int height = input.Length;
+		char[,] lights = new char[width, height];
 
+		for (int y = 0; y < height; y++) {
+			string itemLine = input[y];
 
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int noOfIterations = GetArgument(args, 1, 100);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input, noOfIterations).ToString();
+			for (int x = 0; x < width; x++) {
+				lights[x, y] = itemLine[x];
+			}
+		}
+		return lights;
 	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int noOfIterations = GetArgument(args, 1, 100);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input, noOfIterations).ToString();
-	}
-	#endregion
 
+	public static List<char> GetAdjacentLights(int X, int Y, int width, int height, char[,] lights) {
+		List<char> adjacent = new();
+		foreach (var (dX, dY) in DIRECTIONS) {
+			int x = X + dX;
+			int y = Y + dY;
+			if (x >= 0 && x < width && y >= 0 && y < height) {
+				adjacent.Add(lights[x, y]);
+			}
+		}
+		return adjacent;
+	}
 }

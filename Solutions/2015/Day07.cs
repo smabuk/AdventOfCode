@@ -7,6 +7,13 @@
 [Description("Some Assembly Required")]
 public class Day07 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		string start = GetArgument(args, 1, "a");
+		return Solution1(input, start).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record Wire(string Identifier) {
 		public ushort? Value { get; set; } = null;
 		public List<object> Ins { get; set; } = new();
@@ -228,17 +235,5 @@ public class Day07 {
 	//	}
 	//	return null!;
 	//}
-
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		string start = args?[0].ToString() ?? "a";
-		return Solution1(input, start).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		string start = args?[0].ToString() ?? "a";
-		return Solution2(input).ToString();
-	}
 }
+

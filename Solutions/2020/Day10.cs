@@ -7,6 +7,9 @@
 [Description("Adapter Array")]
 public class Day10 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static int Solution1(string[] input) {
 		List<int> inputs = input.Select(i => int.Parse(i)).ToList();
 		inputs.Sort();
@@ -55,37 +58,4 @@ public class Day10 {
 
 		return total;
 	}
-
-
-	#region Problem initialisation
-	/// <summary>
-	/// Sets up the inputs for Part1 of the problem and calls Solution1
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	/// <summary>
-	/// Sets up the inputs for Part2 of the problem and calls Solution2
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

@@ -7,6 +7,13 @@
 [Description("Medicine for Rudolph")]
 public class Day19 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? args) {
+		bool testing = GetArgument(args, 1, false);
+		if (testing is false) { return "** Solution not written yet **"; }
+		return Solution2(input).ToString();
+	}
+
 	record Replacement(string From, string To);
 
 	private static int Solution1(string[] input) {
@@ -80,23 +87,4 @@ public class Day19 {
 		}
 		return null!;
 	}
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		bool testing = GetArgument(args, 1, false);
-		if (testing is false) { return "** Solution not written yet **"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

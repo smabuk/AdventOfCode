@@ -9,51 +9,29 @@ namespace AdventOfCode.Solutions.Year2015;
 [Description("Elves Look, Elves Say")]
 public class Day10 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static long Solution1(string[] input) {
 		string inputString = input[0];
 
-		string newString = LookAndSay2(inputString);
+		string newString = LookAndSay(inputString);
 		for (int i = 0; i < 39; i++) {
-			newString = LookAndSay2(newString);
+			newString = LookAndSay(newString);
 		}
 		return newString.Length;
 	}
 
-	private static string LookAndSay(string inputString) {
-		char current = inputString[0];
-		string consecutiveString = "";
-		long count = 0;
-		string newString = "";
-		foreach (char c in inputString) {
-			if (current == c) {
-				consecutiveString += c;
-				count++;
-			} else {
-				if (string.IsNullOrEmpty(consecutiveString)) {
-					newString += $"1{consecutiveString[0]}";
-				} else {
-					newString += $"{consecutiveString.Length}{consecutiveString[0]}";
-				}
-				consecutiveString = c.ToString();
-				current = c;
-				count = 0;
-			}
-		}
-		if (!string.IsNullOrEmpty(consecutiveString)) {
-			newString += $"{consecutiveString.Length}{consecutiveString[0]}";
-		}
-		return newString;
-	}
 	private static long Solution2(string[] input) {
 		string inputString = input[0];
 
-		string newString = LookAndSay2(inputString);
+		string newString = LookAndSay(inputString);
 		for (int i = 0; i < 49; i++) {
-			newString = LookAndSay2(newString);
+			newString = LookAndSay(newString);
 		}
 		return newString.Length;
 	}
-	private static string LookAndSay2(string inputString) {
+	private static string LookAndSay(string inputString) {
 		char current = inputString[0];
 		char c;
 		StringBuilder sb = new();
@@ -76,40 +54,4 @@ public class Day10 {
 		}
 		return sb.ToString();
 	}
-
-
-
-
-
-
-
-	#region Problem initialisation
-	/// <summary>
-	/// Sets up the inputs for Part1 of the problem and calls Solution1
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	/// <summary>
-	/// Sets up the inputs for Part2 of the problem and calls Solution2
-	/// </summary>
-	/// <param name="input"></param>
-	/// Array of strings
-	/// <param name="args"></param>
-	/// Optional extra parameters that may be required as input to the problem
-	/// <returns></returns>
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

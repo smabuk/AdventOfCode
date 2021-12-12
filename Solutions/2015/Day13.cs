@@ -7,6 +7,9 @@
 [Description("Knights of the Dinner Table")]
 public class Day13 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static int Solution1(string[] input) {
 		Dictionary<(string, string), int> lookup = new();
 		List<KeyValuePair<(string, string), int>>? inputs = input.Select(i => ParseLine(i)).ToList();
@@ -19,17 +22,6 @@ public class Day13 {
 			lookup.Add(item.Key, item.Value);
 		}
 		int sum = guests.Permute().Select(t => CalculateHappinessIncrease(t, lookup)).Max();
-
-		return sum;
-	}
-
-	public static int CalculateHappinessIncrease(IEnumerable<string> table, Dictionary<(string, string), int> lookup) {
-		int sum = lookup[(table.Last(), table.First())];
-		sum += table.Zip(table.Skip(1), (g1, g2) => (g1, g2)).Sum(g => lookup[g]);
-
-		IEnumerable<string> reverseTable = table.Reverse();
-		sum += lookup[(reverseTable.Last(), reverseTable.First())];
-		sum += reverseTable.Zip(reverseTable.Skip(1), (g1, g2) => (g1, g2)).Sum(g => lookup[g]);
 
 		return sum;
 	}
@@ -58,6 +50,17 @@ public class Day13 {
 		return sum;
 	}
 
+	public static int CalculateHappinessIncrease(IEnumerable<string> table, Dictionary<(string, string), int> lookup) {
+		int sum = lookup[(table.Last(), table.First())];
+		sum += table.Zip(table.Skip(1), (g1, g2) => (g1, g2)).Sum(g => lookup[g]);
+
+		IEnumerable<string> reverseTable = table.Reverse();
+		sum += lookup[(reverseTable.Last(), reverseTable.First())];
+		sum += reverseTable.Zip(reverseTable.Skip(1), (g1, g2) => (g1, g2)).Sum(g => lookup[g]);
+
+		return sum;
+	}
+
 	private static KeyValuePair<(string, string), int> ParseLine(string input) {
 		Match match = Regex.Match(input, @"(\w+) would (gain|lose) (\d+) happiness units by sitting next to (\w+)");
 		if (match.Success) {
@@ -69,23 +72,4 @@ public class Day13 {
 		}
 		return new KeyValuePair<(string, string), int>();
 	}
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

@@ -6,8 +6,10 @@
 /// </summary>
 [Description("Report Repair")]
 public static class Day01 {
-	public static long Part1(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static long Solution1(string[] input) {
 		List<int> expenseValues = new();
 		foreach (string item in input) {
 			expenseValues.Add(int.Parse(item));
@@ -16,8 +18,7 @@ public static class Day01 {
 		return entries.Aggregate(1, (product, entry) => product * entry);
 	}
 
-	public static long Part2(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static long Solution2(string[] input) {
 		List<int> expenseValues = new();
 		foreach (string item in input) {
 			expenseValues.Add(int.Parse(item));
@@ -25,7 +26,6 @@ public static class Day01 {
 		FindSumsEqualTo(2020, expenseValues, 3, out List<int> entries);
 		return entries.Aggregate(1, (product, entry) => product * entry);
 	}
-
 
 	public static bool FindSumsEqualTo(int value, IEnumerable<int> expenseValues, int noOfEntries, out List<int> foundEntries) {
 		foundEntries = new();
@@ -50,6 +50,4 @@ public static class Day01 {
 
 		return false;
 	}
-
-
 }

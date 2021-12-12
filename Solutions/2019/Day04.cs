@@ -7,12 +7,28 @@
 [Description("Secure Container")]
 public class Day04 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static string Solution1(string[] input) {
 		(int start, int end) = ParseInputs(input);
 
 		int count = 0;
 		for (int i = start; i <= end; i++) {
 			if (IsValidPassword(i)) {
+				count++;
+			}
+		}
+
+		return count.ToString();
+	}
+
+	private static string Solution2(string[] input) {
+		(int start, int end) = ParseInputs(input);
+
+		int count = 0;
+		for (int i = start; i <= end; i++) {
+			if (IsValidPassword2(i)) {
 				count++;
 			}
 		}
@@ -38,19 +54,6 @@ public class Day04 {
 		}
 
 		return false;
-	}
-
-	private static string Solution2(string[] input) {
-		(int start, int end) = ParseInputs(input);
-
-		int count = 0;
-		for (int i = start; i <= end; i++) {
-			if (IsValidPassword2(i)) {
-				count++;
-			}
-		}
-
-		return count.ToString();
 	}
 
 	private static bool IsValidPassword2(int i) {
@@ -84,21 +87,4 @@ public class Day04 {
 		int end = int.Parse(inputs[1]);
 		return (start, end);
 	}
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

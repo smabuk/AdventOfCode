@@ -3,7 +3,7 @@ namespace AdventOfCode.Tests.Year2020;
 /// <summary>
 /// https://adventofcode.com/2020/day/4
 /// </summary>
-public class Tests_04 {
+public class Tests_04_Passport_Processing {
 	static readonly string[] _input =
 	{
 			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
@@ -23,7 +23,7 @@ public class Tests_04 {
 
 
 	[Fact]
-	public void Passport_Processing_Part1() {
+	public void Part1() {
 		long actual = Solutions.Year2020.Day04.CountValidPassports(_input, 1);
 		Assert.Equal(2, actual);
 	}
@@ -58,7 +58,7 @@ public class Tests_04 {
 			"",
 			"iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719"
 			}, 4)]
-	public void Passport_Processing_Part2(string[] input, long expected) {
+	public void Part2(string[] input, long expected) {
 		long actual = Solutions.Year2020.Day04.CountValidPassports(input, 2);
 		Assert.Equal(expected, actual);
 	}

@@ -6,13 +6,14 @@
 /// </summary>
 [Description("Password Philosophy")]
 public static class Day02 {
-	public static long Part1(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static long Solution1(string[] input) {
 		return CountValidPasswords_Part1(input);
 	}
 
-	public static long Part2(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
+	public static long Solution2(string[] input) {
 		return CountValidPasswords_Part2(input);
 	}
 

@@ -7,6 +7,9 @@
 [Description("Operation Order")]
 public class Day18 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	public const char OPEN_PARENTHESIS = '(';
 	public const char CLOSE_PARENTHESIS = ')';
 	public const char PLUS = '+';
@@ -140,19 +143,4 @@ public class Day18 {
 		return value;
 
 	}
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

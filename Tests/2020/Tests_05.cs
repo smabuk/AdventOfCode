@@ -1,12 +1,12 @@
 namespace AdventOfCode.Tests.Year2020;
 
-public class Tests_05 {
+public class Tests_05_Binary_Boarding {
 	[Theory]
 	[InlineData(new string[] { "BFFFBBFRRR" }, 567)]
 	[InlineData(new string[] { "FFFBBBFRRR" }, 119)]
 	[InlineData(new string[] { "BBFFBBFRLL" }, 820)]
 	[InlineData(new string[] { "BBFFBBFRRL" }, 822)]
-	public void Part1_Binary_Boarding(string[] input, int expected) {
+	public void Part1(string[] input, int expected) {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2020, 5, 1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}

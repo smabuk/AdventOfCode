@@ -6,17 +6,10 @@
 /// </summary>
 [Description("Binary Boarding")]
 public class Day05 {
-	public static string Part1(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
-		return SolutionPart1(input).ToString();
-	}
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	public static string Part2(string[]? input = null) {
-		input = input.StripTrailingBlankLineOrDefault();
-		return SolutionPart2(input).ToString();
-	}
-
-	private static long SolutionPart1(string[] input) {
+	private static long Solution1(string[] input) {
 		int highest = 0;
 		foreach (string line in input) {
 			int row = Convert.ToInt32(line[..7].Replace("B", "1").Replace("F", "0"), 2);
@@ -29,7 +22,7 @@ public class Day05 {
 		return highest;
 	}
 
-	private static long SolutionPart2(string[] input) {
+	private static long Solution2(string[] input) {
 		List<int> map = new();
 		foreach (string line in input) {
 			int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
@@ -50,5 +43,4 @@ public class Day05 {
 
 		return myUid;
 	}
-
 }
