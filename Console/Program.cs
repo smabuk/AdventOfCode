@@ -20,9 +20,9 @@ if (date.Month == 12 && date.Day <= 25) {
 	}
 }
 
-Console.WriteLine();
-Console.Write("Press a key to continue ... ");
-Console.ReadKey();
+//Console.WriteLine();
+//Console.Write("Press a key to continue ... ");
+//Console.ReadKey();
 
 static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
