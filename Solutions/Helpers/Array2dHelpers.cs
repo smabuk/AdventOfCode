@@ -69,12 +69,22 @@ public static partial class ArrayHelpers {
 		return GetAdjacentCells<T>(array, point.x, point.y, includeDiagonals);
 	}
 
-	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] array, int width = 0) where T : struct {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="array"></param>
+	/// <param name="width">If -1 then no spaces. If 0 then 1 padded space, otherwise the width of columns required</param>
+	/// <returns></returns>
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] array, int? width = null) where T : struct {
 		for (int r = 0; r <= array.GetUpperBound(1); r++) {
 			string line = "";
 			for (int c = 0; c <= array.GetUpperBound(0); c++) {
 				string cell = array[c, r].ToString() ?? "";
-				line += $"{new string(' ', width == 0 ? 1 : width - cell.Length)}{cell}";
+				line += width switch {
+					0 => $"{cell}",
+					_ => $"{new string(' ', (width - cell.Length) ?? 1)}{cell}",
+				};
 			}
 			yield return line;
 		}

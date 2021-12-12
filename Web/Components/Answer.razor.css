@@ -2,6 +2,7 @@
     font-size: x-large;
 }
 
-.answer > code {
-    font-weight: bold;
-}
+    .answer pre code {
+        color: #e83e8c;
+        font-weight: bold;
+    }
