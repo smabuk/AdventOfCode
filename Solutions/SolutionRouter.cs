@@ -43,6 +43,7 @@ static public class SolutionRouter {
 			return NO_SOLUTION;
 		}
 
+		input = input.StripTrailingBlankLineOrDefault();
 		int noOfParameters = method.GetParameters().Length;
 
 		return noOfParameters switch {

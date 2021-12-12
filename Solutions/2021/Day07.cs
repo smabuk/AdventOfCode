@@ -7,6 +7,9 @@
 [Description("The Treachery of Whales")]
 public class Day07 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record RecordType(string Name, int Value);
 
 	private static int Solution1(string[] input) {
@@ -52,22 +55,4 @@ public class Day07 {
 	}
 
 	static int FuelCost(int n) => SequenceHelpers.TriangularNumber(n);
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

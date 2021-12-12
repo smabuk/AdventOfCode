@@ -7,6 +7,41 @@
 [Description("Giant Squid")]
 public class Day04 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	private static int Solution1(string[] input) {
+		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
+		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
+
+		foreach (int number in numberOrder) {
+			foreach (BingoBoard board in bingoBoards) {
+				if (board.MarkNo(number)) {
+					return board.WinningValue;
+				}
+			}
+		}
+
+		return -1;
+	}
+
+	private static int Solution2(string[] input) {
+		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
+		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
+
+		int lastWinningBoardResult = 0;
+		foreach (int number in numberOrder) {
+			foreach (BingoBoard board in bingoBoards) {
+				if (board.MarkNo(number)) {
+					lastWinningBoardResult = board.WinningValue;
+				}
+			}
+			bingoBoards.RemoveAll(b => b.IsWin);
+		}
+
+		return lastWinningBoardResult;
+	}
+
 	class BingoBoard {
 		readonly List<List<int>> _lines = new();
 		readonly List<int> _unmarkedNos = new();
@@ -41,38 +76,6 @@ public class Day04 {
 		}
 	};
 
-	private static int Solution1(string[] input) {
-		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
-		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
-
-		foreach (int number in numberOrder) {
-			foreach (BingoBoard board in bingoBoards) {
-				if (board.MarkNo(number)) {
-					return board.WinningValue;
-				}
-			}
-		}
-
-		return -1;
-	}
-
-	private static int Solution2(string[] input) {
-		List<int> numberOrder = input[0].Split(",").Select(x => int.Parse(x)).ToList();
-		List<BingoBoard> bingoBoards = ParseBingoBoards(input[2..]);
-
-		int lastWinningBoardResult = 0;
-		foreach (int number in numberOrder) {
-			foreach (BingoBoard board in bingoBoards) {
-				if (board.MarkNo(number)) {
-					lastWinningBoardResult = board.WinningValue;
-				}
-			}
-			bingoBoards.RemoveAll(b => b.IsWin);
-		}
-
-		return lastWinningBoardResult;
-	}
-
 	private static List<BingoBoard> ParseBingoBoards(string[] input) {
 		List<BingoBoard> bingoBoards = new();
 		for (int i = 0; i < ((input.Length + 1) / 6); i++) {
@@ -87,21 +90,4 @@ public class Day04 {
 		}
 		return bingoBoards;
 	}
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

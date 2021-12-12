@@ -7,6 +7,9 @@
 [Description("Dive!")]
 public class Day02 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record Instruction(string Direction, int Value);
 	record Position(int Horizontal, int Depth, int Aim = 0);
 
@@ -49,22 +52,4 @@ public class Day02 {
 		}
 		return null!;
 	}
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

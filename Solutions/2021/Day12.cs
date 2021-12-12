@@ -7,6 +7,9 @@
 [Description("Passage Pathing")]
 public class Day12 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record Connection(string From, string To);
 	
 	record Cave(string Name) {
@@ -67,26 +70,4 @@ public class Day12 {
 
 		return caves;
 	}
-
-
-
-
-	/******************************************************************
-	 *          P R O B L E M    I N I T I A L I S A T I O N          *
-	 ******************************************************************/
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

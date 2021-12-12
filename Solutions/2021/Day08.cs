@@ -7,6 +7,21 @@
 [Description("Seven Segment Search")]
 public class Day08 {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	private static int Solution1(string[] input) {
+		List<FourDigitDisplay> fourDigitDisplays = input.Select(i => ParseLine(i)).ToList();
+
+		return fourDigitDisplays.Sum(f => f.OneFourSevenEightTotal);
+	}
+
+	private static int Solution2(string[] input) {
+		List<FourDigitDisplay> fourDigitDisplays = input.Select(i => ParseLine(i)).ToList();
+
+		return fourDigitDisplays.Sum(fdd => fdd.GetFourDigitDisplay());
+	}
+
 	record FourDigitDisplay(List<string> SignalPatterns, List<string> OutputValues) {
 
 		public int GetFourDigitDisplay() {
@@ -58,18 +73,6 @@ public class Day08 {
 
 	}
 
-	private static int Solution1(string[] input) {
-		List<FourDigitDisplay> fourDigitDisplays = input.Select(i => ParseLine(i)).ToList();
-
-		return fourDigitDisplays.Sum(f => f.OneFourSevenEightTotal);
-	}
-
-	private static int Solution2(string[] input) {
-		List<FourDigitDisplay> fourDigitDisplays = input.Select(i => ParseLine(i)).ToList();
-
-		return fourDigitDisplays.Sum(fdd => fdd.GetFourDigitDisplay());
-	}
-
 	private static FourDigitDisplay ParseLine(string input) {
 
 		List<string> signalPatterns = input
@@ -86,24 +89,6 @@ public class Day08 {
 			.ToList();
 		return new FourDigitDisplay(signalPatterns, outputValues);
 	}
-
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }
 
 internal static class Day08_StringExtensions {

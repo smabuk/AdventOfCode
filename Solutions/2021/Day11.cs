@@ -7,6 +7,13 @@
 [Description("Dumbo Octopus")]
 public class Day11 {
 
+	public static string Part1(string[] input, params object[]? args) {
+		int steps = GetArgument(args, argumentNumber: 1, defaultResult: 100);
+		return Solution1(input, steps).ToString();
+	}
+
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	private static int Solution1(string[] input, int steps) {
 		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
 
@@ -64,22 +71,4 @@ public class Day11 {
 
 		return flashes;
 	}
-
-
-
-
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		int steps = GetArgument(args, 1, 100);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input, steps).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }

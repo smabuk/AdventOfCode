@@ -7,6 +7,9 @@
 [Description("")]
 public class DayXX {
 
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
 	record RecordType(string Name, int Value);
 
 	private static string Solution1(string[] input) {
@@ -31,31 +34,4 @@ public class DayXX {
 		}
 		return null!;
 	}
-
-
-
-
-
-	/******************************************************************
-	 *          P R O B L E M    I N I T I A L I S A T I O N          *
-	 ******************************************************************/
-	#region Problem initialisation
-	public static string Part1(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		bool testing = GetArgument(args, 1, false);
-		if (testing is false) { return "** Solution not written yet **"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution1(input).ToString();
-	}
-	public static string Part2(string[]? input, params object[]? args) {
-		if (input is null) { return "Error: No data provided"; }
-		bool testing = GetArgument(args, 1, false);
-		if (testing is false) { return "** Solution not written yet **"; }
-		// int arg1 = GetArgument(args, 1, 25);
-		input = input.StripTrailingBlankLineOrDefault();
-		return Solution2(input).ToString();
-	}
-	#endregion
-
 }
