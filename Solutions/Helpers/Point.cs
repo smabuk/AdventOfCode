@@ -7,4 +7,10 @@ public record struct Point(int X, int Y) {
 		p.Deconstruct(out int x, out int y);
 		return (x, y);
 	}
+
+	public void Deconstruct(out int x, out int y) {
+		x = X;
+		y = Y;
+	}
+
 };

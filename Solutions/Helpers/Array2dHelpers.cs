@@ -48,7 +48,7 @@ public static partial class ArrayHelpers {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="array"></param>
 	/// <returns></returns>
-	public static IEnumerable<(int X, int Y, T Value)> Walk2dArrayWithValues<T>(this T[,] array) {
+	public static IEnumerable<Cell<T>> Walk2dArrayWithValues<T>(this T[,] array) {
 		int cols = array.GetUpperBound(0);
 		int rows = array.GetUpperBound(1);
 
@@ -61,7 +61,7 @@ public static partial class ArrayHelpers {
 	public static IEnumerable<(int X, int Y)> Walk2dArray<T>(this T[,] array) {
 		return array
 			.Walk2dArrayWithValues()
-			.Select(cell => (cell.X, cell.Y));
+			.Select(cell => (cell.Index.X, cell.Index.Y));
 	}
 
 
