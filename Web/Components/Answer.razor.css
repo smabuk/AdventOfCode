@@ -5,4 +5,8 @@
     .answer pre code {
         color: #e83e8c;
         font-weight: bold;
+        line-height: 1;
     }
+        .answer pre code span {
+            color: var(--text-color);
+        }

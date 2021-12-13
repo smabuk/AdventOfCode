@@ -6,8 +6,7 @@
 
 <p class="answer">
     @ChildContent
-    Your puzzle answer is
-    <pre><code @ref="_codeElement">@PuzzleAnswer</code></pre>
+    <pre><code @ref="_codeElement"><span>Your puzzle answer is </span>@PuzzleAnswer</code></pre>
     <span>
         <button type="button" class="btn btn-primary" hidden="@string.IsNullOrWhiteSpace(PuzzleAnswer)" @onclick="CopyTextToClipboard">Copy</button>
     </span>
