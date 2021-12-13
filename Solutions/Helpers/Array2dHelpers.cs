@@ -30,7 +30,6 @@ public static partial class ArrayHelpers {
 		int rows = input.Select(i => i.Y).Max() + 1;
 
 		T[,] result = new T[cols, (int)rows];
-		int i = 0;
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				result[c, r] = initial;
