@@ -18,29 +18,16 @@ public class Day13 {
 	private static int Solution1(string[] input, int folds) {
 		(HashSet<Point> dots, List<FoldInstruction> instructions) = ParseInput(input);
 
-		dots = Fold(folds, dots, instructions).ToHashSet();
-
-		return dots.Count;
+		return Fold(folds, dots, instructions).ToHashSet().Count;
 	}
 
 	private static string Solution2(string[] input) {
 		(HashSet<Point> dots, List<FoldInstruction> instructions) = ParseInput(input);
 
-		dots = Fold(instructions.Count, dots, instructions).ToHashSet();
-
-		int maxX = dots.Select(dot => dot.X).Max() + 1;
-		int maxY = dots.Select(dot => dot.Y).Max() + 1;
-
-		char[,] outputDisplay = new char[maxX, maxY];
-		foreach ((int x, int y) in outputDisplay.Walk2dArray()) {
-			outputDisplay[x, y] = ' ';
-		}
-		foreach (Point dot in dots) {
-			outputDisplay[dot.X, dot.Y] = '#';
-		}
-
-		return Environment.NewLine
-			+ String.Join(Environment.NewLine, outputDisplay.PrintAsStringArray(0));
+		return Environment.NewLine + String.Join(Environment.NewLine, 
+			Fold(instructions.Count, dots, instructions)
+			.To2dArray(initial: ' ', value: '█')
+			.PrintAsStringArray(width: 0));
 	}
 
 	private static IEnumerable<Point> Fold(int folds, HashSet<Point> dots, List<FoldInstruction> instructions) {

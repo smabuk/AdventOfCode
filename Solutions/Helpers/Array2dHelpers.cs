@@ -25,6 +25,24 @@ public static partial class ArrayHelpers {
 		return result;
 	}
 
+	public static T[,] To2dArray<T>(this IEnumerable<Point> input, T initial, T value) {
+		int cols = input.Select(i => i.X).Max() + 1;
+		int rows = input.Select(i => i.Y).Max() + 1;
+
+		T[,] result = new T[cols, (int)rows];
+		int i = 0;
+		for (int r = 0; r < rows; r++) {
+			for (int c = 0; c < cols; c++) {
+				result[c, r] = initial;
+			}
+		}
+		foreach (Point p in input) {
+			result[p.X, p.Y] = value;
+		}
+
+		return result;
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>

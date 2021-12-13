@@ -1,4 +1,4 @@
-namespace AdventOfCode.Tests.Year2021;
+﻿namespace AdventOfCode.Tests.Year2021;
 
 public class Tests_13_Transparent_Origami {
 	[Theory]
@@ -77,11 +77,11 @@ public class Tests_13_Transparent_Origami {
 		"fold along y=7",
 		"fold along x=5",
 	}, @"
-#####
-#   #
-#   #
-#   #
-#####")]
+█████
+█   █
+█   █
+█   █
+█████")]
 	public void Part2(string[] input, string expected) {
 		string actual = SolutionRouter.SolveProblem(2021, 13, 2, input);
 		Assert.Equal(expected, actual);

@@ -23,6 +23,20 @@ public class ArrayHelperTests {
 	}
 
 	[Fact]
+	public void To2dArray_Points_To_Char() {
+		Point[] input = { new Point(1, 3), new Point(2, 4), new Point(3, 6) };
+		char[,] array = input.To2dArray<char>(initial:' ', value: '#');
+		Assert.Equal(28, array.Length);
+		Assert.Equal(4, array.GetUpperBound(0) + 1);
+		Assert.Equal(7, array.GetUpperBound(1) + 1);
+		Assert.Equal(' ', array[0,0]);
+		Assert.Equal(' ', array[3,5]);
+		Assert.Equal('#', array[1,3]);
+		Assert.Equal('#', array[2,4]);
+		Assert.Equal('#', array[3,6]);
+	}
+
+	[Fact]
 	public void To2dArray_Tuple_Should_HaveShape() {
 		(char, int)[] input = new (char, int)[8];
 		for (int i = 0; i < input.GetUpperBound(0); i++) {
