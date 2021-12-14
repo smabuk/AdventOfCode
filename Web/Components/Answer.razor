@@ -32,7 +32,7 @@
         Session.OnProblemInputChange += DataHasChanged;
         PuzzleAnswer = "";
     }
-    
+
     protected override void OnParametersSet() {
         DataHasChanged();
     }
@@ -40,8 +40,12 @@
     protected void DataHasChanged() {
         PuzzleAnswer = SOLVING;
         StateHasChanged();
-        PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-            Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+        try {
+            PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+                Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+        } catch (Exception ex) {
+            PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.InnerException?.Message ?? "Exception";
+        }
         StateHasChanged();
     }
 
