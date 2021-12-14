@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-using static AdventOfCode.Solutions.SolutionRouter;
+﻿using static AdventOfCode.Solutions.SolutionRouter;
 
 DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 if (args.Length == 2) {
@@ -42,32 +40,45 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
-	Stopwatch timer = new();
-
 	Console.Write($"{year} {day,2} {title,-38}");
 	if (input is not null) {
+		ConsoleColor answerColour;
+		answerColour = ConsoleColor.Green;
+		System.Diagnostics.Stopwatch timer = new();
 		timer.Start();
 		string Problem1Answer;
 		try {
 			Problem1Answer = SolveProblem(year, day, 1, input, args);
+			timer.Stop();
 		} catch (Exception) {
+			timer.Stop();
 			Problem1Answer = "** Exception";
+			answerColour= ConsoleColor.Red;
 		}
-		timer.Stop();
-		Console.Write($" Pt1: {timer.ElapsedMilliseconds,4}ms  {Problem1Answer,-16}");
+		Console.Write($" Pt1: {timer.ElapsedMilliseconds,4}ms");
+		Console.ForegroundColor = answerColour;
+		Console.Write($"  {Problem1Answer,-16}");
+		Console.ResetColor();
 
+		answerColour = ConsoleColor.Yellow;
 		timer.Restart();
 		string Problem2Answer;
 		try {
 			Problem2Answer = SolveProblem(year, day, 2, input, args);
+			timer.Stop();
 			if (Problem2Answer == "** Solution not written yet **") {
 				Problem2Answer = "** No Solution";
+				answerColour= ConsoleColor.White;
 			}
 		} catch (Exception) {
+			timer.Stop();
 			Problem2Answer = "** Exception";
+			answerColour= ConsoleColor.Red;
 		}
-		timer.Stop();
-		Console.WriteLine($"Pt2: {timer.ElapsedMilliseconds,5}ms  {Problem2Answer}");
+		Console.Write($" Pt2: {timer.ElapsedMilliseconds,4}ms");
+		Console.ForegroundColor =answerColour;
+		Console.WriteLine($"  {Problem2Answer}");
+		Console.ResetColor();
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
