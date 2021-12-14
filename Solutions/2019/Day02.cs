@@ -14,7 +14,7 @@ public class Day02 {
 
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	private static string Solution1(string[] input, int[] programReplacements) {
+	private static int Solution1(string[] input, int[] programReplacements) {
 		string inputLine = input[0];
 		int[] inputs = inputLine.Split(",").Select(i => int.Parse(i)).ToArray();
 
@@ -22,7 +22,7 @@ public class Day02 {
 			inputs[i + 1] = programReplacements[i];
 		}
 
-		return String.Join(",", IntcodeComputer.ExecuteIntcodeProgram(inputs)).ToString();
+		return IntcodeComputer.ExecuteIntcodeProgram(inputs).First();
 	}
 
 	private static int Solution2(string[] input) {

@@ -4,7 +4,7 @@
 /// Day 20: Infinite Elves and Infinite Houses
 /// https://adventofcode.com/2015/day/20
 /// </summary>
-[Description("")]
+[Description("Infinite Elves and Infinite Houses")]
 public class Day20 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();

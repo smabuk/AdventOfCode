@@ -1,4 +1,6 @@
-﻿using static AdventOfCode.Solutions.SolutionRouter;
+﻿using System.Diagnostics;
+
+using static AdventOfCode.Solutions.SolutionRouter;
 
 DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 if (args.Length == 2) {
@@ -40,11 +42,32 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
-	//Console.WriteLine();
-	Console.Write($"{year} DAY {day,2} - {title,-35}");
+	Stopwatch timer = new();
+
+	Console.Write($"{year} {day,2} {title,-38}");
 	if (input is not null) {
-		Console.Write($"  Part 1:  {SolveProblem(year, day, 1, input, args),-15}");
-		Console.WriteLine($"     Part 2:  {SolveProblem(year, day, 2, input, args)}");
+		timer.Start();
+		string Problem1Answer;
+		try {
+			Problem1Answer = SolveProblem(year, day, 1, input, args);
+		} catch (Exception) {
+			Problem1Answer = "** Exception";
+		}
+		timer.Stop();
+		Console.Write($" Pt1: {timer.ElapsedMilliseconds,4}ms  {Problem1Answer,-16}");
+
+		timer.Restart();
+		string Problem2Answer;
+		try {
+			Problem2Answer = SolveProblem(year, day, 2, input, args);
+			if (Problem2Answer == "** Solution not written yet **") {
+				Problem2Answer = "** No Solution";
+			}
+		} catch (Exception) {
+			Problem2Answer = "** Exception";
+		}
+		timer.Stop();
+		Console.WriteLine($"Pt2: {timer.ElapsedMilliseconds,5}ms  {Problem2Answer}");
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}

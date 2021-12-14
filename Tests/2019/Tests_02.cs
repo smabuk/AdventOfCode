@@ -2,13 +2,13 @@ namespace AdventOfCode.Tests.Year2019;
 
 public class Tests_02_1202_Program_Alarm {
 	[Theory]
-	[InlineData(new string[] { "1,0,0,0,99" }, "2,0,0,0,99")]
-	[InlineData(new string[] { "2,3,0,3,99" }, "2,3,0,6,99")]
-	[InlineData(new string[] { "2,4,4,5,99,0" }, "2,4,4,5,99,9801")]
-	[InlineData(new string[] { "1,1,1,4,99,5,6,0,99" }, "30,1,1,4,2,5,6,0,99")]
-	[InlineData(new string[] { "1,9,10,3,2,3,11,0,99,30,40,50" }, "3500,9,10,70,2,3,11,0,99,30,40,50")]
-	public void Part1(string[] input, string expected) {
-		string actual = SolutionRouter.SolveProblem(2019, 2, 1, input, new int[] { });
+	[InlineData(new string[] { "1,0,0,0,99" }, 2)]
+	[InlineData(new string[] { "2,3,0,3,99" }, 2)]
+	[InlineData(new string[] { "2,4,4,5,99,0" }, 2)]
+	[InlineData(new string[] { "1,1,1,4,99,5,6,0,99" }, 30)]
+	[InlineData(new string[] { "1,9,10,3,2,3,11,0,99,30,40,50" }, 3500)]
+	public void Part1(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2019, 2, 1, input, Array.Empty<int>()), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
