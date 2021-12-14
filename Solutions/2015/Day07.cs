@@ -11,229 +11,126 @@ public class Day07 {
 		string start = GetArgument(args, 1, "a");
 		return Solution1(input, start).ToString();
 	}
-
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
-
-	record Wire(string Identifier) {
-		public ushort? Value { get; set; } = null;
-		public List<object> Ins { get; set; } = new();
-		public List<object> Outs { get; set; } = new();
-
-		//private int myVar;
-
-		internal ushort GetOutputValue() => throw new NotImplementedException();
-
-		public ushort GetOutputValue1() {
-			if (Value is not null) {
-				return (ushort)Value;
-			}
-			return 0;
-		}
-
-
-	};
-	class Gate {
-		public Gate() {
-			// just to get rid of warnings
-			GateType = "";
-			OutputWire = "";
-		}
-		public Gate(string gateType, string outputWire) {
-			if (string.IsNullOrEmpty(gateType)) {
-				throw new ArgumentException($"'{nameof(gateType)}' cannot be null or empty", nameof(gateType));
-			}
-
-			if (string.IsNullOrEmpty(outputWire)) {
-				throw new ArgumentException($"'{nameof(outputWire)}' cannot be null or empty", nameof(outputWire));
-			}
-
-			GateType = gateType;
-			OutputWire = outputWire;
-		}
-		public Gate(string gateType, string outputWire, ushort value) {
-			GateType = gateType ?? throw new ArgumentNullException(nameof(gateType));
-			OutputWire = outputWire ?? throw new ArgumentNullException(nameof(outputWire));
-			Value = value;
-		}
-		public string GateType { get; set; }
-		public string OutputWire { get; set; }
-		public string? InputWire1 { get; set; } = null;
-		public string? InputWire2 { get; set; } = null;
-		public ushort? Value { get; set; } = null;
-
-		public ushort OutputValue() {
-			switch (GateType) {
-				case "NUMBER":
-					return (ushort?)Value ?? 0;
-				case "OR":
-				//return (ushort)(InputWire1 | InputWire2);
-				default:
-					break;
-			}
-			return 0;
-		}
+	public static string Part2(string[] input, params object[]? args) {
+		string start = GetArgument(args, 1, "a");
+		return Solution2(input, start).ToString();
 	}
-	//record ShiftGate(string GateType, Wire Output, ushort ShiftAmount) : Gate(GateType, Output);
-	//record NumberGate(string GateType, Wire Output, ushort Number) : Gate(GateType, Output);
-	//record Gate(string GateType, Wire Output) {
-	//	public List<object> Ins { get; set; } = new();
-	//	public List<object> Outs { get; set; } = new();
-
-	//	public ushort GetOutputValue1() {
-	//		switch (GateType) {
-	//			case "NUMBER":
-	//				return (NumberGate)this. ;
-	//			default:
-	//				break;
-	//		}
-	//		foreach (Gate gate in Ins) {
-
-
-	//		}
-	//	}
-
-	//};
 
 
 	record Instruction(string OutWire);
 	record NOT_Instruction(string OutWire, string Operand, string InWire) : Instruction(OutWire);
-	record SHIFT_Instruction(string OutWire, string Operand
-		, string InWire1, ushort ShiftAmount) : Instruction(OutWire);
+	record SHIFT_Instruction(string OutWire, string Operand, string InWire1, ushort ShiftAmount) : Instruction(OutWire);
 	record LOGICAL_Instruction(string OutWire, string Operand, string InWire1, string InWire2) : Instruction(OutWire);
-	record NUMBER_Instruction(string OutWire, ushort InputValue) : Instruction(OutWire) {
-		public string Operand { get; set; } = "NUMBER";
-	};
-
-	//record Instruction(Wire OutWire);
-	//record NOT_Instruction(Wire OutWire, Wire InWire) : Instruction(OutWire);
-	//record SHIFT_Instruction(Wire OutWire, string Direction, Wire InWire1, UInt16 ShiftAmount) : Instruction(OutWire);
-	//record LOGICAL_Instruction(Wire OutWire, string Operand, Wire InWire1, Wire InWire2) : Instruction(OutWire);
-	//record NUMBER_Instruction(Wire OutWire, UInt16 InputValue) : Instruction(OutWire);
-
+	record NUMBER_Instruction(string OutWire, ushort InputValue, string Operand = "NUMBER") : Instruction(OutWire);
+	record NOOP_Instruction(string OutWire, string InWire, string Operand = "NOOP") : Instruction(OutWire);
 
 	private static ushort Solution1(string[] input, string start) {
 		List<string> inputs = input.ToList();
 		List<Instruction> instructions = input.Select(x => ParseLine(x)).ToList();
-		Dictionary<string, Wire> wireInputs = new();
-		List<Gate> gates = new();
+		Dictionary<string, ushort?> wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
 
-		//foreach ( NUMBER_Instruction instruction in instructions.Where(i => i is NUMBER_Instruction)) {
-		foreach (Instruction instruction in instructions) {
-			Wire outWire = new(instruction.OutWire);
-			if (wireInputs.ContainsKey(outWire.Identifier)) {
-				wireInputs[outWire.Identifier].Ins.Add(outWire);
-			} else {
-				wireInputs.Add(outWire.Identifier, outWire);
-			}
-			if (instruction is NUMBER_Instruction numI) {
-				wireInputs[numI.OutWire].Value = numI.InputValue;
-				Gate gate = new() {
-					GateType = numI.Operand,
-					OutputWire = numI.OutWire,
-					Value = numI.InputValue
-				};
-				gates.Add(gate);
-			}
-			if (instruction is NOT_Instruction notI) {
-				Gate gate = new() {
-					GateType = notI.Operand,
-					OutputWire = notI.OutWire,
-					InputWire1 = notI.InWire
-				};
-				gates.Add(gate);
-			}
-			if (instruction is LOGICAL_Instruction logI) {
-				Gate gate = new() {
-					GateType = logI.Operand,
-					OutputWire = logI.OutWire,
-					InputWire1 = logI.InWire1,
-					InputWire2 = logI.InWire2
-				};
-				gates.Add(gate);
-			}
-			if (instruction is SHIFT_Instruction shiftI) {
-				Gate gate = new() {
-					GateType = shiftI.Operand,
-					OutputWire = shiftI.OutWire,
-					InputWire1 = shiftI.InWire1,
-					Value = shiftI.ShiftAmount
-				};
-				gates.Add(gate);
-			}
+		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
+			wireValues[wireValue.Key] = null;
 		}
-		//var x = instructions.Where(i => i is NUMBER_Instruction)
-		//	.Cast<NUMBER_Instruction>()
-		//	.Select(i => new Wire(i.OutWire, i.InputValue))
-		//	.;
 
+		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
+			wireValues[wireValue.Key] = CalculateValue(wireValue.Key, instructions, wireValues);
+		}
 
-		ushort result = GetOutputValue(start, gates);
+		ushort result = CalculateValue(start, instructions, wireValues);
 		return result;
 	}
 
-	private static ushort GetOutputValue(string start, List<Gate> gates) {
-		ushort result = 0;
-
-		//var x = gates.Select(g => g.Outs.Where(x => x. == start);
-		var x = gates.Where(g => g.OutputWire == start);
-
-
-
-		return result;
-	}
-
-	private static string Solution2(string[] input) {
+	private static ushort Solution2(string[] input, string start) {
 		List<string> inputs = input.ToList();
+		List<Instruction> instructions = input.Select(x => ParseLine(x)).ToList();
+		Dictionary<string, ushort?> wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
+
+		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
+			wireValues[wireValue.Key] = null;
+		}
+
+		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
+			wireValues[wireValue.Key] = CalculateValue(wireValue.Key, instructions, wireValues);
+		}
+
+		ushort result = CalculateValue(start, instructions, wireValues);
+		return result;
+	}
+
+	private static ushort CalculateValue(string wireId, List<Instruction> instructions, Dictionary<string, ushort?> wireValues) {
+		if (Char.IsDigit(wireId[0])) {
+			return ushort.Parse(wireId);
+		}
+
+		if (wireValues[wireId] is not null) {
+			return wireValues[wireId] ?? 0;
+		}
+
+		Instruction instruction = instructions.Where(i => i.OutWire == wireId).Single();
+
+		if (instruction is NUMBER_Instruction numI) {
+			wireValues[wireId] = numI.InputValue;
+			return numI.InputValue;
+		}
+		if (instruction is NOOP_Instruction noopI) {
+			return CalculateValue(noopI.InWire, instructions, wireValues);
+		}
+		if (instruction is LOGICAL_Instruction logicI) {
+			ushort v1 = CalculateValue(logicI.InWire1, instructions, wireValues);
+			ushort v2 = CalculateValue(logicI.InWire2, instructions, wireValues);
+			ushort value;
+			value = logicI.Operand switch {
+				"AND" => (ushort)(v1 & v2),
+				"OR" => (ushort)(v1 | v2),
+				_ => throw new NotImplementedException(),
+			};
+			wireValues[wireId] = value;
+			return value;
+		}
+		if (instruction is SHIFT_Instruction shiftI) {
+			ushort v1 = CalculateValue(shiftI.InWire1, instructions, wireValues);
+			ushort value;
+			value = shiftI.Operand switch {
+				"LSHIFT" => (ushort)(v1 << shiftI.ShiftAmount),
+				"RSHIFT" => (ushort)(v1 >> shiftI.ShiftAmount),
+				_ => throw new NotImplementedException(),
+			};
+			wireValues[wireId] = value;
+			return value;
+		}
+		if (instruction is NOT_Instruction notI) {
+			ushort v1 = CalculateValue(notI.InWire, instructions, wireValues);
+			ushort value = (ushort)~v1;
+			wireValues[wireId] = value;
+			return value;
+		}
+
 		throw new NotImplementedException();
 	}
 
 	private static Instruction ParseLine(string input) {
-		string[] parts = input.Split(" -> ");
-		string outWire = parts[^1];
-		if (char.IsDigit(input[0])) {
-			NUMBER_Instruction instruction = new(outWire, ushort.Parse(parts[0]));
-			return instruction;
+		Match match = Regex.Match(input, @"(?<wire1>\w+) (?<operand>AND|OR) (?<wire2>\w+) -> (?<out>\w+)");
+		if (match.Success) {
+			return new LOGICAL_Instruction(match.Groups["out"].Value, match.Groups["operand"].Value, match.Groups["wire1"].Value, match.Groups["wire2"].Value);
 		}
-		if (input.StartsWith("NOT")) {
-			string[] moreParts = parts[0].Split(" ");
-			NOT_Instruction instruction = new(outWire, "NOT", moreParts[1]);
-			return instruction;
+		match = Regex.Match(input, @"(?<wire1>\w+) (?<operand>LSHIFT|RSHIFT) (?<amount>\d+) -> (?<out>\w+)");
+		if (match.Success) {
+			return new SHIFT_Instruction(match.Groups["out"].Value, match.Groups["operand"].Value, match.Groups["wire1"].Value, ushort.Parse(match.Groups["amount"].Value));
 		}
-		if (input.Contains("SHIFT")) {
-			string[] moreParts = parts[0].Split(" ");
-			SHIFT_Instruction instruction = new(outWire, moreParts[1], moreParts[0], ushort.Parse(moreParts[2]));
-			return instruction;
+		match = Regex.Match(input, @"(?<operand>NOT) (?<wire1>\w+) -> (?<out>\w+)");
+		if (match.Success) {
+			return new NOT_Instruction(match.Groups["out"].Value, match.Groups["operand"].Value, match.Groups["wire1"].Value);
 		}
-		if (parts.Length > 0) {
-			string[] moreParts = parts[0].Split(" ");
-			LOGICAL_Instruction instruction = new(outWire, moreParts[1], moreParts[0], moreParts[2]);
-			return instruction;
+		match = Regex.Match(input, @"(?<value>\d+) -> (?<out>\w+)");
+		if (match.Success) {
+			return new NUMBER_Instruction(match.Groups["out"].Value, ushort.Parse(match.Groups["value"].Value));
 		}
-		return null!;
+		match = Regex.Match(input, @"(?<wire1>\w+) -> (?<out>\w+)");
+		if (match.Success) {
+			return new NOOP_Instruction(match.Groups["out"].Value, match.Groups["wire1"].Value);
+		}
+		throw new Exception("Unrecognised input: {input}");
 	}
-	//private static Instruction ParseLine(string input) {
-	//	string[] parts = input.Split(" -> ");
-	//	string outWire = parts[^1];
-	//	if (char.IsDigit(input[0])) {
-	//		NUMBER_Instruction instruction = new(outWire, ushort.Parse(parts[0]));
-	//		return instruction;
-	//	}
-	//	if (input.StartsWith("NOT")) {
-	//		string[] moreParts = parts[0].Split(" ");
-	//		NOT_Instruction instruction = new(outWire, "NOT", moreParts[1]);
-	//		return instruction;
-	//	}
-	//	if (input.Contains("SHIFT")) {
-	//		string[] moreParts = parts[0].Split(" ");
-	//		SHIFT_Instruction instruction = new(outWire, moreParts[1], moreParts[0], ushort.Parse(moreParts[2]));
-	//		return instruction;
-	//	}
-	//	if (parts.Length > 0) {
-	//		string[] moreParts = parts[0].Split(" ");
-	//		LOGICAL_Instruction instruction = new(outWire, moreParts[1], moreParts[0],moreParts[2]);
-	//		return instruction;
-	//	}
-	//	return null!;
-	//}
 }
 
