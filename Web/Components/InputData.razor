@@ -16,7 +16,7 @@
         <h5>
             <InputSelect @bind-Value="GitHubUserSelect" DisplayName="User">
                 <option value="">Select a user</option>
-                @foreach (string name in githubClient.KnownUsers) {
+                @foreach (string name in githubClient.KnownUsersInOrder) {
                     <option value="@name">@name (@githubClient.UserLanguages(name))</option>
                 }
             </InputSelect>

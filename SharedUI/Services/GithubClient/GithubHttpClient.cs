@@ -3,18 +3,36 @@
 public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 	private readonly HttpClient _httpClient;
 
+	record GithubProfile(string Name, string UserLanguages, string SolutionTemplate, string InputTemplate);
+
+	private static readonly List<GithubProfile> Users = new() {
+		new("andriamanitra", "multi", "{GITHUB}Andriamanitra/adventofcode{year}/blob/main/day{day:D2} ", "Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt "),
+		new("bassel-t", "c#", "{GITHUB}Bassel-T/AdventOfCode{year}-CS/blob/main/AdventOfCode{year}/Day{day}.cs ", " "),
+		new("copperbeardy", "c#", "{GITHUB}CopperBeardy/AdventOfCode{year}/blob/main/AdventOfCode{year}/AdventOfCode{year}/Days/Day{day}.cs ", "CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt"),
+		new("dylanbeattie", "c#", "{GITHUB}dylanbeattie/advent-of-code-{year}/blob/main/day{day}/Program.cs ", "dylanbeattie/advent-of-code-{year}/main/day{day}/input.txt "),
+		new("encse", "c#", "{GITHUB}encse/adventofcode/blob/master/{year}/Day{day:D2}/Solution.cs ", "encse/adventofcode/master/{year}/Day{day:D2}/input.in "),
+		new("glombek", "c#", "{GITHUB}glombek/advent-of-code-{year % 1000}/blob/main/Days/Day{day}.cs ", "glombek/advent-of-code-{year % 1000}/main/Inputs/Day{day}/input.txt "),
+		new("internetbird", "c#", "{GITHUB}internetbird/AOC{year}/blob/master/PuzzleSolvers/Day{day}PuzzleSolver.cs ", "internetbird/AOC{year}/master/InputFiles/day{day}.txt "),
+		new("kevinsjoberg", "crystal", "{GITHUB}KevinSjoberg/aoc-{year}/blob/main/{day:D2}/day{day:D2}.cr ", "KevinSjoberg/aoc-{year}/main/{day:D2}/input.txt "),
+		new("pseale", "c#", "{GITHUB}pseale/advent-of-code/blob/main/{year}-csharp/Day{day:D2}/Program.cs ", "Rollerss/AOC_{year}/master/AOC/InputData/AOCDay{day:D2}.txt "),
+		new("rollerss", "c#", "{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs ", "pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt "),
+		new("smabuk", "c#", "{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs ", "smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt "),
+		new("tasagent", "c#", "{GITHUB}TasAgent/AdventOfCode{year}/blob/master/Day{day:D2}/Program.cs ", "TASagent/AdventOfCode{year}/master/input{day:D2}.txt "),
+	};
+
 	public GithubHttpClient(HttpClient httpClient) {
 		httpClient.BaseAddress = new Uri("https://raw.githubusercontent.com/");
 		_httpClient = httpClient;
 	}
 
-	public List<string> KnownUsers => new() {
+	public List<string> KnownUsersInOrder => new() {
 		"smabuk",
 		"encse",
 		"glombek",
 		"dylanbeattie",
 		"internetbird",
 		"pseale",
+		"TASagent",
 		"CopperBeardy",
 		"Rollerss",
 		"KevinSjoberg",
@@ -22,65 +40,22 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		"Bassel-T"
 	};
 
-	public string UserLanguages(string username) => username switch {
-		"smabuk" => "c#",
-		"encse" => "c#",
-		"glombek" => "c#",
-		"dylanbeattie" => "c#",
-		"internetbird" => "c#",
-		"pseale" => "c#",
-		"CopperBeardy" => "c#",
-		"Rollerss" => "c#",
-		"KevinSjoberg" => "crystal",
-		"Andriamanitra" => "multi",
-		"Bassel-T" => "c#",
-		_ => ""
-	};
+	public string UserLanguages(string username) => 
+		Users.Where(user => user.Name == username.ToLower()).Single().UserLanguages;
 
 	public string GetSolutionHref(int year, int day, string username) {
-		const string GITHUB = "https://github.com/";
+		if (String.IsNullOrWhiteSpace(username)) { return ""; }
 
-		if (username is null) { return ""; }
-		if (KnownUsers.Contains(username) == false) { return ""; }
-
-		string href = username.ToLower() switch {
-			"andriamanitra" => $"{GITHUB}Andriamanitra/adventofcode{year}/blob/main/day{day:D2}",
-			"bassel-t" => $"{GITHUB}Bassel-T/AdventOfCode{year}-CS/blob/main/AdventOfCode{year}/Day{day}.cs",
-			"copperbeardy" => $"{GITHUB}CopperBeardy/AdventOfCode{year}/blob/main/AdventOfCode{year}/AdventOfCode{year}/Days/Day{day}.cs",
-			"dylanbeattie" => $"{GITHUB}dylanbeattie/advent-of-code-{year}/blob/main/day{day}/Program.cs",
-			"encse" => $"{GITHUB}encse/adventofcode/blob/master/{year}/Day{day:D2}/Solution.cs",
-			"glombek" => $"{GITHUB}glombek/advent-of-code-{year % 1000}/blob/main/Days/Day{day}.cs",
-			"internetbird" => $"{GITHUB}internetbird/AOC{year}/blob/master/PuzzleSolvers/Day{day}PuzzleSolver.cs",
-			//"ians-au" => $"{GITHUB}ians-au/AdventOfCode{year}/blob/main/day{day:D2}.cs",
-			"kevinsjoberg" => $"{GITHUB}KevinSjoberg/aoc-{year}/blob/main/{day:D2}/day{day:D2}.cr",
-			"pseale" => $"{GITHUB}pseale/advent-of-code/blob/main/{year}-csharp/Day{day:D2}/Program.cs",
-			"rollerss" => $"{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs",
-			"smabuk" => $"{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs",
-			_ => "",
-		};
-
-		return href;
+		string href = Users.Where(user => user.Name == username.ToLower()).Single().SolutionTemplate;
+		return ParseTemplate(href, year, day);
 	}
 
 	public async Task<string> GetInputData(int year, int day, string? username) {
 		if (username is null) { return ""; }
-		if (KnownUsers.Contains(username) == false) { return ""; }
+		if (KnownUsersInOrder.Contains(username) == false) { return ""; }
 
-		string path = username.ToLower() switch {
-			"andriamanitra" => $"Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt",
-			"bassel-t" => "",
-			"copperbeardy" => $"CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt",
-			"dylanbeattie" => $"dylanbeattie/advent-of-code-{year}/main/day{day}/input.txt",
-			"encse" => $"encse/adventofcode/master/{year}/Day{day:D2}/input.in",
-			"glombek" => $"glombek/advent-of-code-{year % 1000}/main/Inputs/Day{day}/input.txt",
-			"internetbird" => $"internetbird/AOC{year}/master/InputFiles/day{day}.txt",
-			//"ians-au" => $"",
-			"kevinsjoberg" => $"KevinSjoberg/aoc-{year}/main/{day:D2}/input.txt",
-			"rollerss" => $"Rollerss/AOC_{year}/master/AOC/InputData/AOCDay{day:D2}.txt",
-			"pseale" => $"pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt",
-			"smabuk" => $"smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt",
-			_ => "",
-		};
+		string inputTemplate = Users.Where(user => user.Name == username.ToLower()).Single().InputTemplate;
+		string path = ParseTemplate(inputTemplate, year, day);
 
 		if (string.IsNullOrEmpty(path)) {
 			return "";
@@ -92,4 +67,22 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 			_ => await response.Content.ReadAsStringAsync()
 		};
 	}
+	private static string ParseTemplate(string template, int year, int day) {
+		template = template.Replace("{GITHUB}", "https://github.com/");
+		while (template.IndexOf("{year}") > 0) {
+			template = template.Replace("{year}", $"{year}");
+		}
+		while (template.IndexOf("{year % 1000}") > 0) {
+			template = template.Replace("{year % 1000}", $"{year % 1000}");
+		}
+		while (template.IndexOf("{day:D2}") > 0) {
+			template = template.Replace("{day:D2}", $"{day:D2}");
+		}
+		while (template.IndexOf("{day}") > 0) {
+			template = template.Replace("{day}", $"{day}");
+		}
+
+		return template;
+	}
+
 }
