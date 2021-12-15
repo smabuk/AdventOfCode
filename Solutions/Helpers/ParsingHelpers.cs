@@ -20,4 +20,16 @@ public static class ParsingHelpers {
 	/// <returns>IEnumerable<Point></returns>
 	public static IEnumerable<Point> AsPoints(this IEnumerable<(int x, int y)> input) =>
 		input.Select(p => new Point(X: p.x, Y: p.y));
+
+
+	public static string AsBinaryFromHex(this string input) {
+		return String.Join(String.Empty, input.Select(
+		c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
+	}
+
+	public static string AsBinaryFromHex(this IEnumerable<string> input) {
+		return String.Join(String.Empty, input.Select(
+		c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
+	}
 }
+
