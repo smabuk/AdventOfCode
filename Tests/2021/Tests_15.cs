@@ -31,7 +31,7 @@ public class Tests_15_Chiton {
 		"3125421639",
 		"1293138521",
 		"2311944581",
-	}, 9999)]
+	}, 315)]
 	public void Part2(string[] input, long expected) {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 15, 2, input), out long actual);
 		Assert.Equal(expected, actual);

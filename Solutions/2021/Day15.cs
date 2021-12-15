@@ -10,53 +10,88 @@ public class Day15 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	record RecordType(string Name, int Value);
-
 	private static int Solution1(string[] input) {
 		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
 
 		Point start = new(0, 0);
-		Point end = new(grid.GetUpperBound(0), grid.GetUpperBound(1));
+		Point end = new(new(grid.GetUpperBound(0), grid.GetUpperBound(1)));
 
-		Point current = start;
-		HashSet<Point> visited = new();
-		var neighbours = grid.GetAdjacentCells(current);
-		Point start1 = new(neighbours.First().x, neighbours.First().y);
-		Point start2 = new(neighbours.Last().x, neighbours.Last().y);
-		(bool failed1, int result1) = FindShortestRoute(start1, end, grid, visited.Append(start).ToHashSet());
-		(bool failed2, int result2) = FindShortestRoute(start2, end, grid, visited.Append(start).ToHashSet());
+		// https://en.wikipedia.org/wiki/Dijkstra's_algorithm
 
-		return Math.Min(result1, result2);
-	}
+		PriorityQueue<Cell<int>, int> priorityQueue = new();
+		priorityQueue.Enqueue(new(start, 0), 0);
+		Dictionary<Point, int> costs = new();
+		costs.Add(start, 0);
 
-	private static (bool success, int result) FindShortestRoute(Point current, Point end, int[,] grid, HashSet<Point> visited) {
-		int risk = grid[current.X, current.Y];
-		if (current == end) {
-			return (true, risk);
-		}
-		if (visited.Contains(current)) {
-			return (false, risk);
-		}
-		List<int> results = new();
-		var neighbours = grid.GetAdjacentCells(current);
-		foreach (var (x, y, value) in neighbours) {
-			if (x >= current.X && y >= current.Y) {
-				(bool success, int result) = FindShortestRoute(new(x, y), end, grid, visited.Append(current).ToHashSet());
-				if (success) {
-					results = results.Append(result).ToList();
+		while (priorityQueue.Count > 0) {
+			Cell<int> cell = priorityQueue.Dequeue();
+
+			foreach ((int x, int y, int value) in grid.GetAdjacentCells(cell.Index)) {
+				Cell<int> neighbour = new(x, y, value);
+				if (!costs.ContainsKey(neighbour.Index)) {
+					int cost = costs[cell.Index] + neighbour.Value;
+					costs[neighbour.Index] = cost;
+					if (neighbour.Index == end) {
+						break;
+					}
+					priorityQueue.Enqueue(neighbour, cost);
 				}
 			}
 		}
 
-		if (results.Count == 0) {
-			return (false, risk);
-		} else {
-			return (true, results.Min() + risk);
-		}
+		return costs[end];
 	}
 
-	private static string Solution2(string[] input) {
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input) {
+		int[,] inputGrid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+
+		Point start = new(0, 0);
+		int inputGridWidth = inputGrid.GetLength(0);
+		int inputGridHeight = inputGrid.GetLength(1);
+
+
+		int[,] grid = new int[inputGridWidth * 5, inputGridHeight * 5];
+
+		for (int y = 0; y < 5; y++) {
+			int yOffset = y * inputGridHeight;
+			for (int x = 0; x < 5; x++) {
+				int xOffset = x * inputGridWidth;
+				foreach (Cell<int> cell in inputGrid.Walk2dArrayWithValues()) {
+					int value = (cell.Value + x + y) switch {
+						>= 20 => (cell.Value + x + y) - 18,
+						>= 10 => (cell.Value + x + y) - 9,
+						_ => (cell.Value + x + y),
+					};
+					grid[cell.X + xOffset, cell.Y + yOffset] = value;
+				}
+			}
+		}
+
+		Point end = new(new(grid.GetUpperBound(0), grid.GetUpperBound(1)));
+
+		// https://en.wikipedia.org/wiki/Dijkstra's_algorithm
+
+		PriorityQueue<Cell<int>, int> priorityQueue = new();
+		priorityQueue.Enqueue(new(start, 0), 0);
+		Dictionary<Point, int> costs = new();
+		costs.Add(start, 0);
+
+		while (priorityQueue.Count > 0) {
+			Cell<int> cell = priorityQueue.Dequeue();
+
+			foreach ((int x, int y, int value) in grid.GetAdjacentCells(cell.Index)) {
+				Cell<int> neighbour = new(x, y, value);
+				if (!costs.ContainsKey(neighbour.Index)) {
+					int cost = costs[cell.Index] + neighbour.Value;
+					costs[neighbour.Index] = cost;
+					if (neighbour.Index == end) {
+						break;
+					}
+					priorityQueue.Enqueue(neighbour, cost);
+				}
+			}
+		}
+
+		return costs[end];
 	}
 }
