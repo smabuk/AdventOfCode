@@ -11,7 +11,7 @@ public class FileSystemInputData : IInputDataService {
 		};
 
 		if (File.Exists(filename)) {
-			return (await File.ReadAllTextAsync(filename)).ReplaceLineEndings();
+			return (await File.ReadAllTextAsync(filename)).ReplaceLineEndings().Replace("\r", "");
 		}
 
 		return "";
