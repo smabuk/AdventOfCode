@@ -25,37 +25,23 @@ public class Day07 {
 	record NOOP_Instruction(string OutWire, string InWire, string Operand = "NOOP") : Instruction(OutWire);
 
 	private static ushort Solution1(string[] input, string start) {
-		List<string> inputs = input.ToList();
 		List<Instruction> instructions = input.Select(x => ParseLine(x)).ToList();
 		Dictionary<string, ushort?> wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
 
-		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
-			wireValues[wireValue.Key] = null;
-		}
-
-		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
-			wireValues[wireValue.Key] = CalculateValue(wireValue.Key, instructions, wireValues);
-		}
-
-		ushort result = CalculateValue(start, instructions, wireValues);
-		return result;
+		return CalculateValue(start, instructions, wireValues);
 	}
 
 	private static ushort Solution2(string[] input, string start) {
-		List<string> inputs = input.ToList();
 		List<Instruction> instructions = input.Select(x => ParseLine(x)).ToList();
 		Dictionary<string, ushort?> wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
 
-		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
-			wireValues[wireValue.Key] = null;
-		}
+		ushort newB = CalculateValue(start, instructions, wireValues);
+		instructions.RemoveAll(i => i.OutWire == "b");
+		instructions = instructions.Prepend(new NUMBER_Instruction("b", newB)).ToList();
 
-		foreach (KeyValuePair<string, ushort?> wireValue in wireValues.Where(w => w.Value is null)) {
-			wireValues[wireValue.Key] = CalculateValue(wireValue.Key, instructions, wireValues);
-		}
+		wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
 
-		ushort result = CalculateValue(start, instructions, wireValues);
-		return result;
+		return CalculateValue(start, instructions, wireValues);
 	}
 
 	private static ushort CalculateValue(string wireId, List<Instruction> instructions, Dictionary<string, ushort?> wireValues) {
