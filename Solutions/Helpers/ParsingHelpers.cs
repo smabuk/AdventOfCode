@@ -23,13 +23,13 @@ public static class ParsingHelpers {
 
 
 	public static string AsBinaryFromHex(this string input) {
-		return String.Join(String.Empty, input.Select(
-		c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
+		return String.Join(
+			String.Empty,
+			input.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
 	}
 
 	public static string AsBinaryFromHex(this IEnumerable<string> input) {
-		return String.Join(String.Empty, input.Select(
-		c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
+		return String.Join(String.Empty, input.Select(c => AsBinaryFromHex(c)));
 	}
 }
 
