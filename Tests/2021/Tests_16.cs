@@ -15,9 +15,14 @@ public class Tests_16_Packet_Decoder {
 	}
 
 	[Theory]
-	[InlineData(new string[] {
-		"",
-	}, 9999)]
+	[InlineData(new string[] { "C200B40A82" }, 3)]
+	[InlineData(new string[] { "04005AC33890" }, 54)]
+	[InlineData(new string[] { "880086C3E88112" }, 7)]
+	[InlineData(new string[] { "CE00C43D881120" }, 9)]
+	[InlineData(new string[] { "D8005AC2A8F0" }, 1)]
+	[InlineData(new string[] { "F600BC2D8F" }, 0)]
+	[InlineData(new string[] { "9C005AC2F8F0" }, 0)]
+	[InlineData(new string[] { "9C0141080250320F1802104A08" }, 1)]
 	public void Part2(string[] input, long expected) {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 16, 2, input), out long actual);
 		Assert.Equal(expected, actual);

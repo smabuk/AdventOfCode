@@ -10,27 +10,31 @@ public class Day16 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-
-	enum PacketType {
-		LiteralValue = 4,
-		Operator = 3
-	}
-
 	record Packet(string Bits, int Version, int Type) {
 		public List<Packet> Packets = new();
 		public int TotalVersion => Version + Packets.Sum(p => p.TotalVersion);
+		public virtual long Value { get; set; } = 9999;
 	};
 
 	record OuterPacket(string Bits, int Version, int Type) : Packet(Bits, Version, Type) {
-
+		public override long Value => ((OperatorPacket)Packets.Single()).Value;
 	}
 	record OperatorPacket(string Bits, int Version, int Type) : Packet(Bits, Version, Type) {
+		public override long Value => Type switch {
+			0 => Packets.Sum(p => p.Value),
+			1 => Packets.Select(p => p.Value).Aggregate((a, b) => a * b),
+			2 => Packets.Select(p => p.Value).Min(),
+			3 => Packets.Select(p => p.Value).Max(),
+			5 => Packets[0].Value > Packets[1].Value ? 1 : 0,
+			6 => Packets[0].Value < Packets[1].Value ? 1 : 0,
+			7 => Packets[0].Value == Packets[1].Value ? 1 : 0,
+			_ => throw new NotImplementedException(),
+		};
 	}
+
 	record LiteralPacket(string Bits, int Version, int Type, string Number) : Packet(Bits, Version, Type) {
-		public long Value => Convert.ToInt64(Number, 2);
+		public override long Value => Convert.ToInt64(Number, 2);
 	};
-
-
 
 	private static int Solution1(string[] input) {
 		string transmission = input[0].AsBinaryFromHex();
@@ -38,12 +42,13 @@ public class Day16 {
 		return packet.TotalVersion;
 	}
 
-
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
+	private static long Solution2(string[] input) {
+		string transmission = input[0].AsBinaryFromHex();
+		OuterPacket packet = ParsePackets(transmission, true).Packet as OuterPacket ?? new OuterPacket("", 0, 0);
+		return packet.Value;
 	}
-	private static (Packet Packet, string RestOfString) ParsePackets(string transmission, bool isOuterPacket = false) {
 
+	private static (Packet Packet, string RestOfString) ParsePackets(string transmission, bool isOuterPacket = false) {
 		int bitsIndex = 0;
 
 		if (isOuterPacket) {
