@@ -12,28 +12,26 @@ public class Day17 {
 
 	private static int Solution1(string[] input) {
 		TargetArea targetArea = new(input[0]);
-		int maxHeight = 0;
+		int xDirection = Math.Sign(targetArea.XFrom);
+		int minX = Math.Min(Math.Abs(targetArea.XFrom), Math.Abs(targetArea.XFrom));
 
-		for (int x = 2; x < targetArea.XFrom; x++) {
-			for (int y = 0; y < 100; y++) {
-				(bool success, int height) = targetArea.WillProbeHit(new Point(x, y));
-				if (success) {
-					maxHeight = Math.Max(maxHeight, height);
-				}
-			}
-		}
+		int xVelocity;
+		for (xVelocity = 1; SequenceHelpers.TriangularNumber(xVelocity) < minX; xVelocity++) { }
+		Point initialVelocity = new(xVelocity * xDirection, Math.Abs(targetArea.YFrom) - 1);
+		(_, int height) = targetArea.WillProbeHit(initialVelocity);
 
-		return maxHeight;
+		return height;
 	}
 
 	private static int Solution2(string[] input) {
 		TargetArea targetArea = new(input[0]);
 		int numberOfHits = 0;
+		int xDirection = Math.Sign(targetArea.XFrom);
+		int xMaxGuess = Math.Max(Math.Abs(targetArea.XFrom), Math.Abs(targetArea.XTo));
 
-		// HACK: Guessed some likely hit ranges then narrowed it down
-		for (int x = 2; x < 2 * targetArea.XTo; x++) {
+		for (int x = 2; x <= xMaxGuess; x++) {
 			for (int y = targetArea.YFrom; y < Math.Abs(targetArea.YFrom); y++) {
-				(bool success, _) = targetArea.WillProbeHit(new Point(x, y));
+				(bool success, _) = targetArea.WillProbeHit(new Point(x * xDirection, y));
 				if (success) {
 					numberOfHits++;
 				}
@@ -43,9 +41,7 @@ public class Day17 {
 		return numberOfHits;
 	}
 
-	record TargetArea(int XFrom, int XTo, int YFrom, int YTo) {
-
-		public HashSet<Point> TargetRange = new();
+	public record TargetArea(int XFrom, int XTo, int YFrom, int YTo) {
 
 		public TargetArea(string input) : this(0, 0, 0, 0) {
 			Match match = Regex.Match(input,
@@ -56,12 +52,13 @@ public class Day17 {
 				YFrom = int.Parse(match.Groups["yfrom"].Value);
 				YTo = int.Parse(match.Groups["yto"].Value);
 			}
-			for (int y = YFrom; y <= YTo; y++) {
-				for (int x = XFrom; x <= XTo; x++) {
-					TargetRange.Add(new Point(x, y));
-				}
-			}
 		}
+
+		public bool InTargetArea(int x, int y)
+			=> ((XFrom <= x && x <= XTo) || (XTo <= x && x <= XFrom)) &&
+				((YFrom <= y && y <= YTo) || (YTo <= y && y <= YFrom));
+		public bool InTargetArea(Point position) => InTargetArea(position.X, position.Y);
+
 
 		public (bool Success, int MaxHeight) WillProbeHit(Point initialVelocity) {
 			Point currentVelocity = initialVelocity;
@@ -71,24 +68,21 @@ public class Day17 {
 			while (currentPosition.Y >= YFrom) {
 				currentPosition = currentPosition with {
 					X = currentPosition.X + currentVelocity.X,
-					Y = currentPosition.Y + currentVelocity.Y,
-				};
+					Y = currentPosition.Y + currentVelocity.Y,};
+
 				maxHeight = Math.Max(maxHeight, currentPosition.Y);
 
-				if (TargetRange.Contains(currentPosition)) {
+				if (InTargetArea(currentPosition)) {
 					return (true, maxHeight);
 				}
 
-				int newXVelocity = 0;
-				if (currentVelocity.X < 0) {
-					newXVelocity = currentVelocity.X + 1;
-				} else if (currentVelocity.X > 0) {
-					newXVelocity = currentVelocity.X - 1;
-				}
-
 				currentVelocity = currentVelocity with {
-					X = newXVelocity,
 					Y = currentVelocity.Y - 1,
+					X = currentVelocity.X switch {
+						< 0 => currentVelocity.X + 1,
+						> 0 => currentVelocity.X - 1,
+						_ => 0,
+					},
 				};
 			}
 
