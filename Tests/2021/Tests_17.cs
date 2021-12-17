@@ -9,7 +9,7 @@ public class Tests_17_Trick_Shot {
 	}
 
 	[Theory]
-	[InlineData(new string[] { "" }, 9999)]
+	[InlineData(new string[] { "target area: x=20..30, y=-10..-5" }, 112)]
 	public void Part2(string[] input, long expected) {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 17, 2, input), out long actual);
 		Assert.Equal(expected, actual);

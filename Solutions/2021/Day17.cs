@@ -26,9 +26,21 @@ public class Day17 {
 		return maxHeight;
 	}
 
-	private static string Solution2(string[] input) {
+	private static int Solution2(string[] input) {
 		TargetArea targetArea = new(input[0]);
-		return "** Solution not written yet **";
+		int numberOfHits = 0;
+
+		// HACK: Guessed some likely hit ranges then narrowed it down
+		for (int x = 2; x < 2 * targetArea.XTo; x++) {
+			for (int y = targetArea.YFrom; y < Math.Abs(targetArea.YFrom); y++) {
+				(bool success, _) = targetArea.WillProbeHit(new Point(x, y));
+				if (success) {
+					numberOfHits++;
+				}
+			}
+		}
+
+		return numberOfHits;
 	}
 
 	record TargetArea(int XFrom, int XTo, int YFrom, int YTo) {
@@ -56,7 +68,7 @@ public class Day17 {
 			Point currentPosition = new(0, 0);
 			int maxHeight = 0;
 
-			while (currentPosition.X <= XTo && currentPosition.Y >= YFrom) {
+			while (currentPosition.Y >= YFrom) {
 				currentPosition = currentPosition with {
 					X = currentPosition.X + currentVelocity.X,
 					Y = currentPosition.Y + currentVelocity.Y,
@@ -82,10 +94,5 @@ public class Day17 {
 
 			return (false, 0);
 		}
-
-
 	};
-
-
-
 }
