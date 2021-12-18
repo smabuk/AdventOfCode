@@ -33,8 +33,8 @@ public class Tests_18_Snailfish {
 		"[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]",
 		"[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]",
 	}, 3993)]
-	public void Part2(string[] input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 18, 2, input), out long actual);
+	public void Part2(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 18, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -72,8 +72,8 @@ public class Tests_18_Snailfish {
 	[InlineData("[[[[5,0],[7,4]],[5,5]],[6,6]]", 1137)]
 	[InlineData("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]", 3488)]
 	[InlineData("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]", 4140)]
-	public void Snailfish_Magnitude(string input, long expected) {
-		long actual = new SnailfishNumber(input).Magnitude;
+	public void Snailfish_Magnitude(string input, int expected) {
+		int actual = new SnailfishNumber(input).Magnitude;
 		Assert.Equal(expected, actual);
 	}
 

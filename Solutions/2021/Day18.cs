@@ -11,46 +11,40 @@ public class Day18 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static long Solution1(string[] input) {
-		List<SnailfishNumber> snailfishNumbers = input.Select(i => ParseLine(i)).ToList();
-
-		SnailfishNumber result = snailfishNumbers.First();
-		foreach (var sfn in snailfishNumbers.Skip(1)) {
-			result = result.Plus(sfn);
-		}
-
-		return result.Magnitude;
+		return input
+			.Select(i => new SnailfishNumber(i))
+			.Aggregate((a, b) => a.Plus(b))
+			.Magnitude;
 	}
 
-	private static long Solution2(string[] input) {
-		List<SnailfishNumber> snailfishNumbers = input.Select(i => ParseLine(i)).ToList();
+	private static int Solution2(string[] input) {
+		List<SnailfishNumber> snailfishNumbers = input.Select(i => new SnailfishNumber(i)).ToList();
 
-		long maxMagnitude = 0;
-
-		foreach (var sfn in snailfishNumbers.Combinations(2)) {
-			long magnitude = sfn.First().Plus(sfn.Last()).Magnitude;
-			maxMagnitude = Math.Max(maxMagnitude, magnitude);
-			magnitude = sfn.Last().Plus(sfn.First()).Magnitude;
-			maxMagnitude = Math.Max(maxMagnitude, magnitude);
-		}
-
-		return maxMagnitude;
+		return snailfishNumbers
+			.SelectMany(sfn => snailfishNumbers, (a, b) => (a, b))
+			.Where(x => x.a != x.b)
+			.Select(x => x.a.Plus(x.b).Magnitude)
+			.Max();
 	}
 
-	private static SnailfishNumber ParseLine(string input) => new(input);
-	public record SnailfishNumber(string Number) {
+	public record struct SnailfishNumber(string Number) {
 
-		public long Magnitude => CalculateMagnitude(Number);
+		private static readonly Regex _pairRegex = new(@"\[(?<lv>\d+),(?<rv>\d+)\]", RegexOptions.Compiled);
+		private static readonly Regex _numberRegex = new(@"(?<d>\d+)", RegexOptions.Compiled);
+		private static readonly Regex _ddRegex = new(@"(?<dd>\d\d+)", RegexOptions.Compiled);
 
-		private long CalculateMagnitude(string number) {
+		public int Magnitude => CalculateMagnitude(Number);
+
+		private int CalculateMagnitude(string number) {
 			string input = number;
-			long result = 0;
-			Match? pair = Regex.Match(input, @"\[(?<lv>\d+),(?<rv>\d+)\]");
+			int result = 0;
+			Match pair = _pairRegex.Match(input);
 			if (pair.Success) {
-				result = 3 * int.Parse(pair.Groups["lv"].Value);
-				result += 2 * int.Parse(pair.Groups["rv"].Value);
+				result = 3 * int.Parse(pair.Groups["lv"].ValueSpan);
+				result += 2 * int.Parse(pair.Groups["rv"].ValueSpan);
 				string newNumber = $"{number[..(pair.Index)]}{result}{input[(pair.Index + pair.Length)..]}";
 
-				long newResult = CalculateMagnitude(newNumber);
+				int newResult = CalculateMagnitude(newNumber);
 				if (newResult != 0) {
 					result = newResult;
 				}
@@ -60,7 +54,6 @@ public class Day18 {
 		}
 
 		public SnailfishNumber Plus(SnailfishNumber rho) => new(Reduce($"[{Number},{rho.Number}]"));
-
 
 		public static string Reduce(string input) {
 			string output = input;
@@ -90,9 +83,6 @@ public class Day18 {
 
 		public static string Explode(string input) {
 			int depthCount = 0;
-			int? lastNumberStart = null;
-			int? lastNumberEnd = null;
-			string output = "";
 			for (int i = 0; i < input.Length; i++) {
 				char c = input[i];
 				if (c == '[') {
@@ -100,30 +90,28 @@ public class Day18 {
 				} else if (c == ']') {
 					depthCount--;
 				} else if (depthCount > 4) {
-					long leftValue = long.Parse(input[i..].Split(",")[0]);
-					long rightValue = long.Parse(input[i..].Split(",")[1].Split("]")[0]);
-					string lhs = input[..i];
+					int commaIndex = input[i..].IndexOf(',');
+					int bracketIndex = input[(i + commaIndex + 1)..].IndexOf(']');
+					int leftValue = int.Parse(input[i..(i + commaIndex)]);
+					int rightValue = int.Parse(input[(i + commaIndex + 1)..(i + commaIndex + 1 + bracketIndex)]);
+					string lhs;
 					string rhs = input[(input[i..].IndexOf(']') + i + 1)..];
-					if (lastNumberStart is null || lastNumberEnd is null) {
-						lhs = $"{input[..(i - 1)]}";
+					MatchCollection findLastNumber = _numberRegex.Matches(input[..(i - 1)]);
+					if (findLastNumber.Count == 0) {
+						lhs = input[..(i - 1)];
 					} else {
+						lhs = input[..i];
 						int index = Math.Min(lhs.IndexOf(']'), lhs.IndexOf(','));
-						long lhsValue = int.Parse(lhs[(int)lastNumberStart..((int)lastNumberEnd + 1)]) + leftValue;
-						lhs = $"{lhs[..(int)lastNumberStart]}{lhsValue}{lhs[((int)lastNumberEnd + 1)..^1]}";
+						int lhsValue = int.Parse(findLastNumber.Last().ValueSpan) + leftValue;
+						lhs = $"{lhs[..findLastNumber.Last().Index]}{lhsValue}{lhs[(findLastNumber.Last().Index + findLastNumber.Last().Length)..^1]}";
 					}
-					Match? findNumber = Regex.Match(rhs, @"\d+");
-					if (findNumber.Success) {
-						long rhsValue = long.Parse(findNumber.Value) + rightValue;
-						int fI = findNumber.Index;
-						rhs = $"{rhs[..(fI)]}{rhsValue}{rhs[(fI + findNumber.Length)..]}";
+					var findNextNumber = _numberRegex.Match(rhs);
+					if (findNextNumber.Success) {
+						int rhsValue = int.Parse(findNextNumber.ValueSpan) + rightValue;
+						int fI = findNextNumber.Index;
+						rhs = $"{rhs[..fI]}{rhsValue}{rhs[(fI + findNextNumber.Length)..]}";
 					}
-					output = $"{lhs}0{rhs}";
-					return output;
-				} else if (Char.IsDigit(c)) {
-					lastNumberEnd = i;
-					if (i == 0 || (Char.IsDigit(input[i - 1]) is false)) {
-						lastNumberStart = i;
-					}
+					return $"{lhs}0{rhs}";
 				}
 			}
 
@@ -131,26 +119,26 @@ public class Day18 {
 		}
 
 		private static string Split(string input) {
-			string output = input;
 			for (int i = 0; i < input.Length; i++) {
 				char c = input[i];
-				if (Char.IsDigit(c)) {
+				if (char.IsDigit(c)) {
 					int numberStart = i;
 					int numberEnd = numberStart;
-					while (Char.IsDigit(input[numberEnd])) {
+					while (char.IsDigit(input[numberEnd])) {
 						numberEnd++;
 					}
-					long value = long.Parse(input[numberStart..(numberEnd)]);
-					if (value >= 10) {
-						long lhsValue = value / 2;
-						long rhsValue = value - lhsValue;
-						output = $"{input[..numberStart]}[{lhsValue},{rhsValue}]{input[numberEnd..]}";
-						return output;
+					if (numberEnd - numberStart >= 2) {
+						int value = int.Parse(input.AsSpan(numberStart, numberEnd - numberStart));
+						int lhsValue = value / 2;
+						int rhsValue = value - lhsValue;
+						return $"{input[..numberStart]}[{lhsValue},{rhsValue}]{input[numberEnd..]}";
 					}
 				}
 			}
 
-			return output;
+			return input;
 		}
+
+
 	}
 }
