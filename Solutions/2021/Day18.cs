@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace AdventOfCode.Solutions.Year2021;
+﻿namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 18: Snailfish
@@ -23,24 +21,27 @@ public class Day18 {
 		return result.Magnitude;
 	}
 
-	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		List<SnailfishNumber> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
+	private static long Solution2(string[] input) {
+		List<SnailfishNumber> snailfishNumbers = input.Select(i => ParseLine(i)).ToList();
+
+		long maxMagnitude = 0;
+
+		foreach (var sfn in snailfishNumbers.Combinations(2)) {
+			long magnitude = sfn.First().Plus(sfn.Last()).Magnitude;
+			maxMagnitude = Math.Max(maxMagnitude, magnitude);
+			magnitude = sfn.Last().Plus(sfn.First()).Magnitude;
+			maxMagnitude = Math.Max(maxMagnitude, magnitude);
+		}
+
+		return maxMagnitude;
 	}
 
 	private static SnailfishNumber ParseLine(string input) => new(input);
-	public class SnailfishNumber {
-		public string Number { get; }
-
-		public SnailfishNumber(string number) {
-			Number = number;
-		}
+	public record SnailfishNumber(string Number) {
 
 		public long Magnitude => CalculateMagnitude(Number);
 
-		public long CalculateMagnitude(string number) {
+		private long CalculateMagnitude(string number) {
 			string input = number;
 			long result = 0;
 			Match? pair = Regex.Match(input, @"\[(?<lv>\d+),(?<rv>\d+)\]");
@@ -151,7 +152,5 @@ public class Day18 {
 
 			return output;
 		}
-
-
 	}
 }
