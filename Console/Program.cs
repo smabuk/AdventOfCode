@@ -12,6 +12,9 @@ if (args.Length == 1) {
 	}
 }
 
+System.Diagnostics.Stopwatch totalTimer = new();
+totalTimer.Start();
+
 if (date.Month == 12 && date.Day <= 25) {
 	GetInputDataAndSolve(date.Year, date.Day);
 } else {
@@ -20,9 +23,8 @@ if (date.Month == 12 && date.Day <= 25) {
 	}
 }
 
-//Console.WriteLine();
-//Console.Write("Press a key to continue ... ");
-//Console.ReadKey();
+totalTimer.Stop();
+Console.Write($" Total Elapsed time: {totalTimer.Elapsed}");
 
 static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
