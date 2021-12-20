@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Day 19: Beacon Scanner
-/// https://adventofcode.com/2021/day/XX
+/// https://adventofcode.com/2021/day/19
 /// </summary>
 [Description("Beacon Scanner")]
 public class Day19 {
@@ -57,12 +57,14 @@ public class Day19 {
 			HashSet<Point3d> referenceBeacons = referenceScanner
 				.GetBeacons(referenceScanner.Alignment)
 				.ToHashSet();
-			foreach (Point3d pos in referenceBeacons) {
+			// Know there are at least 12 points that match so guaranteed to still
+			// have match if we skip the first 11 of each set
+			foreach (Point3d pos in referenceBeacons.Skip(11)) {
 				for (int alignment = 0; alignment < 24; alignment++) {
 					HashSet<Point3d> scannerBeacons = scanner
 						.GetBeacons(alignment)
 						.ToHashSet();
-					foreach (Point3d pos2 in scannerBeacons) {
+					foreach (Point3d pos2 in scannerBeacons.Skip(11)) {
 						if (referenceScanner.Position.HasValue) {
 							Point3d possiblePosition = -(pos2 - pos);
 							int overlapCount = scannerBeacons
