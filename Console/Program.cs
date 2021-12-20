@@ -1,5 +1,7 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
+Console.ResetColor();
+
 DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 if (args.Length == 2) {
 	if (int.TryParse(args[0], out int year) && int.TryParse(args[1], out int day)) {
@@ -55,9 +57,16 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		} catch (Exception) {
 			timer.Stop();
 			Problem1Answer = "** Exception";
-			answerColour= ConsoleColor.Red;
+			answerColour = ConsoleColor.Red;
 		}
-		Console.Write($" Pt1: {timer.ElapsedMilliseconds,4}ms");
+		Console.Write($" Pt1:");
+		if (timer.ElapsedMilliseconds <= 3000) {
+			Console.Write($" {timer.ElapsedMilliseconds,4}ms");
+		} else {
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.Write($" {timer.Elapsed,4:%s} s");
+			Console.ResetColor();
+		}
 		Console.ForegroundColor = answerColour;
 		Console.Write($"  {Problem1Answer,-16}");
 		Console.ResetColor();
@@ -77,8 +86,15 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 			Problem2Answer = "** Exception";
 			answerColour= ConsoleColor.Red;
 		}
-		Console.Write($" Pt2: {timer.ElapsedMilliseconds,4}ms");
-		Console.ForegroundColor =answerColour;
+		Console.Write($" Pt2:");
+		if (timer.ElapsedMilliseconds <= 3000) {
+			Console.Write($" {timer.ElapsedMilliseconds,4}ms");
+		} else {
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.Write($" {timer.Elapsed,4:%s} s");
+			Console.ResetColor();
+		}
+		Console.ForegroundColor = answerColour;
 		Console.WriteLine($"  {Problem2Answer}");
 		Console.ResetColor();
 	} else {
