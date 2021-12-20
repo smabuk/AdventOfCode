@@ -12,7 +12,7 @@ public class Tests_20_Trench_Map {
 		"..###",
 	}, 35)]
 	public void Part1(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 20, 1, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 20, 1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -27,7 +27,7 @@ public class Tests_20_Trench_Map {
 		"..###",
 	}, 3351)]
 	public void Part2(string[] input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 20, 2, input, true), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 20, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }

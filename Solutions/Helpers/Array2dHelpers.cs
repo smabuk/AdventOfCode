@@ -93,7 +93,7 @@ public static partial class ArrayHelpers {
 	/// <param name="array"></param>
 	/// <param name="width">If -1 then no spaces. If 0 then 1 padded space, otherwise the width of columns required</param>
 	/// <returns></returns>
-	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] array, int? width = null) where T : struct {
+	public static IEnumerable<string> PrintAsStringArray<T>(this T[,] array, int? width = null, (string, string)[]? replacements = null) where T : struct {
 		for (int r = 0; r <= array.GetUpperBound(1); r++) {
 			string line = "";
 			for (int c = 0; c <= array.GetUpperBound(0); c++) {
@@ -102,6 +102,11 @@ public static partial class ArrayHelpers {
 					0 => $"{cell}",
 					_ => $"{new string(' ', (width - cell.Length) ?? 1)}{cell}",
 				};
+			}
+			if (replacements is not null) {
+				foreach ((string from, string to) in replacements) {
+					line = line.Replace(from, to);
+				}
 			}
 			yield return line;
 		}

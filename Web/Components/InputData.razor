@@ -74,8 +74,9 @@
         } else {
             InputSource = "file cache";
         }
-        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
         Input = inputModel.InputData;
+        StateHasChanged();
+        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
         IsLoading = false;
         StateHasChanged();
 
