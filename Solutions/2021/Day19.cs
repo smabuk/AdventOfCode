@@ -6,50 +6,71 @@
 /// </summary>
 [Description("Beacon Scanner")]
 public class Day19 {
+	static List<Scanner> Scanners = new();
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
-	private static int Solution1(string[] input) {
-		List<Scanner> scanners = Parse(input);
 
-		HashSet<Point3d> allBeacons = scanners[0]
-			.GetBeacons(0)
-			.ToHashSet();
-		scanners.First().Position = new(0, 0, 0);
-		while (scanners.Where(s => s.Position is null).Any()) {
-			foreach (Scanner scanner in scanners.Where(s => s.Position is null)) {
-				(bool success, Point3d position, int alignment) = FindOverlap(scanners, scanner);
+	private static int Solution1(string[] input) {
+		FindPositionsOfScanners(input);
+
+		return Scanners
+			.SelectMany(s => s.GetBeacons(s.Alignment).Select(b => b + (Point3d)s.Position!))
+			.ToHashSet()
+			.Count;
+	}
+
+	private static int Solution2(string[] input) {
+		FindPositionsOfScanners(input);
+			
+		return Scanners
+			.SelectMany(s => Scanners, (a, b) => (a, b))
+			.Select(x => (pos1: (Point3d)x.a.Position!, pos2: (Point3d)x.b.Position!))
+			.Select(x => GetManhattanDistance(x.pos1, x.pos2))
+			.Max();
+	}
+
+	private static int GetManhattanDistance(Point3d a, Point3d b) =>
+		Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
+
+	private static void FindPositionsOfScanners(string[] input) {
+		if (Scanners.Count != 0) {
+			return;
+		}
+
+		Scanners = Parse(input);
+		Scanners.First().Position = (0, 0, 0);
+		while (Scanners.Where(s => s.Position is null).Any()) {
+			foreach (Scanner scanner in Scanners.Where(s => s.Position is null)) {
+				(bool success, Point3d position, int alignment) = FindOverlap(scanner);
 				if (success) {
 					scanner.Position = position;
 					scanner.Alignment = alignment;
-					allBeacons.UnionWith(scanner.GetBeacons(alignment)
-								.Select(b => b + position)
-								.ToHashSet());
 					break;
 				}
 			}
 		}
-
-		return allBeacons.Count;
 	}
 
-	private static (bool success, Point3d position, int alignment) FindOverlap(List<Scanner> scanners, Scanner scanner) {
-		foreach (Scanner referenceScanner in scanners.Where(s => s.Position is not null)) {
-			foreach (Point3d pos in referenceScanner.GetBeacons(referenceScanner.Alignment)) {
+	private static (bool success, Point3d position, int alignment) FindOverlap(Scanner scanner) {
+		foreach (Scanner referenceScanner in Scanners.Where(s => s.Position is not null)) {
+			HashSet<Point3d> referenceBeacons = referenceScanner
+				.GetBeacons(referenceScanner.Alignment)
+				.ToHashSet();
+			foreach (Point3d pos in referenceBeacons) {
 				for (int alignment = 0; alignment < 24; alignment++) {
-					foreach (Point3d pos2 in scanner.GetBeacons(alignment)) {
+					HashSet<Point3d> scannerBeacons = scanner
+						.GetBeacons(alignment)
+						.ToHashSet();
+					foreach (Point3d pos2 in scannerBeacons) {
 						if (referenceScanner.Position.HasValue) {
 							Point3d possiblePosition = -(pos2 - pos);
-							var beacons = scanner.
-								GetBeacons(alignment)
-								.Select(b => b + possiblePosition);
-							int overlapCount = beacons
-								.Intersect(referenceScanner.GetBeacons(referenceScanner.Alignment))
+							int overlapCount = scannerBeacons
+								.Select(b => b + possiblePosition)
+								.Intersect(referenceBeacons)
 								.Count();
 
 							if (overlapCount >= 12) {
-								scanner.Position = referenceScanner.Position + possiblePosition;
-								scanner.Alignment = alignment;
 								return (true, (Point3d)referenceScanner.Position + possiblePosition, alignment);
 							}
 						}
@@ -60,70 +81,43 @@ public class Day19 {
 		return (false, (0, 0, 0), 0);
 	}
 
-	private static int Solution2(string[] input) {
-		List<Scanner> scanners = Parse(input);
-
-		return 0;
-	}
-
-
 	record Scanner(string Name) {
 		public List<Point3d> Beacons { get; set; } = new();
 		public Point3d? Position { get; set; } = null;
 		public int Alignment { get; set; } = 0;
 
-		public IEnumerable<Point3d> GetBeacons(int alignment = -1) {
-			if (alignment < 0) {
-				alignment = Alignment;
-			}
-
+		public IEnumerable<Point3d> GetBeacons(int alignment) {
 			foreach (Point3d beacon in Beacons) {
-				Point3d newB = (alignment % 6) switch {
-					0 => (beacon.X, beacon.Y, beacon.Z) ,
-					1 => (-beacon.X, beacon.Y, -beacon.Z),
-					2 => (beacon.Y, -beacon.X, beacon.Z),
-					3 => (-beacon.Y, beacon.X, beacon.Z),
-					4 => (beacon.Z, beacon.Y, -beacon.X),
-					5 => (-beacon.Z, beacon.Y, beacon.X),
-					_ => throw new NotImplementedException(),
-				};
-
-				newB = ((alignment / 6) % 4) switch {
-					0 => (newB.X, newB.Y, newB.Z),
-					1 => (newB.X, -newB.Z, newB.Y),
-					2 => (newB.X, -newB.Y, -newB.Z),
-					3 => (newB.X, newB.Z, -newB.Y),
-					_ => throw new NotImplementedException(),
-				};
-
-				yield return newB;
+				yield return ReAlign(beacon, alignment);
 			}
-
 		}
-
 	};
 
-	public static Point3d GetAlignedPoint3d(Point3d point, int alignment) {
+	static Point3d ReAlign(Point3d p, int alignment) {
 
-		Point3d newPoint = (alignment % 6) switch {
-			0 => point with { X = point.X, Y = point.Y, Z = point.Z },
-			1 => point with { X = -point.X, Y = point.Y, Z = -point.Z },
-			2 => point with { X = point.Y, Y = -point.X, Z = point.Z },
-			3 => point with { X = -point.Y, Y = point.X, Z = point.Z },
-			4 => point with { X = point.Z, Y = point.Y, Z = -point.X },
-			5 => point with { X = -point.Z, Y = point.Y, Z = point.X },
+		Point3d pX = (alignment % 12) switch {
+			0 =>  ( p.X,  p.Y,  p.Z),
+			1 =>  ( p.X,  p.Z, -p.Y),
+			2 =>  ( p.X, -p.Y, -p.Z),
+			3 =>  ( p.X, -p.Z,  p.Y),
+			4 =>  ( p.Y,  p.X, -p.Z),
+			5 =>  ( p.Y,  p.Z,  p.X),
+			6 =>  ( p.Y, -p.X,  p.Z),
+			7 =>  ( p.Y, -p.Z, -p.X),
+			8 =>  ( p.Z,  p.X,  p.Y),
+			9 =>  ( p.Z,  p.Y, -p.X),
+			10 => ( p.Z, -p.X, -p.Y),
+			11 => ( p.Z, -p.Y,  p.X),
 			_ => throw new NotImplementedException(),
 		};
 
-		newPoint = ((alignment / 6) % 4) switch {
-			0 => newPoint with { X = newPoint.X, Y = newPoint.Y, Z = newPoint.Z },
-			1 => newPoint with { X = newPoint.X, Y = -newPoint.Z, Z = newPoint.Y },
-			2 => newPoint with { X = newPoint.X, Y = -newPoint.Y, Z = -newPoint.Z },
-			3 => newPoint with { X = newPoint.X, Y = newPoint.Z, Z = -newPoint.Y },
+		pX = (alignment / 12) switch {
+			0 => pX,
+			1 => pX * (-1, 1, -1),
 			_ => throw new NotImplementedException(),
 		};
 
-		return newPoint;
+		return pX;
 	}
 
 	private static List<Scanner> Parse(string[] input) {

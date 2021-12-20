@@ -27,6 +27,10 @@ public record struct Point3d(int X, int Y, int Z) {
 	public static Point3d operator -(in Point3d value) =>
 		new Point3d(-value.X, -value.Y, -value.Z);
 
+	public static implicit operator Point3d(int v) {
+		throw new NotImplementedException();
+	}
+
 	public void Deconstruct(out int x, out int y, out int z) {
 		x = X;
 		y = Y;

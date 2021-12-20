@@ -285,9 +285,9 @@ public class Tests_19_Beacon_Scanner {
 		"-652,-548,-490",
 		"30,-46,-14",
 		"",
-	}, 9999)]
-	public void Part2(string[] input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 19, 2, input), out long actual);
+	}, 3621)]
+	public void Part2(string[] input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2021, 19, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
