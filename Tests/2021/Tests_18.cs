@@ -48,7 +48,7 @@ public class Tests_18_Snailfish {
 	[InlineData("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]", "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]", "[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]")]
 
 	public void Snailfish_Addition(string lho, string rho, string expected) {
-		SnailfishNumber actual = new SnailfishNumber(lho).Plus(new SnailfishNumber(rho));
+		SnailfishNumber actual = new SnailfishNumber(lho) + new SnailfishNumber(rho);
 		Assert.Equal(expected, actual.Number);
 	}
 

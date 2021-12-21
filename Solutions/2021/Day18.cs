@@ -13,7 +13,7 @@ public class Day18 {
 	private static long Solution1(string[] input) {
 		return input
 			.Select(i => new SnailfishNumber(i))
-			.Aggregate((a, b) => a.Plus(b))
+			.Aggregate((a, b) => a + b)
 			.Magnitude;
 	}
 
@@ -23,7 +23,7 @@ public class Day18 {
 		return snailfishNumbers
 			.SelectMany(sfn => snailfishNumbers, (a, b) => (a, b))
 			.Where(x => x.a != x.b)
-			.Select(x => x.a.Plus(x.b).Magnitude)
+			.Select(x => (x.a + x.b).Magnitude)
 			.Max();
 	}
 
@@ -32,6 +32,9 @@ public class Day18 {
 		private static readonly Regex _pairRegex = new(@"\[(?<lv>\d+),(?<rv>\d+)\]", RegexOptions.Compiled);
 		private static readonly Regex _numberRegex = new(@"(?<d>\d+)", RegexOptions.Compiled);
 		private static readonly Regex _ddRegex = new(@"(?<dd>\d\d+)", RegexOptions.Compiled);
+
+		public static SnailfishNumber operator +(SnailfishNumber lho, SnailfishNumber rho)
+			=> new(Reduce($"[{lho.Number},{rho.Number}]"));
 
 		public int Magnitude => CalculateMagnitude(Number);
 
@@ -52,8 +55,6 @@ public class Day18 {
 
 			return result;
 		}
-
-		public SnailfishNumber Plus(SnailfishNumber rho) => new(Reduce($"[{Number},{rho.Number}]"));
 
 		public static string Reduce(string input) {
 			string output = input;
