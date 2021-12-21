@@ -14,81 +14,84 @@ public class Day20 {
 		char[] imageEnhancementAlgorithm = input[0].ToArray();
 		int maxCols = input[2].Length;
 		int maxRows = input.Length - 2;
-		char[,] image = String.Join("", input[2..]).To2dArray<char>(maxCols);
+		char[] image = String.Join("", input[2..]).ToArray();
 
-		char[,] newImage = EnhanceImage(2, imageEnhancementAlgorithm, image, maxCols, maxRows);
+		char[] newImage = EnhanceImage(2, imageEnhancementAlgorithm, image, maxCols, maxRows);
 
-		return newImage.Walk2dArrayWithValues().Count(x => x.Value == LIGHT);
+		return newImage.Count(x => x == LIGHT);
 	}
 
 	private static int Solution2(string[] input) {
 		char[] imageEnhancementAlgorithm = input[0].ToArray();
 		int maxCols = input[2].Length;
 		int maxRows = input.Length - 2;
-		char[,] image = String.Join("", input[2..]).To2dArray<char>(maxCols);
+		char[] image = String.Join("", input[2..]).ToArray();
 
-		char[,] newImage = EnhanceImage(50, imageEnhancementAlgorithm, image, maxCols, maxRows);
+		char[] newImage = EnhanceImage(50, imageEnhancementAlgorithm, image, maxCols, maxRows);
 
-		return newImage.Walk2dArrayWithValues().Count(x => x.Value == LIGHT);
+		return newImage.Count(x => x == LIGHT);
 	}
 
 	public static readonly List<(int dX, int dY)> DIRECTIONS = new()
-		{
-		(-1, -1),
-		(0, -1),
-		(1, -1)
-		,
-		(-1, 0),
-		(0, 0),
-		(1, 0)
-		,
-		(-1, 1),
-		(0, 1),
-		(1, 1)
-	};
+		{ (-1, -1), (0, -1), (1, -1)
+		, (-1,  0), (0,  0), (1,  0)
+		, (-1,  1), (0,  1), (1,  1) };
 
-	const char DARK = '.';
+	const char DARK  = '.';
 	const char LIGHT = '#';
 
-	private static char[,] EnhanceImage(int steps, char[] imageEnhancementAlgorithm, char[,] image, int maxCols, int maxRows) {
-		char[,] newImage = new char[1, 1];
+	private static char[] EnhanceImage(int steps, char[] imageEnhancementAlgorithm, char[] image, int maxX, int maxY) {
+		char[] newImage = new char[maxX + (50 * 2) * maxY + (50 * 2)];
 		bool flippingAlgorithm = imageEnhancementAlgorithm[0] == LIGHT && imageEnhancementAlgorithm[511] == DARK;
-		for (int i = 1; i <= steps; i++) {
-			newImage = new char[maxCols + (i * 2), maxRows + (i * 2)];
-			foreach ((int x, int y) in newImage.Walk2dArray()) {
-				newImage[x, y] = flippingAlgorithm switch {
-					true => newImage[x, y] = (i % 2) == 1 ? '.' : LIGHT,
-					false => newImage[x, y] = DARK,
-				};
-			}
-			foreach ((int x, int y, char value) in image.Walk2dArrayWithValues()) {
-				newImage[x + 1, y + 1] = value;
-			}
-			image = new char[maxCols + (i * 2), maxRows + (i * 2)];
-			Array.Copy(newImage, 0, image, 0, image.LongLength);
 
-			foreach (Cell<char> item in image.Walk2dArrayWithValues()) {
-				string binary = "";
-				foreach ((int dX, int dY) in DIRECTIONS) {
-					if (item.X + dX < 0 || item.X + dX > image.GetUpperBound(0) || item.Y + dY < 0 || item.Y + dY > image.GetUpperBound(1)) {
-						binary = flippingAlgorithm switch {
-							true => $"{binary}{(i % 2 == 1 ? '0' : '1')}",
-							false => $"{binary}{0}",
-						};
-					} else {
-						binary = $"{binary}{(image[item.X + dX, item.Y + dY] == LIGHT ? '1' : '0')}";
-					}
+		for (int step = 1; step <= steps; step++) {
+			int xSize = maxX + (step * 2);
+			int ySize = maxY + (step * 2);
+			newImage = new char[xSize * ySize];
+			for (int y = 0; y < ySize; y++) {
+				for (int x = 0; x < xSize; x++) {
+					int index = y * ySize + x;
+					newImage[index] = flippingAlgorithm switch {
+						true => newImage[index] = (step % 2) == 1 ? DARK : LIGHT,
+						false => newImage[index] = DARK,
+					};
 				}
-
-				int index = Convert.ToInt32(binary, 2);
-				char newChar = imageEnhancementAlgorithm[index];
-				newImage[item.X, item.Y] = newChar;
 			}
-			image = new char[maxCols + (i * 2), maxRows + (i * 2)];
-			Array.Copy(newImage, 0, image, 0, image.LongLength);
+			for (int y = 0; y < ySize - 2; y++) {
+				for (int x = 0; x < xSize - 2; x++) {
+					newImage[(y + 1) * ySize + x + 1] = image[y * (ySize - 2) + x];
+				}
+			}
+			image = (char[])newImage.Clone();
+
+			for (int y = 0; y < xSize; y++) {
+				for (int x = 0; x < ySize; x++) {
+					int index = GetIndexReference(x, y, image, step, ySize, flippingAlgorithm);
+					newImage[y * ySize + x] = imageEnhancementAlgorithm[index];
+				}
+			}
+			image = (char[])newImage.Clone();
 		}
 
 		return newImage;
 	}
+
+	private static int GetIndexReference(int x, int y, char[] image, int step, int ySize, bool flippingAlgorithm) {
+		int factor = 512;
+		int index = 0;
+		for (int i = 0; i < 9; i++) {
+			factor /= 2;
+			bool oob = OutOfBounds(x, y, DIRECTIONS[i].dX, DIRECTIONS[i].dY, ySize, ySize);
+			index += factor * oob switch {
+				true => flippingAlgorithm ? (step % 2 == 1 ? 0 : 1) : 0,
+				false => image[(y + DIRECTIONS[i].dY) * ySize + x + DIRECTIONS[i].dX] == LIGHT ? 1 : 0,
+			};
+		}
+
+		return index;
+	}
+
+	private static bool OutOfBounds(int x, int y, int dX, int dY, int xSize, int ySize) 
+		=> x + dX < 0 || x + dX >= xSize || y + dY < 0 || y + dY >= ySize;
 
 }
