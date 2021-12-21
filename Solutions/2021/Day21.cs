@@ -33,65 +33,59 @@ public class Day21 {
 
 	private static long Solution2(string[] input) {
 		List<Player> playersInput = input.Select(i => ParseLine(i)).ToList();
+		Dictionary<int, int> DieRollFrequency = new();
+		Dictionary<GamePosition, (long, long)> GamePositions = new();
 
-		// Count the number of ways each starting player can win
-
-		//Dictionary<(Player, Player), int> games = new();
-
-		//List<DiePermutation> diePermutations = new();
+		// Each roll is a 3,4,5,6,7,8 or 9
 		for (int i = 1; i <= 3; i++) {
 			for (int j = 1; j <= 3; j++) {
 				for (int k = 1; k <= 3; k++) {
-					//diePermutations.Add(new(i, j, k));
 					DieRollFrequency[i + j + k] = DieRollFrequency.GetValueOrDefault(i + j + k, 0) + 1;
 				}
 			}
 		}
-		// Each roll is a 3,4,5,6,7,8 or 9
-
 
 		int p1Start = playersInput[0].Position;
 		int p2Start = playersInput[1].Position;
 
-
 		(long WinsForPlayer1, long WinsForPlayer2) = CountDiracDiceWins(p1Start, 0, p2Start, 0);
 
 		return Math.Max(WinsForPlayer1, WinsForPlayer2);
+
+		// Local functions --------------------------------------------------------
+
+		(long p1Count, long p2Count) CountDiracDiceWins(int p1Position, int p1Score, int p2Position, int p2Score) {
+			if (p1Score >= 21) {
+				return (1, 0);
+			}
+			if (p2Score >= 21) {
+				return (0, 1);
+			}
+
+			GamePosition gamePosition = new(p1Position, p1Score, p2Position, p2Score);
+			if (GamePositions.ContainsKey(gamePosition)) {
+				return GamePositions[gamePosition];
+			}
+
+			long p1Wins = 0;
+			long p2Wins = 0;
+
+			for (int roll = 3; roll <= 9; roll++) {
+				int newP1Position = (p1Position + roll - 1) % 10 + 1;
+				int newP1Score = p1Score + newP1Position;
+
+				// Other players turn
+				(long p2w, long p1w) = CountDiracDiceWins(p2Position, p2Score, newP1Position, newP1Score);
+				p1Wins += p1w * DieRollFrequency[roll];
+				p2Wins += p2w * DieRollFrequency[roll];
+			}
+
+			GamePositions[gamePosition] = (p1Wins, p2Wins);
+
+			return (p1Wins, p2Wins);
+		}
 	}
 
-	static readonly Dictionary<int, int> DieRollFrequency = new();
-
-	static readonly Dictionary<GamePosition, (long, long)> GamePositions = new();
-	private static (long p1Count, long p2Count) CountDiracDiceWins(int p1Position, int p1Score, int p2Position, int p2Score) {
-		if (p1Score >= 21) {
-			return (1, 0);
-		}
-		if (p2Score >= 21) {
-			return (0, 1);
-		}
-
-		GamePosition gamePosition = new(p1Position, p1Score, p2Position, p2Score);
-		if (GamePositions.ContainsKey(gamePosition)) {
-			return GamePositions[gamePosition];
-		}
-
-		long p1Wins = 0;
-		long p2Wins = 0;
-
-		for (int roll = 3; roll <= 9; roll++) {
-			int newP1Position = (p1Position + roll - 1) % 10 + 1;
-			int newP1Score = p1Score + newP1Position;
-
-			// Other players turn
-			(long p2w, long p1w) = CountDiracDiceWins(p2Position, p2Score, newP1Position, newP1Score);
-			p1Wins += p1w * DieRollFrequency[roll];
-			p2Wins += p2w * DieRollFrequency[roll];
-		}
-
-		GamePositions[gamePosition] = (p1Wins, p2Wins);
-
-		return (p1Wins, p2Wins);
-	}
 
 	record Player(string Name) {
 		public int Position { get; set; }
@@ -110,8 +104,6 @@ public class Day21 {
 	};
 
 	record struct GamePosition(int P1Pos, int P1Score, int P2Pos, int P2Score);
-	record struct DiePermutation(int R1, int R2, int R3);
-
 
 	private static Player ParseLine(string input) {
 		Match match = Regex.Match(input, @"(?<name>.*) starting position: (?<start>\d+)");
