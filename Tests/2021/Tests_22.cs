@@ -1,4 +1,6 @@
-﻿using static AdventOfCode.Solutions.Year2021.Day22;
+﻿using System.Collections;
+
+using static AdventOfCode.Solutions.Year2021.Day22;
 
 namespace AdventOfCode.Tests.Year2021;
 
@@ -118,30 +120,33 @@ public class Tests_22_Reactor_Reboot {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2021, 22, 2, input), out long actual);
 		Assert.Equal(expected, actual);
 	}
-	[Fact]
-	public void Cube_Overlap() {
-		Cube cubeA = new() { From = new(0, 0, 0), To = new(3, 3, 3) };
-		Cube cubeB = new() { From = new(2, 2, 2), To = new(4, 4, 4) };
-
+	[Theory]
+	[ClassData(typeof(CubesOverlapTestData))]
+	public void Cubes_Overlap_Should_Return_Correct_Bool(Cube cubeA, Cube cubeB, bool expected) {
 		bool actual = CubesOverlap(cubeA, cubeB);
-		Assert.True(actual);
-
-		cubeA = new() { From = new(0, 0, 0), To = new(3, 3, 3) };
-		cubeB = new() { From = new(4, 4, 4), To = new(8, 8, 8) };
-
-		actual = CubesOverlap(cubeA, cubeB);
-		Assert.False(actual);
-
-		cubeA = new() { From = new(0, 0, 0), To = new(3, 3, 3) };
-		cubeB = new() { From = new(3, 3, 3), To = new(8, 8, 8) };
-
-		actual = CubesOverlap(cubeA, cubeB);
-		Assert.True(actual);
-
-		cubeA = new() { From = new(0, 0, 0), To = new(3, 3, 3)  };
-		cubeB = new() { From = new(-3, -3, -3), To = new(8, 8, 8) };
-
-		actual = CubesOverlap(cubeA, cubeB);
-		Assert.True(actual);
+		Assert.Equal(expected, actual);
 	}
+}
+
+public class CubesOverlapTestData : IEnumerable<object[]> {
+	public IEnumerator<object[]> GetEnumerator() {
+		yield return new object[] { 
+			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cube(new Point3d(2, 2, 2), new Point3d(4, 4, 4)),
+			true };
+		yield return new object[] { 
+			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cube(new Point3d(4, 4, 4), new Point3d(8, 8, 8)),
+			false };
+		yield return new object[] { 
+			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cube(new Point3d(3, 3, 3), new Point3d(8, 8, 8)),
+			true };
+		yield return new object[] { 
+			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cube(new Point3d(-3, -3, -3), new Point3d(8, 8, 8)),
+			true };
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
