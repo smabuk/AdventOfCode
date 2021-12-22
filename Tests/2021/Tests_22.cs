@@ -121,30 +121,30 @@ public class Tests_22_Reactor_Reboot {
 		Assert.Equal(expected, actual);
 	}
 	[Theory]
-	[ClassData(typeof(CubesOverlapTestData))]
-	public void Cubes_Overlap_Should_Return_Correct_Bool(Cube cubeA, Cube cubeB, bool expected) {
-		bool actual = CubesOverlap(cubeA, cubeB);
+	[ClassData(typeof(CuboidsOverlapTestData))]
+	public void Cuboids_Overlap_Should_Return_Correct_Bool(Cuboid cubeA, Cuboid cubeB, bool expected) {
+		bool actual = CuboidsOverlap(cubeA, cubeB);
 		Assert.Equal(expected, actual);
 	}
 }
 
-public class CubesOverlapTestData : IEnumerable<object[]> {
+public class CuboidsOverlapTestData : IEnumerable<object[]> {
 	public IEnumerator<object[]> GetEnumerator() {
 		yield return new object[] { 
-			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
-			new Cube(new Point3d(2, 2, 2), new Point3d(4, 4, 4)),
+			new Cuboid(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cuboid(new Point3d(2, 2, 2), new Point3d(4, 4, 4)),
 			true };
 		yield return new object[] { 
-			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
-			new Cube(new Point3d(4, 4, 4), new Point3d(8, 8, 8)),
+			new Cuboid(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cuboid(new Point3d(4, 4, 4), new Point3d(8, 8, 8)),
 			false };
 		yield return new object[] { 
-			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
-			new Cube(new Point3d(3, 3, 3), new Point3d(8, 8, 8)),
+			new Cuboid(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cuboid(new Point3d(3, 3, 3), new Point3d(8, 8, 8)),
 			true };
 		yield return new object[] { 
-			new Cube(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
-			new Cube(new Point3d(-3, -3, -3), new Point3d(8, 8, 8)),
+			new Cuboid(new Point3d(0, 0, 0), new Point3d(3, 3, 3)),
+			new Cuboid(new Point3d(-3, -3, -3), new Point3d(8, 8, 8)),
 			true };
 	}
 

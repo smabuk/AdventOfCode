@@ -13,7 +13,7 @@ public class Day22 {
 	private static int Solution1(string[] input) {
 		List<RebootStep> rebootSteps = input.Select(i => ParseLine(i)).ToList();
 
-		HashSet<Point3d> cubes = new();
+		HashSet<Point3d> cuboids = new();
 
 		foreach (var rebootStep in rebootSteps) {
 			if (OutOfBounds(rebootStep.XMin, rebootStep.YMin, rebootStep.ZMin)
@@ -24,16 +24,16 @@ public class Day22 {
 				for (int y = rebootStep.YMin; y <= rebootStep.YMax; y++) {
 					for (int x = rebootStep.XMin; x <= rebootStep.XMax; x++) {
 						if (rebootStep.TurnOn) {
-							cubes.Add(new Point3d(x, y, z));
+							cuboids.Add(new Point3d(x, y, z));
 						} else {
-							cubes.Remove(new Point3d(x, y, z));
+							cuboids.Remove(new Point3d(x, y, z));
 						}
 					}
 				}
 			}
 		}
 
-		return cubes.Count;
+		return cuboids.Count;
 
 		static bool OutOfBounds(int x, int y, int z)
 			=> x < -50 || x > 50 || y < -50 || y > 50 || z < -50 || z > 50;
@@ -42,109 +42,109 @@ public class Day22 {
 	private static long Solution2(string[] input) {
 		List<RebootStep> rebootSteps = input.Select(i => ParseLine(i)).ToList();
 
-		List<Cube> cubes = new();
-		List<Cube> tempCubes = new();
+		List<Cuboid> cuboids = new();
+		List<Cuboid> tempCuboids = new();
 
 		foreach (var rebootStep in rebootSteps) {
 			Point3d from = new(rebootStep.XMin, rebootStep.YMin, rebootStep.ZMin);
 			Point3d to =   new(rebootStep.XMax, rebootStep.YMax, rebootStep.ZMax);
-			Cube newCube = new(from, to);
+			Cuboid newCuboid = new(from, to);
 
-			tempCubes.Clear();
+			tempCuboids.Clear();
 			// Find overlapping cuboids and take a big chunk out of it
 			// where the new cube fits by splitting it up
-			for (int i = 0; i < cubes.Count; i++) {
-				Cube cube2 = cubes[i];
-				if (CubesOverlap(cube2, newCube) is false) {
-					tempCubes.Add(cube2);
+			for (int i = 0; i < cuboids.Count; i++) {
+				Cuboid cuboid2 = cuboids[i];
+				if (CuboidsOverlap(cuboid2, newCuboid) is false) {
+					tempCuboids.Add(cuboid2);
 				} else {
-					if (newCube.From.X > cube2.From.X) {
-						Cube split = cube2 with {
-							To = cube2.To with {
-								X = newCube.From.X - 1
+					if (newCuboid.From.X > cuboid2.From.X) {
+						Cuboid split = cuboid2 with {
+							To = cuboid2.To with {
+								X = newCuboid.From.X - 1
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
-					if (newCube.To.X < cube2.To.X) {
-						Cube split = cube2 with {
-							From = cube2.From with {
-								X = newCube.To.X + 1
+					if (newCuboid.To.X < cuboid2.To.X) {
+						Cuboid split = cuboid2 with {
+							From = cuboid2.From with {
+								X = newCuboid.To.X + 1
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
-					if (newCube.From.Y > cube2.From.Y) {
-						Cube split = cube2 with {
-							From = cube2.From with {
-								X = Math.Max(newCube.From.X, cube2.From.X)
+					if (newCuboid.From.Y > cuboid2.From.Y) {
+						Cuboid split = cuboid2 with {
+							From = cuboid2.From with {
+								X = Math.Max(newCuboid.From.X, cuboid2.From.X)
 							},
-							To = cube2.To with {
-								X = Math.Min(newCube.To.X, cube2.To.X),
-								Y = newCube.From.Y - 1
+							To = cuboid2.To with {
+								X = Math.Min(newCuboid.To.X, cuboid2.To.X),
+								Y = newCuboid.From.Y - 1
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
-					if (newCube.To.Y < cube2.To.Y) {
-						Cube split = cube2 with {
-							From = cube2.From with {
-								X = Math.Max(newCube.From.X, cube2.From.X),
-								Y = newCube.To.Y + 1
+					if (newCuboid.To.Y < cuboid2.To.Y) {
+						Cuboid split = cuboid2 with {
+							From = cuboid2.From with {
+								X = Math.Max(newCuboid.From.X, cuboid2.From.X),
+								Y = newCuboid.To.Y + 1
 							},
-							To = cube2.To with {
-								X = Math.Min(newCube.To.X, cube2.To.X)
+							To = cuboid2.To with {
+								X = Math.Min(newCuboid.To.X, cuboid2.To.X)
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
-					if (newCube.From.Z > cube2.From.Z) {
-						Cube split = cube2 with {
-							From = cube2.From with {
-								X = Math.Max(newCube.From.X, cube2.From.X),
-								Y = Math.Max(newCube.From.Y, cube2.From.Y)
+					if (newCuboid.From.Z > cuboid2.From.Z) {
+						Cuboid split = cuboid2 with {
+							From = cuboid2.From with {
+								X = Math.Max(newCuboid.From.X, cuboid2.From.X),
+								Y = Math.Max(newCuboid.From.Y, cuboid2.From.Y)
 							},
-							To = cube2.To with {
-								X = Math.Min(newCube.To.X, cube2.To.X),
-								Y = Math.Min(newCube.To.Y, cube2.To.Y),
-								Z = Math.Max(newCube.From.Z, cube2.From.Z) - 1,
+							To = cuboid2.To with {
+								X = Math.Min(newCuboid.To.X, cuboid2.To.X),
+								Y = Math.Min(newCuboid.To.Y, cuboid2.To.Y),
+								Z = Math.Max(newCuboid.From.Z, cuboid2.From.Z) - 1,
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
-					if (newCube.To.Z < cube2.To.Z) {
-						Cube split = cube2 with {
-							From = cube2.From with {
-								X = Math.Max(newCube.From.X, cube2.From.X),
-								Y = Math.Max(newCube.From.Y, cube2.From.Y),
-								Z = Math.Min(newCube.To.Z, cube2.To.Z) + 1
+					if (newCuboid.To.Z < cuboid2.To.Z) {
+						Cuboid split = cuboid2 with {
+							From = cuboid2.From with {
+								X = Math.Max(newCuboid.From.X, cuboid2.From.X),
+								Y = Math.Max(newCuboid.From.Y, cuboid2.From.Y),
+								Z = Math.Min(newCuboid.To.Z, cuboid2.To.Z) + 1
 							},
-							To = cube2.To with {
-								X = Math.Min(newCube.To.X, cube2.To.X),
-								Y = Math.Min(newCube.To.Y, cube2.To.Y)
+							To = cuboid2.To with {
+								X = Math.Min(newCuboid.To.X, cuboid2.To.X),
+								Y = Math.Min(newCuboid.To.Y, cuboid2.To.Y)
 							}
 						};
-						tempCubes.Add(split);
+						tempCuboids.Add(split);
 					}
 				}
 			}
 
 			if (rebootStep.TurnOn) {
-				tempCubes.Add(newCube);
+				tempCuboids.Add(newCuboid);
 			};
 
-			cubes = tempCubes.ToList();
+			cuboids = tempCuboids.ToList();
 		}
 
 		// [x] Count all the ons left
-		return cubes.Sum(cube => cube.Size);
+		return cuboids.Sum(cube => cube.Size);
 	}
 
-	public record struct Cube(Point3d From, Point3d To) {
+	public record struct Cuboid(Point3d From, Point3d To) {
 		public long Size => (long)(To.X - From.X + 1) * (long)(To.Y - From.Y + 1) * (long)(To.Z - From.Z + 1);
 	}
 
-	public static bool CubesOverlap(Cube a, Cube b) {
+	public static bool CuboidsOverlap(Cuboid a, Cuboid b) {
 		bool cond1 = a.To.X < b.From.X;
 		bool cond2 = b.To.X < a.From.X;
 		bool cond3 = a.To.Y < b.From.Y;
