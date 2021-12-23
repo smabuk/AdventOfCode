@@ -40,7 +40,9 @@ public class Day23 {
 			}
 
 			Game newGame = gameBoard;
-			while (!gameBoard.Completed) {
+			int count = 0;
+			while (!gameBoard.Completed || count > 1000) {
+				count++;
 				gameStates.TryAdd(gameState, gameBoard.EnergyExpended);
 				int leastEnergy = int.MaxValue;
 				foreach (var amphipod in gameBoard.Amphipods.Values) {
