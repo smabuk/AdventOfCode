@@ -14,7 +14,7 @@ public class Day23 {
 	}
 	public static string Part2(string[] input, params object[]? args) {
 		bool testing = GetArgument(args, 1, false);
-		if (testing is false) { return "** Solution not written yet **"; }
+		if (testing is false) { return Solution2ByHand(input); }
 		return Solution2(input).ToString();
 	}
 
@@ -63,8 +63,6 @@ public class Day23 {
 		Game startGameBoard = new(Game.GameType.Part1);
 		startGameBoard.Init(input);
 		int leastEnergy = 0;
-
-
 
 		return leastEnergy;
 	}
@@ -199,20 +197,17 @@ public class Day23 {
 				if (y == BOTTOM) {
 					return false;
 				}
+					// TODO extra rows above
 				if (y == BOTTOM - 1 && Board[x, y + 1] == amphipod.Type[0]) {
 					return false;
 				}
 			}
-			if (y == 2) {
-				if (Board[x - 1, 1] == '.' || Board[x + 1, 1] == '.') {
+			if (y > 1 || y < BOTTOM) {
+				if (Board[x, y - 1] == '.' && (Board[x - 1, 1] == '.' || Board[x + 1, 1] == '.')) {
 					return true;
 				}
 			}
-			if (y == 3 && Board[x, 2] == '.') {
-				if (Board[x - 1, 1] == '.' || Board[x + 1, 1] == '.') {
-					return true;
-				}
-			}
+
 			for (int i = Math.Min(x, amphipod.TargetSideRoom); i < Math.Min(x, amphipod.TargetSideRoom); i++) {
 				if (Board[i, 1] != '.') {
 					return false;
@@ -292,6 +287,10 @@ public class Day23 {
 		Game gameBoard = new(Game.GameType.Part1);
 		gameBoard.Init(input);
 
+
+		if (new string(gameBoard.Amphipods.Keys.Select(s => s[0]).ToArray()) != "DCDCABAB") {
+			return "** Solution not written yet **";
+		}
 		gameBoard.Move("A92", new Point(10, 1));
 		gameBoard.Move("A72", new Point(2, 1));
 		gameBoard.Move("B93", new Point(4, 1));
@@ -421,5 +420,50 @@ public class Day23 {
 		// D => 15000 (7000 + 8000)
 		//      16489
 
+	}
+
+	private static string Solution2ByHand(string[] input) {
+		Game gameBoard = new(Game.GameType.Part2);
+		gameBoard.Init(input);
+
+		if (new string(gameBoard.Amphipods.Keys.Select(s => s[0]).ToArray()) != "DDDCDCBCABABAACB") {
+			return "** Solution not written yet **";
+		}
+
+		gameBoard.Move("A92", new Point(1, 1));
+		gameBoard.Move("A93", new Point(2, 1));
+		gameBoard.Move("C94", new Point(11, 1));
+		gameBoard.Move("B95", new Point(10, 1));
+		gameBoard.Move("D52", new Point(6, 1));
+		gameBoard.Move("D52", new Point(9, 5));
+		gameBoard.Move("D32", new Point(4, 1));
+		gameBoard.Move("D32", new Point(9, 4));
+		gameBoard.Move("D33", new Point(4, 1));
+		gameBoard.Move("D33", new Point(9, 3));
+		gameBoard.Move("D34", new Point(4, 1));
+		gameBoard.Move("D34", new Point(9, 2)); // Pretty sure up to here
+
+		gameBoard.Move("C35", new Point(8, 1));
+		gameBoard.Move("A93", new Point(3, 5));
+		gameBoard.Move("A92", new Point(3, 4));
+		gameBoard.Move("A72", new Point(6, 1));
+		gameBoard.Move("A72", new Point(3, 3));
+		gameBoard.Move("B73", new Point(2, 1));
+		gameBoard.Move("A74", new Point(4, 1));
+		gameBoard.Move("A74", new Point(3, 2));
+		gameBoard.Move("B75", new Point(4, 1));
+		gameBoard.Move("C35", new Point(7, 5));
+		gameBoard.Move("C53", new Point(6, 1));
+		gameBoard.Move("C53", new Point(7, 4));
+		gameBoard.Move("B54", new Point(8, 1));
+		gameBoard.Move("C55", new Point(6, 1));
+		gameBoard.Move("C55", new Point(7, 3));
+		gameBoard.Move("B54", new Point(5, 5));
+		gameBoard.Move("B95", new Point(5, 4));
+		gameBoard.Move("C94", new Point(7, 2));
+		gameBoard.Move("B75", new Point(5, 3));
+		gameBoard.Move("B73", new Point(5, 2));
+
+		return $"{gameBoard.EnergyExpended}  by hand";
 	}
 }

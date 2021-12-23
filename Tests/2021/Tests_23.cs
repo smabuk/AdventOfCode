@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Tests.Year2021;
 
 public class Tests_23_Amphipod {
-	[Theory]
+	[Theory(Skip = "This problem needs more thought, solved by hand for the star")]
 	[InlineData(new string[] {
 		"#############",
 		"#...........#",
@@ -14,7 +14,7 @@ public class Tests_23_Amphipod {
 		Assert.Equal(expected, actual);
 	}
 
-	[Theory(Skip = "This problem needs more thought")]
+	[Theory(Skip = "This problem needs more thought, solved by hand for the star")]
 	[InlineData(new string[] {
 		"#############",
 		"#...........#",
