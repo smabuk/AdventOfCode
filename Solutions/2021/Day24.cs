@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2021;
+﻿using static AdventOfCode.Solutions.Year2021.Day24.InstructionType;
+
+namespace AdventOfCode.Solutions.Year2021;
 
 /// <summary>
 /// Day 24: Arithmetic Logic Unit
@@ -7,252 +9,324 @@
 [Description("Arithmetic Logic Unit")]
 public class Day24 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? args) {
+		bool debug = GetArgument<bool>(args, argumentNumber: 1, false);
+		return Solution1(input, debug).ToString();
+	}
+	public static string Part2(string[] input, params object[]? args) {
+		bool debug = GetArgument<bool>(args, argumentNumber: 1, false);
+		return Solution2(input, debug).ToString();
+	}
 
-	private static string Solution1(string[] input) {
-		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-		int[] digits = new int[14];
-
-		// Rules
-		//  w0 = w13 + 8
-		//  w1 = w12 - 7
-		//  w2 =  w3 - 7
-		//  w3 =  w2 - 7
-		//  w4 =  w5 - 1
-		//  w5 =  w4 + 1
-		//  w6 = w11 - 8
-		//  w7 =  w8 - 5
-		//  w8 =  w7 + 5
-		//  w9 = w10
-		// w10 =  w9
-		// w11 =  w6 + 8
-		// w12 =  w1 + 7
-		// w13 =  w0 - 8
+	private static string Solution1(string[] input, bool debug = false) {
+		List<Instruction> instructions = ALU.Parse(input).ToList();
 
 		ALU submarineAlu = new();
 		//                 01234567890123
-		// Too low Guess = 92922311699991;
-		// Too low Guess = 92922314999991;
 		long modelNumber = 92928914999991;
 
-		//Console.WriteLine();
+		if (debug) {
+			submarineAlu.Debug = debug;
+			Console.WriteLine();
+			Console.WriteLine($"{modelNumber}");
+		}
 
-		//Console.WriteLine($"{modelNumber}");
-		digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
-		submarineAlu = new();
+		int[] digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
 		submarineAlu.ExecuteInstructions(instructions, digits);
-		//Console.WriteLine();
-		if (submarineAlu.HasException) {
-			//Console.WriteLine(submarineAlu.ExceptionMessage);
-		} else {
-			//Console.WriteLine($"{modelNumber} w: {submarineAlu.W} x: {submarineAlu.X} y: {submarineAlu.Y} z: {submarineAlu.Z} ");
+
+		if (debug) {
+			Console.WriteLine();
+			if (submarineAlu.HasException) {
+				Console.WriteLine(submarineAlu.ExceptionMessage);
+			} else {
+				Console.WriteLine($"{modelNumber} w: {submarineAlu.W} x: {submarineAlu.X} y: {submarineAlu.Y} z: {submarineAlu.Z} ");
+			}
 		}
 
 		if (submarineAlu.Z == 0) {
-			return String.Join("", digits.Select(d => $"{d}"));
+			return string.Join("", digits.Select(d => $"{d}"));
 		} else {
 			return "No idea";
 		}
 	}
 
-	private static string Solution2(string[] input) {
-		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-		int[] digits = new int[14];
-
-		// Rules
-		//  w0 = w13 + 8
-		//  w1 = w12 - 7
-		//  w2 =  w3 - 7
-		//  w3 =  w2 - 7
-		//  w4 =  w5 - 1
-		//  w5 =  w4 + 1
-		//  w6 = w11 - 8
-		//  w7 =  w8 - 5
-		//  w8 =  w7 + 5
-		//  w9 = w10
-		// w10 =  w9
-		// w11 =  w6 + 8
-		// w12 =  w1 + 7
-		// w13 =  w0 - 8
-
+	private static string Solution2(string[] input, bool debug = false) {
+		List<Instruction> instructions = ALU.Parse(input).ToList();
 
 		ALU submarineAlu = new();
 		//                 01234567890123
 		long modelNumber = 91811211611981;
 
-		//Console.WriteLine();
+		if (debug) {
+			submarineAlu.Debug = debug;
+			Console.WriteLine();
+			Console.WriteLine($"{modelNumber}");
+		}
 
-		//Console.WriteLine($"{modelNumber}");
-		digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
-		submarineAlu = new();
+		int[] digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
 		submarineAlu.ExecuteInstructions(instructions, digits);
-		//Console.WriteLine();
-		if (submarineAlu.HasException) {
-			//Console.WriteLine(submarineAlu.ExceptionMessage);
-		} else {
-			//Console.WriteLine($"{modelNumber} w: {submarineAlu.W} x: {submarineAlu.X} y: {submarineAlu.Y} z: {submarineAlu.Z} ");
+
+		if (debug) {
+			Console.WriteLine();
+			if (submarineAlu.HasException) {
+				Console.WriteLine(submarineAlu.ExceptionMessage);
+			} else {
+				Console.WriteLine($"{modelNumber} w: {submarineAlu.W} x: {submarineAlu.X} y: {submarineAlu.Y} z: {submarineAlu.Z} ");
+			}
 		}
 
 		if (submarineAlu.Z == 0) {
-			return String.Join("", digits.Select(d => $"{d}"));
+			return string.Join("", digits.Select(d => $"{d}"));
 		} else {
 			return "No idea";
 		}
 	}
 
 	public record class ALU {
-		public int W { get; set; } = 0;
-		public int X { get; set; } = 0;
-		public int Y { get; set; } = 0;
-		public int Z { get; set; } = 0;
+		public bool Debug { get; set; } = false;
+		private readonly Dictionary<Register, int> Registers = new () {
+			{ new Register("w"), 0 },
+			{ new Register("x"), 0 },
+			{ new Register("y"), 0 },
+			{ new Register("z"), 0 },
+		};
+		public List<(int w1, int w2, int offset)> Conditions = new();
+
+		public int W => Registers[new Register("w")];
+		public int X => Registers[new Register("x")];
+		public int Y => Registers[new Register("y")];
+		public int Z => Registers[new Register("z")];
 		public bool HasException { get; set; } = false;
 		public string ExceptionMessage { get; set; } = "";
 
 		public Queue<int> InputQueue { get; set; } = new();
 
-
-
 		public bool ExecuteInstructions(List<Instruction> instructions, int[] inputs) {
 			foreach (int input in inputs) {
 				InputQueue.Enqueue(input);
 			}
+			Conditions = new();
+			int lastAddX = 0;
+			int lastAddY = 0;
+			int timeSinceLastZero = 0;
+			Dictionary<int, (int Section, int Value)> lastZs = new();
+			List<string> Rules = new();
 			int section = -1;
-			//Console.WriteLine();
-			foreach (var instruction in instructions) {
-				switch (instruction.Operation) {
-					case "inp":
+			if (Debug) { Console.WriteLine(); };
+			for (int index = 0; index < instructions.Count; index++) {
+				Instruction instruction = instructions[index];
+				switch (instruction.OpCode) {
+					case Inp:
+						if (Debug) {
+							Console.WriteLine();
+						}
 						section++;
-						//Console.Write($"Section: {section,-2}: ");
-						//Console.WriteLine($"w: {W,-11} x: {X,-11} y: {Y,-11} z: {Z,-11} inst: {instruction.Operation} {instruction.VariableA} {instruction.VariableB}");
+						if (Debug) {
+							Console.WriteLine($"Section {section,-2}: ");
+						};
+						timeSinceLastZero++;
 						Input(instruction.VariableA, InputQueue.Dequeue());
 						break;
-					case "add":
+					case InstructionType.Add:
 						Add(instruction.VariableA, instruction.VariableB);
+						if (instruction.VariableB is IntValue v) {
+							if (instruction.VariableA.Name == "x") {
+								lastAddX = v.Value;
+								if ((lastAddY + lastAddX) is >= 1 and <= 9) {
+									//Conditions.Add((section, lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX));
+
+								}
+							} else if (instruction.VariableA.Name == "y" && instructions[index - 1].VariableB is Register r && r.Name == "w") {
+								lastAddY = v.Value;
+							}
+						}
 						break;
-					case "mul":
+					case Mul:
 						Multiply(instruction.VariableA, instruction.VariableB);
 						break;
-					case "div":
+					case Div:
 						Divide(instruction.VariableA, instruction.VariableB);
 						break;
-					case "mod":
+					case Mod:
 						Modulo(instruction.VariableA, instruction.VariableB);
 						break;
-					case "eql":
+					case Eql:
 						Equal(instruction.VariableA, instruction.VariableB);
 						break;
 					default:
 						break;
 				}
-				//if (section == 13) {
-				//	Console.WriteLine($"w: {W,-11} x: {X,-11} y: {Y,-11} z: {Z,-11} inst: {instruction.Operation} {instruction.VariableA} {instruction.VariableB}");
-				//}
+				if (Debug) {
+					Console.WriteLine($"i:{index,3}   w: {W,-2} x: {X,-11} y: {Y,2}   z: {Z,-11}  {instruction.OpCode} {instruction.VariableA}  {instruction.VariableB}");
+				};
 				if (HasException) {
-					ExceptionMessage = $"{String.Join("", inputs.Select(d => $"{d}"))} {ExceptionMessage}";
+					ExceptionMessage = $"{string.Join("", inputs.Select(d => $"{d}"))} {ExceptionMessage}";
 					break;
 				}
+				if (index == instructions.Count - 1 || instructions[index + 1].OpCode is Inp) {
+					if (Debug) {
+						Console.Write($"Summary {section,2}:");
+					}
+					if (X == 0) {
+						(int sec, int val) = lastZs[section - 2];
+						lastZs.Add(section, (sec, val));
+
+						string condition = $"w{section} == {FormatSum(lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX)}";
+						Conditions.Add((section, lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX));
+						lastAddY = 0;
+						timeSinceLastZero--;
+						if (Debug) {
+							Console.ForegroundColor = ConsoleColor.Green;
+							Console.Write($"   x: {X,-4}  {condition,-13}   z: {FormatSum(sec, val)}");
+						}
+					} else {
+						lastZs.Add(section, (section, lastAddY));
+						if (Debug) {
+							Console.Write($"   x: {X,-11}         z: {FormatSum(section, lastAddY)}");
+						}
+					}
+					if (Debug) {
+						Console.ResetColor();
+						Console.WriteLine();
+					}
+				};
+
+			}
+			foreach (var rule in Conditions) {
+				Rules.Add($"  {$"w{rule.w1}",3} == {FormatSum(rule.w2, rule.offset)}");
+				Rules.Add($"  {$"w{rule.w2}",3} == {FormatSum(rule.w1, -rule.offset)}");
+			}
+			if (Debug) {
+				Console.WriteLine("Rules");
+				foreach (string rule in Rules.OrderBy(r => r)) {
+					Console.WriteLine(rule);
+				}
+				Console.WriteLine();
 			}
 			return HasException;
-
 		}
 
-		private void Add(string variableA, string variableB) {
-			int a = GetVariable(variableA);
+		private static string FormatSum(int section, int value) {
+			string w1 = $"w{section}";
+			return value switch {
+				0 => $"{w1,3}",
+				< 0 => $"{w1,3} - {Math.Abs(value)}",
+				> 0 => $"{w1,3} + {Math.Abs(value)}",
+			};
+		}
+
+		private void Input(Register variableA, int value) => SetVariable(variableA, value);
+
+		private void Add(Register registerA, RegisterOrIntValue variableB) {
+			int a = GetVariable(registerA);
 			int b = GetVariable(variableB);
-			SetVariable(variableA, a + b);
+			SetVariable(registerA, a + b);
 		}
 
-		private void Multiply(string variableA, string variableB) {
-			int a = GetVariable(variableA);
+		private void Multiply(Register registerA, RegisterOrIntValue variableB) {
+			int a = GetVariable(registerA);
 			int b = GetVariable(variableB);
-			SetVariable(variableA, a * b);
+			SetVariable(registerA, a * b);
 		}
 
-		private void Divide(string variableA, string variableB) {
-			int a = GetVariable(variableA);
+		private void Divide(Register registerA, RegisterOrIntValue variableB) {
+			int a = GetVariable(registerA);
 			int b = GetVariable(variableB);
 			if (b == 0) {
 				HasException = true;
 				ExceptionMessage = $"Divide by Zero of {a}";
 			}
-			SetVariable(variableA, a / b);
+			SetVariable(registerA, a / b);
 		}
 
-		private void Modulo(string variableA, string variableB) {
-			int a = GetVariable(variableA);
+		private void Modulo(Register registerA, RegisterOrIntValue variableB) {
+			int a = GetVariable(registerA);
 			int b = GetVariable(variableB);
 			if (a < 0 || b < 0) {
 				HasException = true;
 				ExceptionMessage = $"Negative Modulo {a} {b}";
 			}
-			SetVariable(variableA, a % b);
+			SetVariable(registerA, a % b);
 		}
 
-		private void Equal(string variableA, string variableB) {
-			int a = GetVariable(variableA);
+		private void Equal(Register registerA, RegisterOrIntValue variableB) {
+			int a = GetVariable(registerA);
 			int b = GetVariable(variableB);
-			SetVariable(variableA, a == b ? 1 : 0);
+			SetVariable(registerA, a == b ? 1 : 0);
 		}
 
-		private void Input(string variableA, int value) => SetVariable(variableA, value);
-		private int GetVariable(string variable) {
-			return variable switch {
-				"w" => W,
-				"x" => X,
-				"y" => Y,
-				"z" => Z,
-				_ => int.Parse(variable),
-			};
-		}
-
-		private void SetVariable(string variable, int value) {
-			switch (variable) {
-				case "w":
-					W = value;
-					break;
-				case "x":
-					X = value;
-					break;
-				case "y":
-					Y = value;
-					break;
-				case "z":
-					Z = value;
-					break;
-				default:
-					break;
+		private int GetVariable(RegisterOrIntValue variable) {
+			if (variable is Register r) {
+				return Registers[r];
+			} else if (variable is IntValue i) {
+				return i.Value;
 			}
+			throw new ArgumentOutOfRangeException();
+		}
+
+		private void SetVariable(Register r, int value) {
+			Registers[r] = value;
 		}
 
 		public static IEnumerable<Instruction> Parse(string[] inputs) {
 			foreach (string input in inputs) {
-				string[] i = input.Split(' ');
-				yield return new(i[0], i[1], i.Length < 3 ? "" : i[2]);
+				yield return Instruction.Parse(input);
 			}
 		}
 	}
 
+	public record Instruction(InstructionType OpCode, Register VariableA, RegisterOrIntValue VariableB) {
+		public static Instruction Parse(string input) {
+			string[] i = input.Split(' ');
+			InstructionType opCode = i[0] switch {
+				"inp" => Inp,
+				"add" => Add,
+				"mul" => Mul,
+				"div" => Div,
+				"mod" => Mod,
+				"eql" => Eql,
+				_ => throw new NotImplementedException(),
+			};
 
+			RegisterOrIntValue riA = char.IsLetter(i[1][0]) switch {
+				true => new Register(i[1]),
+				false => new IntValue(int.Parse(i[1])),
+			};
 
-
-
-
-	public record Instruction(string Operation, string VariableA, string VariableB) {
-		public int NumberB {
-			get {
-				if (string.IsNullOrWhiteSpace(VariableB) || char.IsLetter(VariableB[0])) {
-					return 0;
-				} else {
-					return int.Parse(VariableB);
-				}
+			if (opCode is Inp) {
+				return new Instruction(opCode, new Register("w"), riA);
 			}
+
+			RegisterOrIntValue riB = char.IsLetter(i[2][0]) switch {
+				true => new Register(i[2]),
+				false => new IntValue(int.Parse(i[2])),
+			};
+
+			return opCode switch {
+				Add
+				or Mul
+				or Div 
+				or Mod
+				or Eql => new Instruction(opCode, (Register)riA, riB),
+				_ => throw new NotImplementedException(),
+			};
 		}
 	};
-
-	private static Instruction ParseLine(string input) {
-		string[] i = input.Split(' ');
-		return new(i[0], i[1], i.Length < 3 ? "" : i[2]);
+	public enum InstructionType {
+		Inp,
+		Add,
+		Mul,
+		Div,
+		Mod,
+		Eql,
+	}
+	public abstract record RegisterOrIntValue();
+	public record Register(string Name) : RegisterOrIntValue {
+		public override string ToString() => $"{Name,2}";
+	}
+	
+	public record IntValue(int Value) : RegisterOrIntValue {
+		public override string ToString() => $"{Value,2}";
 	}
 }
 
@@ -282,6 +356,25 @@ public class Day24 {
 	x => 0        if {condition} else 1
 	y => 0        if {condition} else w + 12
 	z => (z / 26) if {condition} else (z * 26) + w + 12
+
+ * 
+ * Rules for my input data
+ * 
+
+		//  w0 = w13 + 8
+		//  w1 = w12 - 7
+		//  w2 =  w3 + 7
+		//  w3 =  w2 - 7
+		//  w4 =  w5 - 1
+		//  w5 =  w4 + 1
+		//  w6 = w11 - 8
+		//  w7 =  w8 - 5
+		//  w8 =  w7 + 5
+		//  w9 = w10
+		// w10 =  w9
+		// w11 =  w6 + 8
+		// w12 =  w1 + 7
+		// w13 =  w0 - 8
 
  * 
  * Debug run of lowest successful number

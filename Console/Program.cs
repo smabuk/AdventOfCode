@@ -1,11 +1,20 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
+object[]? solutionArgs = Array.Empty<object>();
 Console.ResetColor();
 
 DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
-if (args.Length == 2) {
+if (args.Length >= 2) {
 	if (int.TryParse(args[0], out int year) && int.TryParse(args[1], out int day)) {
 		date = new(year, 12, day);
+	}
+	if (args.Length > 2) {
+		solutionArgs = new object[args.Length - 2];
+		for (int i = 2; i < args.Length; i++) {
+			if (args[i] is "true" or "false") {
+				solutionArgs[i-2] = args[i] == "true";
+			}
+		}
 	}
 }
 if (args.Length == 1) {
@@ -18,7 +27,7 @@ System.Diagnostics.Stopwatch totalTimer = new();
 totalTimer.Start();
 
 if (date.Month == 12 && date.Day <= 25) {
-	GetInputDataAndSolve(date.Year, date.Day);
+	GetInputDataAndSolve(date.Year, date.Day, null, null, solutionArgs);
 } else {
 	for (int day = 1; day <= 25; day++) {
 		GetInputDataAndSolve(date.Year, day);
