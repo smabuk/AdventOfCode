@@ -12,7 +12,7 @@
         @if (Year != 0) {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="@Year">
-                    <span class="oi oi-calendar" aria-hidden="true"></span> Year @Year
+                    <span class="oi oi-calendar" aria-hidden="true"></span> <span>@(summaryYearExists ? $"{Session.Summaries.GetValueOrDefault(Year, new()).NoOfStars}⭐ " : "")</span> Year @Year
                 </NavLink>
             </li>
             <li class="aoc-grid">
@@ -38,7 +38,7 @@
             if (yr != Year) {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="@yr">
-                        <span class="oi oi-calendar" aria-hidden="true"></span> Year @yr
+                        <span class="oi oi-calendar" aria-hidden="true"></span> <span>@(Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars > 0 ? $"{Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars}⭐ " : "")</span> Year @yr
                     </NavLink>
                 </li>
             }
@@ -61,6 +61,7 @@
     }
 
     protected void SummaryHasChanged() {
+
         StateHasChanged();
     }
 
