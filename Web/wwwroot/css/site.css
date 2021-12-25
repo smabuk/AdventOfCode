@@ -7,3 +7,7 @@ em {
     font-style: normal;
     font-weight: bold;
 }
+
+span[title] {
+    border-bottom: 1px dotted #ffff66;
+}
