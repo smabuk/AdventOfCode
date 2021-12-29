@@ -24,6 +24,7 @@ public class Day24 {
 		ALU submarineAlu = new();
 		//                 01234567890123
 		long modelNumber = 92928914999991;
+		modelNumber = 11111111111111;
 
 		if (debug) {
 			submarineAlu.Debug = debug;
@@ -108,6 +109,7 @@ public class Day24 {
 			Conditions = new();
 			int lastAddX = 0;
 			int lastAddY = 0;
+			bool divZBy26 = false;
 			int timeSinceLastZero = 0;
 			Dictionary<int, (int Section, int Value)> lastZs = new();
 			List<string> Rules = new();
@@ -145,6 +147,9 @@ public class Day24 {
 						Multiply(instruction.VariableA, instruction.VariableB);
 						break;
 					case Div:
+						if (instruction.VariableB is IntValue varz) {
+							divZBy26 = varz.Value == 26;
+						}
 						Divide(instruction.VariableA, instruction.VariableB);
 						break;
 					case Mod:
@@ -167,7 +172,7 @@ public class Day24 {
 					if (Debug) {
 						Console.Write($"Summary {section,2}:");
 					}
-					if (X == 0) {
+					if (divZBy26) {
 						(int sec, int val) = lastZs[section - 2];
 						lastZs.Add(section, (sec, val));
 
@@ -192,9 +197,9 @@ public class Day24 {
 				};
 
 			}
-			foreach (var rule in Conditions) {
-				Rules.Add($"  {$"w{rule.w1}",3} == {FormatSum(rule.w2, rule.offset)}");
-				Rules.Add($"  {$"w{rule.w2}",3} == {FormatSum(rule.w1, -rule.offset)}");
+			foreach ((int w1, int w2, int offset) in Conditions) {
+				Rules.Add($"  {$"w{w1}",3} == {FormatSum(w2, offset)}");
+				Rules.Add($"  {$"w{w2}",3} == {FormatSum(w1, -offset)}");
 			}
 			if (Debug) {
 				Console.WriteLine("Rules");
