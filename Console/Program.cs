@@ -1,6 +1,8 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
 object[]? solutionArgs = Array.Empty<object>();
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.ResetColor();
 
 DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
