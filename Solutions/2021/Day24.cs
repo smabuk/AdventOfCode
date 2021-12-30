@@ -21,10 +21,9 @@ public class Day24 {
 	private static string Solution1(string[] input, bool debug = false) {
 		List<Instruction> instructions = ALU.Parse(input).ToList();
 
+		long modelNumber = 11111111111111;
+
 		ALU submarineAlu = new();
-		//                 01234567890123
-		long modelNumber = 92928914999991;
-		modelNumber = 11111111111111;
 
 		if (debug) {
 			submarineAlu.Debug = debug;
@@ -47,16 +46,26 @@ public class Day24 {
 		if (submarineAlu.Z == 0) {
 			return string.Join("", digits.Select(d => $"{d}"));
 		} else {
-			return "No idea";
+			foreach ((int w1, int w2, int offset) in submarineAlu.Conditions) {
+				if (offset >= 0) {
+					digits[w1] = 9;
+					digits[w2] = 9 - offset;
+
+				} else {
+					digits[w2] = 9;
+					digits[w1] = 9 + offset;
+				}
+			}
+			return string.Join("", digits.Select(d => $"{d}"));
 		}
 	}
 
 	private static string Solution2(string[] input, bool debug = false) {
 		List<Instruction> instructions = ALU.Parse(input).ToList();
 
+		long modelNumber = 11111111111111;
+
 		ALU submarineAlu = new();
-		//                 01234567890123
-		long modelNumber = 91811211611981;
 
 		if (debug) {
 			submarineAlu.Debug = debug;
@@ -79,7 +88,17 @@ public class Day24 {
 		if (submarineAlu.Z == 0) {
 			return string.Join("", digits.Select(d => $"{d}"));
 		} else {
-			return "No idea";
+			foreach ((int w1, int w2, int offset) in submarineAlu.Conditions) {
+				if (offset >= 0) {
+					digits[w1] = 1 + offset;
+					digits[w2] = 1;
+
+				} else {
+					digits[w2] = 1 - offset;
+					digits[w1] = 1;
+				}
+			}
+			return string.Join("", digits.Select(d => $"{d}"));
 		}
 	}
 
@@ -110,7 +129,7 @@ public class Day24 {
 			int lastAddX = 0;
 			int lastAddY = 0;
 			bool divZBy26 = false;
-			int timeSinceLastZero = 0;
+			int zDepth = -1;
 			Dictionary<int, (int Section, int Value)> lastZs = new();
 			List<string> Rules = new();
 			int section = -1;
@@ -126,7 +145,7 @@ public class Day24 {
 						if (Debug) {
 							Console.WriteLine($"Section {section,-2}: ");
 						};
-						timeSinceLastZero++;
+						zDepth++;
 						Input(instruction.VariableA, InputQueue.Dequeue());
 						break;
 					case InstructionType.Add:
@@ -134,10 +153,6 @@ public class Day24 {
 						if (instruction.VariableB is IntValue v) {
 							if (instruction.VariableA.Name == "x") {
 								lastAddX = v.Value;
-								if ((lastAddY + lastAddX) is >= 1 and <= 9) {
-									//Conditions.Add((section, lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX));
-
-								}
 							} else if (instruction.VariableA.Name == "y" && instructions[index - 1].VariableB is Register r && r.Name == "w") {
 								lastAddY = v.Value;
 							}
@@ -173,21 +188,26 @@ public class Day24 {
 						Console.Write($"Summary {section,2}:");
 					}
 					if (divZBy26) {
+						zDepth -= 2;
 						(int sec, int val) = lastZs[section - 2];
-						lastZs.Add(section, (sec, val));
-
 						string condition = $"w{section} == {FormatSum(lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX)}";
-						Conditions.Add((section, lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX));
+						if (zDepth < 1) {
+							(sec, val) = lastZs[zDepth + 1];
+							condition = $"w{section} == {FormatSum(sec, val + lastAddX)}";
+							Conditions.Add((section, sec, val + lastAddX));
+						} else {
+							Conditions.Add((section, lastZs[section - 1].Section, lastZs[section - 1].Value + lastAddX));
+						}
+						lastZs.Add(section, (sec, val));
 						lastAddY = 0;
-						timeSinceLastZero--;
 						if (Debug) {
 							Console.ForegroundColor = ConsoleColor.Green;
-							Console.Write($"   x: {X,-4}  {condition,-13}   z: {FormatSum(sec, val)}");
+							Console.Write($"   x: {X,-4}  {condition,-13}   z: {FormatSum(sec, val)}       depth: {zDepth}");
 						}
 					} else {
 						lastZs.Add(section, (section, lastAddY));
 						if (Debug) {
-							Console.Write($"   x: {X,-11}         z: {FormatSum(section, lastAddY)}");
+							Console.Write($"   x: {X,-11}         z: {FormatSum(section, lastAddY)}       depth: {zDepth}");
 						}
 					}
 					if (Debug) {
