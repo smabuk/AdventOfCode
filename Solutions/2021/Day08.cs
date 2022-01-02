@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Day 08: Seven Segment Search
-/// https://adventofcode.com/2021/day/XX
+/// https://adventofcode.com/2021/day/8
 /// </summary>
 [Description("Seven Segment Search")]
 public class Day08 {
