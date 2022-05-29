@@ -1,5 +1,5 @@
 ﻿global using System.ComponentModel;
 global using System.Text.RegularExpressions;
 
-global using AdventOfCode.Solutions.Helpers;
-global using static AdventOfCode.Solutions.Helpers.ArgumentHelpers;
+global using Smab.Helpers;
+global using static Smab.Helpers.ArgumentHelpers;
