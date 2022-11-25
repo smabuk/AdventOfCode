@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Console", "Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Solutions", "Solutions\AdventOfCode.Solutions.csproj", "{03D0E614-3441-4A0C-8749-8B2D6C837405}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Tests", "Tests\AdventOfCode.Tests.csproj", "{314DCB1E-E4DA-4EA9-8072-D9BE8D9E2714}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Tests.Shared", "Tests\Shared\AdventOfCode.Tests.Shared.csproj", "{314DCB1E-E4DA-4EA9-8072-D9BE8D9E2714}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Web", "Web\AdventOfCode.Web.csproj", "{F026D8F9-0780-4816-9D6E-B7763F9D9A27}"
 EndProject

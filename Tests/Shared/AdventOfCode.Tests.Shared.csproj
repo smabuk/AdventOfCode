@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Solutions\AdventOfCode.Solutions.csproj" />
+    <ProjectReference Include="..\..\Solutions\AdventOfCode.Solutions.csproj" />
   </ItemGroup>
 
 </Project>
