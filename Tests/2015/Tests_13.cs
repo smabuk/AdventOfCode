@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_13_Knights_of_the_Dinner_Table {
 	[Theory]

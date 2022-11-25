@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_03_Perfectly_Spherical_Houses_in_a_Vacuum {
 	[Theory]

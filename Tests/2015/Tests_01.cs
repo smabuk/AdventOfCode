@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_01_Not_Quite_Lisp {
 	[Theory]

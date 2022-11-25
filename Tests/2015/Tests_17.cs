@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_17_No_Such_Thing_as_Too_Much {
 	[Theory]

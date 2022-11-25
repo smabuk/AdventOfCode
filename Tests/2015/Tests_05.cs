@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_05_Doesnt_He_Have_Intern_Elves_For_This {
 	[Theory]

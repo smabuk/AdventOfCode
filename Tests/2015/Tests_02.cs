@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year2015;
+﻿namespace AdventOfCode.Tests._2015;
 
 public class Tests_02_I_Was_Told_There_Would_Be_No_Math {
 	[Theory]
