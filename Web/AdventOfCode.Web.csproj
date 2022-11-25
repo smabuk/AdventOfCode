@@ -9,6 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharedUI\AdventOfCode.SharedUI.csproj" />
-    <ProjectReference Include="..\Solutions\AdventOfCode.Solutions.csproj" />
+    <ProjectReference Include="..\Solutions\Router\AdventOfCode.Solutions.Router.csproj" />
   </ItemGroup>
 </Project>

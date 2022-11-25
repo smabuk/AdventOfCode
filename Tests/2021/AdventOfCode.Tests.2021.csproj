@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Solutions\AdventOfCode.Solutions.csproj" />
+		<ProjectReference Include="..\..\Solutions\Router\AdventOfCode.Solutions.Router.csproj" />
 	</ItemGroup>
 
 </Project>
