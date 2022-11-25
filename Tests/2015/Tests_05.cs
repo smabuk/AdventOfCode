@@ -8,7 +8,7 @@ public class Tests_05_Doesnt_He_Have_Intern_Elves_For_This {
 	[InlineData(new string[] { "haegwjzuvuyypxyu" }, false)]
 	[InlineData(new string[] { "dvszwmarrgswjxmb" }, false)]
 	public void Part1(string[] input, bool expected) {
-		bool actual = Solutions.Year2015.Day05.Nice_Part1(input[0]);
+		bool actual = Solutions._2015.Day05.Nice_Part1(input[0]);
 		Assert.Equal(expected, actual);
 	}
 
@@ -18,7 +18,7 @@ public class Tests_05_Doesnt_He_Have_Intern_Elves_For_This {
 	[InlineData(new string[] { "uurcxstgmygtbstg" }, false)]
 	[InlineData(new string[] { "ieodomkazucvgmuy" }, false)]
 	public void Part2(string[] input, bool expected) {
-		bool actual = Solutions.Year2015.Day05.Nice_Part2(input[0]);
+		bool actual = Solutions._2015.Day05.Nice_Part2(input[0]);
 		Assert.Equal(expected, actual);
 	}
 }

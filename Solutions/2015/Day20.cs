@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions._2015;
 
 /// <summary>
 /// Day 20: Infinite Elves and Infinite Houses

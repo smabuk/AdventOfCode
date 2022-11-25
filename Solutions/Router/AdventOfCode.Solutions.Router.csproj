@@ -12,6 +12,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Solutions\2015\AdventOfCode.Solutions.2015.csproj" />
+		<!--<ProjectReference Include="..\..\Solutions\2016\AdventOfCode.Solutions.2016.csproj" />-->
+		<!--<ProjectReference Include="..\..\Solutions\2017\AdventOfCode.Solutions.2017.csproj" />-->
+		<!--<ProjectReference Include="..\..\Solutions\2018\AdventOfCode.Solutions.2018.csproj" />-->
+		<ProjectReference Include="..\..\Solutions\2019\AdventOfCode.Solutions.2019.csproj" />
+		<ProjectReference Include="..\..\Solutions\2020\AdventOfCode.Solutions.2020.csproj" />
+		<ProjectReference Include="..\..\Solutions\2021\AdventOfCode.Solutions.2021.csproj" />
+		<ProjectReference Include="..\..\Solutions\2022\AdventOfCode.Solutions.2022.csproj" />
 	</ItemGroup>
 
 </Project>

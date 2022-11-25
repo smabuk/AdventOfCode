@@ -24,7 +24,7 @@ public class Tests_04_Passport_Processing {
 
 	[Fact]
 	public void Part1() {
-		long actual = Solutions.Year2020.Day04.CountValidPassports(_input, 1);
+		long actual = Solutions._2020.Day04.CountValidPassports(_input, 1);
 		Assert.Equal(2, actual);
 	}
 
@@ -59,7 +59,7 @@ public class Tests_04_Passport_Processing {
 			"iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719"
 			}, 4)]
 	public void Part2(string[] input, long expected) {
-		long actual = Solutions.Year2020.Day04.CountValidPassports(input, 2);
+		long actual = Solutions._2020.Day04.CountValidPassports(input, 2);
 		Assert.Equal(expected, actual);
 	}
 

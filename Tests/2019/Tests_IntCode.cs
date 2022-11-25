@@ -1,5 +1,5 @@
-using AdventOfCode.Solutions.Year2019;
-namespace AdventOfCode.Tests.Year2019;
+using AdventOfCode.Solutions._2019;
+namespace AdventOfCode.Tests._2019;
 
 public class Tests_IntCode {
 	[Theory]

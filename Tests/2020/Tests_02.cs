@@ -13,13 +13,13 @@ public class Tests_02_Password_Philosophy {
 
 	[Fact]
 	public void Valid_CountOfValidPasswords_Part1() {
-		long actual = Solutions.Year2020.Day02.CountValidPasswords_Part1(_input);
+		long actual = Solutions._2020.Day02.CountValidPasswords_Part1(_input);
 		Assert.Equal(2, actual);
 	}
 
 	[Fact]
 	public void Valid_CountOfValidPasswords_Part2() {
-		long actual = Solutions.Year2020.Day02.CountValidPasswords_Part2(_input);
+		long actual = Solutions._2020.Day02.CountValidPasswords_Part2(_input);
 		Assert.Equal(1, actual);
 	}
 

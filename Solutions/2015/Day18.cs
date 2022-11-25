@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions._2015;
 
 /// <summary>
 /// Day 18: Like a GIF For Your Yard

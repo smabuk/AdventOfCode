@@ -18,7 +18,7 @@ public class Tests_11_Corporate_Policy {
 	[InlineData("abcdezzy", 1, "abcdezzz")]
 	[InlineData("abcdezzz", 1, "abcdfaaa")]
 	public void Password_Should_IncrementBy(string input, long increment, string expected) {
-		string actual = Solutions.Year2015.Day11.IncrementPasswordBy(input, increment);
+		string actual = Solutions._2015.Day11.IncrementPasswordBy(input, increment);
 		Assert.Equal(expected, actual);
 	}
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-using static AdventOfCode.Solutions.Year2021.Day22;
+using static AdventOfCode.Solutions._2021.Day22;
 
 namespace AdventOfCode.Tests.Year2021;
 

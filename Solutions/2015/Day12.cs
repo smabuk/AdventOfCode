@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace AdventOfCode.Solutions.Year2015;
+namespace AdventOfCode.Solutions._2015;
 
 /// <summary>
 /// Day 12: JSAbacusFramework.io

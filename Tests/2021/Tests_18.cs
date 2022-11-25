@@ -1,4 +1,4 @@
-﻿using static AdventOfCode.Solutions.Year2021.Day18;
+﻿using static AdventOfCode.Solutions._2021.Day18;
 namespace AdventOfCode.Tests.Year2021;
 
 public class Tests_18_Snailfish {

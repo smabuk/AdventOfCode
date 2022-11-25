@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace AdventOfCode.Solutions.Year2015;
+namespace AdventOfCode.Solutions._2015;
 
 /// <summary>
 /// Day 04: The Ideal Stocking Stuffer

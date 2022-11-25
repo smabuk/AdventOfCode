@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Solutions.Year2015;
+﻿namespace AdventOfCode.Solutions._2015;
 
 /// <summary>
 /// Day 05: Doesn't He Have Intern-Elves For This?

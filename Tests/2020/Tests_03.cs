@@ -23,7 +23,7 @@ public class Tests_03_Toboggan_Trajectory {
 	public void Toboggan_Trajectory_Part1() {
 		int right = 3;
 		int down = 1;
-		long actual = Solutions.Year2020.Day03.CalculateNoOfTrees(_input, right, down);
+		long actual = Solutions._2020.Day03.CalculateNoOfTrees(_input, right, down);
 		Assert.Equal(7, actual);
 	}
 
@@ -34,7 +34,7 @@ public class Tests_03_Toboggan_Trajectory {
 	[InlineData(7, 1, 4)]
 	[InlineData(1, 2, 2)]
 	public void Toboggan_Trajectory_Part2(int right, int down, int expected) {
-		long actual = Solutions.Year2020.Day03.CalculateNoOfTrees(_input, right, down);
+		long actual = Solutions._2020.Day03.CalculateNoOfTrees(_input, right, down);
 		Assert.Equal(expected, actual);
 	}
 
