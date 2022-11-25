@@ -8,12 +8,17 @@ static public class SolutionRouter {
 	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
 	public static string? GetProblemDescription(int year, int day) {
-		Assembly assembly = Assembly.GetExecutingAssembly();
+		Assembly assembly;
+		try {
+			assembly = Assembly.Load($"AdventOfCode.Solutions.{year}");
+		} catch (Exception) {
+			return NO_SOLUTION;
+		}
 
 		Type? type =
 			(from a in assembly.GetTypes()
 			 from m in a.GetMethods()
-			 where m.Name == $"Part1" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
+			 where m.Name == $"Part1" && (m.ReflectedType?.FullName?.EndsWith($".Day{day:D2}") ?? false)
 			 select ((MethodInfo)m)).SingleOrDefault()?.DeclaringType;
 
 		if (type is null) {
@@ -31,12 +36,17 @@ static public class SolutionRouter {
 			return NO_INPUT;
 		}
 
-		Assembly assembly = Assembly.GetExecutingAssembly();
+		Assembly assembly;
+		try {
+			assembly = Assembly.Load($"AdventOfCode.Solutions.{year}");
+		} catch (Exception) {
+			return NO_SOLUTION;
+		}
 
 		MethodInfo? method =
 			(from a in assembly.GetTypes()
 			 from m in a.GetMethods()
-			 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($"Year{year}.Day{day:D2}") ?? false)
+			 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($".Day{day:D2}") ?? false)
 			 select ((MethodInfo)m)).SingleOrDefault();
 
 		if (method is null) {

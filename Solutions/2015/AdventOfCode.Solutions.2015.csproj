@@ -2,16 +2,13 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
+		<RootNamespace>AdventOfCode.Solutions._2015</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Smab.Helpers" Version="1.2.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\Solutions\2015\AdventOfCode.Solutions.2015.csproj" />
 	</ItemGroup>
 
 </Project>

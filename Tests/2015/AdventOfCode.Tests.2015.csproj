@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Solutions\Router\AdventOfCode.Solutions.Router.csproj" />
+		<ProjectReference Include="..\..\Solutions\2015\AdventOfCode.Solutions.2015.csproj" />
 	</ItemGroup>
 
 </Project>

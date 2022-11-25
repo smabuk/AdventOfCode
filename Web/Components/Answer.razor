@@ -44,7 +44,7 @@
             PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
                 Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
         } catch (Exception ex) {
-            PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.InnerException?.Message ?? "Exception";
+            PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
         }
         StateHasChanged();
     }
