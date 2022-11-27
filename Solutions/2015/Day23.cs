@@ -13,31 +13,45 @@ public sealed partial class Day23 {
 	}
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	record Instruction(string OperationName, string RegisterName, int Value);
-
 	private static int Solution1(string[] input, string outputRegister) {
-		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-
 		Computer computer = new();
-		computer.ExecuteProgram(instructions);
+		computer.ExecuteProgram(Instruction.ParseProgram(input));
 
 		return computer.registers[outputRegister];
 	}
 
 	private static int Solution2(string[] input) {
-		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-
 		Computer computer = new();
 		computer.registers["a"] = 1;
-		computer.ExecuteProgram(instructions);
+		computer.ExecuteProgram(Instruction.ParseProgram(input));
 
 		return computer.registers["b"];
 	}
 
-	record class Computer {
+
+
+	private partial record Instruction(string OperationName, string RegisterName, int Value) {
+		[GeneratedRegex("""(?<op>\D\D\D) (?<reg>a|b)*(, )*(?<value>[\+\-]\d+)*""")]
+		private static partial Regex InstructionRegex();
+
+		public static Instruction Parse(string input) {
+			Match match = InstructionRegex().Match(input);
+			if (match.Success) {
+				int value = 0;
+				if (!String.IsNullOrWhiteSpace(match.Groups["value"].Value)) {
+					value = int.Parse(match.Groups["value"].Value);
+				}
+				return new(match.Groups["op"].Value, match.Groups["reg"].Value, value);
+			}
+			return null!;
+		}
+
+		public static List<Instruction> ParseProgram(string[] input) =>
+			input.Select(i => Parse(i)).ToList();
+	};
+
+	private record class Computer {
 		public Dictionary<string, int> registers = new();
-		public int RegisterA => registers["a"];
-		public int RegisterB => registers["b"];
 
 		public Computer() {
 			registers["a"] = 0;
@@ -80,29 +94,11 @@ public sealed partial class Day23 {
 						currentInstructionNo++;
 						break;
 					default:
-						break;
+						return false;
 				}
 			}
 
 			return true;
 		}
 	}
-
-
-
-
-	private static Instruction ParseLine(string input) {
-		Match match = InstructionRegex().Match(input);
-		if (match.Success) {
-			int value = 0;
-			if (!String.IsNullOrWhiteSpace(match.Groups["value"].Value)) {
-				value = int.Parse(match.Groups["value"].Value);
-			}
-			return new(match.Groups["op"].Value, match.Groups["reg"].Value, value);
-		}
-		return null!;
-	}
-
-	[GeneratedRegex("""(?<op>\D\D\D) (?<reg>a|b)*(, )*(?<value>[\+\-]\d+)*""")]
-	private static partial Regex InstructionRegex();
 }
