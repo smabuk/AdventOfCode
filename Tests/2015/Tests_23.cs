@@ -65,17 +65,4 @@ public class Tests_23_Opening_the_Turing_Lock {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 23, 1, input, register), out int actual);
 		Assert.Equal(expected, actual);
 	}
-
-	[Theory]
-	[InlineData("""
-		inc a
-		jio a, +2
-		tpl a
-		inc a
-		"""
-		, 2)]
-	public void Part2(string input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2015, 23, 2, input), out int actual);
-		Assert.Equal(expected, actual);
-	}
 }

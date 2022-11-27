@@ -24,11 +24,14 @@ public sealed partial class Day23 {
 		return computer.registers[outputRegister];
 	}
 
-	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
+	private static int Solution2(string[] input) {
 		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
+
+		Computer computer = new();
+		computer.registers["a"] = 1;
+		computer.ExecuteProgram(instructions);
+
+		return computer.registers["b"];
 	}
 
 	record class Computer {
