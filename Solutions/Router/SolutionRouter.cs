@@ -30,6 +30,11 @@ static public class SolutionRouter {
 			? ((DescriptionAttribute)descriptionAttributes.First()).Description
 			: NO_SOLUTION;
 	}
+
+	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) {
+		return SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), args);
+	}
+
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
 
 		if (input is null) {
