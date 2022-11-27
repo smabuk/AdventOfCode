@@ -17,6 +17,7 @@ public sealed partial class Day23 {
 
 	private static int Solution1(string[] input, string outputRegister) {
 		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
+
 		Computer computer = new();
 		computer.ExecuteProgram(instructions);
 
@@ -46,32 +47,32 @@ public sealed partial class Day23 {
 			while (currentInstructionNo < Instructions.Count) {
 				Instruction currentInstruction = Instructions[currentInstructionNo];
 				switch (currentInstruction.OperationName) {
-					case "hlf":
+					case "hlf": // Half
 						registers[currentInstruction.RegisterName] = registers[currentInstruction.RegisterName] / 2;
 						currentInstructionNo++;
 						break;
-					case "inc":
+					case "inc": // Increment
 						registers[currentInstruction.RegisterName]++;
 						currentInstructionNo++;
 						break;
-					case "jie":
+					case "jie": // Jump If Even
 						if (registers[currentInstruction.RegisterName] % 2 == 0) {
 							currentInstructionNo += currentInstruction.Value;
 						} else {
 							currentInstructionNo++;
 						}
 						break;
-					case "jio":
+					case "jio": // Jump If One
 						if (registers[currentInstruction.RegisterName] == 1) {
 							currentInstructionNo += currentInstruction.Value;
 						} else {
 							currentInstructionNo++;
 						}
 						break;
-					case "jmp":
+					case "jmp": // Jump
 						currentInstructionNo += currentInstruction.Value;
 						break;
-					case "tpl":
+					case "tpl": // Triple
 						registers[currentInstruction.RegisterName] = registers[currentInstruction.RegisterName] * 3;
 						currentInstructionNo++;
 						break;
