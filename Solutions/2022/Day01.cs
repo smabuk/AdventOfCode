@@ -21,7 +21,7 @@ public partial class Day01 {
 				}
 				calories = 0;
 			} else {
-				calories += int.Parse(input[i]); ;
+				calories += input[i].AsInt(); ;
 			}
 		}
 
@@ -37,7 +37,7 @@ public partial class Day01 {
 				caloriesPerElf.Add(calories);
 				calories = 0;
 			} else {
-				calories += int.Parse(input[i]);
+				calories += input[i].AsInt();
 			}
 		}
 
