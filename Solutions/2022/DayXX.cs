@@ -5,7 +5,7 @@
 /// https://adventofcode.com/2022/day/XX
 /// </summary>
 [Description("")]
-public class DayXX {
+public partial class DayXX {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
@@ -27,11 +27,14 @@ public class DayXX {
 	}
 
 	private static RecordType ParseLine(string input) {
-		//MatchCollection match = Regex.Matches(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
-		Match match = Regex.Match(input, @"(opt1|opt2|opt3) ([\+\-]\d+)");
+		//MatchCollection match = InputRegEx().Matches(input);
+		Match match = InputRegEx().Match(input);
 		if (match.Success) {
-			return new(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
+			return new(match.Groups["opts"].Value, int.Parse(match.Groups["number"].Value));
 		}
 		return null!;
 	}
+
+	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]\d+)""")]
+	private static partial Regex InputRegEx();
 }
