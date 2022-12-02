@@ -21,12 +21,12 @@ public sealed partial class Day02 {
 	}
 
 	private enum HandShape {
-		Rock = 0,
-		Paper = 1,
-		Scissors = 2,
+		Rock,
+		Paper,
+		Scissors,
 	}
 
-	private enum Outcome {
+	private enum DesiredOutcome {
 		Win,
 		Lose,
 		Draw,
@@ -41,14 +41,14 @@ public sealed partial class Day02 {
 			MyChoice = myChoice;
 		}
 
-		public RockPaperScissors(HandShape opponentChoice, Outcome myOutcome) {
+		public RockPaperScissors(HandShape opponentChoice, DesiredOutcome myOutcome) {
 			OpponentChoice = opponentChoice;
 
 			switch (myOutcome) {
-				case Outcome.Draw:
+				case DesiredOutcome.Draw:
 					MyChoice = OpponentChoice;
 					break;
-				case Outcome.Win:
+				case DesiredOutcome.Win:
 					MyChoice = OpponentChoice switch {
 						HandShape.Rock => HandShape.Paper,
 						HandShape.Paper => HandShape.Scissors,
@@ -56,7 +56,7 @@ public sealed partial class Day02 {
 						_ => throw new ArgumentOutOfRangeException(nameof(OpponentChoice)),
 					};
 					break;
-				case Outcome.Lose:
+				case DesiredOutcome.Lose:
 					MyChoice = OpponentChoice switch {
 						HandShape.Rock => HandShape.Scissors,
 						HandShape.Paper => HandShape.Rock,
@@ -92,45 +92,28 @@ public sealed partial class Day02 {
 	};
 
 	private static RockPaperScissors ParseLinePt1(string input) {
-		Match match = InputRegEx().Match(input);
-		if (match.Success) {
-			HandShape opponent = match.Groups["opp"].Value switch {
-				"A" => HandShape.Rock,
-				"B" => HandShape.Paper,
-				"C" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException("opponent"),
-			};
-			HandShape me = match.Groups["hint"].Value switch {
-				"X" => HandShape.Rock,
-				"Y" => HandShape.Paper,
-				"Z" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException("hint"),
-			};
-			return new(opponent, me);
-		}
-		return null!;
+		HandShape opponent = GetHandShapeFromChar(input[0]);
+		HandShape me = GetHandShapeFromChar(input[2]);
+		return new(opponent, me);
 	}
 
 	private static RockPaperScissors ParseLinePt2(string input) {
-		Match match = InputRegEx().Match(input);
-		if (match.Success) {
-			HandShape opponent = match.Groups["opp"].Value switch {
-				"A" => HandShape.Rock,
-				"B" => HandShape.Paper,
-				"C" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException("opponent"),
-			};
-			Outcome choice = match.Groups["hint"].Value switch {
-				"X" => Outcome.Lose,
-				"Y" => Outcome.Draw,
-				"Z" => Outcome.Win,
-				_ => throw new ArgumentOutOfRangeException("hint"),
-			};
-			return new(opponent, choice);
-		}
-		return null!;
+		HandShape opponent = GetHandShapeFromChar(input[0]);
+		DesiredOutcome choice = input[2] switch {
+			'X' => DesiredOutcome.Lose,
+			'Y' => DesiredOutcome.Draw,
+			'Z' => DesiredOutcome.Win,
+			_ => throw new ArgumentOutOfRangeException("hint"),
+		};
+		return new(opponent, choice);
 	}
 
-	[GeneratedRegex("""(?<opp>A|B|C) (?<hint>\D)""")]
-	private static partial Regex InputRegEx();
+	private static HandShape GetHandShapeFromChar(char input) {
+		return input switch {
+			'A' or 'X' => HandShape.Rock,
+			'B' or 'Y' => HandShape.Paper,
+			'C' or 'Z' => HandShape.Scissors,
+			_ => throw new ArgumentOutOfRangeException(nameof(input)),
+		};
+	}
 }
