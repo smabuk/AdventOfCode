@@ -5,7 +5,7 @@
 /// https://adventofcode.com/2022/day/XX
 /// </summary>
 [Description("")]
-public partial class DayXX {
+public sealed partial class DayXX {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();

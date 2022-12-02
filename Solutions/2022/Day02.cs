@@ -5,65 +5,55 @@
 /// https://adventofcode.com/2022/day/2
 /// </summary>
 [Description("Rock Paper Scissors")]
-public partial class Day02 {
+public sealed partial class Day02 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	enum HandShape {
+	private static int Solution1(string[] input) {
+		List<RockPaperScissors> round = input.Select(i => ParseLinePt1(i)).ToList();
+		return round.Sum(x => x.Score);
+	}
+
+	private static int Solution2(string[] input) {
+		List<RockPaperScissors> round = input.Select(i => ParseLinePt2(i)).ToList();
+		return round.Sum(x => x.Score);
+	}
+
+	private enum HandShape {
 		Rock = 0,
 		Paper = 1,
 		Scissors = 2,
 	}
 
-	enum Outcome {
+	private enum Outcome {
 		Win,
 		Lose,
 		Draw,
 	}
 
-	record class RockPaperScissors {
+	sealed record class RockPaperScissors {
 		public HandShape OpponentChoice { get; set; }
 		public HandShape MyChoice { get; set; }
 
-		public RockPaperScissors(string opponentChoice, string myChoice) {
-			OpponentChoice = opponentChoice switch {
-				"A" => HandShape.Rock,
-				"B" => HandShape.Paper,
-				"C" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException(),
-			};
-			MyChoice = myChoice switch {
-				"X" => HandShape.Rock,
-				"Y" => HandShape.Paper,
-				"Z" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException(),
-			};
+		public RockPaperScissors(HandShape opponentChoice, HandShape myChoice) {
+			OpponentChoice = opponentChoice;
+			MyChoice = myChoice;
 		}
 
-		public RockPaperScissors(string opponentChoice, Outcome myOutcome) {
-			OpponentChoice = opponentChoice switch {
-				"A" => HandShape.Rock,
-				"B" => HandShape.Paper,
-				"C" => HandShape.Scissors,
-				_ => throw new ArgumentOutOfRangeException(),
-			};
+		public RockPaperScissors(HandShape opponentChoice, Outcome myOutcome) {
+			OpponentChoice = opponentChoice;
 
 			switch (myOutcome) {
 				case Outcome.Draw:
-					MyChoice = OpponentChoice switch {
-						HandShape.Rock => HandShape.Rock,
-						HandShape.Paper => HandShape.Paper,
-						HandShape.Scissors => HandShape.Scissors,
-						_ => throw new ArgumentOutOfRangeException(),
-					};
+					MyChoice = OpponentChoice;
 					break;
 				case Outcome.Win:
 					MyChoice = OpponentChoice switch {
 						HandShape.Rock => HandShape.Paper,
 						HandShape.Paper => HandShape.Scissors,
 						HandShape.Scissors => HandShape.Rock,
-						_ => throw new ArgumentOutOfRangeException(),
+						_ => throw new ArgumentOutOfRangeException(nameof(OpponentChoice)),
 					};
 					break;
 				case Outcome.Lose:
@@ -71,7 +61,7 @@ public partial class Day02 {
 						HandShape.Rock => HandShape.Scissors,
 						HandShape.Paper => HandShape.Rock,
 						HandShape.Scissors => HandShape.Paper,
-						_ => throw new ArgumentOutOfRangeException(),
+						_ => throw new ArgumentOutOfRangeException(nameof(OpponentChoice)),
 					};
 					break;
 			}
@@ -89,9 +79,7 @@ public partial class Day02 {
 				const int LOSS = 0;
 				const int DRAW = 3;
 				const int WIN = 6;
-				if (OpponentChoice == HandShape.Rock && MyChoice == HandShape.Rock
-					|| OpponentChoice == HandShape.Paper && MyChoice == HandShape.Paper
-					|| OpponentChoice == HandShape.Scissors && MyChoice == HandShape.Scissors) {
+				if (OpponentChoice == MyChoice) {
 					return MyChoiceScore + DRAW;
 				} else if (OpponentChoice == HandShape.Rock && MyChoice == HandShape.Paper
 					|| OpponentChoice == HandShape.Paper && MyChoice == HandShape.Scissors
@@ -103,22 +91,22 @@ public partial class Day02 {
 		}
 	};
 
-	private static int Solution1(string[] input) {
-		List<RockPaperScissors> round = input.Select(i => ParseLine(i)).ToList();
-		int totalScore = round.Sum(x => x.Score);
-		return totalScore;
-	}
-
-	private static int Solution2(string[] input) {
-		List<RockPaperScissors> round = input.Select(i => ParseLinePt2(i)).ToList();
-		int totalScore = round.Sum(x => x.Score);
-		return totalScore;
-	}
-
-	private static RockPaperScissors ParseLine(string input) {
+	private static RockPaperScissors ParseLinePt1(string input) {
 		Match match = InputRegEx().Match(input);
 		if (match.Success) {
-			return new(match.Groups["opp"].Value, match.Groups["hint"].Value);
+			HandShape opponent = match.Groups["opp"].Value switch {
+				"A" => HandShape.Rock,
+				"B" => HandShape.Paper,
+				"C" => HandShape.Scissors,
+				_ => throw new ArgumentOutOfRangeException("opponent"),
+			};
+			HandShape me = match.Groups["hint"].Value switch {
+				"X" => HandShape.Rock,
+				"Y" => HandShape.Paper,
+				"Z" => HandShape.Scissors,
+				_ => throw new ArgumentOutOfRangeException("hint"),
+			};
+			return new(opponent, me);
 		}
 		return null!;
 	}
@@ -126,13 +114,19 @@ public partial class Day02 {
 	private static RockPaperScissors ParseLinePt2(string input) {
 		Match match = InputRegEx().Match(input);
 		if (match.Success) {
+			HandShape opponent = match.Groups["opp"].Value switch {
+				"A" => HandShape.Rock,
+				"B" => HandShape.Paper,
+				"C" => HandShape.Scissors,
+				_ => throw new ArgumentOutOfRangeException("opponent"),
+			};
 			Outcome choice = match.Groups["hint"].Value switch {
 				"X" => Outcome.Lose,
 				"Y" => Outcome.Draw,
 				"Z" => Outcome.Win,
-				_ => throw new ArgumentOutOfRangeException(),
+				_ => throw new ArgumentOutOfRangeException("hint"),
 			};
-			return new(match.Groups["opp"].Value, choice);
+			return new(opponent, choice);
 		}
 		return null!;
 	}

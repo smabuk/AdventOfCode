@@ -5,7 +5,7 @@
 /// https://adventofcode.com/2022/day/1
 /// </summary>
 [Description("Calorie Counting")]
-public partial class Day01 {
+public sealed partial class Day01 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
