@@ -8,8 +8,8 @@ public class Tests_02_Rock_Paper_Scissors {
 		C Z
 		"""
 		, 15)]
-	public void Part1(string input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 2, 1, input), out long actual);
+	public void Part1(string input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 2, 1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -19,9 +19,9 @@ public class Tests_02_Rock_Paper_Scissors {
 		B X
 		C Z
 		"""
-		, 9999)]
-	public void Part2(string input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 2, 2, input), out long actual);
+		, 12)]
+	public void Part2(string input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 2, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
