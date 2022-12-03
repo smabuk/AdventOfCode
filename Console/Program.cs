@@ -55,11 +55,11 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
+	System.Diagnostics.Stopwatch timer = new();
 	Console.Write($"{year} {day,2} {title,-38}");
 	if (input is not null) {
 		ConsoleColor answerColour;
 		answerColour = ConsoleColor.Green;
-		System.Diagnostics.Stopwatch timer = new();
 		timer.Start();
 		string Problem1Answer;
 		try {
@@ -71,13 +71,7 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 			answerColour = ConsoleColor.Red;
 		}
 		Console.Write($" Pt1:");
-		if (timer.ElapsedMilliseconds <= 3000) {
-			Console.Write($" {timer.ElapsedMilliseconds,4}ms");
-		} else {
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.Write($" {timer.Elapsed,4:%s} s");
-			Console.ResetColor();
-		}
+		OutputTimings();
 		Console.ForegroundColor = answerColour;
 		Console.Write($"  {Problem1Answer,-16}");
 		Console.ResetColor();
@@ -90,26 +84,33 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 			timer.Stop();
 			if (Problem2Answer == "** Solution not written yet **") {
 				Problem2Answer = "** No Solution";
-				answerColour= ConsoleColor.White;
+				answerColour = ConsoleColor.White;
 			}
 		} catch (Exception) {
 			timer.Stop();
 			Problem2Answer = "** Exception";
-			answerColour= ConsoleColor.Red;
+			answerColour = ConsoleColor.Red;
 		}
 		Console.Write($" Pt2:");
-		if (timer.ElapsedMilliseconds <= 3000) {
+		OutputTimings();
+		Console.ForegroundColor = answerColour;
+		Console.WriteLine($"  {Problem2Answer}");
+		Console.ResetColor();
+	} else {
+		Console.WriteLine($"     ** NO INPUT DATA **");
+	}
+
+	void OutputTimings() {
+		int stopWatchMicroSecondsMultiplier = (int)(System.Diagnostics.Stopwatch.Frequency / 1_000_000);
+		if (System.Diagnostics.Stopwatch.IsHighResolution && (timer.ElapsedTicks / stopWatchMicroSecondsMultiplier) < 10_000) {
+			Console.Write($" {timer.ElapsedTicks / stopWatchMicroSecondsMultiplier,4}µs");
+		} else if (timer.ElapsedMilliseconds <= 3000) {
 			Console.Write($" {timer.ElapsedMilliseconds,4}ms");
 		} else {
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.Write($" {timer.Elapsed,4:%s} s");
 			Console.ResetColor();
 		}
-		Console.ForegroundColor = answerColour;
-		Console.WriteLine($"  {Problem2Answer}");
-		Console.ResetColor();
-	} else {
-		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
 }
 
