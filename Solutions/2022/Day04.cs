@@ -28,11 +28,11 @@ public sealed partial class Day04 {
 		List<ElfPair> elfPairs = input.Select(i => ParseLine(i)).ToList();
 		int count = 0;
 		foreach (ElfPair elfPair in elfPairs) {
-			for (int i = elfPair.Elf1Start; i <= elfPair.Elf1End; i++) {
-				if (i >= elfPair.Elf2Start && i <= elfPair.Elf2End) {
-					count++;
-					break;
-				}
+			if (elfPair.Elf1Start >= elfPair.Elf2Start && elfPair.Elf1Start <= elfPair.Elf2End
+				|| elfPair.Elf1End >= elfPair.Elf2Start && elfPair.Elf1End <= elfPair.Elf2End
+				|| elfPair.Elf2Start >= elfPair.Elf1Start && elfPair.Elf2Start <= elfPair.Elf1End
+				|| elfPair.Elf2End >= elfPair.Elf1Start && elfPair.Elf2End <= elfPair.Elf1End) {
+				count++;
 			}
 		}
 		return count;
