@@ -10,14 +10,23 @@ public sealed partial class Day04 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	record ElfPair(int Elf1Start, int Elf1End, int Elf2Start, int Elf2End);
-
 	private static int Solution1(string[] input) {
-		List<ElfPair> elfPairs = input.Select(i => ParseLine(i)).ToList();
+	//       CONTAINS
+	//
+	//    a--------------b
+	//         c-----d
+	//         
+	//         a-----b
+	//    c--------------d
+	//
+	//    a >= c && b <= d
+	//    c >= a && d <= b
+	//
 		int count = 0;
-		foreach (ElfPair elfPair in elfPairs) {
-			if (elfPair.Elf1Start >= elfPair.Elf2Start && elfPair.Elf1End <= elfPair.Elf2End
-				|| elfPair.Elf2Start >= elfPair.Elf1Start && elfPair.Elf2End <= elfPair.Elf1End) {
+		for (int i = 0; i < input.Length; i++) {
+			(int a, int b, int c, int d) = ParseLine(input[i]);
+			if (   a >= c && b <= d
+				|| c >= a && d <= b) {
 				count++;
 			}
 		}
@@ -25,28 +34,35 @@ public sealed partial class Day04 {
 	}
 
 	private static int Solution2(string[] input) {
-		List<ElfPair> elfPairs = input.Select(i => ParseLine(i)).ToList();
+		//       OVERLAPS
+		//
+		//    a----------b
+		//         c---------d
+		//
+		//         a---------b
+		//    c--------d
+		//
+		//
+		//    a--------------b
+		//         c-----d
+		//         
+		//         a-----b
+		//    c--------------d
+		//
+		//    a <= d && c <= b
+		//
 		int count = 0;
-		foreach (ElfPair elfPair in elfPairs) {
-			if (elfPair.Elf1Start >= elfPair.Elf2Start && elfPair.Elf1Start <= elfPair.Elf2End
-				|| elfPair.Elf1End >= elfPair.Elf2Start && elfPair.Elf1End <= elfPair.Elf2End
-				|| elfPair.Elf2Start >= elfPair.Elf1Start && elfPair.Elf2Start <= elfPair.Elf1End
-				|| elfPair.Elf2End >= elfPair.Elf1Start && elfPair.Elf2End <= elfPair.Elf1End) {
+		for (int i = 0; i < input.Length; i++) {
+			(int a, int b, int c, int d) = ParseLine(input[i]);
+			if (a <= d && c <= b) {
 				count++;
 			}
 		}
 		return count;
 	}
 
-	private static ElfPair ParseLine(string input) {
-		Match match = InputRegEx().Match(input);
-		if (match.Success) {
-			return new(int.Parse(match.Groups["Elf1Start"].Value), int.Parse(match.Groups["Elf1End"].Value)
-					 , int.Parse(match.Groups["Elf2Start"].Value), int.Parse(match.Groups["Elf2End"].Value));
-		}
-		return null!;
+	private static (int a, int b, int c, int d) ParseLine(string input) {
+		string[] numbers = input.Split(new char[] {'-' , ',' });
+		return (int.Parse(numbers[0]), int.Parse(numbers[1]), int.Parse(numbers[2]), int.Parse(numbers[3]));
 	}
-
-	[GeneratedRegex("""(?<Elf1Start>\d+)-(?<Elf1End>\d+),(?<Elf2Start>\d+)-(?<Elf2End>\d+)""")]
-	private static partial Regex InputRegEx();
 }

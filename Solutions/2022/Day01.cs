@@ -21,7 +21,8 @@ public sealed partial class Day01 {
 				}
 				calories = 0;
 			} else {
-				calories += input[i].AsInt(); ;
+				calories += input[i].AsInt();
+				;
 			}
 		}
 
@@ -29,22 +30,27 @@ public sealed partial class Day01 {
 	}
 
 	private static int Solution2(string[] input) {
-		List<int> caloriesPerElf = new();
+		int[] caloriesPerElf = new int[3];
 
 		int calories = 0;
 		for (int i = 0; i <= input.Length; i++) {
 			if (i == input.Length || input[i] == "") {
-				caloriesPerElf.Add(calories);
+				int minLargeCalories = caloriesPerElf.Min();
+				if (calories > minLargeCalories) {
+					for (int e = 0; e < 3; e++) {
+						if (minLargeCalories == caloriesPerElf[e]) {
+							caloriesPerElf[e] = calories;
+							break;
+						}
+					}
+				}
 				calories = 0;
 			} else {
 				calories += input[i].AsInt();
 			}
 		}
 
-		return caloriesPerElf
-			.OrderByDescending(x => x)
-			.Take(3)
-			.Sum();
+		return caloriesPerElf.Sum();
 	}
 
 }

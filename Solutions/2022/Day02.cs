@@ -11,19 +11,21 @@ public sealed partial class Day02 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		List<RockPaperScissors> round = input.Select(i => ParseLinePt1(i)).ToList();
-		return round.Sum(x => x.Score);
+		return input
+			.Select(i => ParseLinePt1(i).Score)
+			.Sum();
 	}
 
 	private static int Solution2(string[] input) {
-		List<RockPaperScissors> round = input.Select(i => ParseLinePt2(i)).ToList();
-		return round.Sum(x => x.Score);
+		return input
+			.Select(i => ParseLinePt2(i).Score)
+			.Sum();
 	}
 
 	private enum HandShape {
-		Rock,
-		Paper,
-		Scissors,
+		Rock     = 1,
+		Paper    = 2,
+		Scissors = 3,
 	}
 
 	private enum DesiredOutcome {
@@ -32,7 +34,7 @@ public sealed partial class Day02 {
 		Draw,
 	}
 
-	sealed record class RockPaperScissors {
+	record struct RockPaperScissors {
 		public HandShape OpponentChoice { get; set; }
 		public HandShape MyChoice { get; set; }
 
@@ -67,12 +69,7 @@ public sealed partial class Day02 {
 			}
 		}
 
-		private int MyChoiceScore => MyChoice switch {
-			HandShape.Rock => 1,
-			HandShape.Paper => 2,
-			HandShape.Scissors => 3,
-			_ => 0,
-		};
+		private int MyChoiceScore => (int)MyChoice;
 
 		public int Score {
 			get {
