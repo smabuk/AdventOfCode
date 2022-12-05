@@ -13,8 +13,6 @@ public sealed partial class Day05 {
 	record Instruction(int Quantity, int From, int To);
 
 	private static string Solution1(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
 		int noOfStacks = 0;
 		int blankLineNo = 0;
 		for (int i = 0; i < input.Length; i++) {
@@ -57,14 +55,51 @@ public sealed partial class Day05 {
 	}
 
 	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
+		int noOfStacks = 0;
+		int blankLineNo = 0;
+		for (int i = 0; i < input.Length; i++) {
+			if (String.IsNullOrWhiteSpace(input[i])) {
+				noOfStacks = int.Parse(input[i - 1].Trim().Split(' ').Last());
+				blankLineNo = i;
+				break;
+			}
+		}
+
+		List<Stack<char>> stacks = new();
+		for (int i = 0; i < noOfStacks; i++) {
+			stacks.Add(new());
+		}
+
+		for (int i = blankLineNo - 2; i >= 0; i--) {
+			for (int s = 0; s < noOfStacks; s++) {
+				int offset = (s) * 4 + 1;
+				char container = input[i][offset];
+				if (container != ' ') {
+					stacks[s].Push(container);
+				}
+			}
+		}
+
+		List<Instruction> instructions = input[(blankLineNo + 1)..].Select(i => ParseLine(i)).ToList();
+		foreach (var instruction in instructions) {
+			string containers = "";
+			for (int i = 0; i < instruction.Quantity; i++) {
+				containers = stacks[instruction.From - 1].Pop() + containers;
+			}
+			for (int i = 0; i < instruction.Quantity; i++) {
+				stacks[instruction.To - 1].Push(containers[i]);
+			}
+		}
+
+		string message = string.Empty;
+		for (int s = 0; s < noOfStacks; s++) {
+			message += stacks[s].Peek();
+		}
+
+		return message;
 	}
 
 	private static Instruction ParseLine(string input) {
-		//MatchCollection match = InputRegEx().Matches(input);
 		Match match = InputRegEx().Match(input);
 		if (match.Success) {
 			return new(int.Parse(match.Groups["qty"].Value), int.Parse(match.Groups["from"].Value), int.Parse(match.Groups["to"].Value));
