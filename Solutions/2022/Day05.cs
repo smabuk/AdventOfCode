@@ -11,7 +11,7 @@ public sealed partial class Day05 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static string Solution1(string[] input) {
-		(List<Stack<char>> stacks, List<Instruction> instructions) = ParseInput(input);
+		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
 
 		foreach (Instruction instruction in instructions) {
 			for (int i = 0; i < instruction.Quantity; i++) {
@@ -23,7 +23,7 @@ public sealed partial class Day05 {
 	}
 
 	private static string Solution2(string[] input) {
-		(List<Stack<char>> stacks, List<Instruction> instructions) = ParseInput(input);
+		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
 
 		foreach (Instruction instruction in instructions) {
 			char[] crates = new char[instruction.Quantity];
@@ -39,10 +39,9 @@ public sealed partial class Day05 {
 	}
 
 
-
-	private static string GetMessage(List<Stack<char>> stacks) {
+	private static string GetMessage(Stack<char>[] stacks) {
 		string message = "";
-		for (int s = 0; s < stacks.Count; s++) {
+		for (int s = 0; s < stacks.Length; s++) {
 			message += stacks[s].Peek();
 		}
 
@@ -51,7 +50,7 @@ public sealed partial class Day05 {
 
 	record struct Instruction(int Quantity, int From, int To);
 
-	private static (List<Stack<char>>, List<Instruction>) ParseInput(string[] input) {
+	private static (Stack<char>[], IEnumerable<Instruction>) ParseInput(string[] input) {
 		int noOfStacks = 0;
 		int blankLineNo = 0;
 		for (int i = 0; i < input.Length; i++) {
@@ -62,16 +61,16 @@ public sealed partial class Day05 {
 			}
 		}
 
-		List<Stack<char>> stacks = ParseStacks(input[..(blankLineNo - 1)], noOfStacks);
-		List<Instruction> instructions = input[(blankLineNo + 1)..].Select(i => ParseInstruction(i)).ToList();
+		Stack<char>[] stacks = ParseStacks(input[..(blankLineNo - 1)], noOfStacks);
+		var instructions = input[(blankLineNo + 1)..].Select(i => ParseInstruction(i));
 
 		return (stacks, instructions);
 	}
 
-	private static List<Stack<char>> ParseStacks(string[] input, int noOfStacks) {
-		List<Stack<char>> stacks = new();
+	private static Stack<char>[] ParseStacks(string[] input, int noOfStacks) {
+		Stack<char>[] stacks = new Stack<char>[noOfStacks];
 		for (int s = 0; s < noOfStacks; s++) {
-			stacks.Add(new());
+			stacks[s] = new();
 		}
 
 		for (int i = input.Length - 1; i >= 0; i--) {
@@ -88,13 +87,7 @@ public sealed partial class Day05 {
 	}
 
 	private static Instruction ParseInstruction(string input) {
-		Match match = InputRegEx().Match(input);
-		if (match.Success) {
-			return new(int.Parse(match.Groups["qty"].Value), int.Parse(match.Groups["from"].Value), int.Parse(match.Groups["to"].Value));
-		}
-		throw new ArgumentException($"Value: {input}", nameof(input));
+		string[] tokens = input.Split(' ');
+		return new(int.Parse(tokens[1]), int.Parse(tokens[3]), int.Parse(tokens[5]));
 	}
-
-	[GeneratedRegex("""move (?<qty>\d+) from (?<from>\d+) to (?<to>\d+)""")]
-	private static partial Regex InputRegEx();
 }
