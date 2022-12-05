@@ -5,7 +5,8 @@ object[]? solutionArgs = Array.Empty<object>();
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.ResetColor();
 
-DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
+DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
+DateOnly date = dateNow;
 if (args.Length >= 2) {
 	if (int.TryParse(args[0], out int year) && int.TryParse(args[1], out int day)) {
 		date = new(year, 12, day);
@@ -32,7 +33,9 @@ if (date.Month == 12 && date.Day <= 25) {
 	GetInputDataAndSolve(date.Year, date.Day, null, null, solutionArgs);
 } else {
 	for (int day = 1; day <= 25; day++) {
-		GetInputDataAndSolve(date.Year, day);
+		if (dateNow >= new DateOnly(date.Year, 12, day)) {
+			GetInputDataAndSolve(date.Year, day);
+		}
 	}
 }
 
