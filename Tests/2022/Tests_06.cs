@@ -13,10 +13,11 @@ public class Tests_06_Tuning_Trouble {
 	}
 
 	[Theory]
-	[InlineData("""
-		a
-		"""
-		, 9999)]
+	[InlineData("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 19)]
+	[InlineData("bvwbjplbgvbhsrlpgdmjqwftvncz", 23)]
+	[InlineData("nppdvjthqldpwncqszvftbrmjlhg", 23)]
+	[InlineData("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 29)]
+	[InlineData("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 26)]
 	public void Part2(string input, int expected) {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 6, 2, input), out int actual);
 		Assert.Equal(expected, actual);

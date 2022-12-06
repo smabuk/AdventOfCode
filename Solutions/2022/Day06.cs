@@ -10,39 +10,15 @@ public sealed partial class Day06 {
 	public static string Part1(string input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string input, params object[]? _) => Solution2(input).ToString();
 
-	private record struct RecordType(string Name, int Value);
+	private static int Solution1(string input) => GetMessageStart(input, 4);
+	private static int Solution2(string input) => GetMessageStart(input, 14);
 
-	private static int Solution1(string input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		//List<RecordType> instructions = input.Select(i => ParseLine(i)).ToList();
-		int startOfPacketMarker = 0;
-		for (int i = 0; i < input.Length - 4; i++) {
-			string marker = input[i..(i + 4)];
-			if (marker.ToCharArray().Distinct().Count() == 4) {
-				startOfPacketMarker = i + 4;
-				break;
+	private static int GetMessageStart(string input, int messageSize) {
+		for (int i = 0; i < input.Length - messageSize; i++) {
+			if (input[i..(i + messageSize)].Distinct().Count() == messageSize) {
+				return i + messageSize;
 			}
 		}
-		return startOfPacketMarker;
+		throw new Exception("No answer found");
 	}
-
-	private static string Solution2(string input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		//List<RecordType> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
-	}
-
-	private static RecordType ParseLine(string input) {
-		//MatchCollection match = InputRegEx().Matches(input);
-		Match match = InputRegEx().Match(input);
-		if (match.Success) {
-			return new(match.Groups["opts"].Value, int.Parse(match.Groups["number"].Value));
-		}
-		return new();
-	}
-
-	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]\d+)""")]
-	private static partial Regex InputRegEx();
 }
