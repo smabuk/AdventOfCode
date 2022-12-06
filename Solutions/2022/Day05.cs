@@ -7,10 +7,10 @@
 [Description("Supply Stacks")]
 public sealed partial class Day05 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string input, params object[]? _) => Solution2(input).ToString();
 
-	private static string Solution1(string[] input) {
+	private static string Solution1(string input) {
 		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
 
 		foreach (Instruction instruction in instructions) {
@@ -22,7 +22,7 @@ public sealed partial class Day05 {
 		return GetMessage(stacks);
 	}
 
-	private static string Solution2(string[] input) {
+	private static string Solution2(string input) {
 		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
 
 		foreach (Instruction instruction in instructions) {
@@ -48,32 +48,37 @@ public sealed partial class Day05 {
 		return message;
 	}
 
-	record struct Instruction(int Quantity, int From, int To);
+	private record struct Instruction(int Quantity, int From, int To);
 
-	private static (Stack<char>[], IEnumerable<Instruction>) ParseInput(string[] input) {
-		int noOfStacks = 0;
-		int blankLineNo = 0;
-		for (int i = 0; i < input.Length; i++) {
-			if (String.IsNullOrWhiteSpace(input[i])) {
-				noOfStacks = int.Parse(input[i - 1].Trim().Split(' ').Last());
-				blankLineNo = i;
-				break;
-			}
-		}
+	private static (Stack<char>[], IEnumerable<Instruction>) ParseInput(string input) {
+		string[] inputBlocks = input.Split(Environment.NewLine + Environment.NewLine);
 
-		Stack<char>[] stacks = ParseStacks(input[..(blankLineNo - 1)], noOfStacks);
-		var instructions = input[(blankLineNo + 1)..].Select(i => ParseInstruction(i));
+		Stack<char>[] stacks = ParseStacks(inputBlocks[0].Split(Environment.NewLine));
+		IEnumerable<Instruction> instructions = inputBlocks[1].Split(Environment.NewLine).Select(i => ParseInstruction(i));
 
 		return (stacks, instructions);
 	}
 
-	private static Stack<char>[] ParseStacks(string[] input, int noOfStacks) {
+	/// <summary>
+	/// 
+	/// Input Pattern:
+	///      [D]    
+	///  [N] [C]
+	///  [Z] [M] [P]
+	///   1   2   3 
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <param name="noOfStacks"></param>
+	/// <returns></returns>
+	private static Stack<char>[] ParseStacks(string[] input) {
+		int noOfStacks = int.Parse(input[^1].Trim().Split(' ')[^1]);
 		Stack<char>[] stacks = new Stack<char>[noOfStacks];
 		for (int s = 0; s < noOfStacks; s++) {
 			stacks[s] = new();
 		}
 
-		for (int i = input.Length - 1; i >= 0; i--) {
+		for (int i = input.Length - 2; i >= 0; i--) {
 			for (int s = 0; s < noOfStacks; s++) {
 				int offset = (s) * 4 + 1;
 				char crate = input[i][offset];
@@ -86,8 +91,19 @@ public sealed partial class Day05 {
 		return stacks;
 	}
 
+	/// <summary>
+	/// 
+	/// Input Pattern:
+	/// move 1 from 2 to 1
+	/// move 3 from 1 to 3
+	/// move 2 from 2 to 1
+	/// move 1 from 1 to 2
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
 	private static Instruction ParseInstruction(string input) {
 		string[] tokens = input.Split(' ');
-		return new(int.Parse(tokens[1]), int.Parse(tokens[3]), int.Parse(tokens[5]));
+		return new(tokens[1].AsInt(), tokens[3].AsInt(), tokens[5].AsInt());
 	}
 }

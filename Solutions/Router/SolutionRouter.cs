@@ -59,11 +59,19 @@ static public class SolutionRouter {
 		}
 
 		input = input.StripTrailingBlankLineOrDefault();
-		int noOfParameters = method.GetParameters().Length;
+		ParameterInfo[] parameters = method.GetParameters();
+		int noOfParameters = parameters.Length;
+		string parameterType = parameters[0].ParameterType.Name;
+		object inputObject = parameterType switch {
+			"String[]" => input,
+			"String" => String.Join(Environment.NewLine, input),
+			_ => throw new NotImplementedException(),
+		};
 
 		return noOfParameters switch {
 			0 => NO_PARAMETERS,
-			1 => method.Invoke(0, new object[] { input })?.ToString() ?? "", { } => method.Invoke(0, new object[] { input, args! })?.ToString() ?? ""
+			1 => method.Invoke(0, new object[] { inputObject })?.ToString() ?? "",
+			_ => method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""
 		};
 
 	}
