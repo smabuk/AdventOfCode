@@ -15,12 +15,12 @@ public static partial class Helpers {
 
 		// Start: Fix for xUnit test project
 		if (Path.GetFileName(Path.GetDirectoryName(fullFilename))?.StartsWith("net") ?? false) {
-			fullFilename = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "Data", filename));
+			fullFilename = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "Data", filename));
 		}
 		// End: Fix for xUnit test project
 
 		if (File.Exists(fullFilename)) {
-			input = File.ReadAllText(fullFilename).Split("\n");
+			input = File.ReadAllText(fullFilename).Replace("\r", "").Split("\n");
 		}
 
 		return input;
