@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace AdventOfCode.Solutions._2022;
+﻿namespace AdventOfCode.Solutions._2022;
 
 /// <summary>
 /// Day 07: No Space Left On Device
@@ -11,24 +9,25 @@ public sealed partial class Day07 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	private record Directory(string Name, Directory Parent) {
-		public Dictionary<string, Directory> Directories { get; set; } = new();
-		public Dictionary<string, File> Files { get; set; } = new();
-
-		public void AddDirectory(string name) {
-			Directories.TryAdd(name, new Directory(name, this));
-		}
-		public void AddFile(File file) {
-			Files.TryAdd(file.Name, file);
-		}
-
-		public int Size => Directories.Sum(x => x.Value.Size) + Files.Sum(x => x.Value.Size);
-	};
-
-	private record File(string Name, int Size);
-
 	private static int Solution1(string[] input) {
-		string[] terminalOutput = input;
+		Directory fileSystem = ParseAndCreate(input);
+		return TotalOfSubDirectoriesWithSizeLessThan(fileSystem, 100_000);
+	}
+
+	private static int Solution2(string[] input) {
+		const int DiskSpaceAvailable  = 70_000_000;
+		const int RequiredUnusedSpace = 30_000_000;
+
+		Directory fileSystem = ParseAndCreate(input);
+		int spaceToFreeUp = RequiredUnusedSpace - (DiskSpaceAvailable - fileSystem.Size);
+
+		return GetAllSubDirectories(fileSystem)
+			.Select(x => x.Size)
+			.Where(x => x >= spaceToFreeUp)
+			.Min();
+	}
+
+	private static Directory ParseAndCreate(string[] terminalOutput) {
 		Directory fileSystem = new("/", null!);
 		Directory currentDirectory = fileSystem;
 		for (int i = 0; i < terminalOutput.Length; i++) {
@@ -46,42 +45,48 @@ public sealed partial class Day07 {
 			} else if (output.StartsWith("dir")) {
 				string directoryName = output[4..];
 				currentDirectory.AddDirectory(new(directoryName));
-				// tempCurrentDirectory = currentDirectory.Directories[directoryName];
-			} else if (Char.IsNumber(output[0])) {
+		} else if (Char.IsNumber(output[0])) {
 				string[] tokens = output.Split(" ");
-				currentDirectory.AddFile(new(tokens[1], int.Parse(tokens[0])));
+				currentDirectory.AddFile(tokens[1], tokens[0].AsInt());
 			}
 		}
 
-		return WalkDirectoryTreeAndCountLarge(fileSystem);
+		return fileSystem;
 	}
 
-	private static int WalkDirectoryTreeAndCountLarge(Directory directory) {
-		int size = directory.Size <= 100000 ? directory.Size : 0;
+	private static int TotalOfSubDirectoriesWithSizeLessThan(Directory directory, int targetSize) {
+		int size = directory.Size <= targetSize ? directory.Size : 0;
 		foreach (Directory subDir in directory.Directories.Values) {
-			// Resursive call for each subdirectory.
-			size += WalkDirectoryTreeAndCountLarge(subDir);
+			size += TotalOfSubDirectoriesWithSizeLessThan(subDir, targetSize);
 		}
 		return size;
 	}
 
-
-	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		//List<RecordType> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
+	private static List<Directory> GetAllSubDirectories(Directory directory) {
+		List<Directory> subDirs = new() { directory };
+		foreach (Directory subDir in directory.Directories.Values) {
+			subDirs.AddRange(GetAllSubDirectories(subDir));
+		}
+		return subDirs;
 	}
 
-	//private static RecordType ParseLine(string input) {
-	//	//MatchCollection match = InputRegEx().Matches(input);
-	//	Match match = InputRegEx().Match(input);
-	//	if (match.Success) {
-	//		return new(match.Groups["opts"].Value, int.Parse(match.Groups["number"].Value));
-	//	}
-	//	return null!;
-	//}
 
-	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]\d+)""")]
-	private static partial Regex InputRegEx();
+	private record File(string Name, int Size);
+	
+	private record Directory(string Name, Directory Parent) {
+		public Dictionary<string, Directory> Directories { get; set; } = new();
+		public Dictionary<string, File> Files { get; set; } = new();
+
+		public void AddDirectory(string name) {
+			Directories.TryAdd(name, new Directory(name, this));
+		}
+
+		public void AddFile(string name, int size) {
+			Files.TryAdd(name, new(name, size));
+		}
+
+		public int Size => Directories.Sum(x => x.Value.Size) + Files.Sum(x => x.Value.Size);
+	};
+
+
 }
