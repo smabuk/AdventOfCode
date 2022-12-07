@@ -5,7 +5,7 @@
 /// https://adventofcode.com/2022/day/7
 /// </summary>
 [Description("No Space Left On Device")]
-public sealed partial class Day07 {
+public sealed class Day07 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
@@ -50,7 +50,6 @@ public sealed partial class Day07 {
 				currentDirectory.AddFile(tokens[1], tokens[0].AsInt());
 			}
 		}
-
 		return fileSystem;
 	}
 

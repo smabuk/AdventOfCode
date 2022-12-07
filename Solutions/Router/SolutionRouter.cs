@@ -8,9 +8,10 @@ static public class SolutionRouter {
 	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
 	public static string? GetProblemDescription(int year, int day) {
+		string assemblyName = $"AdventOfCode.Solutions.{year}";
 		Assembly assembly;
 		try {
-			assembly = Assembly.Load($"AdventOfCode.Solutions.{year}");
+			assembly = Assembly.Load(assemblyName);
 		} catch (Exception) {
 			return NO_SOLUTION;
 		}
@@ -36,14 +37,14 @@ static public class SolutionRouter {
 	}
 
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
-
 		if (input is null) {
 			return NO_INPUT;
 		}
 
+		string assemblyName = $"AdventOfCode.Solutions.{year}";
 		Assembly assembly;
 		try {
-			assembly = Assembly.Load($"AdventOfCode.Solutions.{year}");
+			assembly = Assembly.Load(assemblyName);
 		} catch (Exception) {
 			return NO_SOLUTION;
 		}
@@ -57,6 +58,11 @@ static public class SolutionRouter {
 		if (method is null) {
 			return NO_SOLUTION;
 		}
+
+		//var initMethod =
+		//	from m in method.DeclaringType?.GetMethods()
+		//	where m.GetCustomAttributes().Where(a => (a.ToString() ?? "").EndsWith("InitAttribute")).Any()
+		//	select ((MethodInfo)m);
 
 		input = input.StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
