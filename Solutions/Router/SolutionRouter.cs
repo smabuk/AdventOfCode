@@ -3,7 +3,7 @@
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
-	private const string NO_SOLUTION = "** Solution not written yet **";
+	private const string NO_SOLUTION = "** No Solution **";
 	private const string NO_INPUT = "** NO INPUT DATA **";
 	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
@@ -19,32 +19,71 @@ static public class SolutionRouter {
 			: NO_SOLUTION;
 	}
 
-	public static (string answer1, string answer2) SolveDay(int year, int day, string? input, params object[]? args) {
-		return SolveDay( year,  day, input?.Split(Environment.NewLine), args);
-	}
+	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, params object[]? args)
+		=> SolveDay(year, day, input?.Split(Environment.NewLine), args);
 
-	public static (string answer1, string answer2) SolveDay(int year, int day, string[]? input, params object[]? args) {
+	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, params object[]? args) {
 		if (input is null) {
-			return (NO_INPUT, NO_INPUT);
+			yield return SolutionPhase.NoInput;
+			yield break;
 		}
 
 		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
 		if (dayTypeInfo is null) {
-			return (NO_SOLUTION, NO_SOLUTION);
+			yield return SolutionPhase.NoSolution;
+			yield break;
 		}
 
+		MethodInfo[] methods = dayTypeInfo.GetMethods();
+
+		System.Diagnostics.Stopwatch timer = new();
+		MethodInfo? initMethod = methods
+			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
+			.SingleOrDefault();
+
+		timer.Restart();
 		input = input.StripTrailingBlankLineOrDefault();
-		InitInput(input, args, dayTypeInfo);
+		InitInput(input, args, methods);
+		timer.Stop();
+		yield return new SolutionPhase("Init") with { Elapsed = timer.Elapsed };
 
-		string answer1 = SolveProblem(year, day, 1, input, args);
-		string answer2 = SolveProblem(year, day, 2, input, args);
 
-		return (answer1, answer2);
+		MethodInfo ? method1 = methods
+			.Where(m => m.Name == $"Part1")
+			.SingleOrDefault();
+
+		timer.Restart();
+		string answer1 = NO_SOLUTION;
+		if (method1 is not null) {
+			answer1 = InvokeSolutionMethod(input, args, method1);
+		}
+
+		timer.Stop();
+		yield return answer1.Contains("written") switch {
+			false => new SolutionPhase("Part1") with { Answer = answer1, Elapsed = timer.Elapsed },
+			true => SolutionPhase.NoSolutionPart1,
+		};
+
+		MethodInfo? method2 = methods
+			.Where(m => m.Name == $"Part2")
+			.SingleOrDefault();
+
+		string answer2 = NO_SOLUTION;
+		timer.Restart();
+		if (method2 is not null) {
+			answer2 = InvokeSolutionMethod(input, args, method2);
+		}
+
+		timer.Stop();
+		yield return answer2.Contains("written") switch {
+			false => new SolutionPhase("Part2") with { Answer = answer2, Elapsed = timer.Elapsed },
+			true => SolutionPhase.NoSolutionPart2,
+		};
+
 	}
 
-	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) {
-		return SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), args);
-	}
+	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) 
+		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), args);
 
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
 		if (input is null) {
@@ -56,10 +95,11 @@ static public class SolutionRouter {
 			return NO_SOLUTION;
 		}
 
-		InitInput(input, args, dayTypeInfo);
+		MethodInfo[] methods = dayTypeInfo.GetMethods();
 
-		MethodInfo? method =
-			dayTypeInfo.GetMethods()
+		InitInput(input, args, methods);
+
+		MethodInfo? method = methods
 			.Where(m => m.Name == $"Part{problemNo}")
 			.SingleOrDefault();
 
@@ -82,9 +122,8 @@ static public class SolutionRouter {
 		return assembly.DefinedTypes.SingleOrDefault(x => x.Name == $"Day{day:D2}");
 	}
 
-	private static void InitInput(object input, object[]? args, TypeInfo classDay) {
-		MethodInfo? initMethod =
-			classDay.GetMethods()
+	private static void InitInput(object input, object[]? args, MethodInfo[] methods) {
+		MethodInfo? initMethod = methods
 			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
 			.SingleOrDefault();
 

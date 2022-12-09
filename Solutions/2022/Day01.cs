@@ -7,34 +7,26 @@
 [Description("Calorie Counting")]
 public sealed partial class Day01 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	[Init] public static void Init(string[] input, params object[]? _) => ProcessInput(input);
+	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
-	private static int Solution1(string[] input) {
-		int caloriesMax = 0;
+	static int caloriesMax = 0;
+	static int[] caloriesPerElf = new int[3];
 
+	private static int Solution1() => caloriesMax;
+
+	private static int Solution2() => caloriesPerElf.Sum();
+
+	private static void ProcessInput(string[] input) {
+		caloriesMax = 0;
+		caloriesPerElf = new int[3];
 		int calories = 0;
 		for (int i = 0; i <= input.Length; i++) {
 			if (i == input.Length || input[i] == "") {
 				if (calories > caloriesMax) {
 					caloriesMax = calories;
 				}
-				calories = 0;
-			} else {
-				calories += input[i].AsInt();
-				;
-			}
-		}
-
-		return caloriesMax;
-	}
-
-	private static int Solution2(string[] input) {
-		int[] caloriesPerElf = new int[3];
-
-		int calories = 0;
-		for (int i = 0; i <= input.Length; i++) {
-			if (i == input.Length || input[i] == "") {
 				int minLargeCalories = caloriesPerElf.Min();
 				if (calories > minLargeCalories) {
 					for (int e = 0; e < 3; e++) {
@@ -49,8 +41,5 @@ public sealed partial class Day01 {
 				calories += input[i].AsInt();
 			}
 		}
-
-		return caloriesPerElf.Sum();
 	}
-
 }

@@ -7,13 +7,21 @@
 [Description("Supply Stacks")]
 public sealed partial class Day05 {
 
-	public static string Part1(string input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string input, params object[]? _) => Solution2(input).ToString();
+	[Init] public static void Init(string input, params object[]? _) => Load(input);
+	public static string Part1(string input, params object[]? _) => Solution1().ToString();
+	public static string Part2(string input, params object[]? _) => Solution2().ToString();
 
-	private static string Solution1(string input) {
-		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
+	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
+	private static Stack<char>[] _initialStacks = Array.Empty<Stack<char>>();
 
-		foreach (Instruction instruction in instructions) {
+	private static void Load(string input) {
+		(_initialStacks, _instructions) = ParseInput(input);
+	}
+
+	private static string Solution1() {
+		Stack<char>[] stacks = _initialStacks.Select(s => new Stack<char>(s.Reverse())).ToArray();
+
+		foreach (Instruction instruction in _instructions) {
 			for (int i = 0; i < instruction.Quantity; i++) {
 				stacks[instruction.To - 1].Push(stacks[instruction.From - 1].Pop());
 			}
@@ -22,10 +30,10 @@ public sealed partial class Day05 {
 		return GetMessage(stacks);
 	}
 
-	private static string Solution2(string input) {
-		(Stack<char>[] stacks, IEnumerable<Instruction> instructions) = ParseInput(input);
+	private static string Solution2() {
+		Stack<char>[] stacks = _initialStacks.Select(s => new Stack<char>(s.Reverse())).ToArray();
 
-		foreach (Instruction instruction in instructions) {
+		foreach (Instruction instruction in _instructions) {
 			char[] crates = new char[instruction.Quantity];
 			for (int i = 0; i < instruction.Quantity; i++) {
 				crates[i] = stacks[instruction.From - 1].Pop();
