@@ -8,28 +8,19 @@ static public class SolutionRouter {
 	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
 
 	public static string? GetProblemDescription(int year, int day) {
-		string assemblyName = $"AdventOfCode.Solutions.{year}";
-		Assembly assembly;
-		try {
-			assembly = Assembly.Load(assemblyName);
-		} catch (Exception) {
+		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
+		if (dayTypeInfo is null) {
 			return NO_SOLUTION;
 		}
 
-		Type? type =
-			(from a in assembly.GetTypes()
-			 from m in a.GetMethods()
-			 where m.Name == $"Part1" && (m.ReflectedType?.FullName?.EndsWith($".Day{day:D2}") ?? false)
-			 select ((MethodInfo)m)).SingleOrDefault()?.DeclaringType;
-
-		if (type is null) {
-			return NO_SOLUTION;
-		}
-
-		DescriptionAttribute[] descriptionAttributes = (DescriptionAttribute[])type.GetCustomAttributes(typeof(DescriptionAttribute), false);
+		DescriptionAttribute[] descriptionAttributes = (DescriptionAttribute[])dayTypeInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
 		return descriptionAttributes.Length > 0
 			? ((DescriptionAttribute)descriptionAttributes.First()).Description
 			: NO_SOLUTION;
+	}
+
+	public static (string answer1, string answer2) SolveDay(int year, int day, string? input, params object[]? args) {
+		return SolveDay( year,  day, input?.Split(Environment.NewLine), args);
 	}
 
 	public static (string answer1, string answer2) SolveDay(int year, int day, string[]? input, params object[]? args) {
@@ -37,46 +28,13 @@ static public class SolutionRouter {
 			return (NO_INPUT, NO_INPUT);
 		}
 
-		string assemblyName = $"AdventOfCode.Solutions.{year}";
-		Assembly assembly;
-		try {
-			assembly = Assembly.Load(assemblyName);
-		} catch (Exception) {
-			return (NO_SOLUTION, NO_SOLUTION);
-		}
-
-		var classDay = assembly.DefinedTypes.Where(x => x.Name == $"Day{day:D2}").SingleOrDefault();
-
-		if (classDay is null) {
+		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
+		if (dayTypeInfo is null) {
 			return (NO_SOLUTION, NO_SOLUTION);
 		}
 
 		input = input.StripTrailingBlankLineOrDefault();
-
-		var initMethod =
-			(from m in classDay.GetMethods()
-			 where m.GetCustomAttributes().Where(a => (a.ToString() ?? "").EndsWith("InitAttribute")).Any()
-			 select ((MethodInfo)m))
-			.SingleOrDefault();
-
-		if (initMethod is not null) {
-			ParameterInfo[] parameters = initMethod.GetParameters();
-			int noOfParameters = parameters.Length;
-			string parameterType = parameters[0].ParameterType.Name;
-			object inputObject = parameterType switch {
-				"String[]" => input,
-				"String" => String.Join(Environment.NewLine, input),
-				_ => throw new NotImplementedException(),
-			};
-			if (noOfParameters == 0) {
-				initMethod.Invoke(0, null);
-			} else if (noOfParameters == 1) {
-				initMethod.Invoke(0, new object[] { inputObject });
-			} else {
-				initMethod.Invoke(0, new object[] { inputObject, args! });
-			};
-
-		}
+		InitInput(input, args, dayTypeInfo);
 
 		string answer1 = SolveProblem(year, day, 1, input, args);
 		string answer2 = SolveProblem(year, day, 2, input, args);
@@ -93,31 +51,56 @@ static public class SolutionRouter {
 			return NO_INPUT;
 		}
 
-		string assemblyName = $"AdventOfCode.Solutions.{year}";
-		Assembly assembly;
-		try {
-			assembly = Assembly.Load(assemblyName);
-		} catch (Exception) {
+		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
+		if (dayTypeInfo is null) {
 			return NO_SOLUTION;
 		}
 
+		InitInput(input, args, dayTypeInfo);
+
 		MethodInfo? method =
-			(from a in assembly.GetTypes()
-			 from m in a.GetMethods()
-			 where m.Name == $"Part{problemNo}" && (m.ReflectedType?.FullName?.EndsWith($".Day{day:D2}") ?? false)
-			 select ((MethodInfo)m)).SingleOrDefault();
+			dayTypeInfo.GetMethods()
+			.Where(m => m.Name == $"Part{problemNo}")
+			.SingleOrDefault();
 
 		if (method is null) {
 			return NO_SOLUTION;
 		}
 
-		input = input.StripTrailingBlankLineOrDefault();
+		return InvokeSolutionMethod(input, args, method);
+	}
+
+	private static TypeInfo? TryGetDayTypeInfo(int year, int day) {
+		string assemblyName = $"AdventOfCode.Solutions.{year}";
+		Assembly assembly;
+		try {
+			assembly = Assembly.Load(assemblyName);
+		} catch (Exception) {
+			return null;
+		}
+
+		return assembly.DefinedTypes.SingleOrDefault(x => x.Name == $"Day{day:D2}");
+	}
+
+	private static void InitInput(object input, object[]? args, TypeInfo classDay) {
+		MethodInfo? initMethod =
+			classDay.GetMethods()
+			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
+			.SingleOrDefault();
+
+		if (initMethod is not null) {
+			_ = InvokeSolutionMethod(input, args, initMethod);
+		}
+	}
+
+	private static string InvokeSolutionMethod(object input, object[]? args, MethodInfo method) {
+		input = (input as string[]).StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
 		int noOfParameters = parameters.Length;
 		string parameterType = parameters[0].ParameterType.Name;
 		object inputObject = parameterType switch {
 			"String[]" => input,
-			"String" => String.Join(Environment.NewLine, input),
+			"String" => String.Join(Environment.NewLine, (string[])input),
 			_ => throw new NotImplementedException(),
 		};
 
@@ -126,6 +109,5 @@ static public class SolutionRouter {
 			1 => method.Invoke(0, new object[] { inputObject })?.ToString() ?? "",
 			_ => method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""
 		};
-
 	}
 }
