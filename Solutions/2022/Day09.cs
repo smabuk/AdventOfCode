@@ -8,8 +8,8 @@
 public sealed partial class Day09 {
 
 	[Init] public static void Init(string[] input, params object[]? _) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution(2).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution(10).ToString();
 
 	private static List<Instruction> instructions = new();
 
@@ -17,41 +17,21 @@ public sealed partial class Day09 {
 		instructions = input.Select(i => Instruction.Parse(i)).ToList();
 	}
 
-	private static int Solution1() {
-		HashSet<Point> tailPoints = new();
-		Point head = new(0, 0);
-		Point tail = new(0, 0);
-		tailPoints.Add(tail);
-
-		foreach (Instruction instruction in instructions) {
-			for (int i = 0; i < instruction.Steps; i++) {
-				head = MoveHead(head, instruction.Direction);
-				tail = MoveTail(head, tail);
-				tailPoints.Add(tail);
-			}
-		}
-
-		return tailPoints.Count;
-	}
-
-	private static int Solution2() {
-		const int NO_OF_KNOTS = 10;
+	private static int Solution(int noOfKnots) {
 		const int HEAD = 0;
-		const int TAIL = 9;
 		HashSet<Point> tailPoints = new();
-		Point[] knots= new Point[NO_OF_KNOTS];
-		for (int i = 0; i < NO_OF_KNOTS; i++) {
-			knots[i] = new Point(0, 0);
-		}
-		tailPoints.Add(knots[TAIL]);
+		Point[] knots= new Point[noOfKnots];
+		
+		int tailKnot = noOfKnots - 1;
+		tailPoints.Add(knots[tailKnot]);
 
 		foreach (Instruction instruction in instructions) {
 			for (int i = 0; i < instruction.Steps; i++) {
 				knots[HEAD] = MoveHead(knots[HEAD], instruction.Direction);
-				for (int knot = 0; knot < NO_OF_KNOTS - 1; knot++) {
+				for (int knot = 0; knot < noOfKnots - 1; knot++) {
 					knots[knot + 1] = MoveTail(knots[knot], knots[knot+1]);
 				}
-				tailPoints.Add(knots[TAIL]);
+				tailPoints.Add(knots[tailKnot]);
 			}
 		}
 
@@ -83,6 +63,7 @@ public sealed partial class Day09 {
 
 		public static Instruction Parse(string input) {
 			string[] tokens = input.Split(' ');
+
 			Direction direction = tokens[0] switch {
 				"L" => Direction.Left,
 				"R" => Direction.Right,
@@ -90,10 +71,16 @@ public sealed partial class Day09 {
 				"D" => Direction.Down,
 				_ => throw new ArgumentException(input),
 			};
+
 			return new(direction, tokens[1].AsInt());
 		}
 
 	};
 
-	private enum Direction { Left, Right, Up, Down }
+	private enum Direction {
+		Left,
+		Right,
+		Up,
+		Down
+	}
 }
