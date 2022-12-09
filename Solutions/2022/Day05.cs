@@ -7,15 +7,18 @@
 [Description("Supply Stacks")]
 public sealed partial class Day05 {
 
-	[Init] public static void Init(string input, params object[]? _) => Load(input);
+	[Init] public static void Init(string input, params object[]? _) => LoadInstructionsAndStacks(input);
 	public static string Part1(string input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string input, params object[]? _) => Solution2().ToString();
 
 	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
 	private static Stack<char>[] _initialStacks = Array.Empty<Stack<char>>();
 
-	private static void Load(string input) {
-		(_initialStacks, _instructions) = ParseInput(input);
+	private static void LoadInstructionsAndStacks(string input) {
+		string[] inputBlocks = input.Split(Environment.NewLine + Environment.NewLine);
+
+		_initialStacks = ParseStacks(inputBlocks[0].Split(Environment.NewLine));
+		_instructions = inputBlocks[1].Split(Environment.NewLine).Select(i => Instruction.Parse(i));
 	}
 
 	private static string Solution1() {
@@ -56,16 +59,20 @@ public sealed partial class Day05 {
 		return message;
 	}
 
-	private record struct Instruction(int Quantity, int From, int To);
-
-	private static (Stack<char>[], IEnumerable<Instruction>) ParseInput(string input) {
-		string[] inputBlocks = input.Split(Environment.NewLine + Environment.NewLine);
-
-		Stack<char>[] stacks = ParseStacks(inputBlocks[0].Split(Environment.NewLine));
-		IEnumerable<Instruction> instructions = inputBlocks[1].Split(Environment.NewLine).Select(i => ParseInstruction(i));
-
-		return (stacks, instructions);
-	}
+	private record struct Instruction(int Quantity, int From, int To) {
+		/// <summary>
+		/// 
+		/// Input Pattern:
+		/// move 1 from 2 to 1
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public static Instruction Parse(string input) {
+			string[] tokens = input.Split(' ');
+			return new(tokens[1].AsInt(), tokens[3].AsInt(), tokens[5].AsInt());
+		}
+	};
 
 	/// <summary>
 	/// 
@@ -99,19 +106,4 @@ public sealed partial class Day05 {
 		return stacks;
 	}
 
-	/// <summary>
-	/// 
-	/// Input Pattern:
-	/// move 1 from 2 to 1
-	/// move 3 from 1 to 3
-	/// move 2 from 2 to 1
-	/// move 1 from 1 to 2
-	/// 
-	/// </summary>
-	/// <param name="input"></param>
-	/// <returns></returns>
-	private static Instruction ParseInstruction(string input) {
-		string[] tokens = input.Split(' ');
-		return new(tokens[1].AsInt(), tokens[3].AsInt(), tokens[5].AsInt());
-	}
 }

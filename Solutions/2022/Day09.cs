@@ -11,11 +11,10 @@ public sealed partial class Day09 {
 	public static string Part1(string[] input, params object[]? _) => Solution(2).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution(10).ToString();
 
-	private static List<Instruction> instructions = new();
+	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
 
-	private static void LoadInstructions(string[] input) {
-		instructions = input.Select(i => Instruction.Parse(i)).ToList();
-	}
+	private static void LoadInstructions(string[] input) =>
+		_instructions = input.Select(i => Instruction.Parse(i));
 
 	private static int Solution(int noOfKnots) {
 		const int HEAD = 0;
@@ -25,7 +24,7 @@ public sealed partial class Day09 {
 		int tailKnot = noOfKnots - 1;
 		tailPoints.Add(knots[tailKnot]);
 
-		foreach (Instruction instruction in instructions) {
+		foreach (Instruction instruction in _instructions) {
 			for (int i = 0; i < instruction.Steps; i++) {
 				knots[HEAD] = MoveHead(knots[HEAD], instruction.Direction);
 				for (int knot = 0; knot < noOfKnots - 1; knot++) {
