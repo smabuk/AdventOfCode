@@ -41,8 +41,8 @@ static public class SolutionRouter {
 			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
 			.SingleOrDefault();
 
-		timer.Restart();
 		input = input.StripTrailingBlankLineOrDefault();
+		timer.Restart();
 		InitInput(input, args, methods);
 		timer.Stop();
 		yield return new SolutionPhase("Init") with { Elapsed = timer.Elapsed };

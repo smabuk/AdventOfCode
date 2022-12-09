@@ -7,6 +7,7 @@
 [Description("")]
 public sealed partial class DayXX {
 
+	// [Init] public static void Init(string[] input, params object[]? _) => Load(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 

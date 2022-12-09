@@ -8,24 +8,19 @@
 public sealed partial class Day08 {
 
 	[Init] public static void Init(string[] input, params object[]? _) => CreateMap(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
-	private static int[,] grid = default!;
-	private static  bool InitInput = true;
+	private static int[,] _heightMap = default!;
 
 	private static void CreateMap(string[] input) {
-		grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		InitInput = false;
+		_heightMap = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
 	}
 
-	private static int Solution1(string[] input) {
+	private static int Solution1() {
 		int visibleTrees = 0;
-		if (InitInput) {
-			grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		}
-		int columns = grid.NoOfColumns();
-		int rows = grid.NoOfRows();
+		int columns = _heightMap.NoOfColumns();
+		int rows = _heightMap.NoOfRows();
 
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < columns; col++) {
@@ -42,7 +37,7 @@ public sealed partial class Day08 {
 				return true;
 			}
 
-			int tree = grid[col, row];
+			int tree = _heightMap[col, row];
 
 			return IsVisibleInDirection(-1, 0)
 				|| IsVisibleInDirection(1, 0)
@@ -52,7 +47,7 @@ public sealed partial class Day08 {
 			bool IsVisibleInDirection(int dX, int dY) {
 				int newCol = col + dX, newRow = row + dY;
 				while (newCol != -1 && newRow != -1 && newCol != columns && newRow != rows) {
-					if (grid[newCol, newRow] >= tree) {
+					if (_heightMap[newCol, newRow] >= tree) {
 						return false;
 					}
 					newCol += dX;
@@ -63,13 +58,10 @@ public sealed partial class Day08 {
 		}
 	}
 
-	private static long Solution2(string[] input) {
+	private static long Solution2() {
 		long scenicScoreMax = 0;
-		if (InitInput) {
-			grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		}
-		int columns = grid.NoOfColumns();
-		int rows = grid.NoOfRows();
+		int columns = _heightMap.NoOfColumns();
+		int rows = _heightMap.NoOfRows();
 
 		for (int row = 1; row < rows - 1; row++) {
 			for (int col = 1; col < columns - 1; col++) {
@@ -84,7 +76,7 @@ public sealed partial class Day08 {
 				return 0;
 			}
 
-			int tree = grid[col, row];
+			int tree = _heightMap[col, row];
 
 			return ViewingDistance(-1, 0)
 				* ViewingDistance(1, 0)
@@ -96,7 +88,7 @@ public sealed partial class Day08 {
 				int newCol = col + dX, newRow = row + dY;
 				while (newCol != -1 && newRow != -1 && newCol != columns && newRow != rows) {
 					viewingDistance++;
-					if (grid[newCol, newRow] >= tree) {
+					if (_heightMap[newCol, newRow] >= tree) {
 						break;
 					}
 					newCol += dX;

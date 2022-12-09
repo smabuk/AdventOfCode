@@ -13,8 +13,9 @@ public sealed partial class Day09 {
 
 	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
 
-	private static void LoadInstructions(string[] input) =>
+	private static void LoadInstructions(string[] input) {
 		_instructions = input.Select(i => Instruction.Parse(i));
+	}
 
 	private static int Solution(int noOfKnots) {
 		const int HEAD = 0;
