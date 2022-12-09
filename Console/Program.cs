@@ -88,14 +88,17 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
 
+
 	void OutputTimings(TimeSpan elapsed) {
-		if (elapsed.TotalMicroseconds <= 6000) {
+		if (elapsed.TotalNanoseconds <= 999) {
+			Console.Write($" {elapsed.TotalNanoseconds,4:F0}ns");
+		} else if (elapsed.TotalMicroseconds <= 999) {
 			Console.Write($" {elapsed.TotalMicroseconds,4:F0}µs");
-		} else if (elapsed.TotalMilliseconds <= 6000) {
+		} else if (elapsed.TotalMilliseconds <= 999) {
 			Console.Write($" {elapsed.TotalMilliseconds,4:F0}ms");
 		} else {
 			Console.ForegroundColor = ConsoleColor.Red;
-			Console.Write($" {elapsed.TotalSeconds,4:%s} s");
+			Console.Write($" {elapsed.TotalSeconds,5:F1}s");
 			Console.ResetColor();
 		}
 	}
