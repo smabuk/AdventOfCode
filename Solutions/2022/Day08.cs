@@ -7,12 +7,23 @@
 [Description("Treetop Tree House")]
 public sealed partial class Day08 {
 
+	[Init] public static void Init(string[] input, params object[]? _) => CreateMap(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
+	private static int[,] grid = default!;
+	private static  bool InitInput = true;
+
+	private static void CreateMap(string[] input) {
+		grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		InitInput = false;
+	}
+
 	private static int Solution1(string[] input) {
 		int visibleTrees = 0;
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		if (InitInput) {
+			grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		}
 		int columns = grid.NoOfColumns();
 		int rows = grid.NoOfRows();
 
@@ -54,7 +65,9 @@ public sealed partial class Day08 {
 
 	private static long Solution2(string[] input) {
 		long scenicScoreMax = 0;
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		if (InitInput) {
+			grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		}
 		int columns = grid.NoOfColumns();
 		int rows = grid.NoOfRows();
 

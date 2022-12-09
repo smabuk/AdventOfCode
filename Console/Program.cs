@@ -30,11 +30,11 @@ System.Diagnostics.Stopwatch totalTimer = new();
 totalTimer.Start();
 
 if (date.Month == 12 && date.Day <= 25) {
-	GetInputDataAndSolve(date.Year, date.Day, null, null, solutionArgs);
+	GetInputDataAndSolveV2(date.Year, date.Day, null, null, solutionArgs);
 } else {
 	for (int day = 1; day <= 25; day++) {
 		if (dateNow >= new DateOnly(date.Year, 12, day)) {
-			GetInputDataAndSolve(date.Year, day);
+			GetInputDataAndSolveV2(date.Year, day);
 		}
 	}
 }
@@ -99,6 +99,74 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		Console.ForegroundColor = answerColour;
 		Console.WriteLine($"  {Problem2Answer}");
 		Console.ResetColor();
+	} else {
+		Console.WriteLine($"     ** NO INPUT DATA **");
+	}
+
+	void OutputTimings() {
+		int stopWatchMicroSecondsMultiplier = (int)(System.Diagnostics.Stopwatch.Frequency / 1_000_000);
+		if (System.Diagnostics.Stopwatch.IsHighResolution && (timer.ElapsedTicks / stopWatchMicroSecondsMultiplier) < 10_000) {
+			Console.Write($" {timer.ElapsedTicks / stopWatchMicroSecondsMultiplier,4}µs");
+		} else if (timer.ElapsedMilliseconds <= 3000) {
+			Console.Write($" {timer.ElapsedMilliseconds,4}ms");
+		} else {
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.Write($" {timer.Elapsed,4:%s} s");
+			Console.ResetColor();
+		}
+	}
+}
+static void GetInputDataAndSolveV2(int year, int day, string? title = null, string[]? input = null, params object[]? args) {
+	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
+
+	if (File.Exists(filename)) {
+		input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+	} else {
+		filename = Path.GetFullPath(Path.Combine($"../Data/{year}_{day:D2}.txt"));
+		if (File.Exists(filename)) {
+			input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+		}
+	}
+
+	if (String.IsNullOrWhiteSpace(title)) {
+		title = GetProblemDescription(year, day) ?? $"";
+	}
+
+	System.Diagnostics.Stopwatch timer = new();
+	Console.Write($"{year} {day,2} {title,-38}");
+	if (input is not null) {
+		ConsoleColor answerColour;
+		answerColour = ConsoleColor.Green;
+		timer.Start();
+		string Problem1Answer;
+		string Problem2Answer;
+		try {
+			(Problem1Answer, Problem2Answer) = SolveDay(year, day, input, args);
+			timer.Stop();
+			Console.Write($" Pt1:");
+			OutputTimings();
+			Console.ForegroundColor = answerColour;
+			Console.Write($"  {Problem1Answer,-16}");
+			Console.ResetColor();
+
+			answerColour = ConsoleColor.Yellow;
+			if (Problem2Answer == "** Solution not written yet **") {
+				Problem2Answer = "** No Solution";
+				answerColour = ConsoleColor.White;
+			}
+			Console.Write($" Pt2:");
+			OutputTimings();
+			Console.ForegroundColor = answerColour;
+			Console.WriteLine($"  {Problem2Answer}");
+			Console.ResetColor();
+		} catch (Exception) {
+			timer.Stop();
+			Problem1Answer = "** Exception";
+			answerColour = ConsoleColor.Red;
+			Console.ForegroundColor = answerColour;
+			Console.WriteLine($"  {Problem1Answer,-16}");
+			Console.ResetColor();
+		}
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
