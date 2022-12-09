@@ -10,7 +10,7 @@ public sealed partial class DayXX {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	record RecordType(string Name, int Value);
+	private record RecordType(string Name, int Value);
 
 	private static string Solution1(string[] input) {
 		//string inputLine = input[0];
