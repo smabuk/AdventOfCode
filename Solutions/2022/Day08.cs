@@ -13,12 +13,12 @@ public sealed partial class Day08 {
 	private static int Solution1(string[] input) {
 		int visibleTrees = 0;
 		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		int gridWidth = grid.GetLength(0);
-		int gridHeight = grid.GetLength(1);
+		int columns = grid.NoOfColumns();
+		int rows = grid.NoOfRows();
 
-		for (int y = 0; y < gridHeight; y++) {
-			for (int x = 0; x < gridWidth; x++) {
-				if (IsVisible(x, y)) {
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < columns; col++) {
+				if (IsVisible(col, row)) {
 					visibleTrees++;
 				}
 			}
@@ -26,12 +26,12 @@ public sealed partial class Day08 {
 
 		return visibleTrees;
 
-		bool IsVisible(int x, int y) {
-			if (x == 0 || y == 0 || x == gridWidth - 1 || y == gridHeight - 1) {
+		bool IsVisible(int col, int row) {
+			if (col == 0 || row == 0 || col == columns - 1 || row == rows - 1) {
 				return true;
 			}
 
-			int tree = grid[x, y];
+			int tree = grid[col, row];
 
 			return IsVisibleInDirection(-1, 0)
 				|| IsVisibleInDirection(1, 0)
@@ -39,13 +39,13 @@ public sealed partial class Day08 {
 				|| IsVisibleInDirection(0, 1);
 
 			bool IsVisibleInDirection(int dX, int dY) {
-				int x1 = x + dX, y1 = y + dY;
-				while (x1 != -1 && y1 != -1 && x1 != gridWidth && y1 != gridHeight) {
-					if (grid[x1, y1] >= tree) {
+				int newCol = col + dX, newRow = row + dY;
+				while (newCol != -1 && newRow != -1 && newCol != columns && newRow != rows) {
+					if (grid[newCol, newRow] >= tree) {
 						return false;
 					}
-					x1 += dX;
-					y1 += dY;
+					newCol += dX;
+					newRow += dY;
 				}
 				return true;
 			}
@@ -55,23 +55,23 @@ public sealed partial class Day08 {
 	private static long Solution2(string[] input) {
 		long scenicScoreMax = 0;
 		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
-		int gridWidth = grid.GetLength(0);
-		int gridHeight = grid.GetLength(1);
+		int columns = grid.NoOfColumns();
+		int rows = grid.NoOfRows();
 
-		for (int y = 1; y < gridHeight - 1; y++) {
-			for (int x = 1; x < gridWidth - 1; x++) {
-				scenicScoreMax = Math.Max(ScenicScore(x, y), scenicScoreMax);
+		for (int row = 1; row < rows - 1; row++) {
+			for (int col = 1; col < columns - 1; col++) {
+				scenicScoreMax = Math.Max(ScenicScore(col, row), scenicScoreMax);
 			}
 		}
 
 		return scenicScoreMax;
 
-		long ScenicScore(int x, int y) {
-			if (x == 0 || y == 0 || x == gridWidth - 1 || y == gridHeight - 1) {
+		long ScenicScore(int col, int row) {
+			if (col == 0 || row == 0 || col == columns - 1 || row == rows - 1) {
 				return 0;
 			}
 
-			int tree = grid[x, y];
+			int tree = grid[col, row];
 
 			return ViewingDistance(-1, 0)
 				* ViewingDistance(1, 0)
@@ -80,14 +80,14 @@ public sealed partial class Day08 {
 
 			int ViewingDistance(int dX, int dY) {
 				int viewingDistance = 0;
-				int x1 = x + dX, y1 = y + dY;
-				while (x1 != -1 && y1 != -1 && x1 != gridWidth && y1 != gridHeight) {
+				int newCol = col + dX, newRow = row + dY;
+				while (newCol != -1 && newRow != -1 && newCol != columns && newRow != rows) {
 					viewingDistance++;
-					if (grid[x1, y1] >= tree) {
+					if (grid[newCol, newRow] >= tree) {
 						break;
 					}
-					x1 += dX;
-					y1 += dY;
+					newCol += dX;
+					newRow += dY;
 				}
 				return viewingDistance;
 			}
