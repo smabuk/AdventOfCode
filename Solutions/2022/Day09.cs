@@ -18,14 +18,8 @@ public sealed partial class Day09 {
 		tailPoints.Add(tail);
 
 		foreach (Instruction instruction in instructions) {
-			for (int i = 0; i < instruction.Value; i++) {
-				head = instruction.Direction switch {
-					Direction.Left => head with { X = head.X - 1 },
-					Direction.Right => head with { X = head.X + 1 },
-					Direction.Up => head with { Y = head.Y - 1 },
-					Direction.Down => head with { Y = head.Y + 1 },
-					_ => throw new NotImplementedException(),
-				};
+			for (int i = 0; i < instruction.Steps; i++) {
+				head = MoveHead(head, instruction.Direction);
 				tail = MoveTail(head, tail);
 				tailPoints.Add(tail);
 			}
@@ -34,28 +28,54 @@ public sealed partial class Day09 {
 		return tailPoints.Count;
 	}
 
-	private static string Solution2(string[] input) {
-		//List<string> inputs = input.ToList();
+	private static int Solution2(string[] input) {
+		const int NO_OF_KNOTS = 10;
+		const int HEAD = 0;
+		const int TAIL = 9;
 		List<Instruction> instructions = input.Select(i => ParseLine(i)).ToList();
-		return "** Solution not written yet **";
+		HashSet<Point> tailPoints = new();
+		Point[] knots= new Point[NO_OF_KNOTS];
+		for (int i = 0; i < NO_OF_KNOTS; i++) {
+			knots[i] = new Point(0, 0);
+		}
+		tailPoints.Add(knots[TAIL]);
+
+		foreach (Instruction instruction in instructions) {
+			for (int i = 0; i < instruction.Steps; i++) {
+				knots[HEAD] = MoveHead(knots[HEAD], instruction.Direction);
+				for (int knot = 0; knot < NO_OF_KNOTS - 1; knot++) {
+					knots[knot + 1] = MoveTail(knots[knot], knots[knot+1]);
+				}
+				tailPoints.Add(knots[TAIL]);
+			}
+		}
+
+		return tailPoints.Count;
+	}
+
+	private static Point MoveHead(Point head, Direction direction) {
+		return direction switch {
+			Direction.Left => head with { X = head.X - 1 },
+			Direction.Right => head with { X = head.X + 1 },
+			Direction.Up => head with { Y = head.Y - 1 },
+			Direction.Down => head with { Y = head.Y + 1 },
+			_ => throw new NotImplementedException(),
+		};
 	}
 
 	private static Point MoveTail(Point head, Point tail) {
-		int dX = head.X - tail.X;
-		int dY = head.Y - tail.Y;
-		if (Math.Abs(dX) > 1 || Math.Abs(dY) > 1) {
-			if (dX == 0) {
-				tail = tail with { Y = dY > 0 ? tail.Y + 1 : tail.Y - 1 };
-			} else if (dY == 0) {
-				tail = tail with { X = dX > 0 ? tail.X + 1 : tail.X - 1 };
-			} else {
-				tail = tail with { X = dX > 0 ? tail.X + 1 : tail.X - 1, Y = dY > 0 ? tail.Y + 1 : tail.Y - 1 };
-			}
+		int xMagnitude = head.X - tail.X;
+		int yMagnitude = head.Y - tail.Y;
+		int dX = int.Clamp(xMagnitude, -1, 1);
+		int dY = int.Clamp(yMagnitude, -1, 1);
+
+		if (Math.Abs(xMagnitude) > 1 || Math.Abs(yMagnitude) > 1) {
+			tail = tail with { X = tail.X + dX, Y = tail.Y + dY };
 		}
 		return tail;
 	}
 
-	private record struct Instruction(Direction Direction, int Value);
+	private record struct Instruction(Direction Direction, int Steps);
 
 	private static Instruction ParseLine(string input) {
 		string[] tokens = input.Split(' ');
