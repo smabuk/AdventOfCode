@@ -11,7 +11,10 @@ public class Day13 {
 		int folds = GetArgument(args, argumentNumber: 1, defaultResult: 1);
 		return Solution1(input, folds).ToString();
 	}
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part2(string[] input, params object[]? args) {
+		bool includeOcr = GetArgument<bool>(args, argumentNumber: 1, true);
+		return Solution2(input, includeOcr).ToString();
+	}
 
 	record FoldInstruction(string Axis, int Value);
 
@@ -21,13 +24,16 @@ public class Day13 {
 		return Fold(folds, dots, instructions).ToHashSet().Count;
 	}
 
-	private static string Solution2(string[] input) {
+	private static string Solution2(string[] input, bool includeOcr = true) {
 		(HashSet<Point> dots, List<FoldInstruction> instructions) = ParseInput(input);
-
-		return Environment.NewLine + String.Join(Environment.NewLine, 
+		string output = String.Join(Environment.NewLine,
 			Fold(instructions.Count, dots, instructions)
 			.To2dArray(initial: ' ', value: '█')
 			.PrintAsStringArray(width: 0));
+		if (includeOcr) {
+			output = OcrHelpers.IdentifyMessage(output, ' ', '█') + Environment.NewLine + output;
+		}
+		return output;
 	}
 
 	private static IEnumerable<Point> Fold(int folds, HashSet<Point> dots, List<FoldInstruction> instructions) {

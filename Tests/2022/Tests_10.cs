@@ -315,7 +315,7 @@ public class Tests_10_Cathode_Ray_Tube {
 		███████       ███████       ███████     
 		""")]
 	public void Part2(string input, string expected) {
-		string actual = SolutionRouter.SolveProblem(2022, 10, 2, input);
+		string actual = SolutionRouter.SolveProblem(2022, 10, 2, input, false);
 		Assert.Equal(expected, actual);
 	}
 }

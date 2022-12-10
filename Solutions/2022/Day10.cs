@@ -15,7 +15,10 @@ public sealed partial class Day10 {
 		int cycleCheckInterval = GetArgument<int>(args, argumentNumber: 2, 40);
 		return Solution1(cycleCheckStart, cycleCheckInterval).ToString();
 	}
-	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
+	public static string Part2(string[] input, params object[]? args) {
+		bool includeOcr = GetArgument<bool>(args, argumentNumber: 1, true);
+		return Solution2(includeOcr).ToString();
+	}
 
 
 
@@ -32,7 +35,7 @@ public sealed partial class Day10 {
 			.Sum();
 	}
 
-	private static string Solution2() {
+	private static string Solution2(bool includeOcr = false) {
 		const int CRT_COLS = 40;
 		const int CRT_ROWS = 6;
 		char[,] crt = new char[CRT_COLS, CRT_ROWS];
@@ -45,11 +48,15 @@ public sealed partial class Day10 {
 			crt[cpuCycle.X, cpuCycle.Y] = PixelState(cpuCycle.X, cpuCycle.Value) ? '█' : ' ';
 		}
 
-		return String.Join(Environment.NewLine, crt.PrintAsStringArray(width: 0));
-
-		static bool PixelState(int col, int value) {
-			return Math.Abs(value - col) <= 1;
+		string outputString = String.Join(Environment.NewLine, crt.PrintAsStringArray(width: 0)); ;
+		if (includeOcr) {
+			string ocrString = OcrHelpers.IdentifyMessage(crt.PrintAsStringArray(width: 0), ' ', '█');
+			return ocrString + Environment.NewLine + outputString;
+		} else {
+			return outputString;
 		}
+
+		static bool PixelState(int col, int value) => Math.Abs(value - col) <= 1;
 	}
 
 
