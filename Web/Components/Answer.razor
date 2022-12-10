@@ -46,6 +46,10 @@
         } catch (Exception ex) {
             PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
         }
+        if (PuzzleAnswer.Contains(Environment.NewLine))
+        {
+            PuzzleAnswer = Environment.NewLine + PuzzleAnswer;
+        }
         StateHasChanged();
     }
 

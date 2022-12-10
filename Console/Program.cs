@@ -71,13 +71,23 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt1:");
-				Console.Write($"  {result.Answer,-16}");
+				if (result.Answer.Contains(Environment.NewLine)) {
+					Console.WriteLine();
+					Console.WriteLine(result.Answer);
+				} else {
+					Console.Write($"  {result.Answer,-16}");
+				}
 			} else if (result.Phase == "Part2") {
 				answerColour = ConsoleColor.Yellow;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt2:");
-				Console.Write($"  {result.Answer,-16}");
+				if (result.Answer.Contains(Environment.NewLine)) {
+					Console.WriteLine();
+					Console.WriteLine(result.Answer);
+				} else {
+					Console.Write($"  {result.Answer,-16}");
+				}
 			}
 			Console.ResetColor();
 		};
