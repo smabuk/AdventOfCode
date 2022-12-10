@@ -151,12 +151,6 @@ public class Tests_10_Cathode_Ray_Tube {
 		noop
 		"""
 		, 20, 40, 13140)]
-	[InlineData("""
-		noop
-		addx 3
-		addx -5
-		"""
-		, 1, 1, 29)]
 	public void Part1(string input, int cycleCheckStart, int cycleCheckInterval, int expected) {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 10, 1, input, cycleCheckStart, cycleCheckInterval), out int actual);
 		Assert.Equal(expected, actual);
