@@ -7,7 +7,8 @@
 [Description("Supply Stacks")]
 public sealed partial class Day05 {
 
-	[Init] public static void Init(string input, params object[]? _) => LoadInstructionsAndStacks(input);
+	[Init]
+	public static    void Init(string input, params object[]? _) => LoadInstructionsAndStacks(input);
 	public static string Part1(string input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string input, params object[]? _) => Solution2().ToString();
 
@@ -68,12 +69,12 @@ public sealed partial class Day05 {
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public static Instruction Parse(string input) {
-			string[] tokens = input.Split(' ');
-			return new(tokens[1].AsInt(), tokens[3].AsInt(), tokens[5].AsInt());
-		}
-	};
-
+		public static Instruction Parse(string input) =>
+			input.Split(new char[] { ' ' }) switch {
+				[_, var n1, _, var n3, _, var n5, ..] => new(n1.AsInt(), n3.AsInt(), n5.AsInt()),
+				_ => throw new NotImplementedException()
+			};
+	}
 	/// <summary>
 	/// 
 	/// Input Pattern:

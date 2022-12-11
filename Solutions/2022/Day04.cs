@@ -61,8 +61,9 @@ public sealed partial class Day04 {
 		return count;
 	}
 
-	private static (int a, int b, int c, int d) ParseLine(string input) {
-		string[] numbers = input.Split(new char[] {'-' , ',' });
-		return (int.Parse(numbers[0]), int.Parse(numbers[1]), int.Parse(numbers[2]), int.Parse(numbers[3]));
-	}
+	private static (int a, int b, int c, int d) ParseLine(string input) =>
+		input.Split(new char[] { '-', ',' }) switch {
+			[var n1, var n2, var n3, var n4] => (n1.AsInt(), n2.AsInt(), n3.AsInt(), n4.AsInt()),
+			_ => throw new NotImplementedException()
+		};
 }

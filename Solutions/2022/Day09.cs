@@ -7,7 +7,8 @@
 [Description("Rope Bridge")]
 public sealed partial class Day09 {
 
-	[Init] public static void Init(string[] input, params object[]? _) => LoadInstructions(input);
+	[Init]
+	public static    void Init(string[] input, params object[]? _) => LoadInstructions(input);
 	public static string Part1(string[] input, params object[]? _) => Solution(2).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution(10).ToString();
 

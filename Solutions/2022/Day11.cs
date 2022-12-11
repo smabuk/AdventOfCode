@@ -13,7 +13,7 @@ public sealed partial class Day11 {
 		return Solution(input, noOfRounds).ToString();
 	}
 
-	private static long _modulo;		// by using this extra modulo we can keep the number smaller
+	private static long _modulo;		// by using this extra modulo we can keep the number smaller (also see Lowest Common Multiplier)
 
 	private static long Solution(string[] input,int noOfRounds) {
 		bool isPart1 = noOfRounds == 20;
@@ -23,8 +23,8 @@ public sealed partial class Day11 {
 			.ToList();
 
 		_modulo = monkeys
-			.Select(m => m.DivisibleBy)
-			.Aggregate((total, next) => total * next);
+			.Select(m => m.TestDivisor)
+			.Aggregate(1, (total, next) => total * next);
 
 		for (int i = 1; i <= noOfRounds; i++) {
 			foreach (Monkey monkey in monkeys) {
@@ -39,10 +39,10 @@ public sealed partial class Day11 {
 			.Select(m => m.InspectionCount)
 			.OrderByDescending(i => i)
 			.Take(2)
-			.Aggregate((total, next) => total * next);
+			.Aggregate(1L, (total, next) => total * next);
 	}
 
-	private record Monkey(int Name, Operation Operation, int DivisibleBy, int TrueMonkey, int FalseMonkey) {
+	private record Monkey(int Name, Operation Operation, int TestDivisor, int TrueMonkey, int FalseMonkey) {
 		
 		public long InspectionCount { get; set; } = 0;
 
@@ -53,14 +53,14 @@ public sealed partial class Day11 {
 			foreach (Item item in Items) {
 				InspectionCount++;
 				long worryLevel = UpdateWorryLevel(item, isPart1);
-				int monkeyToThrowTo = (worryLevel % DivisibleBy == 0) ? TrueMonkey : FalseMonkey;
+				int monkeyToThrowTo = (worryLevel % TestDivisor == 0) ? TrueMonkey : FalseMonkey;
 				yield return (item with { WorryLevel = worryLevel }, monkeyToThrowTo);
 			}
 			_items.Clear();
 
 			long UpdateWorryLevel(Item item, bool isPart1) {
 				long worryLevel = Operation.Calculate(item.WorryLevel, Operation);
-				worryLevel = (isPart1 ? worryLevel / 3 : worryLevel) % _modulo;
+				worryLevel = isPart1 ? worryLevel / 3 : worryLevel % _modulo;
 				return worryLevel;
 			}
 		}
@@ -75,16 +75,17 @@ public sealed partial class Day11 {
 			for (int i = 0; i < noOfMonkeys; i++) {
 				int startLine = i * LinesPerMonkey;
 
-				int name = input[startLine][7..^1].AsInt();
+				int name        = input[startLine][7..^1].AsInt();
+				int divisibleBy = input[startLine + 3][21..].AsInt();
+				int trueName    = input[startLine + 4][29..].AsInt();
+				int falseName   = input[startLine + 5][29..].AsInt();
+
 				List<Item> items = new(input[startLine + 1][17..]
 					.Split(", ")
 					.Select(x => new Item(x.AsInt())));
 				Operation operation = new(
-					Op: input[startLine + 2][23] == '+' ? Operation.OpType.Add : Operation.OpType.Multiply,
+					Op:    input[startLine + 2][23] == '+' ? Operation.OpType.Add : Operation.OpType.Multiply,
 					Value: input[startLine + 2][25..].AsInt());
-				int divisibleBy = input[startLine + 3][21..].AsInt();
-				int trueName = input[startLine + 4][29..].AsInt();
-				int falseName = input[startLine + 5][29..].AsInt();
 
 				yield return new(name, operation, divisibleBy, trueName, falseName) { Items = items };
 			}
@@ -100,6 +101,8 @@ public sealed partial class Day11 {
 				Operation.OpType.Multiply when operation.Value is Operation.SELF 
 				                          => old * old,
 				Operation.OpType.Multiply => old * operation.Value,
+				Operation.OpType.Add when operation.Value is Operation.SELF
+										  => old + old,
 				Operation.OpType.Add      => old + operation.Value,
 				_ => throw new NotImplementedException(),
 			};

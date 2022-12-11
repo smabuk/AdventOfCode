@@ -7,9 +7,9 @@
 [Description("Cathode-Ray Tube")]
 public sealed partial class Day10 {
 
-	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
 
-	[Init] public static void Init(string[] input, params object[]? _) => LoadInstructions(input);
+	[Init]
+	public static    void Init(string[] input, params object[]? _) => LoadInstructions(input);
 	public static string Part1(string[] input, params object[]? args) {
 		int cycleCheckStart    = GetArgument<int>(args, argumentNumber: 1, 20);
 		int cycleCheckInterval = GetArgument<int>(args, argumentNumber: 2, 40);
@@ -20,6 +20,7 @@ public sealed partial class Day10 {
 		return Solution2(includeOcr).ToString();
 	}
 
+	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
 
 
 	private static void LoadInstructions(string[] input)

@@ -7,9 +7,10 @@
 [Description("Calorie Counting")]
 public sealed partial class Day01 {
 
-	[Init] public static void Init(string[] input, params object[]? _) => ProcessInput(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
+	[Init]
+	public static     void Init(string[] input, params object[]? _) => ProcessInput(input);
+	public static  string Part1(string[] input, params object[]? _) => Solution1().ToString();
+	public static  string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
 	static int caloriesMax = 0;
 	static int[] caloriesPerElf = new int[3];

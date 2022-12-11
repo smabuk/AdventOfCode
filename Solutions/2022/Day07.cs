@@ -6,7 +6,9 @@
 /// </summary>
 [Description("No Space Left On Device")]
 public sealed class Day07 {
-	[Init] public static void Init(string[] input, params object[]? _) => ParseAndCreate(input);
+
+	[Init]
+	public static    void Init(string[] input, params object[]? _) => ParseAndCreate(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 

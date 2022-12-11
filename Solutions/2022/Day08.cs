@@ -7,14 +7,15 @@
 [Description("Treetop Tree House")]
 public sealed partial class Day08 {
 
-	[Init] public static void Init(string[] input, params object[]? _) => CreateMap(input);
+	[Init]
+	public static    void Init(string[] input, params object[]? _) => CreateMap(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
 	private static int[,] _heightMap = default!;
 
 	private static void CreateMap(string[] input) {
-		_heightMap = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		_heightMap = input.SelectMany(ParsingHelpers.AsDigits).To2dArray(input[0].Length);
 	}
 
 	private static int Solution1() {
@@ -39,10 +40,10 @@ public sealed partial class Day08 {
 
 			int tree = _heightMap[col, row];
 
-			return IsVisibleInDirection(-1, 0)
-				|| IsVisibleInDirection(1, 0)
-				|| IsVisibleInDirection(0, -1)
-				|| IsVisibleInDirection(0, 1);
+			return IsVisibleInDirection(-1,  0)
+				|| IsVisibleInDirection( 1,  0)
+				|| IsVisibleInDirection( 0, -1)
+				|| IsVisibleInDirection( 0,  1);
 
 			bool IsVisibleInDirection(int dX, int dY) {
 				int newCol = col + dX, newRow = row + dY;
@@ -78,10 +79,10 @@ public sealed partial class Day08 {
 
 			int tree = _heightMap[col, row];
 
-			return ViewingDistance(-1, 0)
-				* ViewingDistance(1, 0)
-				* ViewingDistance(0, -1)
-				* ViewingDistance(0, 1);
+			return ViewingDistance(-1,  0)
+				 * ViewingDistance( 1,  0)
+				 * ViewingDistance(0 , -1)
+				 * ViewingDistance( 0,  1);
 
 			int ViewingDistance(int dX, int dY) {
 				int viewingDistance = 0;
