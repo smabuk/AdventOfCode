@@ -12,71 +12,99 @@ public sealed partial class Day11 {
 		int noOfRounds = GetArgument<int>(args, argumentNumber: 1, 10_000);
 		return Solution(input, noOfRounds).ToString();
 	}
+
 	private static long _modulo;		// by using this extra modulo we can keep the number smaller
 
 	private static long Solution(string[] input,int noOfRounds) {
-		Dictionary<int, Monkey> monkeys = Monkey.Parse(input).ToDictionary(m => m.Name);
-		_modulo = monkeys.Select(m => m.Value.DivisibleBy).Aggregate((total, next) => total * next);
-		bool part1 = noOfRounds == 20;
+		bool isPart1 = noOfRounds == 20;
+
+		List<Monkey> monkeys = Monkey
+			.Parse(input)
+			.ToList();
+
+		_modulo = monkeys
+			.Select(m => m.DivisibleBy)
+			.Aggregate((total, next) => total * next);
+
 		for (int i = 1; i <= noOfRounds; i++) {
-			foreach (Monkey monkey in monkeys.Values) {
-				foreach ((Item item, int monkeyToThrowTo) in monkey.Inspect(part1)) {
-					monkeys[monkeyToThrowTo].ReceiveItem(item);
+			foreach (Monkey monkey in monkeys) {
+				foreach (var throwing in monkey.Inspect(isPart1)) {
+					monkeys[throwing.MonkeyToThrowTo].Catch(throwing.Item);
 				}
 			}
 		}
 
 		return
-			monkeys.Values
+			monkeys
 			.Select(m => m.InspectionCount)
 			.OrderByDescending(i => i)
 			.Take(2)
 			.Aggregate((total, next) => total * next);
 	}
 
-	private record Monkey(int Name, List<Item> Items, Operation Operation, int DivisibleBy, int TrueMonkeyName, int FalseMonkeyName) {
+	private record Monkey(int Name, Operation Operation, int DivisibleBy, int TrueMonkey, int FalseMonkey) {
+		
 		public long InspectionCount { get; set; } = 0;
 
-		public IEnumerable<(Item, int)> Inspect(bool Part1 = true) {
+		private List<Item> _items = new();
+		public required IEnumerable<Item> Items { get => _items; init => _items = value.ToList(); }
+
+		public IEnumerable<(Item Item, int MonkeyToThrowTo)> Inspect(bool isPart1 = true) {
 			foreach (Item item in Items) {
 				InspectionCount++;
-				long worryLevel = Operation.Op switch {
-					Operation.Operand.Add => item.WorryLevel + Operation.Value,
-					Operation.Operand.Multiply when Operation.Value is Operation.SELF => item.WorryLevel * item.WorryLevel,
-					Operation.Operand.Multiply => item.WorryLevel * Operation.Value,
-					_ => throw new NotImplementedException(),
-				};
-				worryLevel = (Part1 ? worryLevel / 3 : worryLevel) % _modulo;
-				int monkeyToThrowTo = (worryLevel % DivisibleBy == 0) ? TrueMonkeyName : FalseMonkeyName;
+				long worryLevel = UpdateWorryLevel(item, isPart1);
+				int monkeyToThrowTo = (worryLevel % DivisibleBy == 0) ? TrueMonkey : FalseMonkey;
 				yield return (item with { WorryLevel = worryLevel }, monkeyToThrowTo);
 			}
-			Items.Clear();
+			_items.Clear();
+
+			long UpdateWorryLevel(Item item, bool isPart1) {
+				long worryLevel = Operation.Calculate(item.WorryLevel, Operation);
+				worryLevel = (isPart1 ? worryLevel / 3 : worryLevel) % _modulo;
+				return worryLevel;
+			}
 		}
 
-		public void ReceiveItem(Item item) => Items.Add(item);
+		public void Catch(Item item) => _items.Add(item);
 
 		static public IEnumerable<Monkey> Parse(string[] input) {
 			const int LinesPerMonkey = 7;
+
 			int noOfMonkeys = (input.Length + 1) / LinesPerMonkey;
+
 			for (int i = 0; i < noOfMonkeys; i++) {
 				int startLine = i * LinesPerMonkey;
+
 				int name = input[startLine][7..^1].AsInt();
-				List<Item> items = new (input[startLine + 1][17..]
+				List<Item> items = new(input[startLine + 1][17..]
 					.Split(", ")
-					.Select(x => new Item(int.Parse(x))));
-				Operation operation =
-					new(input[startLine + 2][23] == '+' ? Operation.Operand.Add : Operation.Operand.Multiply,
-						input[startLine + 2][25..].AsInt());
-				int test = input[startLine + 3][21..].AsInt();
+					.Select(x => new Item(x.AsInt())));
+				Operation operation = new(
+					Op: input[startLine + 2][23] == '+' ? Operation.OpType.Add : Operation.OpType.Multiply,
+					Value: input[startLine + 2][25..].AsInt());
+				int divisibleBy = input[startLine + 3][21..].AsInt();
 				int trueName = input[startLine + 4][29..].AsInt();
 				int falseName = input[startLine + 5][29..].AsInt();
-				yield return new(name, items, operation, test, trueName, falseName);
+
+				yield return new(name, operation, divisibleBy, trueName, falseName) { Items = items };
 			}
 		}
-	};
+	}
 	private record struct Item(long WorryLevel);
-	private record struct Operation(Operation.Operand Op, int Value) {
-		public const int SELF = 0;
-		public enum Operand { Add, Multiply }
+	
+	private record struct Operation(Operation.OpType Op, int Value) {
+		private const int SELF = 0;
+
+		public static long Calculate(long old, Operation operation) {
+			return operation.Op switch {
+				Operation.OpType.Multiply when operation.Value is Operation.SELF 
+				                          => old * old,
+				Operation.OpType.Multiply => old * operation.Value,
+				Operation.OpType.Add      => old + operation.Value,
+				_ => throw new NotImplementedException(),
+			};
+		}
+
+		public enum OpType { Add, Multiply }
 	};
 }
