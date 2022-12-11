@@ -7,14 +7,37 @@
 [Description("Monkey in the Middle")]
 public sealed partial class Day11 {
 
-	// [Init] public static void Init(string[] input, params object[]? _) => Load(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution(input, 20).ToString();
+	public static string Part2(string[] input, params object[]? args) {
+		int noOfRounds = GetArgument<int>(args, argumentNumber: 1, 10_000);
+		return Solution(input, noOfRounds).ToString();
+	}
+	private static long _modulo;		// by using this extra modulo we can keep the number smaller
+
+	private static long Solution(string[] input,int noOfRounds) {
+		Dictionary<int, Monkey> monkeys = Monkey.Parse(input).ToDictionary(m => m.Name);
+		_modulo = monkeys.Select(m => m.Value.DivisibleBy).Aggregate((total, next) => total * next);
+		bool part1 = noOfRounds == 20;
+		for (int i = 1; i <= noOfRounds; i++) {
+			foreach (Monkey monkey in monkeys.Values) {
+				foreach ((Item item, int monkeyToThrowTo) in monkey.Inspect(part1)) {
+					monkeys[monkeyToThrowTo].ReceiveItem(item);
+				}
+			}
+		}
+
+		return
+			monkeys.Values
+			.Select(m => m.InspectionCount)
+			.OrderByDescending(i => i)
+			.Take(2)
+			.Aggregate((total, next) => total * next);
+	}
 
 	private record Monkey(int Name, List<Item> Items, Operation Operation, int DivisibleBy, int TrueMonkeyName, int FalseMonkeyName) {
-		public int InspectionCount { get; set; } = 0;
+		public long InspectionCount { get; set; } = 0;
 
-		public IEnumerable<(Item, int)>  Inspect() {
+		public IEnumerable<(Item, int)> Inspect(bool Part1 = true) {
 			foreach (Item item in Items) {
 				InspectionCount++;
 				long worryLevel = Operation.Op switch {
@@ -23,12 +46,9 @@ public sealed partial class Day11 {
 					Operation.Operand.Multiply => item.WorryLevel * Operation.Value,
 					_ => throw new NotImplementedException(),
 				};
-				worryLevel = worryLevel / 3;
-				if (worryLevel % DivisibleBy == 0) {
-					yield return (item with { WorryLevel = worryLevel}, TrueMonkeyName);
-				} else {
-					yield return (item with { WorryLevel = worryLevel}, FalseMonkeyName);
-				}
+				worryLevel = (Part1 ? worryLevel / 3 : worryLevel) % _modulo;
+				int monkeyToThrowTo = (worryLevel % DivisibleBy == 0) ? TrueMonkeyName : FalseMonkeyName;
+				yield return (item with { WorryLevel = worryLevel }, monkeyToThrowTo);
 			}
 			Items.Clear();
 		}
@@ -41,11 +61,10 @@ public sealed partial class Day11 {
 			for (int i = 0; i < noOfMonkeys; i++) {
 				int startLine = i * LinesPerMonkey;
 				int name = input[startLine][7..^1].AsInt();
-				List<Item> items = input[startLine + 1][17..]
+				List<Item> items = new (input[startLine + 1][17..]
 					.Split(", ")
-					.Select(x => new Item(long.Parse(x)))
-					.ToList();
-				Operation operation = 
+					.Select(x => new Item(int.Parse(x))));
+				Operation operation =
 					new(input[startLine + 2][23] == '+' ? Operation.Operand.Add : Operation.Operand.Multiply,
 						input[startLine + 2][25..].AsInt());
 				int test = input[startLine + 3][21..].AsInt();
@@ -53,37 +72,11 @@ public sealed partial class Day11 {
 				int falseName = input[startLine + 5][29..].AsInt();
 				yield return new(name, items, operation, test, trueName, falseName);
 			}
-			yield break;
 		}
 	};
 	private record struct Item(long WorryLevel);
 	private record struct Operation(Operation.Operand Op, int Value) {
 		public const int SELF = 0;
-		public enum Operand { Add, Multiply } 
+		public enum Operand { Add, Multiply }
 	};
-
-	private static long Solution1(string[] input, int noOfRounds = 20) {
-		Dictionary<int, Monkey> monkeys = 
-			Monkey.Parse(input)
-			.ToDictionary(m => m.Name);
-
-		for (int i = 0; i < noOfRounds; i++) {
-			foreach (Monkey monkey in monkeys.Values) {
-				foreach ((Item item, int toMonkey) in monkey.Inspect()) {
-					monkeys[toMonkey].ReceiveItem(item);
-				}
-			}
-		}
-		long monkeyBusiness = 
-			monkeys.Values
-			.Select(m => m.InspectionCount)
-			.OrderByDescending(m => m)
-			.Take(2)
-			.Aggregate((total, next) => total * next);
-		return monkeyBusiness;
-	}
-
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
-	}
 }
