@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace AdventOfCode.Solutions._2022;
+﻿namespace AdventOfCode.Solutions._2022;
 
 /// <summary>
 /// Day 12: Hill Climbing Algorithm
@@ -14,27 +12,24 @@ public sealed partial class Day12 {
 	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
-	private static int[,] _elevationMap = default!;
+	private static char[,] _elevationMap = default!;
 	private static Dictionary<Point, int> _costs = new();
+	private static Dictionary<char, Point> _endPoints = new();
 	private static Point _startPoint;
 	private static Point _endPoint;
 
 	private static void LoadElevationMap(string[] input) {
 		_elevationMap = input
 			.SelectMany(i => i)
-			.Select(x => (int)x)
 			.To2dArray(input[0].Length);
 
-		foreach (Cell<int> c in _elevationMap.Walk2dArrayWithValues()) {
-			if (c.Value == 'S') {
-				_startPoint = c.Index;
-				_elevationMap[c.X, c.Y] = 'a';
-			}
-			if (c.Value == 'E') {
-				_endPoint = c.Index;
-				_elevationMap[c.X, c.Y] = 'z';
-			}
-		}
+		_endPoints = _elevationMap
+			.Walk2dArrayWithValues()
+			.Where(c => c.Value == 'S' || c.Value == 'E')
+			.ToDictionary(c => c.Value, c => c.Index);
+
+		_startPoint = _endPoints['S'];
+		_endPoint   = _endPoints['E'];
 
 		_costs = new() {
 			{ _endPoint, 0 }
@@ -44,8 +39,6 @@ public sealed partial class Day12 {
 	}
 
 	private static int Solution1() => _costs[_startPoint];
-
-
 	private static int Solution2() =>
 		_elevationMap
 			.Walk2dArrayWithValues()
@@ -54,23 +47,33 @@ public sealed partial class Day12 {
 			.Min();
 
 
-	private static void CalculateCost(Point p) {
-		int currentCost = _costs[p];
+	private static void CalculateCost(Point point) {
+		int currentCost = _costs[point];
 
 		_elevationMap
-			.GetAdjacentCells(p)
+			.GetAdjacentCells(point)
 			.ToList()
-			.ForEach(adj => CalculateAdjacent(new(adj.x, adj.y)));
+			.ForEach(adj => CalculateAdjacent(adj.Index));
 
 		void CalculateAdjacent(Point adjacent) {
-			// Is this step not too steep - we're going backwards so we can work with parts 1 and 2
-			if (_elevationMap[p.X, p.Y] - 1 <= _elevationMap[adjacent.X, adjacent.Y]) {
+			if (IsThisACorrectRoute(point, adjacent)) {
 				if (!_costs.TryGetValue(adjacent, out int adjacentCost) || adjacentCost > currentCost + 1) {
 					_costs[adjacent] = currentCost + 1;
 					CalculateCost(adjacent);
 				}
 			}
+
+			// if the step uphill is too steep we return false
+			//    we're going downhill so we can work with parts 1 and 2
+			static bool IsThisACorrectRoute(Point p, Point adjacent) 
+				=> ElevationValue(_elevationMap[p.X, p.Y]) - 1 <= ElevationValue(_elevationMap[adjacent.X, adjacent.Y]);
 		}
+
+		static char ElevationValue(char c) => c switch {
+			'S' => 'a',
+			'E' => 'z',
+			_ => c
+		};
 	}
 
 }
