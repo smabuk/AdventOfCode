@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace AdventOfCode.Solutions;
 
@@ -23,6 +24,8 @@ static public class SolutionRouter {
 		=> SolveDay(year, day, input?.Split(Environment.NewLine), args);
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, params object[]? args) {
+		long startTime;
+		long stopTime;
 		if (input is null) {
 			yield return SolutionPhase.NoInput;
 			yield break;
@@ -36,31 +39,31 @@ static public class SolutionRouter {
 
 		MethodInfo[] methods = dayTypeInfo.GetMethods();
 
-		System.Diagnostics.Stopwatch timer = new();
+		startTime = Stopwatch.GetTimestamp();
 		MethodInfo? initMethod = methods
 			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
 			.SingleOrDefault();
 
 		input = input.StripTrailingBlankLineOrDefault();
-		timer.Restart();
+		startTime = Stopwatch.GetTimestamp();
 		InitInput(input, args, methods);
-		timer.Stop();
-		yield return new SolutionPhase("Init") with { Elapsed = timer.Elapsed };
+		stopTime = Stopwatch.GetTimestamp();
+		yield return new SolutionPhase("Init") with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 
 
 		MethodInfo ? method1 = methods
 			.Where(m => m.Name == $"Part1")
 			.SingleOrDefault();
 
-		timer.Restart();
+		startTime = Stopwatch.GetTimestamp();
 		string answer1 = NO_SOLUTION;
 		if (method1 is not null) {
 			answer1 = InvokeSolutionMethod(input, args, method1);
 		}
+		stopTime = Stopwatch.GetTimestamp();
 
-		timer.Stop();
 		yield return answer1.Contains("written") switch {
-			false => new SolutionPhase("Part1") with { Answer = answer1, Elapsed = timer.Elapsed },
+			false => new SolutionPhase("Part1") with { Answer = answer1, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
 			true => SolutionPhase.NoSolutionPart1,
 		};
 
@@ -69,14 +72,14 @@ static public class SolutionRouter {
 			.SingleOrDefault();
 
 		string answer2 = NO_SOLUTION;
-		timer.Restart();
+		startTime = Stopwatch.GetTimestamp();
 		if (method2 is not null) {
 			answer2 = InvokeSolutionMethod(input, args, method2);
 		}
+		stopTime = Stopwatch.GetTimestamp();
 
-		timer.Stop();
 		yield return answer2.Contains("written") switch {
-			false => new SolutionPhase("Part2") with { Answer = answer2, Elapsed = timer.Elapsed },
+			false => new SolutionPhase("Part2") with { Answer = answer2, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
 			true => SolutionPhase.NoSolutionPart2,
 		};
 
