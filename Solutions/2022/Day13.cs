@@ -29,8 +29,27 @@ public sealed partial class Day13 {
 		return correctPairs.Sum(x => x + 1);
 	}
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input) {
+		List<Packet> packets = new();
+		List<int> indexes = new();
+
+		for (int i = 0; i < input.Length; i += 3) {
+			packets.Add(Packet.Parse(input[i]));
+			packets.Add(Packet.Parse(input[i+1]));
+		}
+
+		packets.Add(Packet.Parse("[[2]]"));
+		packets.Add(Packet.Parse("[[6]]"));
+
+		packets.Sort();
+
+		for (int i = 0; i < packets.Count; i++) {
+			if ($"{packets[i]}" == "[[2]]" || $"{packets[i]}" == "[[6]]") {
+				indexes.Add(i + 1);
+			}
+		}
+
+		return indexes[0] * indexes[1];
 	}
 
 	private record Pair(Packet Left, Packet Right) {
@@ -38,7 +57,7 @@ public sealed partial class Day13 {
 			=>  new (Packet.Parse(left), Packet.Parse(right));
 	};
 
-	private abstract record Packet {
+	private abstract record Packet : IComparable {
 		public static Packet Parse(string value)
 			=> Parse(JsonSerializer.Deserialize<JsonElement>(value));
 
@@ -49,6 +68,13 @@ public sealed partial class Day13 {
 				_ => throw new NotImplementedException(),
 			};
 			return value; 
+		}
+
+		public int CompareTo(object? obj) {
+			if (obj is Packet packet) {
+				return this.CompareItem(packet) ?? false ? -1 : 1;
+			}
+			return -1;
 		}
 
 		// null represents continue checking
@@ -90,13 +116,15 @@ public sealed partial class Day13 {
 					if (res is not null) {
 						return res;
 					};
-				} 
+				}
+				if (lp.Packets.Count == rp.Packets.Count) {
+					return null;
+				}
 				return true;
 			}
 			return null;
 		}
-	};
-
+	}
 	private record NumberPacket(int Value) : Packet {
 		public override string ToString() => $"{Value}";
 	}
