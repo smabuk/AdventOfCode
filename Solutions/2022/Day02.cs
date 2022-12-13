@@ -7,18 +7,12 @@
 [Description("Rock Paper Scissors")]
 public sealed partial class Day02 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution(input, HandShape.Rock).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution(input, DesiredOutcome.Win).ToString();
 
-	private static int Solution1(string[] input) {
+	private static int Solution(string[] input, object type) {
 		return input
-			.Select(i => ParseLinePt1(i).Score)
-			.Sum();
-	}
-
-	private static int Solution2(string[] input) {
-		return input
-			.Select(i => ParseLinePt2(i).Score)
+			.Select(i => RockPaperScissors.Parse(i, type).Score)
 			.Sum();
 	}
 
@@ -86,31 +80,35 @@ public sealed partial class Day02 {
 				return MyChoiceScore + LOSS;
 			}
 		}
+
+		public static RockPaperScissors Parse(string input, object inputType) {
+			HandShape opponent = ParseHandShape(input[0]);
+
+			// We don't care about the value of type
+			// it's just used for deciding how to parse the input
+			return inputType switch {
+				HandShape => new(opponent, ParseHandShape(input[2])),
+				DesiredOutcome => new(opponent, ParseDesiredOutcome(input[2])),
+				_ => throw new NotImplementedException(),
+			};
+
+			static HandShape ParseHandShape(char input) {
+				return input switch {
+					'A' or 'X' => HandShape.Rock,
+					'B' or 'Y' => HandShape.Paper,
+					'C' or 'Z' => HandShape.Scissors,
+					_ => throw new ArgumentOutOfRangeException(nameof(input)),
+				};
+			}
+			static DesiredOutcome ParseDesiredOutcome(char input) {
+				return input switch {
+					'X' => DesiredOutcome.Lose,
+					'Y' => DesiredOutcome.Draw,
+					'Z' => DesiredOutcome.Win,
+					_ => throw new ArgumentOutOfRangeException(nameof(input)),
+				};
+			}
+		}
 	};
 
-	private static RockPaperScissors ParseLinePt1(string input) {
-		HandShape opponent = GetHandShapeFromChar(input[0]);
-		HandShape me = GetHandShapeFromChar(input[2]);
-		return new(opponent, me);
-	}
-
-	private static RockPaperScissors ParseLinePt2(string input) {
-		HandShape opponent = GetHandShapeFromChar(input[0]);
-		DesiredOutcome choice = input[2] switch {
-			'X' => DesiredOutcome.Lose,
-			'Y' => DesiredOutcome.Draw,
-			'Z' => DesiredOutcome.Win,
-			_ => throw new ArgumentOutOfRangeException("hint"),
-		};
-		return new(opponent, choice);
-	}
-
-	private static HandShape GetHandShapeFromChar(char input) {
-		return input switch {
-			'A' or 'X' => HandShape.Rock,
-			'B' or 'Y' => HandShape.Paper,
-			'C' or 'Z' => HandShape.Scissors,
-			_ => throw new ArgumentOutOfRangeException(nameof(input)),
-		};
-	}
 }
