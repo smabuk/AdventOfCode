@@ -13,118 +13,86 @@ public sealed partial class Day13 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		List<Pair> pairs = new();
-		List<int> correctPairs = new();
-
-		for (int i = 0; i < input.Length; i += 3) {
-			pairs.Add(new (Packet.Parse(input[i]), Packet.Parse(input[i + 1])));
-		}
-
-		for (int i = 0; i < pairs.Count; i++) {
-			if (pairs[i].Left.CompareItem(pairs[i].Right) ?? false) {
-				correctPairs.Add(i);
-			}
-		}
-
-		return correctPairs.Sum(x => x + 1);
+		return input
+			.Chunk(3)
+			.Select(chunk => new Pair(chunk[0], chunk[1]))
+			.Select((pair, index) => (p: pair, ix: index))
+			.Where((item, index) => item.p.Left.CompareTo(item.p.Right) < 0)
+			.Select(x => x.ix + 1)
+			.Sum();
 	}
 
 	private static int Solution2(string[] input) {
-		List<Packet> packets = new();
-		List<int> indexes = new();
+		List<Packet> packets = input
+			.Where(i => !string.IsNullOrWhiteSpace(i))
+			.Select(i => Packet.Parse(i))
+			.ToList();
 
-		for (int i = 0; i < input.Length; i += 3) {
-			packets.Add(Packet.Parse(input[i]));
-			packets.Add(Packet.Parse(input[i+1]));
-		}
-
-		packets.Add(Packet.Parse("[[2]]"));
-		packets.Add(Packet.Parse("[[6]]"));
+		Packet p2 = Packet.Parse("[[2]]");
+		Packet p6 = Packet.Parse("[[6]]");
+		packets.Add(p2);
+		packets.Add(p6);
 
 		packets.Sort();
 
-		for (int i = 0; i < packets.Count; i++) {
-			if ($"{packets[i]}" == "[[2]]" || $"{packets[i]}" == "[[6]]") {
-				indexes.Add(i + 1);
-			}
-		}
-
-		return indexes[0] * indexes[1];
+		return (packets.IndexOf(p2) + 1)
+			 * (packets.IndexOf(p6) + 1);
 	}
 
 	private record Pair(Packet Left, Packet Right) {
-		public static Pair Parse(string left, string right)
-			=>  new (Packet.Parse(left), Packet.Parse(right));
+		public Pair(string left, string right) : this(Packet.Parse(left), Packet.Parse(right)) { }
 	};
 
-	private abstract record Packet : IComparable {
-		public static Packet Parse(string value)
-			=> Parse(JsonSerializer.Deserialize<JsonElement>(value));
+	private abstract record Packet : IComparable, IEquatable<Packet>, IParsable<Packet> {
+		public static Packet Parse(string value, IFormatProvider? provider = null)
+			=> ParseElement(JsonSerializer.Deserialize<JsonElement>(value));
 
-		public static Packet Parse(JsonElement el) {
+		private static Packet ParseElement(JsonElement el) {
 			Packet value = el.ValueKind switch {
 				JsonValueKind.Number => new NumberPacket(el.GetInt32()),
-				JsonValueKind.Array => new ListPacket(el.EnumerateArray().Select(Parse).ToList()),
+				JsonValueKind.Array => new ListPacket(el.EnumerateArray().Select(ParseElement).ToList()),
 				_ => throw new NotImplementedException(),
 			};
-			return value; 
+			return value;
 		}
 
 		public int CompareTo(object? obj) {
-			if (obj is Packet packet) {
-				return this.CompareItem(packet) ?? false ? -1 : 1;
-			}
-			return -1;
-		}
-
-		// null represents continue checking
-		public bool? CompareItem(Packet right) {
+			int RIGHT_ORDER = -1;
+			int WRONG_ORDER = 1;
+			int UNSURE = 0;
 			Packet left = this;
-			
-			if (left is not null && right is null) {
-				return false;
-			}
+			Packet right = (Packet)obj!;
 
-			if (left is null && right is not null) {
-				return true;
-			}
+			return (left, right) switch {
+				(not null, null) => WRONG_ORDER,
+				(null, not null) => RIGHT_ORDER,
+				(NumberPacket ln, NumberPacket rn) => ln.Value < rn.Value ? RIGHT_ORDER : ln.Value > rn.Value ? WRONG_ORDER : UNSURE,
+				(ListPacket, NumberPacket) => left.CompareTo(new ListPacket(new() { right })),
+				(NumberPacket, ListPacket) => new ListPacket(new() { left }).CompareTo(right),
+				(ListPacket lp, ListPacket rp) => ProcessLists(lp, rp),
+				_ => UNSURE,
+			};
 
-			if (left is NumberPacket ln && right is NumberPacket rn) {
-				if (ln.Value < rn.Value) {
-					return true;
-				} else if (ln.Value > rn.Value) {
-					return false;
-				} else {
-					return null;
-				}
-			} 
-
-			if (left is ListPacket && right is NumberPacket) {
-				return left.CompareItem(new ListPacket(new() { right }));
-			}
-
-			if (left is NumberPacket && right is ListPacket) {
-				return new ListPacket(new() { left }).CompareItem(right);
-			}
-
-			if (left is ListPacket lp && right is ListPacket rp) {
-				for (int i = 0; i < lp.Packets.Count; i++) {
-					if (rp.Packets.Count <= i) {
-						return false;
+			int ProcessLists(ListPacket left, ListPacket right) {
+				for (int i = 0; i < left.Packets.Count; i++) {
+					if (right.Packets.Count <= i) {
+						return WRONG_ORDER;
 					}
-					bool? res = lp.Packets[i].CompareItem(rp.Packets[i]);
-					if (res is not null) {
-						return res;
+					int result = left.Packets[i].CompareTo(right.Packets[i]);
+					if (left.Packets[i].CompareTo(right.Packets[i]) != UNSURE) {
+						return result;
 					};
 				}
-				if (lp.Packets.Count == rp.Packets.Count) {
-					return null;
+				if (left.Packets.Count == right.Packets.Count) {
+					return UNSURE;
 				}
-				return true;
+				return RIGHT_ORDER;
 			}
-			return null;
 		}
+
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Packet result) => throw new NotImplementedException();
 	}
+
 	private record NumberPacket(int Value) : Packet {
 		public override string ToString() => $"{Value}";
 	}
