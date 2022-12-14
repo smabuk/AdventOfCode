@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests._2022;
 
-public class Tests_14_ {
+public class Tests_14_Regolith_Reservoir {
 	[Theory]
 	[InlineData("""
 		498,4 -> 498,6 -> 496,6
@@ -17,7 +17,7 @@ public class Tests_14_ {
 		498,4 -> 498,6 -> 496,6
 		503,4 -> 502,4 -> 502,9 -> 494,9
 		"""
-		, 1, 9999)]
+		, 1, 93)]
 	public void Part2(string input, int noOfRounds, long expected) {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 14, 2, input, noOfRounds), out long actual);
 		Assert.Equal(expected, actual);
