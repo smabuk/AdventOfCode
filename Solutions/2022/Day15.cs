@@ -22,25 +22,24 @@ public sealed partial class Day15 {
 	}
 
 	private static int Solution1(string[] input, int rowToSearch) {
-		int minX = _pairs.Select(p => p.Sensor.X).Union(_pairs.Select(p => p.Beacon.X)).Min();
-		int maxX = _pairs.Select(p => p.Sensor.X).Union(_pairs.Select(p => p.Beacon.X)).Max();
-		
 		List<Point> beacons = _pairs.Select(p => p.Beacon).ToList();
 		HashSet<Point> found= new();
 
 		foreach (SensorBeaconPair sbp in _pairs) {
-			for (int x = minX; x <= maxX; x++) {
-				Point check = new(x, rowToSearch);
-				if (ManhattanDistance(sbp.Sensor, check) <= sbp.ManhattanDistance) {
-					if (!beacons.Contains(check)) {
-						found.Add(check);
+			if (sbp.Sensor.Y - sbp.ManhattanDistance <= rowToSearch && sbp.Sensor.Y + sbp.ManhattanDistance >= rowToSearch) {
+				int rangeMin = Math.Abs(sbp.Sensor.Y - rowToSearch);
+				int distance = sbp.ManhattanDistance - rangeMin;
+				for (int x = sbp.Sensor.X - distance; x <= sbp.Sensor.X + distance; x++) {
+					Point check = new(x, rowToSearch);
+					if (ManhattanDistance(sbp.Sensor, check) <= sbp.ManhattanDistance) {
+						if (!beacons.Contains(check)) {
+							found.Add(check);
+						}
 					}
 				}
 			}
 		}
 
-		// 4403084 Too Low and too slow
-		// 4403085 Too Low about 5s
 		return found.Count;
 	}
 
@@ -51,10 +50,10 @@ public sealed partial class Day15 {
 		return "** Solution not written yet **";
 	}
 
-	private static long ManhattanDistance(Point from, Point to) => Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
+	private static int ManhattanDistance(Point from, Point to) => Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
 
 	private partial record SensorBeaconPair(Point Sensor, Point Beacon) : IParsable<SensorBeaconPair> {
-		public long ManhattanDistance => ManhattanDistance(Sensor, Beacon);
+		public int ManhattanDistance => ManhattanDistance(Sensor, Beacon);
 
 		public static SensorBeaconPair Parse(string s) {
 			Match match = SensorBeaconPairRegEx().Match(s);
