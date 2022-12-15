@@ -15,6 +15,10 @@ public sealed partial class Day15 {
 	}
 	public static string Part2(string[] input, params object[]? args) {
 		int max = GetArgument<int>(args, argumentNumber: 1, 4_000_000);
+		// Skip for now as I have no solution
+		if (max > 20) {
+			return "** Current too slow **";
+		}
 		return Solution2(input, max).ToString();
 	}
 
@@ -49,26 +53,31 @@ public sealed partial class Day15 {
 	private static long Solution2(string[] input, int max) {
 		List<Point> beacons = _pairs.Select(p => p.Beacon).ToList();
 		HashSet<Point> found = new();
-		for (int y = 0; y <= max; y++) {
-			char[] caveRow = new char[max + 1];
-			//char[,] cave = new char[max + 1, max + 1];
-			for (int x = 0; x < caveRow.Length; x++) {
-				caveRow[x] = ' ';
-			}
-			foreach (SensorBeaconPair sbp in _pairs) {
-				for (int x = int.Clamp(sbp.Sensor.X - sbp.ManhattanDistance, 0, max); x <= int.Clamp(sbp.Sensor.X + sbp.ManhattanDistance, 0, max); x++) {
-					if (ManhattanDistance(sbp.Sensor, new(x, y)) <= sbp.ManhattanDistance ) {
-						caveRow[x] = '#';
+		int BLOCK_SIZE = int.Clamp(max, 10, 10_000);
+		Console.WriteLine();
+		char[,] cave = new char[BLOCK_SIZE + 1, BLOCK_SIZE + 1];
+		for (int yBlock = 0; yBlock < max; yBlock+= BLOCK_SIZE) {
+			for (int xBlock = 0; xBlock < max; xBlock += BLOCK_SIZE) {
+				int offsetY = yBlock;
+				int offsetX = xBlock;
+				Console.WriteLine($"Checking : {offsetX}, {offsetY}");
+				foreach ((int x, int y) in cave.Walk2dArray()) {
+					cave[x, y] = ' ';
+				}
+				foreach (SensorBeaconPair sbp in _pairs) {
+					for (int y = int.Clamp(sbp.Sensor.Y - sbp.ManhattanDistance, offsetY, Math.Min(max, offsetY + BLOCK_SIZE)); y <= int.Clamp(sbp.Sensor.Y + sbp.ManhattanDistance, offsetY, Math.Min(max, offsetY + BLOCK_SIZE)); y++) {
+						for (int x = int.Clamp(sbp.Sensor.X - sbp.ManhattanDistance, offsetX, Math.Min(max, offsetX + BLOCK_SIZE)); x <= int.Clamp(sbp.Sensor.X + sbp.ManhattanDistance, offsetX, Math.Min(max, offsetX + BLOCK_SIZE)); x++) {
+							if (ManhattanDistance(sbp.Sensor, new(x, y)) <= sbp.ManhattanDistance) {
+								cave[x - offsetX, y - offsetY] = '#';
+							}
+						}
 					}
 				}
-			}
-			for (int x = 0; x < caveRow.Length; x++) {
-				if (caveRow[x] == ' ') {
-					return (x * 4_000_000) + y;
+				foreach ((int x, int y, char value) in cave.Walk2dArrayWithValues()) {
+					if (value == ' ') {
+						return ((x + offsetX) * 4_000_000) + offsetY + y;
+					}
 				}
-			}
-			if (y % 10_000 == 0) {
-				Console.WriteLine($"Checked up to: {y}");
 			}
 		}
 
