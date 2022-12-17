@@ -15,7 +15,7 @@ public class Tests_17_Pyroclastic_Flow {
 	[InlineData("""
 		>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>
 		"""
-		, 9999)]
+		, 1_514_285_714_288)]
 	public void Part2(string input, long expected) {
 		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 17, 2, input), out long actual);
 		Assert.Equal(expected, actual);

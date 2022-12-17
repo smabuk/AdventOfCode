@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace AdventOfCode.Solutions._2022;
+﻿namespace AdventOfCode.Solutions._2022;
 
 /// <summary>
 /// Day 17: Pyroclastic Flow
@@ -11,88 +9,77 @@ public sealed partial class Day17 {
 
 	private static readonly int CHAMBER_WIDTH = 7;
 	private static readonly int NO_OF_SHAPES = 5;
+	private static readonly int START_HEIGHT_GAP = 3;
 	private static readonly char LEFT = '<';
 	private static readonly char ROCK = '#';
 	private static readonly char FALLING_ROCK = '@';
 	private static readonly char SPACE = '.';
-	private static readonly Point[] ROCK_BOTTOM_0 = { new Point(0, 0), new Point(1, 0), new Point(2, 0), new Point(3, 0) };
-	private static readonly Point[] ROCK_BOTTOM_1 = { new Point(0, 1), new Point(1, 2), new Point(2, 1) };
-	private static readonly Point[] ROCK_BOTTOM_2 = { new Point(0, 2), new Point(1, 2), new Point(2, 2) };
-	private static readonly Point[] ROCK_BOTTOM_3 = { new Point(0, 3) };
-	private static readonly Point[] ROCK_BOTTOM_4 = { new Point(0, 1), new Point(1, 1)};
-	private static readonly string ROCK_SHAPE_PATTERN_0 = "####";
-	private static readonly string ROCK_SHAPE_PATTERN_1 = """
-														.#.
-														###
-														.#.
-														""";
-	private static readonly string ROCK_SHAPE_PATTERN_2 = """
-														..#
-														..#
-														###
-														""";
-	private static readonly string ROCK_SHAPE_PATTERN_3 = """
-														#
-														#
-														#
-														#
-														""";
-	private static readonly string ROCK_SHAPE_PATTERN_4 = """
-														##
-														##
-														""";
-	private static Rock[] ROCK_SHAPES = {
-		new(ROCK_SHAPE_PATTERN_0, ROCK_BOTTOM_0),
-		new(ROCK_SHAPE_PATTERN_1, ROCK_BOTTOM_1),
-		new(ROCK_SHAPE_PATTERN_2, ROCK_BOTTOM_2),
-		new(ROCK_SHAPE_PATTERN_3, ROCK_BOTTOM_3),
-		new(ROCK_SHAPE_PATTERN_4, ROCK_BOTTOM_4),
-	};
 
+	private static readonly Point[] ROCK_BOTTOM_0 = { new(0, 0), new(1, 0), new(2, 0), new(3, 0) };
+	private static readonly Point[] ROCK_BOTTOM_1 = { new(0, 1), new(1, 2), new(2, 1) };
+	private static readonly Point[] ROCK_BOTTOM_2 = { new(0, 2), new(1, 2), new(2, 2) };
+	private static readonly Point[] ROCK_BOTTOM_3 = { new(0, 3) };
+	private static readonly Point[] ROCK_BOTTOM_4 = { new(0, 1), new(1, 1) };
+
+	private static readonly Point[] ROCK_SHAPE_0 = { new(0, 0), new(1, 0), new(2, 0), new(3, 0) };
+	private static readonly Point[] ROCK_SHAPE_1 = { new(0, 1), new(1, 2), new(2, 1), new(1, 0), new(1, 1) };
+	private static readonly Point[] ROCK_SHAPE_2 = { new(0, 2), new(1, 2), new(2, 2), new(2, 0), new(2, 1) };
+	private static readonly Point[] ROCK_SHAPE_3 = { new(0, 3), new(0, 2), new(0, 1), new(0, 0) };
+	private static readonly Point[] ROCK_SHAPE_4 = { new(0, 1), new(1, 1), new(0, 0), new(1, 0)};
+
+	private static Rock[] ROCK_SHAPES = {
+		new(4, 1, ROCK_SHAPE_0, ROCK_BOTTOM_0),
+		new(3, 3, ROCK_SHAPE_1, ROCK_BOTTOM_1),
+		new(3, 3, ROCK_SHAPE_2, ROCK_BOTTOM_2),
+		new(1, 4, ROCK_SHAPE_3, ROCK_BOTTOM_3),
+		new(2, 2, ROCK_SHAPE_4, ROCK_BOTTOM_4),
+	};
 
 	public static string Part1(string input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string input) {
-		Chamber chamber = new(input);
-		chamber = chamber.DropRocks(2022);
-
-		return chamber.TowerHeight;
+		return new Chamber(input)
+			.DropRocks(2022)
+			.TowerHeight;
 	}
 
-	private static string Solution2(string input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		//List<Instruction> instructions = input.Select(ParseLine).ToList();
-		return "** Solution not written yet **";
+	private static long Solution2(string input) {
+		return new Chamber(input)
+			.DropManyRocks(1_000_000_000_000)
+			.CalculatedTowerHeight(1_000_000_000_000);
 	}
 
-	private record Chamber {
-		private HashSet<Point> rocks = new();
-		private List<JetDirection> jetDirections = new();
+	private sealed record Chamber {
+		private readonly HashSet<Point> rocks = new();
+		private readonly List<JetDirection> jetDirections = new();
+		private readonly string directions = "";
 		private int nextShape = -1;
 		private int nextDirection = -1;
+		private long repeatShapeCount = 0;
+		private long repeatTowerHeight = 0;
 
 		public Chamber(string directions) {
-			for (int x = 0; x < CHAMBER_WIDTH; x++) {
-				rocks.Add(new (x, -1));
-			}
+			this.directions = directions;
 			jetDirections = directions
 				.Select(i => i == LEFT ? JetDirection.Left : JetDirection.Right)
 				.ToList();
+			for (int x = 0; x < CHAMBER_WIDTH; x++) {
+				rocks.Add(new(x, -1));
+			}
 		}
 
-		public Chamber DropRocks(int noOfrocks) {
+		public Chamber DropRocks(long noOfrocks) {
 
 			Rock fallingRock = NextRock();
 
-			for (int i = 0; i < noOfrocks; i++) {
+			for (long i = 0; i < long.Clamp(noOfrocks, 1, 10_000); i++) {
 				while (true) {
 					JetDirection direction = NextJetDirection();
 					if (fallingRock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Count() == 0) {
 						fallingRock = fallingRock.Move(direction);
 					}
-					if (fallingRock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any()) { 
+					if (fallingRock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any()) {
 						rocks.UnionWith(fallingRock.Rocks);
 						fallingRock = NextRock();
 						break;
@@ -105,10 +92,61 @@ public sealed partial class Day17 {
 			return this;
 		}
 
+		public Chamber DropManyRocks(long noOfrocks) {
+
+			Rock fallingRock = NextRock();
+
+			for (int tryShape = 0; tryShape < NO_OF_SHAPES; tryShape++) {
+				long firstShapeIteration = 0;
+				long firstTowerHeight = 0;
+				repeatShapeCount = 0;
+				repeatTowerHeight = 0;
+				bool firstTime = true;
+				for (long i = 0; i < long.Clamp(noOfrocks, 1, NO_OF_SHAPES * jetDirections.Count); i++) {
+					while (true) {
+						JetDirection direction = NextJetDirection();
+						if (nextDirection == 1 && nextShape == tryShape) {
+							if (firstTime is true) {
+								if (i > 3) {
+									firstShapeIteration = i;
+									firstTowerHeight = TowerHeight;
+									firstTime = false;
+								}
+							} else if (repeatShapeCount == 0) {
+								// my real input repeats here
+								repeatShapeCount = i - firstShapeIteration;
+								repeatTowerHeight = TowerHeight - firstTowerHeight;
+								return this;
+							}
+
+						}
+						if (fallingRock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Count() == 0) {
+							fallingRock = fallingRock.Move(direction);
+						}
+						if (fallingRock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any()) {
+							rocks.UnionWith(fallingRock.Rocks);
+							fallingRock = NextRock();
+							break;
+						} else {
+							fallingRock = fallingRock.Fall();
+						}
+					}
+				}
+			}
+
+			return this;
+		}
+
+		public long CalculatedTowerHeight(long noOfrocks) {
+			long value = (noOfrocks / repeatShapeCount) * repeatTowerHeight;
+			long moreDrops = noOfrocks % repeatShapeCount;
+			return value + new Chamber(directions).DropRocks(moreDrops).TowerHeight;
+		}
+
 		private Rock NextRock() {
 			nextShape = (nextShape + 1) % NO_OF_SHAPES;
 			Rock rock = ROCK_SHAPES[nextShape];
-			return rock with { Y = TowerHeight + 3 + (rock.Height - 1) };
+			return rock with { Y = TowerHeight + START_HEIGHT_GAP + (rock.Height - 1) };
 		}
 
 		private JetDirection NextJetDirection() {
@@ -133,32 +171,24 @@ public sealed partial class Day17 {
 		}
 	}
 
-	private record Rock(int X, int Y) {
+	private sealed record Rock(int X, int Y) {
 		HashSet<Point> _rocks = new();
 		public HashSet<Point> _rockBottoms = new();
 		public int Height = 0;
 		public int Width = 0;
-		char[,] rocksArray = default!;
-		public Rock(string ShapeString, Point[] RockBottomPoints) : this(2, 0) {
-			Width = ShapeString.Split(Environment.NewLine)[0].Length;
-			rocksArray = ShapeString.Replace(Environment.NewLine, "").To2dArray(Width);
-			Height = rocksArray.NoOfRows();
-			_rocks = rocksArray
-				.Walk2dArrayWithValues()
-				.Where(p => p.Value == ROCK)
-				.Select(p => p.Index)
-				.ToHashSet();
+
+		public Rock(int Width, int Height, Point[] RockPoints, Point[] RockBottomPoints) : this(2, 0) {
+			this.Width = Width;
+			this.Height = Height;
+			_rocks = RockPoints.ToHashSet();
 			_rockBottoms = RockBottomPoints.ToHashSet();
 		}
 
 		public Rock Move(JetDirection direction) => this with { X = int.Clamp(X + (int)direction, 0, CHAMBER_WIDTH - Width) };
 		public Rock Fall() => this with { Y = Y - 1 };
-		public IEnumerable<Point> Rocks => _rocks.Select(r => new Point(r.X + X, Y - r.Y));
+		public IEnumerable<Point> Rocks       => _rocks      .Select(r => new Point(r.X + X, Y - r.Y));
 		public IEnumerable<Point> RockBottoms => _rockBottoms.Select(r => new Point(r.X + X, Y - r.Y));
-
-
 	};
-
 
 	private enum JetDirection {
 		Left = -1,
