@@ -12,7 +12,7 @@ public class Day19 {
 
 	private static int Solution1(string[] input) {
 		List<Scanner> scanners = Parse(input);
-		scanners[0].SetPosition((0, 0, 0), 0);
+		scanners[0].SetPosition(new(0, 0, 0), 0);
 
 		return FindPositionsOfScanners(scanners)
 			.SelectMany(s => s.PositionedBeacons)
@@ -22,7 +22,7 @@ public class Day19 {
 
 	private static int Solution2(string[] input) {
 		List<Scanner> scanners = Parse(input);
-		scanners[0].SetPosition((0, 0, 0), 0);
+		scanners[0].SetPosition(new(0, 0, 0), 0);
 
 		return FindPositionsOfScanners(scanners)
 			.SelectMany(s => scanners, (a, b) => (a, b))
@@ -84,7 +84,7 @@ public class Day19 {
 				}
 			}
 		}
-		return (false, (0, 0, 0), 0);
+		return (false, new(0, 0, 0), 0);
 	}
 
 	record Scanner(string Name) {
@@ -112,30 +112,30 @@ public class Day19 {
 	static Point3d ReAlign(Point3d p, int alignment) {
 
 		Point3d pX = alignment switch {
-			 0 => ( p.X,  p.Y,  p.Z),
-			 1 => ( p.X,  p.Z, -p.Y),
-			 2 => ( p.X, -p.Y, -p.Z),
-			 3 => ( p.X, -p.Z,  p.Y),
-			 4 => ( p.Y,  p.X, -p.Z),
-			 5 => ( p.Y,  p.Z,  p.X),
-			 6 => ( p.Y, -p.X,  p.Z),
-			 7 => ( p.Y, -p.Z, -p.X),
-			 8 => ( p.Z,  p.X,  p.Y),
-			 9 => ( p.Z,  p.Y, -p.X),
-			10 => ( p.Z, -p.X, -p.Y),
-			11 => ( p.Z, -p.Y,  p.X),
-			12 => (-p.X,  p.Y, -p.Z),
-			13 => (-p.X,  p.Z,  p.Y),
-			14 => (-p.X, -p.Y,  p.Z),
-			15 => (-p.X, -p.Z, -p.Y),
-			16 => (-p.Y,  p.X,  p.Z),
-			17 => (-p.Y,  p.Z, -p.X),
-			18 => (-p.Y, -p.X, -p.Z),
-			19 => (-p.Y, -p.Z,  p.X),
-			20 => (-p.Z,  p.X, -p.Y),
-			21 => (-p.Z,  p.Y,  p.X),
-			22 => (-p.Z, -p.X,  p.Y),
-			23 => (-p.Z, -p.Y, -p.X),
+			 0 => new( p.X,  p.Y,  p.Z),
+			 1 => new( p.X,  p.Z, -p.Y),
+			 2 => new( p.X, -p.Y, -p.Z),
+			 3 => new( p.X, -p.Z,  p.Y),
+			 4 => new( p.Y,  p.X, -p.Z),
+			 5 => new( p.Y,  p.Z,  p.X),
+			 6 => new( p.Y, -p.X,  p.Z),
+			 7 => new( p.Y, -p.Z, -p.X),
+			 8 => new( p.Z,  p.X,  p.Y),
+			 9 => new( p.Z,  p.Y, -p.X),
+			10 => new( p.Z, -p.X, -p.Y),
+			11 => new( p.Z, -p.Y,  p.X),
+			12 => new(-p.X,  p.Y, -p.Z),
+			13 => new(-p.X,  p.Z,  p.Y),
+			14 => new(-p.X, -p.Y,  p.Z),
+			15 => new(-p.X, -p.Z, -p.Y),
+			16 => new(-p.Y,  p.X,  p.Z),
+			17 => new(-p.Y,  p.Z, -p.X),
+			18 => new(-p.Y, -p.X, -p.Z),
+			19 => new(-p.Y, -p.Z,  p.X),
+			20 => new(-p.Z,  p.X, -p.Y),
+			21 => new(-p.Z,  p.Y,  p.X),
+			22 => new(-p.Z, -p.X,  p.Y),
+			23 => new(-p.Z, -p.Y, -p.X),
 			_ => throw new NotImplementedException(),
 		};
 
@@ -156,7 +156,7 @@ public class Day19 {
 				continue;
 			} else {
 				int[] coords = line.Split(",").AsInts().ToArray();
-				Point3d beacon = (coords[0], coords[1], coords[2]);
+				Point3d beacon = new(coords[0], coords[1], coords[2]);
 				scanner.Beacons.Add(beacon);
 			}
 		}

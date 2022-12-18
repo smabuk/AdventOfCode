@@ -73,18 +73,18 @@ public sealed partial class Day17 {
 
 			Rock fallingRock = NextRock();
 
-			for (long i = 0; i < long.Clamp(noOfrocks, 1, 10_000); i++) {
+			for (long i = 0; i < noOfrocks; i++) {
 				while (true) {
 					JetDirection direction = NextJetDirection();
-					if (fallingRock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Count() == 0) {
-						fallingRock = fallingRock.Move(direction);
+					if (WillNotCollide(fallingRock, direction)) {
+						fallingRock = fallingRock.MoveSideways(direction);
 					}
-					if (fallingRock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any()) {
+					if (UnableToDrop(fallingRock)) {
 						rocks.UnionWith(fallingRock.Rocks);
 						fallingRock = NextRock();
 						break;
 					} else {
-						fallingRock = fallingRock.Fall();
+						fallingRock = fallingRock.DropDownOne();
 					}
 				}
 			}
@@ -102,9 +102,11 @@ public sealed partial class Day17 {
 				repeatShapeCount = 0;
 				repeatTowerHeight = 0;
 				bool firstTime = true;
-				for (long i = 0; i < long.Clamp(noOfrocks, 1, NO_OF_SHAPES * jetDirections.Count); i++) {
+				long i;
+				for (i = 0; i < long.Clamp(noOfrocks, 1, NO_OF_SHAPES * jetDirections.Count); i++) {
 					while (true) {
 						JetDirection direction = NextJetDirection();
+
 						if (nextDirection == 1 && nextShape == tryShape) {
 							if (firstTime is true) {
 								if (i > 3) {
@@ -118,24 +120,33 @@ public sealed partial class Day17 {
 								repeatTowerHeight = TowerHeight - firstTowerHeight;
 								return this;
 							}
+						}
 
+						if (WillNotCollide(fallingRock, direction)) {
+							fallingRock = fallingRock.MoveSideways(direction);
 						}
-						if (fallingRock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Count() == 0) {
-							fallingRock = fallingRock.Move(direction);
-						}
-						if (fallingRock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any()) {
+						if (UnableToDrop(fallingRock)) {
 							rocks.UnionWith(fallingRock.Rocks);
 							fallingRock = NextRock();
 							break;
 						} else {
-							fallingRock = fallingRock.Fall();
+							fallingRock = fallingRock.DropDownOne();
 						}
 					}
+				}
+				if (i >= noOfrocks) {
+					return this;
 				}
 			}
 
 			return this;
 		}
+
+		public bool UnableToDrop(Rock rock) =>
+			rock.RockBottoms.Select(r => r with { Y = r.Y - 1 }).Intersect(rocks).Any();
+
+		public bool WillNotCollide(Rock rock, JetDirection direction) =>
+			!rock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Any();
 
 		public long CalculatedTowerHeight(long noOfrocks) {
 			long value = (noOfrocks / repeatShapeCount) * repeatTowerHeight;
@@ -172,22 +183,23 @@ public sealed partial class Day17 {
 	}
 
 	private sealed record Rock(int X, int Y) {
-		HashSet<Point> _rocks = new();
-		public HashSet<Point> _rockBottoms = new();
+		List<Point> _rocks = new();
+		public List<Point> _rockBottoms = new();
+		public int Width  = 0;
 		public int Height = 0;
-		public int Width = 0;
 
 		public Rock(int Width, int Height, Point[] RockPoints, Point[] RockBottomPoints) : this(2, 0) {
-			this.Width = Width;
+			this.Width  = Width;
 			this.Height = Height;
-			_rocks = RockPoints.ToHashSet();
-			_rockBottoms = RockBottomPoints.ToHashSet();
+			_rocks = RockPoints.ToList();
+			_rockBottoms = RockBottomPoints.ToList();
 		}
 
-		public Rock Move(JetDirection direction) => this with { X = int.Clamp(X + (int)direction, 0, CHAMBER_WIDTH - Width) };
-		public Rock Fall() => this with { Y = Y - 1 };
-		public IEnumerable<Point> Rocks       => _rocks      .Select(r => new Point(r.X + X, Y - r.Y));
-		public IEnumerable<Point> RockBottoms => _rockBottoms.Select(r => new Point(r.X + X, Y - r.Y));
+		public IEnumerable<Point> Rocks       => _rocks      .Select(r => r with { X = r.X + X, Y = Y - r.Y });
+		public IEnumerable<Point> RockBottoms => _rockBottoms.Select(r => r with { X = r.X + X, Y = Y - r.Y });
+
+		public Rock MoveSideways(JetDirection direction) => this with { X = int.Clamp(X + (int)direction, 0, CHAMBER_WIDTH - Width) };
+		public Rock DropDownOne() => this with { Y = Y - 1 };
 	};
 
 	private enum JetDirection {
