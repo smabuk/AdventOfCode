@@ -15,28 +15,36 @@ public sealed partial class Day19 {
 		return blueprints
 			.Select(Factory.MaxQualityLevel)
 			.Sum();
-
-		// 4724 too high - works for sample input
 	}
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input) {
+		List<Blueprint> blueprints = input.Select(Blueprint.Parse).Take(3).ToList();
+		return blueprints
+			.Select(Factory.MaxGeodes)
+			.Aggregate(1, (total, next) => total * next);
 	}
 
-
-	private record Factory() {
+	private record Factory {
 		private static List<ChoicesState> choicesStates = new();
 
 		public static int MaxQualityLevel(Blueprint blueprint) {
 			int max = int.MinValue;
 			for (int i = 0; i < 100_000; i++) {
-				max = Math.Max(max, QualityLevel(blueprint, true));
+				max = Math.Max(max, Geodes(blueprint, 24));
+			}
+			return max * blueprint.Id;
+		}
+
+		public static int MaxGeodes(Blueprint blueprint) {
+			int max = int.MinValue;
+			for (int i = 0; i < 1_000_000; i++) {
+				max = Math.Max(max, Geodes(blueprint, 32));
 			}
 			return max;
 		}
 
 
-		public static int QualityLevel(Blueprint blueprint, bool tryMonteCarlo = false) {
+		public static int Geodes(Blueprint blueprint, int noOfMinutes) {
 			Random TrueOrFalse = new();
 			Dictionary<Resource, int> myResources = new() {
 				{ Resource.ore, 0 },
@@ -50,24 +58,20 @@ public sealed partial class Day19 {
 			};
 
 			Enum.GetValues<Resource>();
-			for (int minute = 0; minute < 24; minute++) {
+			for (int minute = 0; minute < noOfMinutes; minute++) {
 				List<Robot> building = new();
 
 				if (CanIBuild(Resource.geode)) {
 					building.Add(BuildRobot(Resource.geode));
 				} else if (CanIBuild(Resource.obsidian)
-					//&& myResources[Resource.clay] >= blueprint.RobotCosts[Resource.geode].Costs[Resource.clay].Value
-					//&& myResources[Resource.ore]  >= blueprint.RobotCosts[Resource.geode].Costs[Resource.ore].Value
 					&& MonteCarlo()
 					) {
 					building.Add(BuildRobot(Resource.obsidian));
 				} else if (CanIBuild(Resource.clay)
-				//	&& myResources[Resource.ore] > blueprint.RobotCosts[Resource.obsidian].Costs[Resource.ore].Value
 					&& MonteCarlo()
 					) {
 					building.Add(BuildRobot(Resource.clay));
 				} else if (CanIBuild(Resource.ore)
-				//	&& myResources[Resource.ore] > blueprint.RobotCosts[Resource.obsidian].Costs[Resource.ore].Value
 					&& MonteCarlo()
 					) {
 					building.Add(BuildRobot(Resource.ore));
@@ -80,7 +84,7 @@ public sealed partial class Day19 {
 				robots.AddRange(building);
 			}
 
-			return myResources[Resource.geode] * blueprint.Id;
+			return myResources[Resource.geode];
 
 			bool CanIBuild(Resource resource) {
 				foreach (Cost cost in blueprint.RobotCosts[resource].Costs.Values) {
@@ -102,8 +106,7 @@ public sealed partial class Day19 {
 		}
 
 
-		private record ChoicesState {
-		}
+		private record ChoicesState();
 	}
 
 
