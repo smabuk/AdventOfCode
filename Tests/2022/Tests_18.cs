@@ -40,8 +40,8 @@ public class Tests_18_Boiling_Boulders {
 		2,3,5
 		"""
 		, 58)]
-	public void Part2(string input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 18, 2, input), out long actual);
+	public void Part2(string input, int expected) {
+		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 18, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }

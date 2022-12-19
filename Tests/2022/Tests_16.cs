@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Tests._2022;
 
 public class Tests_16_Proboscidea_Volcanium {
-	[Theory]
+	[Theory(Skip = "I'm really not interesting in solving this yet")]
 	[InlineData("""
 		Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 		Valve BB has flow rate=13; tunnels lead to valves CC, AA
@@ -20,7 +20,7 @@ public class Tests_16_Proboscidea_Volcanium {
 		Assert.Equal(expected, actual);
 	}
 
-	[Theory]
+	[Theory(Skip = "I'm really not interesting in solving this yet")]
 	[InlineData("""
 		Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 		Valve BB has flow rate=13; tunnels lead to valves CC, AA
