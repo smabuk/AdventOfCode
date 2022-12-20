@@ -37,9 +37,9 @@ public class Tests_20_Grove_Positioning_System {
 		0
 		4
 		"""
-		, 9999)]
-	public void Part2(string input, int expected) {
-		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 20, 2, input), out int actual);
+		, 1623178306)]
+	public void Part2(string input, long expected) {
+		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 20, 2, input), out long actual);
 		Assert.Equal(expected, actual);
 	}
 }
