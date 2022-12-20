@@ -17,7 +17,7 @@ public sealed partial class Day15 {
 		int max = GetArgument<int>(args, argumentNumber: 1, 4_000_000);
 		// Skip for now as I have no solution
 		if (max > 20) {
-			return "** Current too slow **";
+			return "* Too slow *";
 		}
 		return Solution2(input, max).ToString();
 	}

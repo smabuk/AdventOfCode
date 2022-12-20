@@ -14,14 +14,14 @@ public sealed partial class Day19 {
 
 	public static string Part1(string[] input, params object[]? _) {
 		if (MyInputSoSkip[0] == input[0] && MyInputSoSkip[1] == input[1]) {
-			return $"1766 known answer";
+			return $"1766 my answer";
 		}
 		return Solution1(input).ToString();
 	}
 
 	public static string Part2(string[] input, params object[]? _) {
 		if (MyInputSoSkip[0] == input[0] && MyInputSoSkip[1] == input[1]) {
-			return $"30780 known answer";
+			return $"30780 my answer";
 		}
 		return Solution2(input).ToString();
 	}

@@ -4,9 +4,9 @@ using System.Reflection;
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
-	private const string NO_SOLUTION = "** No Solution **";
-	private const string NO_INPUT = "** NO INPUT DATA **";
-	private const string NO_PARAMETERS = "** INVALID NO OF PARAMETERS **";
+	private const string NO_SOLUTION = "* No Solution *";
+	private const string NO_INPUT = "* NO INPUT DATA *";
+	private const string NO_PARAMETERS = "* INVALID NO OF PARAMETERS *";
 
 	public static string? GetProblemDescription(int year, int day) {
 		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);

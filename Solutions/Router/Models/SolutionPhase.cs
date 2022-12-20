@@ -5,9 +5,9 @@ public record struct SolutionPhase(SolutionResultType Result, string Phase, stri
 	public SolutionPhase(string Phase, string Answer) : this(SUCCESS, Phase, Answer, new()) { }
 	public SolutionPhase(string Phase) : this(SUCCESS, Phase, "", new()) { }
 
-	private const string NO_SOLUTION_MESSAGE = "** No solution **";
-	private const string NO_INPUT_MESSAGE = "** NO INPUT DATA **";
-	private const string NO_PARAMETERS_MESSAGE = "** NO PARAMETERS **";
+	private const string NO_SOLUTION_MESSAGE = "* No solution *";
+	private const string NO_INPUT_MESSAGE = "* NO INPUT DATA *";
+	private const string NO_PARAMETERS_MESSAGE = "* NO PARAMETERS *";
 
 	public static SolutionPhase NoInput => new(NO_INPUT, "Solution", NO_INPUT_MESSAGE, new());
 	public static SolutionPhase NoSolution => new(NO_SOLUTION, "Solution", NO_SOLUTION_MESSAGE, new());
