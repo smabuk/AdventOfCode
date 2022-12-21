@@ -71,12 +71,18 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt1:");
+				if (result.Answer.StartsWith("*")) {
+					Console.ForegroundColor = ConsoleColor.Red;
+				}
 				Console.Write($"  {result.Answer,-16}");
 			} else if (result.Phase == "Part2") {
 				answerColour = ConsoleColor.Yellow;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt2:");
+				if (result.Answer.StartsWith("*")) {
+					Console.ForegroundColor = ConsoleColor.Red;
+				}
 				Console.Write($"  {result.Answer,-16}");
 			}
 			Console.ResetColor();
