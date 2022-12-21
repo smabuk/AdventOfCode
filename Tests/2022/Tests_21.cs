@@ -43,9 +43,9 @@ public class Tests_21_Monkey_Math {
 		drzm: hmdt - zczc
 		hmdt: 32
 		"""
-		, 9999)]
+		, 301)]
 	public void Part2(string input, long expected) {
-		_ = long.TryParse(SolutionRouter.SolveProblem(2022, 21, 2, input), out long actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 21, 2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
