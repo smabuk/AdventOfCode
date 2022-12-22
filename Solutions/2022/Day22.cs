@@ -106,7 +106,7 @@ public sealed partial class Day22 {
 
 	private static int Solution1(string[] input) {
 		char[,] monkeyMap = LoadMap(input[..^2]);
-		List<Instruction> instructions = Instruction.Parse(input[^1]).ToList();
+		List<Instruction> instructions = Instruction.ParseLine(input[^1]).ToList();
 
 		Position currentPosition = new(-1, 0, Facing.right);
 		currentPosition = Next2dPosition(currentPosition, new STEP_Instruction(1), monkeyMap);
@@ -120,7 +120,7 @@ public sealed partial class Day22 {
 
 	private static int Solution2(string[] input, int cubeSize) {
 		char[,] monkeyMap = LoadMap(input[..^2]);
-		List<Instruction> instructions = Instruction.Parse(input[^1]).ToList();
+		List<Instruction> instructions = Instruction.ParseLine(input[^1]).ToList();
 		
 		int startX;
 
@@ -182,15 +182,13 @@ public sealed partial class Day22 {
 			Point nextXY = position.XY;
 			do {
 				nextXY += movement;
-				if (nextXY.X < 0) {
-					nextXY.X = map.NoOfColumns() - 1;
-				} else if (nextXY.X >= map.NoOfColumns()) {
-					nextXY.X = 0;
-				} else if (nextXY.Y < 0) {
-					nextXY.Y = map.NoOfRows() - 1;
-				} else if (nextXY.Y >= map.NoOfRows()) {
-					nextXY.Y = 0;
-				}
+				nextXY = nextXY switch {
+					{ X: int x } when x <  0                 => nextXY with { X = map.NoOfColumns() - 1 },
+					{ X: int x } when x >= map.NoOfColumns() => nextXY with { X = 0 },
+					{ Y: int y } when y <  0                 => nextXY with { Y = map.NoOfRows() - 1 },
+					{ Y: int y } when y >= map.NoOfRows()    => nextXY with { Y = 0 },
+					_ => nextXY
+				};
 
 				if (map[nextXY.X, nextXY.Y] == WALL) {
 					return position;
@@ -200,6 +198,7 @@ public sealed partial class Day22 {
 			return position with { Column = nextXY.X, Row = nextXY.Y };
 		}
 	}
+
 	private static Position Next3dPosition(Position current, Instruction instruction, char[,] map, int cubeSize) {
 		if (instruction is ROTATE_Instruction rotate) {
 			return Rotate(current, rotate);
@@ -229,9 +228,9 @@ public sealed partial class Day22 {
 
 			nextXY += movement;
 			if ( 
-				   (nextXY.X < _cubeTopology[face].X)
+				   (nextXY.X <  _cubeTopology[face].X)
 				|| (nextXY.X >= _cubeTopology[face].X + cubeSize)
-				|| (nextXY.Y < _cubeTopology[face].Y) 
+				|| (nextXY.Y <  _cubeTopology[face].Y) 
 				|| (nextXY.Y >= _cubeTopology[face].Y + cubeSize)) {
 
 				(face, Facing newFacing, bool invert) = GetNextFace(face, nextFacing);
@@ -248,7 +247,7 @@ public sealed partial class Day22 {
 			(int, Facing, bool Invert) GetNextFace(int face, Facing facing) {
 				return cubeSize switch {
 					4 => TEST_CUBE_TRANSLATIONS[new(face, facing)],
-					_ => MY_CUBE_TRANSLATIONS[new(face, facing)],
+					_ =>   MY_CUBE_TRANSLATIONS[new(face, facing)],
 				};
 			}
 
@@ -258,16 +257,12 @@ public sealed partial class Day22 {
 				int coordY = coord.Y % cubeSize;
 
 				coord = (currFacing, newFacing) switch {
-					   (Facing.right, Facing.right)
-					or (Facing.down , Facing.down) 
-					or (Facing.left , Facing.left) 
-					or (Facing.up   , Facing.up)   
-					or (Facing.right, Facing.left) 
+					   (Facing.right, Facing.left)
 					or (Facing.left , Facing.right)
-					or (Facing.up   , Facing.down) 
-					or (Facing.down , Facing.up)    
-					  => coord with { X = coordX, Y = coordY },
-					_ => coord with { X = coordY, Y = coordX }	// swap X and Y
+					or (Facing.up   , Facing.down)
+					or (Facing.down , Facing.up)   => coord with { X = coordX, Y = coordY },
+					_ when currFacing == newFacing => coord with { X = coordX, Y = coordY },
+					_                              => coord with { X = coordY, Y = coordX }	// swap X and Y
 				};
 
 				if (invert) {
@@ -341,16 +336,19 @@ public sealed partial class Day22 {
 	}
 
 	private record Instruction() : IParsable<Instruction> {
-		public static IEnumerable<Instruction> Parse(string s) {
-			s = s.Replace("L", ",left,").Replace("R", ",right,");
-			string[] tokens = s.Split(',', StringSplitOptions.RemoveEmptyEntries);
-			foreach (string token in tokens) {
-				if (char.IsNumber(token[0])) {
-					yield return new STEP_Instruction(token.AsInt());
-				} else {
-					yield return new ROTATE_Instruction(Enum.Parse<Direction>(token));
-				}
-			}
+		public static IEnumerable<Instruction> ParseLine(string s) {
+			return 
+				s
+				.Replace("L", ",left,").Replace("R", ",right,")
+				.Split(',', StringSplitOptions.RemoveEmptyEntries)
+				.Select(Parse);
+		}
+
+		public static Instruction Parse(string s) {
+			return char.IsNumber(s[0]) switch {
+				true  => new STEP_Instruction(s.AsInt()),
+				false => new ROTATE_Instruction(Enum.Parse<Direction>(s))
+			};
 		}
 
 		public static Instruction Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
@@ -375,4 +373,56 @@ public sealed partial class Day22 {
 		left,
 		right,
 	}
+
 }
+
+//         TEST CUBE TOPOLOGY 
+//         
+//             -----------             
+//            |           |	           
+//            |        +=====+         
+//            |        +     +         
+//            |      --+  1  +-------- 
+//            |     |  +     +        |
+//         +=====+=====+=====+        |
+//         +     +     +     +        |
+//       __+  3  +  2  +  4  +--      |
+//      |  +     +     +     +  |     |
+//      |  +=====+=====+=====+=====+  |
+//      |     |     |  +     +     +  |
+//      |     |      --+  6  +  5  +-- 
+//      |     |        +     +     +   
+//      |     |        +=====+=====+   
+//      |     |           |     |      
+//      |      -----------      |      
+//      |                       |      
+//       -----------------------       
+
+
+//       MY CUBE TOPOLOGY 
+//                                      
+//                                      
+//   -------------       ---------      
+//  |             |     |        |      
+//  |          +=====+=====+     |      
+//  |          +     +     +     |      
+//  |  --------+  1  +  5  +--   |      
+//  | |        +     +     +  |  |      
+//  | |        +=====+=====+  |  |      
+//  | |        +     +  |     |  |      
+//  | |      --+  4  +--      |  |      
+//  | |     |  +     +        |  |      
+//  | |  +=====+=====+        |  |      
+//  | |  +     +     +        |  |      
+//  |  --+  2  +  6  +--------   |      
+//  |    +     +     +           |      
+//  |    +=====+=====+           |      
+//  |    +     +  |              |      
+//   ----+  3  +--               |      
+//       +     +                 |      
+//       +=====+                 |      
+//          |                    |      
+//           --------------------       
+//                                      
+//                                      
+
