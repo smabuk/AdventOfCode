@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Smab.Helpers" Version="1.2.11" />
+		<PackageReference Include="Smab.Helpers" Version="1.2.12" />
 	</ItemGroup>
 
 </Project>

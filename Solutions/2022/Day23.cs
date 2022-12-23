@@ -13,47 +13,37 @@ public sealed partial class Day23 {
 	private static readonly char ELF   = '#';
 	private static readonly char EMPTY = '.';
 
-	private static readonly List<Point> DIRECTION_ORDER = new() {
-		new( 0, -1), // North
-		new( 0,  1), // South
-		new(-1,  0), // West
-		new( 1,  0), // East
-	};
 
-	private static int Solution1(string[] input) {
-		const int NoOfRounds = 10;
 
+	private static int Solution1(string[] input, int noOfRounds = 10) {
 		Dictionary<string, Point> elves = LoadElves(input);
-		List<Elf> proposedElfMoves = new();
 
-		int directionOffset = 0;
-		for (int round = 1; round <= NoOfRounds; round++) {
-			_ = ProcessRound(elves, directionOffset);
-			directionOffset = NextDirectionOffset(directionOffset);
+		int choiceOffset = 0;
+
+		for (int round = 1; round <= noOfRounds; round++) {
+			_ = ProcessRound(elves, choiceOffset);
+			choiceOffset = NextDirectionChoice(choiceOffset);
 		}
 
-		int minX = elves.Values.Select(l => l.X).Min();
-		int minY = elves.Values.Select(l => l.Y).Min();
-		int maxX = elves.Values.Select(l => l.X).Max();
-		int maxY = elves.Values.Select(l => l.Y).Max();
-		int size = (maxX - minX + 1) * (maxY - minY + 1);
-
-		return size - elves.Distinct().Count();
+		return GetSize(elves.Values) - elves.Count();
 	}
+
+
 
 	private static int Solution2(string[] input) {
 		Dictionary<string, Point> elves = LoadElves(input);
 
 		int round = 1;
-		int directionOffset = 0;
-		
-		while (ProcessRound(elves, directionOffset) is false) {
+		int choiceOffset = 0;
+
+		while (ProcessRound(elves, choiceOffset)) {
 			round++;
-			directionOffset = NextDirectionOffset(directionOffset);
+			choiceOffset = NextDirectionChoice(choiceOffset);
 		}
 
 		return round;
 	}
+
 
 
 	private static Dictionary<string, Point> LoadElves(string[] input) =>
@@ -63,20 +53,22 @@ public sealed partial class Day23 {
 		.Select(item => (Name: Guid.NewGuid().ToString(), Location: new Point(item.x, item.y))))
 		.ToDictionary(item => item.Name, item => item.Location);
 
-	private static bool ProcessRound(Dictionary<string, Point> elves, int directionChoiceOffset) {
+
+
+
+	private static bool ProcessRound(Dictionary<string, Point> elves, int choiceOffset) {
 		List<Elf> proposedElfMoves = new();
 
 		HashSet<Point> elfLocations = elves.Values.ToHashSet();
-
 		List<string> elvesThatCanMove = elves
-			.Where(elf => elfLocations.Overlaps(elf.Value.AllAdjacent))
+			.Where(elf => elfLocations.Overlaps(elf.Value.AllAdjacent()))
 			.Select(elf => elf.Key)
 			.ToList();
 
 		bool noMoves = true;
-		
+
 		foreach (string elfName in elvesThatCanMove) {
-			foreach (Point direction in Directions(directionChoiceOffset)) {
+			foreach (Point direction in Directions(choiceOffset)) {
 				Point location = elves[elfName];
 				if (CanElfMove(direction, location)) {
 					proposedElfMoves.Add(new Elf(elfName, location + direction));
@@ -92,17 +84,21 @@ public sealed partial class Day23 {
 			}
 		}
 
-		return noMoves;
+		return !noMoves;
+
+
+		#region Local functions
 
 		bool CanElfMove(Point direction, Point location) {
-			bool foundElf = false;
+			int[] DIRECTION_OFFSETS = { -1, 0, 1 };
 
-			for (int d = -1; d <= 1; d++) {
-				Point checkDirection = direction.X switch {
-					0 => direction with { X = d },
-					_ => direction with { Y = d },
+			bool foundElf = false;
+			foreach (int dOffset in DIRECTION_OFFSETS) {
+				Point checkLocation = location + direction.X switch {
+					0 => direction with { X = dOffset },
+					_ => direction with { Y = dOffset },
 				};
-				if (elfLocations.Contains(location + checkDirection)) {
+				if (elfLocations.Contains(checkLocation)) {
 					foundElf = true;
 					break;
 				}
@@ -115,36 +111,56 @@ public sealed partial class Day23 {
 			=> proposedElfMoves.Where(e => e.Location == elf.Location).Count() == 1;
 
 		static IEnumerable<Point> Directions(int index) {
+			Point[] DIRECTION_ORDER = {
+				new( 0, -1), // North
+				new( 0,  1), // South
+				new(-1,  0), // West
+				new( 1,  0), // East
+			};
+
 			for (int choice = 0; choice < 4; choice++) {
 				Point direction = DIRECTION_ORDER[(choice + index) % 4];
 				yield return direction;
 			}
 		}
+
+		#endregion Local functions
 	}
-	
-	private static int NextDirectionOffset(int directionOffset) => (directionOffset + 1) % 4;
+
+	private static int GetSize(IEnumerable<Point> points) {
+		(Point start, Point end) = GetBounds(points);
+		return (end.X - start.X + 1) * (end.Y - start.Y + 1);
+	}
+
+	private static (Point Start, Point End) GetBounds(IEnumerable<Point> points) {
+		int minX = int.MaxValue;
+		int maxX = int.MinValue;
+		int minY = int.MaxValue;
+		int maxY = int.MinValue;
+		foreach (Point point in points) {
+			minX = Math.Min(minX, point.X);
+			maxX = Math.Max(maxX, point.X);
+			minY = Math.Min(minY, point.Y);
+			maxY = Math.Max(maxY, point.Y);
+		}
+		return (new Point(minX, minY), new Point(maxX, maxY));
+	}
+
+	private static int NextDirectionChoice(int choiceOffset) => (choiceOffset + 1) % 4;
 
 	private record struct Elf(string Name, Point Location);
 
 	private static void DebugPrint(IEnumerable<Point> locations) {
 
-		int minX = locations.Select(l => l.X).Min();
-		int minY = locations.Select(l => l.Y).Min();
-		int maxX = locations.Select(l => l.X).Max();
-		int maxY = locations.Select(l => l.Y).Max();
-		int size = (maxX - minX + 1) * (maxY - minY + 1);
+		(Point start, Point end) = GetBounds(locations);
+		int size = (end.X - start.X + 1) * (end.Y - start.Y + 1);
 
 		Debug.WriteLine("");
-		for (int y = minY; y <= maxY; y++) {
+		for (int y = start.Y; y <= end.Y; y++) {
 			Debug.WriteLine("");
-			for (int x = minX; x <= maxX; x++) {
-				if (locations.Any(e => e == new Point(x, y))) {
-					Debug.Write(ELF);
-				} else {
-					Debug.Write(EMPTY);
-				}
+			for (int x = start.X; x <= end.X; x++) {
+				Debug.Write(locations.Any(e => e == new Point(x, y)) ? ELF : EMPTY);
 			}
-
 		}
 		Debug.WriteLine("");
 	}
