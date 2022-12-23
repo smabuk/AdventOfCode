@@ -26,9 +26,15 @@ public class Tests_23_Unstable_Diffusion {
 
 	[Theory]
 	[InlineData("""
-		b
+		....#..
+		..###.#
+		#...#.#
+		.#...##
+		#.###..
+		##.#.##
+		.#..#..
 		"""
-		, 9999)]
+		, 20)]
 	public void Part2(string input, long expected) {
 		_ = int.TryParse(SolutionRouter.SolveProblem(2022, 23, 2, input), out int actual);
 		Assert.Equal(expected, actual);
