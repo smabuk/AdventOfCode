@@ -15,6 +15,7 @@ public sealed partial class Day25 {
 		return sum;
 	}
 
+	[DebuggerDisplay("{DebuggerDisplay()}")]
 	public record struct SnafuNumber(long Value) : IParsable<SnafuNumber> {
 
 		public static SnafuNumber Parse(string s) {
@@ -58,10 +59,12 @@ public sealed partial class Day25 {
 
 		private const char MINUS_1 = '-';
 		private const char MINUS_2 = '=';
-		private const int BASE = 5;
+		private const int  BASE    = 5;
 
 		public static SnafuNumber Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out SnafuNumber result) => throw new NotImplementedException();
+
+		private string DebuggerDisplay() => $$$"""{{{{nameof(SnafuNumber)}}} { Value = {{{Value}}}, String = {{{ToString()}}} }}""";
 	}
 
 }

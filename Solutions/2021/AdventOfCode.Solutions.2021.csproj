@@ -7,6 +7,10 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Smab.Helpers" Version="1.2.12" />
 	</ItemGroup>
