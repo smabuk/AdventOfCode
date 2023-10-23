@@ -22,7 +22,7 @@ public class Day15 {
 		string[] inputs = input[0].Split(",");
 
 		int newLastNo;
-		Dictionary<int, Spoken> gamePlay = new();
+		Dictionary<int, Spoken> gamePlay = [];
 
 		Spoken lastGo = new(0, 0, false);
 		for (int turnNo = 1; turnNo <= inputs.Length; turnNo++) {

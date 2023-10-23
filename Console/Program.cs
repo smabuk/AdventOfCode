@@ -1,6 +1,6 @@
 ﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-object[]? solutionArgs = Array.Empty<object>();
+object[]? solutionArgs = [];
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.ResetColor();
@@ -71,7 +71,7 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt1:");
-				if (result.Answer.StartsWith("*")) {
+				if (result.Answer.StartsWith('*')) {
 					Console.ForegroundColor = ConsoleColor.Red;
 				}
 				Console.Write($"  {result.Answer,-16}");
@@ -80,7 +80,7 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt2:");
-				if (result.Answer.StartsWith("*")) {
+				if (result.Answer.StartsWith('*')) {
 					Console.ForegroundColor = ConsoleColor.Red;
 				}
 				Console.Write($"  {result.Answer,-16}");

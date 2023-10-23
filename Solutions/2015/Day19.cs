@@ -20,7 +20,7 @@ public class Day19 {
 		List<Replacement> replacements = input[..^2].Select(i => ParseLine(i)).ToList();
 		string startingMolecule = input[^1];
 
-		List<string> molecules = new();
+		List<string> molecules = [];
 
 		foreach (var r in replacements) {
 			int i = 0;
@@ -39,15 +39,15 @@ public class Day19 {
 	private static int Solution2(string[] input) {
 		var replacements = input[..^2].Select(i => ParseLine(i)).ToArray();
 		string targetMolecule = input[^1];
-		List<string> foundMolecules = new();
+		List<string> foundMolecules = [];
 		string finishingMolecule = "e";
 
-		List<string> molecules = new() { targetMolecule };
+		List<string> molecules = [targetMolecule];
 		int steps = 0;
 		bool foundMolecule = false;
 		do {
 			List<string> newMolecules = molecules.Distinct().ToList();
-			molecules = new();
+			molecules = [];
 			steps++;
 			foreach (string startingMolecule in newMolecules) {
 				foreach (var r in replacements) {

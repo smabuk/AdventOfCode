@@ -110,7 +110,7 @@ public class Day24 {
 			{ new Register("y"), 0 },
 			{ new Register("z"), 0 },
 		};
-		public List<(int w1, int w2, int offset)> Conditions = new();
+		public List<(int w1, int w2, int offset)> Conditions = [];
 
 		public int W => Registers[new Register("w")];
 		public int X => Registers[new Register("x")];
@@ -125,13 +125,13 @@ public class Day24 {
 			foreach (int input in inputs) {
 				InputQueue.Enqueue(input);
 			}
-			Conditions = new();
+			Conditions = [];
 			int lastAddX = 0;
 			int lastAddY = 0;
 			bool divZBy26 = false;
 			int zDepth = -1;
-			Dictionary<int, (int Section, int Value)> lastZs = new();
-			List<string> Rules = new();
+			Dictionary<int, (int Section, int Value)> lastZs = [];
+			List<string> Rules = [];
 			int section = -1;
 			if (Debug) { Console.WriteLine(); };
 			for (int index = 0; index < instructions.Count; index++) {

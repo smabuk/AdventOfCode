@@ -24,7 +24,7 @@ public class Day17 {
 		int noOfIterations = 6;
 
 		Dictionary<Point, Cube> cubes = ParseInput(input, 3);
-		Dictionary<Point, Cube> nextCubes = new();
+		Dictionary<Point, Cube> nextCubes = [];
 
 		Point[] directions = (from dx in new[] { -1, 0, 1 }
 							  from dy in new[] { -1, 0, 1 }
@@ -36,7 +36,7 @@ public class Day17 {
 		for (int i = 0; i < noOfIterations; i++) {
 
 			countOn = 0;
-			nextCubes = new();
+			nextCubes = [];
 			int minX = cubes.Select(c => ((CubePoint)c.Key).X).Min() - 1;
 			int maxX = cubes.Select(c => ((CubePoint)c.Key).X).Max() + 1;
 			int minY = cubes.Select(c => ((CubePoint)c.Key).Y).Min() - 1;
@@ -73,7 +73,7 @@ public class Day17 {
 		int noOfIterations = 6;
 
 		Dictionary<Point, Cube> cubes = ParseInput(input, 4);
-		Dictionary<Point, Cube> nextCubes = new();
+		Dictionary<Point, Cube> nextCubes = [];
 
 		Point[] directions = (from dw in new[] { -1, 0, 1 }
 							  from dx in new[] { -1, 0, 1 }
@@ -86,7 +86,7 @@ public class Day17 {
 		for (int i = 0; i < noOfIterations; i++) {
 
 			countOn = 0;
-			nextCubes = new();
+			nextCubes = [];
 			int minW = cubes.Select(c => ((HyperPoint)c.Key).W).Min() - 1;
 			int maxW = cubes.Select(c => ((HyperPoint)c.Key).W).Max() + 1;
 			int minX = cubes.Select(c => ((HyperPoint)c.Key).X).Min() - 1;
@@ -139,7 +139,7 @@ public class Day17 {
 	}
 
 	private static Dictionary<Point, Cube> ParseInput(string[] input, int noOfDimensions) {
-		Dictionary<Point, Cube> cubes = new();
+		Dictionary<Point, Cube> cubes = [];
 		int width = input[0].Length;
 		int height = input.Length;
 

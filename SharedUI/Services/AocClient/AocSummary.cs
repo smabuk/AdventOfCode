@@ -3,7 +3,7 @@
 public class AocSummary {
 	public string UserName { get; set; } = null!;
 	public int NoOfStars { get; set; }
-	public Dictionary<int, DailySummary> Days { get; set; } = new();
+	public Dictionary<int, DailySummary> Days { get; set; } = [];
 }
 
 public class DailySummary {

@@ -42,7 +42,7 @@ public class IntcodeComputer {
 
 	public static int[] ExecuteIntcodeProgram(int[] program, int[]? inputs, out int[] outputs) {
 		int inputIndex = 0;
-		List<int> outputList = new();
+		List<int> outputList = [];
 
 		for (int i = 0; i < program.Length && program[i] != 99; i++) {
 			Instruction instruction = Instruction.Parse(program[i]);

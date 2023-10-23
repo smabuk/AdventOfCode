@@ -36,7 +36,7 @@ public class Day16 {
 			.TicketFields.SelectMany(i => i.AllowedValues)
 			.ToList();
 
-		List<Ticket> validTickets = new();
+		List<Ticket> validTickets = [];
 
 		foreach (Ticket ticket in instructions.NearbyTickets) {
 			if (ticket.Values.All(t => allowedValues.Contains(t))) {
@@ -45,7 +45,7 @@ public class Day16 {
 		}
 
 		int noOfFields = instructions.TicketFields.Count();
-		List<(string name, int position)> answers = new();
+		List<(string name, int position)> answers = [];
 
 		foreach (TicketField tf in instructions.TicketFields) {
 			for (int i = 0; i < noOfFields; i++) {
@@ -56,7 +56,7 @@ public class Day16 {
 			}
 		}
 
-		List<long> departureValues = new();
+		List<long> departureValues = [];
 
 		for (int i = 0; i < noOfFields; i++) {
 			var names = answers
@@ -81,8 +81,8 @@ public class Day16 {
 	private static Input Parse(string[] input) {
 		string line;
 		int i = 0;
-		List<TicketField> ticketFields = new();
-		List<Ticket> nearbyTickets = new();
+		List<TicketField> ticketFields = [];
+		List<Ticket> nearbyTickets = [];
 		while (!string.IsNullOrEmpty(input[i])) {
 			line = input[i];
 			Match match = Regex.Match(line, @"(?<name>[ \w]+): (?<r1lower>\d+)-(?<r1upper>\d+) or (?<r2lower>\d+)-(?<r2upper>\d+)");

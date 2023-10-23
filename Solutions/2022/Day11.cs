@@ -46,7 +46,7 @@ public sealed partial class Day11 {
 		
 		public long InspectionCount { get; set; } = 0;
 
-		private List<Item> _items = new();
+		private List<Item> _items = [];
 		public required IEnumerable<Item> Items { get => _items; init => _items = value.ToList(); }
 
 		public IEnumerable<(Item Item, int MonkeyToThrowTo)> Inspect(bool isPart1 = true) {

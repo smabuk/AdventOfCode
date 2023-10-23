@@ -16,7 +16,7 @@ public static class Day08 {
 
 	private static int Solution1(string[] input) {
 		List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
-		List<int> VisitedLineNos = new();
+		List<int> VisitedLineNos = [];
 
 		Accumulator = 0;
 		int lineNo = 0;
@@ -32,12 +32,12 @@ public static class Day08 {
 	private static int Solution2(string[] input) {
 		List<Instruction> program = input.Select(x => GetCommand(x)).ToList();
 
-		List<int> ChangedLines = new();
+		List<int> ChangedLines = [];
 		int lineNo;
 		do {
 			Accumulator = 0;
 			lineNo = 0;
-			List<int> VisitedLineNos = new();
+			List<int> VisitedLineNos = [];
 			bool instructionChanged = false;
 			do {
 				Instruction instruction = program[lineNo];

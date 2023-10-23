@@ -34,8 +34,8 @@ public class Day06 {
 	private static string Solution2(string[] input) {
 		(_, Dictionary<string, OrbitRecord> orbits) = ParseInputs(input);
 		
-		List<string> startList = new();
-		List<string> finishList = new();
+		List<string> startList = [];
+		List<string> finishList = [];
 
 		string currObject = "YOU";
 		while (currObject != "COM") {

@@ -68,12 +68,12 @@ public sealed partial class Day19 {
 				{ ResourceType.geode, 0 }
 			};
 
-			List<Robot> robots = new() {
+			List<Robot> robots = [
 				new(ResourceType.ore)
-			};
+			];
 
 			for (int minute = 1; minute <= noOfMinutes; minute++) {
-				List<Robot> newRobot = new();
+				List<Robot> newRobot = [];
 
 				if (CanIBuild(ResourceType.geode)) {
 					newRobot.Add(BuildRobot(ResourceType.geode));

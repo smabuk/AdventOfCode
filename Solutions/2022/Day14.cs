@@ -61,10 +61,10 @@ public sealed partial class Day14 {
 		int minX = int.MaxValue;
 		int maxX = int.MinValue;
 		int maxY = int.MinValue;
-		List<List<Point>> linePaths = new();
+		List<List<Point>> linePaths = [];
 
 		for (int i = 0; i < input.Length; i++) {
-			List<Point> pathPoints = new();
+			List<Point> pathPoints = [];
 			int[] coords = input[i].Replace("-", "").Split(new char[] { '>', ',' }).AsInts().ToArray();
 			for (int j = 0; j < coords.Length; j += 2) {
 				pathPoints.Add(new(coords[j], coords[j + 1]));

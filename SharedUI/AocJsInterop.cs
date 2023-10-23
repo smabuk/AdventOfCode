@@ -7,13 +7,9 @@ namespace AdventOfCode.SharedUI;
 // This class should be registered as scoped DI service and then injected into Blazor
 // components for use.
 
-public class AocJsInterop : IAsyncDisposable {
-	private readonly Lazy<Task<IJSObjectReference>> moduleTask;
-
-	public AocJsInterop(IJSRuntime jsRuntime) {
-		moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+public class AocJsInterop(IJSRuntime jsRuntime) : IAsyncDisposable {
+	private readonly Lazy<Task<IJSObjectReference>> moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
 			"import", "./_content/AdventOfCode.SharedUI/aocJsInterop.js").AsTask());
-	}
 
 	public async ValueTask<string> CopyToClipboard(ElementReference reference) {
 		var module = await moduleTask.Value;
@@ -45,6 +41,7 @@ public class AocJsInterop : IAsyncDisposable {
 		if (moduleTask.IsValueCreated) {
 			var module = await moduleTask.Value;
 			await module.DisposeAsync();
+			GC.SuppressFinalize(this);
 		}
 	}
 }

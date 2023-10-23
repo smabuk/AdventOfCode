@@ -10,7 +10,7 @@ public class Day03 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		List<(int x, int y)> houses = new();
+		List<(int x, int y)> houses = [];
 		(int x, int y) santa = (0, 0);
 		houses.Add(santa);
 		foreach (char c in input[0]) {
@@ -27,7 +27,7 @@ public class Day03 {
 	}
 
 	private static int Solution2(string[] input) {
-		List<(int x, int y)> houses = new();
+		List<(int x, int y)> houses = [];
 		(int x, int y) santa = (0, 0);
 		(int x, int y) roboSanta = (0, 0);
 		houses.Add(santa);

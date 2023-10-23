@@ -88,12 +88,12 @@ public class Day19 {
 	}
 
 	record Scanner(string Name) {
-		public List<Point3d> Beacons { get; set; } = new();
+		public List<Point3d> Beacons { get; set; } = [];
 		public Point3d Position { get; set; }
 		public bool HasPosition { get; set; } = false;
 
-		public HashSet<Point3d> PositionedBeacons = new();
-		public Dictionary<(Point3d, Point3d), int> BeaconDistances = new();
+		public HashSet<Point3d> PositionedBeacons = [];
+		public Dictionary<(Point3d, Point3d), int> BeaconDistances = [];
 
 		public IEnumerable<Point3d> GetBeacons(int alignment) {
 			foreach (Point3d beacon in Beacons) {
@@ -143,7 +143,7 @@ public class Day19 {
 	}
 
 	private static List<Scanner> Parse(string[] input) {
-		List<Scanner> scanners = new();
+		List<Scanner> scanners = [];
 		bool isScannerNameLine = true;
 		Scanner scanner = new("not used");
 		foreach (string line in input) {

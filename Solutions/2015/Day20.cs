@@ -50,7 +50,7 @@ public class Day20 {
 
 	// https://stackoverflow.com/questions/239865/best-way-to-find-all-factors-of-a-given-number#239877
 	static List<int> Factor(int number) {
-		List<int>? factors = new();
+		List<int>? factors = [];
 		int max = (int)Math.Sqrt(number);  // Round down
 
 		for (int factor = 1; factor <= max; ++factor) // Test from 1 to the square root, or the int below it, inclusive.

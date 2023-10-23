@@ -24,7 +24,7 @@ public class Day14 {
 
 	private static int Solution1(string[] input, int raceTime) {
 		List<Reindeer> reindeer = input.Select(i => ParseLine(i)).ToList();
-		Dictionary<string, int> distances = new();
+		Dictionary<string, int> distances = [];
 		foreach (Reindeer r in reindeer) {
 			distances.Add(r.Name, 0);
 		}
@@ -42,8 +42,8 @@ public class Day14 {
 
 	private static int Solution2(string[] input, int raceTime) {
 		List<Reindeer> reindeer = input.Select(i => ParseLine(i)).ToList();
-		Dictionary<string, int> distances = new();
-		Dictionary<string, int> points = new();
+		Dictionary<string, int> distances = [];
+		Dictionary<string, int> points = [];
 		foreach (Reindeer r in reindeer) {
 			distances.Add(r.Name, 0);
 			points.Add(r.Name, 0);

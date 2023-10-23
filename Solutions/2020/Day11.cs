@@ -14,8 +14,7 @@ public static class Day11 {
 	public const char FLOOR = '.';
 	public const char OCCUPIED = '#';
 
-	private static readonly List<(int dX, int dY)> DIRECTIONS = new()
-			{ (0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1) };
+	private static readonly List<(int dX, int dY)> DIRECTIONS = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)];
 
 
 	private static int Solution1(string[] input) {
@@ -58,7 +57,7 @@ public static class Day11 {
 		return countOccupied;
 	}
 	public static List<char> GetAdjacentPositions(int X, int Y, int width, int height, char[,] room) {
-		List<char> adjacent = new();
+		List<char> adjacent = [];
 		foreach (var (dX, dY) in DIRECTIONS) {
 			int x = X + dX;
 			int y = Y + dY;
@@ -112,7 +111,7 @@ public static class Day11 {
 	}
 
 	public static List<char> GetAdjacentLines(int X, int Y, int width, int height, char[,] room) {
-		List<char> adjacent = new();
+		List<char> adjacent = [];
 		foreach (var (dX, dY) in DIRECTIONS) {
 			int x = X + dX;
 			int y = Y + dY;

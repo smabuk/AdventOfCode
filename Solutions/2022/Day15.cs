@@ -30,7 +30,7 @@ public sealed partial class Day15 {
 
 	private static int Solution1(string[] input, int rowToSearch) {
 		List<Point> beacons = _pairs.Select(p => p.Beacon).ToList();
-		HashSet<Point> found = new();
+		HashSet<Point> found = [];
 
 		foreach (SensorBeaconPair sbp in _pairs) {
 			if (sbp.Sensor.Y - sbp.ManhattanDistance <= rowToSearch && sbp.Sensor.Y + sbp.ManhattanDistance >= rowToSearch) {
@@ -52,7 +52,7 @@ public sealed partial class Day15 {
 
 	private static long Solution2(string[] input, int max) {
 		List<Point> beacons = _pairs.Select(p => p.Beacon).ToList();
-		HashSet<Point> found = new();
+		HashSet<Point> found = [];
 		int BLOCK_SIZE = int.Clamp(max, 10, 10_000);
 		Console.WriteLine();
 		char[,] cave = new char[BLOCK_SIZE + 1, BLOCK_SIZE + 1];

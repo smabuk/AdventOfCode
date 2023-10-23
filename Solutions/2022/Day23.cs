@@ -57,7 +57,7 @@ public sealed partial class Day23 {
 
 
 	private static bool ProcessRound(Dictionary<string, Point> elves, int choiceOffset) {
-		List<Elf> proposedElfMoves = new();
+		List<Elf> proposedElfMoves = [];
 
 		HashSet<Point> elfLocations = elves.Values.ToHashSet();
 		List<string> elvesThatCanMove = elves

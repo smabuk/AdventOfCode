@@ -51,8 +51,8 @@ public sealed partial class Day17 {
 	}
 
 	private sealed record Chamber {
-		private readonly HashSet<Point> rocks = new();
-		private readonly List<JetDirection> jetDirections = new();
+		private readonly HashSet<Point> rocks = [];
+		private readonly List<JetDirection> jetDirections = [];
 		private readonly string directions = "";
 		private int nextShape = -1;
 		private int nextDirection = -1;
@@ -168,7 +168,7 @@ public sealed partial class Day17 {
 		public int TowerHeight => rocks.Max(r => r.Y) + 1;
 
 		public List<string> Print(Rock rock) {
-			List<string> message = new();
+			List<string> message = [];
 			Console.WriteLine();
 			for (int y = TowerHeight + 5; y >= 0; y--) {
 				string line = "";

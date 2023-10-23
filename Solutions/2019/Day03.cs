@@ -22,8 +22,8 @@ public class Day03 {
 		List<WireRoute> wireInstructions1 = input[0].Split(",").Select(i => ParseLine(i)).ToList();
 		List<WireRoute> wireInstructions2 = input[1].Split(",").Select(i => ParseLine(i)).ToList();
 
-		List<Point> wire1 = new() { startPos };
-		List<Point> wire2 = new() { startPos };
+		List<Point> wire1 = [startPos];
+		List<Point> wire2 = [startPos];
 
 		foreach (var instruction in wireInstructions1) {
 			wire1.AddRange(GetPoints(wire1.Last(), instruction));
@@ -42,7 +42,7 @@ public class Day03 {
 	}
 
 	static List<Point> GetPoints(Point startPoint, WireRoute route) {
-		List<Point> points = new();
+		List<Point> points = [];
 		for (int i = 1; i <= route.Value; i++) {
 			Point point = route.Direction switch {
 				"L" => startPoint with { X = startPoint.X - i },
@@ -63,8 +63,8 @@ public class Day03 {
 		List<WireRoute> wireInstructions1 = input[0].Split(",").Select(i => ParseLine(i)).ToList();
 		List<WireRoute> wireInstructions2 = input[1].Split(",").Select(i => ParseLine(i)).ToList();
 
-		List<Point> wire1 = new() { startPos };
-		List<Point> wire2 = new() { startPos };
+		List<Point> wire1 = [startPos];
+		List<Point> wire2 = [startPos];
 
 		foreach (var instruction in wireInstructions1) {
 			wire1.AddRange(GetPoints(wire1.Last(), instruction));

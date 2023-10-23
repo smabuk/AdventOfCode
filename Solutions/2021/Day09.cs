@@ -44,7 +44,7 @@ public class Day09 {
 			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
 			.AsPoints()
 			.Select(location => 
-				new Basin(location, GetAdjacentBasinPoints(location, heightMap, new List<Point>() { location }))
+				new Basin(location, GetAdjacentBasinPoints(location, heightMap, [location]))
 				.Locations
 				.Count)
 			.OrderByDescending(x => x)

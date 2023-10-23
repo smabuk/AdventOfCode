@@ -13,8 +13,8 @@ public sealed partial class Day12 {
 	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
 	private static char[,] _elevationMap = default!;
-	private static Dictionary<Point, int> _costs = new();
-	private static Dictionary<char, Point> _endPoints = new();
+	private static Dictionary<Point, int> _costs = [];
+	private static Dictionary<char, Point> _endPoints = [];
 	private static Point _startPoint;
 	private static Point _endPoint;
 

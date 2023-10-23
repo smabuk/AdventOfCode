@@ -10,7 +10,7 @@ public static class Day01 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	public static long Solution1(string[] input) {
-		List<int> expenseValues = new();
+		List<int> expenseValues = [];
 		foreach (string item in input) {
 			expenseValues.Add(int.Parse(item));
 		}
@@ -28,7 +28,7 @@ public static class Day01 {
 	}
 
 	public static bool FindSumsEqualTo(int value, IEnumerable<int> expenseValues, int noOfEntries, out List<int> foundEntries) {
-		foundEntries = new();
+		foundEntries = [];
 
 		foreach (int entry in expenseValues) {
 			if (noOfEntries > 2) {

@@ -20,8 +20,7 @@ public class Day18 {
 	public const char OFF = '.';
 	public const char ON = '#';
 
-	private static readonly List<(int dX, int dY)> DIRECTIONS = new()
-			{ (0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1) };
+	private static readonly List<(int dX, int dY)> DIRECTIONS = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)];
 
 	private static int Solution1(string[] input, int noOfIterations) {
 		int width = input[0].Length;
@@ -136,7 +135,7 @@ public class Day18 {
 	}
 
 	public static List<char> GetAdjacentLights(int X, int Y, int width, int height, char[,] lights) {
-		List<char> adjacent = new();
+		List<char> adjacent = [];
 		foreach (var (dX, dY) in DIRECTIONS) {
 			int x = X + dX;
 			int y = Y + dY;

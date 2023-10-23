@@ -20,7 +20,7 @@ public sealed partial class Day09 {
 
 	private static int Solution(int noOfKnots) {
 		const int HEAD = 0;
-		HashSet<Point> tailPoints = new();
+		HashSet<Point> tailPoints = [];
 		Point[] knots= new Point[noOfKnots];
 		
 		int tailKnot = noOfKnots - 1;

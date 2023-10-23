@@ -51,7 +51,7 @@ public sealed partial class Day23 {
 	};
 
 	private record class Computer {
-		public Dictionary<string, int> registers = new();
+		public Dictionary<string, int> registers = [];
 
 		public Computer() {
 			registers["a"] = 0;

@@ -40,6 +40,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 				article = "";
 				break;
 			}
+
 			int end = part[start..].IndexOf("</article>") + 10;
 			article = part[start..(start + end)];
 			part = part[(start + end + 1)..];
@@ -75,11 +76,11 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 				return null;
 			}
 
-			int end = page[start..].IndexOf("<");
+			int end = page[start..].IndexOf('<');
 			summary.UserName = page[start..(start + end)];
 
 			start = page.IndexOf("class=\"star-count\"") + 19;
-			end = page[start..].IndexOf("*");
+			end = page[start..].IndexOf('*');
 			_ = int.TryParse(page[start..(start + end)], out int noOfStars);
 			summary.NoOfStars = noOfStars;
 
@@ -94,7 +95,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 					} else if (page[start..(start + 3)] == "two") {
 						noOfStars = 2;
 					}
-				}
+				};
 				DailySummary dayInfo = new() {
 					Day = day,
 					NoOfStars = noOfStars
@@ -106,21 +107,21 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 		});
 	}
 
-	private string GetNonNestedHtmlPart(string input, string name, int instanceNo) {
-		string part = input;
-		string returnString = "";
-		for (int i = 0; i < instanceNo; i++) {
-			int start = part.IndexOf($"<{name}");
-			if (start < 0) {
-				returnString = "";
-				break;
-			}
-			int end = part[start..].IndexOf($"</{name}>") + 10;
-			returnString = part[start..(start + end)];
+	//private static string GetNonNestedHtmlPart(string input, string name, int instanceNo) {
+	//	string part = input;
+	//	string returnString = "";
+	//	for (int i = 0; i < instanceNo; i++) {
+	//		int start = part.IndexOf($"<{name}");
+	//		if (start < 0) {
+	//			returnString = "";
+	//			break;
+	//		};
+	//		int end = part[start..].IndexOf($"</{name}>") + 10;
+	//		returnString = part[start..(start + end)];
 
-			part = part[(start + end + 1)..];
-		}
-		return returnString;
-	}
+	//		part = part[(start + end + 1)..];
+	//	};
+	//	return returnString;
+	//}
 
 }

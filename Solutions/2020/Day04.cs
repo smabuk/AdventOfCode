@@ -20,15 +20,15 @@ public static class Day04 {
 
 	public static long CountValidPassports(string[] input, int problemNo) {
 
-		List<Passport> passports = new();
+		List<Passport> passports = [];
 		List<string> inputs = input.ToList();
 		inputs.Add("");
-		Dictionary<string, string> passportFields = new();
+		Dictionary<string, string> passportFields = [];
 		foreach (string inputLine in inputs) {
 			if (string.IsNullOrWhiteSpace(inputLine)) {
 				Passport passport = new(passportFields);
 				passports.Add(passport);
-				passportFields = new();
+				passportFields = [];
 			} else {
 				string[] pairs = inputLine.Split(" ");
 				foreach (string pair in pairs) {

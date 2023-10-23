@@ -106,11 +106,9 @@ static public class SolutionRouter {
 			.Where(m => m.Name == $"Part{problemNo}")
 			.SingleOrDefault();
 
-		if (method is null) {
-			return NO_SOLUTION;
-		}
-
-		return InvokeSolutionMethod(input, args, method);
+		return method is null
+			? NO_SOLUTION
+			: InvokeSolutionMethod(input, args, method);
 	}
 
 	private static TypeInfo? TryGetDayTypeInfo(int year, int day) {

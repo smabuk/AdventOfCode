@@ -8,35 +8,33 @@ public class SessionState
 	private void NotifyStateChanged() => OnChange?.Invoke();
 
 	public string UserName { get; set; } = "";
-	public Dictionary<int, int> NoOfStars { get; set; } = new();
+	public Dictionary<int, int> NoOfStars { get; set; } = [];
 	public bool IsSummaryLoaded(int year) => NoOfStars.ContainsKey(year);
-	public Dictionary<Tuple<int, int, int>, string> ProblemDescriptions { get; set; } = new();
-	public Dictionary<Tuple<int, int>, (string InputData, string Source)> ProblemInputs { get; set; } = new();
-	public Dictionary<Tuple<int, int>, string[]> ProblemRawInputs { get; set; } = new();
+	public Dictionary<Tuple<int, int, int>, string> ProblemDescriptions { get; set; } = [];
+	public Dictionary<Tuple<int, int>, (string InputData, string Source)> ProblemInputs { get; set; } = [];
+	public Dictionary<Tuple<int, int>, string[]> ProblemRawInputs { get; set; } = [];
 
 	public event Action? OnSummaryChange;
 	private void NotifySummaryChanged() => OnSummaryChange?.Invoke();
-	public Dictionary<int, AocSummary> Summaries { get; set; } = new();
+	public Dictionary<int, AocSummary> Summaries { get; set; } = [];
 	public void SetSummary(int year, AocSummary value) {
-		if (Summaries.ContainsKey(year)) {
+		if (!Summaries.TryAdd(year, value)) {
 			Summaries[year] = value;
-		} else {
-			Summaries.Add(year, value);
 		}
+
 		NotifySummaryChanged();
 	}
 
 
 
 	public bool DoesNOfStarsExist(int year) => NoOfStars.ContainsKey(year);
-	public int GetNoOfStars(int year) => NoOfStars.ContainsKey(year) ? NoOfStars[year] : 0;
-	public int GetNoOfStars(int year, int day) => NoOfStars.ContainsKey(year) ? NoOfStars[year] : 0;
+	public int GetNoOfStars(int year) => NoOfStars.TryGetValue(year, out int value) ? value : 0;
+	//public int GetNoOfStars(int year, int day) => NoOfStars.TryGetValue(year, out int value) ? value : 0;
 	public void SetNoOfStars(int year, int value) {
-		if (NoOfStars.ContainsKey(year)) {
+		if (!NoOfStars.TryAdd(year, value)) {
 			NoOfStars[year] = value;
-		} else {
-			NoOfStars.Add(year, value);
 		}
+
 		NotifyStateChanged();
 	}
 
@@ -44,11 +42,10 @@ public class SessionState
 	public string GetProblemDescription(int year, int day, int problemNo) => ProblemDescriptions.ContainsKey(new (year, day, problemNo)) ? ProblemDescriptions[new(year, day, problemNo)] : "";
 	public void SetProblemDescription(int year, int day, int problemNo, string value) {
 		Tuple<int, int, int> key = new(year, day, problemNo);
-		if (ProblemDescriptions.ContainsKey(key)) {
+		if (!ProblemDescriptions.TryAdd(key, value)) {
 			ProblemDescriptions[key] = value;
-		} else {
-			ProblemDescriptions.Add(key, value);
 		}
+
 		NotifyStateChanged();
 	}
 
@@ -61,6 +58,7 @@ public class SessionState
 		if (string.IsNullOrWhiteSpace(value)) {
 			return;
 		}
+
 		string[] rawValue = value.Split("\n");
 		Tuple<int, int> key = new(year, day);
 		source ??= "";
@@ -71,6 +69,7 @@ public class SessionState
 			ProblemInputs.Add(key, (value, source));
 			ProblemRawInputs.Add(key, rawValue);
 		}
+
 		NotifyProblemInputChanged();
 	}
 

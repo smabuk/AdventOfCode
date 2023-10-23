@@ -33,8 +33,8 @@ public class Day21 {
 
 	private static long Solution2(string[] input) {
 		List<Player> playersInput = input.Select(i => ParseLine(i)).ToList();
-		Dictionary<int, int> DieRollFrequency = new();
-		Dictionary<GamePosition, (long, long)> GamePositions = new();
+		Dictionary<int, int> DieRollFrequency = [];
+		Dictionary<GamePosition, (long, long)> GamePositions = [];
 
 		// Each roll is a 3,4,5,6,7,8 or 9
 		for (int i = 1; i <= 3; i++) {

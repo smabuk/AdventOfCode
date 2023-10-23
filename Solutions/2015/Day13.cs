@@ -11,9 +11,9 @@ public class Day13 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		Dictionary<(string, string), int> lookup = new();
+		Dictionary<(string, string), int> lookup = [];
 		List<KeyValuePair<(string, string), int>>? inputs = input.Select(i => ParseLine(i)).ToList();
-		List<string> guests = new();
+		List<string> guests = [];
 
 		foreach (var item in inputs) {
 			if (guests.Contains(item.Key.Item1) == false) {
@@ -27,9 +27,9 @@ public class Day13 {
 	}
 
 	private static int Solution2(string[] input) {
-		Dictionary<(string, string), int> lookup = new();
+		Dictionary<(string, string), int> lookup = [];
 		List<KeyValuePair<(string, string), int>>? inputs = input.Select(i => ParseLine(i)).ToList();
-		List<string> guests = new();
+		List<string> guests = [];
 
 		foreach (var item in inputs) {
 			if (guests.Contains(item.Key.Item1) == false) {

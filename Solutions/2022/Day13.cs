@@ -67,8 +67,8 @@ public sealed partial class Day13 {
 				(not null, null) => WRONG_ORDER,
 				(null, not null) => RIGHT_ORDER,
 				(NumberPacket ln, NumberPacket rn) => ln.Value < rn.Value ? RIGHT_ORDER : ln.Value > rn.Value ? WRONG_ORDER : UNSURE,
-				(ListPacket, NumberPacket) => left.CompareTo(new ListPacket(new() { right })),
-				(NumberPacket, ListPacket) => new ListPacket(new() { left }).CompareTo(right),
+				(ListPacket, NumberPacket) => left.CompareTo(new ListPacket([right])),
+				(NumberPacket, ListPacket) => new ListPacket([left]).CompareTo(right),
 				(ListPacket lp, ListPacket rp) => ProcessLists(lp, rp),
 				_ => UNSURE,
 			};

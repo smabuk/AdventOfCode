@@ -21,7 +21,7 @@ public class Day17 {
 		int[] containers = input.Select(i => int.Parse(i)).ToArray();
 
 		int noOfCombinations = 0;
-		List<IEnumerable<int>> combinations = new();
+		List<IEnumerable<int>> combinations = [];
 		for (int k = 2; k <= containers.Length; k++) {
 			noOfCombinations += containers.Combinations(k).Where(x => x.Sum() == noOfLiters).Count();
 		}
@@ -34,7 +34,7 @@ public class Day17 {
 		int[] containers = input.Select(i => int.Parse(i)).ToArray();
 
 		int noOfCombinations = 0;
-		List<IEnumerable<int>> combinations = new();
+		List<IEnumerable<int>> combinations = [];
 		for (int k = 2; k <= containers.Length; k++) {
 			noOfCombinations = containers.Combinations(k).Where(x => x.Sum() == noOfLiters).Count();
 			if (noOfCombinations > 0) {

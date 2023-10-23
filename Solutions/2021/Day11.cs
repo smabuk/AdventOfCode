@@ -34,7 +34,7 @@ public class Day11 {
 	}
 
 	private static int GenerateStep(int[,] grid) {
-		HashSet<Point> flashedPoints = new();
+		HashSet<Point> flashedPoints = [];
 		int flashesPerStep = 0;
 
 		foreach ((int x, int y) in grid.Walk2dArray()) {

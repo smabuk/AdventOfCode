@@ -14,7 +14,7 @@ public class Day14 {
 
 	private static long Solution1(string[] input) {
 		List<Instruction> instructions = Parse(input);
-		Dictionary<long, long> memory = new();
+		Dictionary<long, long> memory = [];
 
 		foreach (Instruction instruction in instructions) {
 			if (!memory.ContainsKey(instruction.MemoryAddress)) {
@@ -28,7 +28,7 @@ public class Day14 {
 
 	private static long Solution2(string[] input) {
 		List<Instruction> instructions = Parse(input);
-		Dictionary<long, long> memory = new();
+		Dictionary<long, long> memory = [];
 
 		foreach (Instruction instruction in instructions) {
 			List<long> memoryAddresses = GetMaskedMemoryAddresses(instruction.Mask, instruction.MemoryAddress);
@@ -45,7 +45,7 @@ public class Day14 {
 
 	private static List<Instruction> Parse(string[] input) {
 		string mask = "";
-		List<Instruction> instructions = new();
+		List<Instruction> instructions = [];
 		foreach (string line in input) {
 			if (line.StartsWith("mask")) {
 				mask = line[7..];
@@ -73,8 +73,8 @@ public class Day14 {
 
 	private static List<long> GetMaskedMemoryAddresses(string mask, long memoryAddress) {
 		char[] binaryString = GetBinaryString36(memoryAddress).ToCharArray();
-		List<long> memoryAddresses = new();
-		List<string> memAddresses = new();
+		List<long> memoryAddresses = [];
+		List<string> memAddresses = [];
 		for (int i = 1; i <= 36; i++) {
 			binaryString[^i] = mask[^i] switch {
 				'1' => '1',

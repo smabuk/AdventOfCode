@@ -38,7 +38,7 @@ public class Day13 {
 
 	private static IEnumerable<Point> Fold(int folds, HashSet<Point> dots, List<FoldInstruction> instructions) {
 		foreach (FoldInstruction fold in instructions.Take(folds)) {
-			HashSet<Point> newDots = new();
+			HashSet<Point> newDots = [];
 			switch (fold.Axis) {
 				case "x":
 					newDots = dots

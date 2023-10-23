@@ -32,10 +32,10 @@ public class Day20 {
 		return newImage.Count(x => x == LIGHT);
 	}
 
-	public static readonly List<(int dX, int dY)> DIRECTIONS = new()
-		{ (-1, -1), (0, -1), (1, -1)
+	public static readonly List<(int dX, int dY)> DIRECTIONS =
+		[(-1, -1), (0, -1), (1, -1)
 		, (-1,  0), (0,  0), (1,  0)
-		, (-1,  1), (0,  1), (1,  1) };
+		, (-1,  1), (0,  1), (1,  1) ];
 
 	const char DARK  = '.';
 	const char LIGHT = '#';

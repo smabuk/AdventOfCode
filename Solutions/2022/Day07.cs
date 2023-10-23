@@ -65,7 +65,7 @@ public sealed class Day07 {
 	}
 
 	private static List<Directory> GetAllSubDirectories(Directory directory) {
-		List<Directory> subDirs = new() { directory };
+		List<Directory> subDirs = [directory];
 		foreach (Directory subDir in directory.Directories.Values) {
 			subDirs.AddRange(GetAllSubDirectories(subDir));
 		}
@@ -76,8 +76,8 @@ public sealed class Day07 {
 	private record File(string Name, int Size);
 	
 	private record Directory(string Name, Directory Parent) {
-		public Dictionary<string, Directory> Directories { get; set; } = new();
-		public Dictionary<string, File> Files { get; set; } = new();
+		public Dictionary<string, Directory> Directories { get; set; } = [];
+		public Dictionary<string, File> Files { get; set; } = [];
 
 		public void AddDirectory(string name) {
 			_ = Directories.TryAdd(name, new Directory(name, this));

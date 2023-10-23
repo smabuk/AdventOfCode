@@ -13,7 +13,7 @@ public class Day22 {
 	private static int Solution1(string[] input) {
 		List<RebootStep> rebootSteps = input.Select(i => ParseLine(i)).ToList();
 
-		HashSet<Point3d> cuboids = new();
+		HashSet<Point3d> cuboids = [];
 
 		foreach (var rebootStep in rebootSteps) {
 			if (OutOfBounds(rebootStep.XMin, rebootStep.YMin, rebootStep.ZMin)
@@ -42,8 +42,8 @@ public class Day22 {
 	private static long Solution2(string[] input) {
 		List<RebootStep> rebootSteps = input.Select(i => ParseLine(i)).ToList();
 
-		List<Cuboid> cuboids = new();
-		List<Cuboid> tempCuboids = new();
+		List<Cuboid> cuboids = [];
+		List<Cuboid> tempCuboids = [];
 
 		foreach (var rebootStep in rebootSteps) {
 			Point3d from = new(rebootStep.XMin, rebootStep.YMin, rebootStep.ZMin);

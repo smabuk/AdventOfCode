@@ -23,7 +23,7 @@ public class Day05 {
 	}
 
 	private static long Solution2(string[] input) {
-		List<int> map = new();
+		List<int> map = [];
 		foreach (string line in input) {
 			int row = Convert.ToInt32(line[..7].Replace("F", "0").Replace("B", "1"), 2);
 			int col = Convert.ToInt32(line[7..].Replace("L", "0").Replace("R", "1"), 2);

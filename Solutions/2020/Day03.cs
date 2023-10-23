@@ -14,12 +14,14 @@ public static class Day03 {
 	}
 
 	public static long Solution2(string[] input) {
-		List<long> resultArray = new();
-		resultArray.Add(CalculateNoOfTrees(input, 1, 1));
-		resultArray.Add(CalculateNoOfTrees(input, 3, 1));
-		resultArray.Add(CalculateNoOfTrees(input, 5, 1));
-		resultArray.Add(CalculateNoOfTrees(input, 7, 1));
-		resultArray.Add(CalculateNoOfTrees(input, 1, 2));
+		List<long> resultArray =
+		[
+			CalculateNoOfTrees(input, 1, 1),
+			CalculateNoOfTrees(input, 3, 1),
+			CalculateNoOfTrees(input, 5, 1),
+			CalculateNoOfTrees(input, 7, 1),
+			CalculateNoOfTrees(input, 1, 2),
+		];
 
 		return resultArray.Aggregate(1, (long treeProduct, long treeCount) => treeProduct * treeCount);
 	}

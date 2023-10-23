@@ -25,7 +25,7 @@ public class Day16 {
 
 
 	public abstract record Packet(int Version, Operation Type) {
-		public List<Packet> Packets = new();
+		public List<Packet> Packets = [];
 		protected List<long> PacketValues => Packets.Select(p => p.Value).ToList();
 		public abstract long Value { get; }
 		public int SumOfVersions => Version + Packets.Sum(p => p.SumOfVersions);

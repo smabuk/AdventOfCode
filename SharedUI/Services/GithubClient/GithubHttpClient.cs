@@ -5,7 +5,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 
 	record GithubProfile(string Name, string UserLanguages, string SolutionTemplate, string InputTemplate);
 
-	private static readonly List<GithubProfile> Users = new() {
+	private static readonly List<GithubProfile> Users = [
 		new("andriamanitra", "multi", "{GITHUB}Andriamanitra/adventofcode{year}/blob/main/day{day:D2} ", "Andriamanitra/adventofcode{year}/main/day{day:D2}/input.txt "),
 		new("bassel-t", "c#", "{GITHUB}Bassel-T/AdventOfCode{year}-CS/blob/main/AdventOfCode{year}/Day{day}.cs ", " "),
 		new("copperbeardy", "c#", "{GITHUB}CopperBeardy/AdventOfCode{year}/blob/main/AdventOfCode{year}/AdventOfCode{year}/Days/Day{day}.cs ", "CopperBeardy/AdventOfCode{year}/main/AdventOfCode{year}/AdventOfCode{year}/DayInputs/Day{day}.txt"),
@@ -18,7 +18,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		new("rollerss", "c#", "{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs ", "pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt "),
 		new("smabuk", "c#", "{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs ", "smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt "),
 		new("tasagent", "c#", "{GITHUB}TasAgent/AdventOfCode{year}/blob/master/Day{day:D2}/Program.cs ", "TASagent/AdventOfCode{year}/master/input{day:D2}.txt "),
-	};
+	];
 
 	public GithubHttpClient(HttpClient httpClient) {
 		httpClient.BaseAddress = new Uri("https://raw.githubusercontent.com/");

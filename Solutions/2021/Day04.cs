@@ -43,8 +43,8 @@ public class Day04 {
 	}
 
 	class BingoBoard {
-		readonly List<List<int>> _lines = new();
-		readonly List<int> _unmarkedNos = new();
+		readonly List<List<int>> _lines = [];
+		readonly List<int> _unmarkedNos = [];
 
 		public bool IsWin = false;
 		public int WinningValue;
@@ -77,7 +77,7 @@ public class Day04 {
 	};
 
 	private static List<BingoBoard> ParseBingoBoards(string[] input) {
-		List<BingoBoard> bingoBoards = new();
+		List<BingoBoard> bingoBoards = [];
 		for (int i = 0; i < ((input.Length + 1) / 6); i++) {
 			List<int> numbers = Enumerable
 				.Range(0, 5)

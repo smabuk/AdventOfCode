@@ -13,7 +13,7 @@ public class Day12 {
 	record Connection(string From, string To);
 	
 	record Cave(string Name) {
-		public List<Cave> ConnectsTo = new();
+		public List<Cave> ConnectsTo = [];
 
 		public bool IsSmall => char.IsLower(Name[0]);
 		public bool IsBig => char.IsUpper(Name[0]);
@@ -25,13 +25,13 @@ public class Day12 {
 	private static int Solution1(string[] input) {
 		Dictionary<string, Cave> caves = ParseInput(input);
 
-		return FindAllPaths(caves[START], caves[END], new() { START }, caves, true);
+		return FindAllPaths(caves[START], caves[END], [START], caves, true);
 	}
 
 	private static int Solution2(string[] input) {
 		Dictionary<string, Cave> caves = ParseInput(input);
 
-		return FindAllPaths(caves[START], caves[END], new () { START }, caves, false);
+		return FindAllPaths(caves[START], caves[END], [START], caves, false);
 	}
 
 	private static int FindAllPaths(Cave current, Cave end, List<string> isVisited, Dictionary<string, Cave> caves, bool lookedTwice) {

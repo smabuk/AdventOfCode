@@ -18,7 +18,7 @@ public class Day07 {
 
 		Dictionary<string, List<BagRuleDetail>?> rules = GetAllBagRules(inputs);
 
-		List<string> foundContainers = new();
+		List<string> foundContainers = [];
 		foreach (var item in rules) {
 			_ = FindShinyGoldBag(item.Key, item.Value, rules, foundContainers);
 		}
@@ -69,7 +69,7 @@ public class Day07 {
 	}
 
 	public static Dictionary<string, List<BagRuleDetail>?> GetAllBagRules(IEnumerable<string> inputs) {
-		Dictionary<string, List<BagRuleDetail>?> rules = new();
+		Dictionary<string, List<BagRuleDetail>?> rules = [];
 
 		foreach (string rule in inputs) {
 			string bag = rule[..rule.IndexOf(" bag")];

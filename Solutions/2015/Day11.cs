@@ -33,7 +33,7 @@ public class Day11 {
 			}
 
 			// double chars
-			List<(char value, int pos)> doublePos = new();
+			List<(char value, int pos)> doublePos = [];
 			bool foundDoubles = false;
 			for (int i = 0; i < pLength - 1; i++) {
 				if (newPassword[i] == newPassword[i + 1]) {
