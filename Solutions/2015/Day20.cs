@@ -29,7 +29,7 @@ public class Day20 {
 		int noOfElves = 50;
 		int multiplier = 11;
 
-		int[] houses = new int[target / multiplier + 1];
+		int[] houses = new int[(target / multiplier) + 1];
 		for (int elf = 1; elf < houses.Length; elf++) {
 			int count = 0;
 			for (int house = elf; house < houses.Length && count < noOfElves; house += elf) {
@@ -58,7 +58,9 @@ public class Day20 {
 			if (number % factor == 0) {
 				factors.Add(factor);
 				if (factor != number / factor) // Don't add the square root twice!  Thanks Jon Skeet
+				{
 					factors.Add(number / factor);
+				}
 			}
 		}
 		return factors;

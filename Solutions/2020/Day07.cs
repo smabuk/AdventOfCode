@@ -60,9 +60,9 @@ public class Day07 {
 
 		long noOfBags = 1;
 		foreach (var innerbag in bagrules) {
-			long i = (CountBags(rules[innerbag.Bag], rules));
+			long i = CountBags(rules[innerbag.Bag], rules);
 			if (i != 0) {
-				noOfBags += (innerbag.Number * i);
+				noOfBags += innerbag.Number * i;
 			}
 		}
 		return noOfBags;

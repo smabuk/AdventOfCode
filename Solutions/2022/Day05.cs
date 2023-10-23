@@ -96,7 +96,7 @@ public sealed partial class Day05 {
 
 		for (int i = input.Length - 2; i >= 0; i--) {
 			for (int s = 0; s < noOfStacks; s++) {
-				int offset = (s) * 4 + 1;
+				int offset = (s * 4) + 1;
 				char crate = input[i][offset];
 				if (crate != ' ') {
 					stacks[s].Push(crate);

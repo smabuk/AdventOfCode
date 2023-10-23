@@ -19,7 +19,7 @@ public class Day06 {
 			int noOnZero = fish.Count(f => f == 0);
 			for (int fIndex = 0; fIndex < fish.Count; fIndex++) {
 				int f = fish[fIndex];
-				fish[fIndex] = (f == 0 ? 6 : f - 1);
+				fish[fIndex] = f == 0 ? 6 : f - 1;
 			}
 			fish.AddRange(Enumerable.Repeat(8, noOnZero));
 		}

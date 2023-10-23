@@ -45,7 +45,7 @@ public class Day18 {
 			if (pair.Success) {
 				result = 3 * int.Parse(pair.Groups["lv"].ValueSpan);
 				result += 2 * int.Parse(pair.Groups["rv"].ValueSpan);
-				string newNumber = $"{number[..(pair.Index)]}{result}{input[(pair.Index + pair.Length)..]}";
+				string newNumber = $"{number[..pair.Index]}{result}{input[(pair.Index + pair.Length)..]}";
 
 				int newResult = CalculateMagnitude(newNumber);
 				if (newResult != 0) {

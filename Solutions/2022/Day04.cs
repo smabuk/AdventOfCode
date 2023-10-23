@@ -25,8 +25,8 @@ public sealed partial class Day04 {
 		int count = 0;
 		for (int i = 0; i < input.Length; i++) {
 			(int a, int b, int c, int d) = ParseLine(input[i]);
-			if (   a >= c && b <= d
-				|| c >= a && d <= b) {
+			if (   (a >= c && b <= d)
+				|| (c >= a && d <= b)) {
 				count++;
 			}
 		}

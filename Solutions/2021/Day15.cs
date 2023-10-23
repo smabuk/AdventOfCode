@@ -35,9 +35,9 @@ public class Day15 {
 				int xOffset = x * inputGridWidth;
 				foreach (Cell<int> cell in inputGrid.Walk2dArrayWithValues()) {
 					int value = (cell.Value + x + y) switch {
-						>= 20 => (cell.Value + x + y) - 18,
-						>= 10 => (cell.Value + x + y) - 9,
-						_ => (cell.Value + x + y),
+						>= 20 => cell.Value + x + y - 18,
+						>= 10 => cell.Value + x + y - 9,
+						_ => cell.Value + x + y,
 					};
 					grid[cell.X + xOffset, cell.Y + yOffset] = value;
 				}

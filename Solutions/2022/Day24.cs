@@ -165,8 +165,8 @@ public sealed partial class Day24 {
 				for (int x = 0; x < Width; x++) {
 					if (x == 0 
 						|| x == Width - 1 
-						|| y == 0 && x != Start.X 
-						|| y == Height - 1 && x != End.X 
+						|| (y == 0 && x != Start.X) 
+						|| (y == Height - 1 && x != End.X) 
 						) {
 						Debug.Write(WALL);
 					} else {

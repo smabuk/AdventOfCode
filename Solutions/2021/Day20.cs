@@ -41,7 +41,7 @@ public class Day20 {
 	const char LIGHT = '#';
 
 	private static char[] EnhanceImage(int steps, char[] imageEnhancementAlgorithm, char[] image, int maxX, int maxY) {
-		char[] newImage = new char[maxX + (50 * 2) * maxY + (50 * 2)];
+		char[] newImage = new char[maxX + (50 * 2 * maxY) + (50 * 2)];
 		bool flippingAlgorithm = imageEnhancementAlgorithm[0] == LIGHT && imageEnhancementAlgorithm[511] == DARK;
 
 		for (int step = 1; step <= steps; step++) {
@@ -50,7 +50,7 @@ public class Day20 {
 			newImage = new char[xSize * ySize];
 			for (int y = 0; y < ySize; y++) {
 				for (int x = 0; x < xSize; x++) {
-					int index = y * ySize + x;
+					int index = (y * ySize) + x;
 					newImage[index] = flippingAlgorithm switch {
 						true => newImage[index] = (step % 2) == 1 ? DARK : LIGHT,
 						false => newImage[index] = DARK,
@@ -59,7 +59,7 @@ public class Day20 {
 			}
 			for (int y = 0; y < ySize - 2; y++) {
 				for (int x = 0; x < xSize - 2; x++) {
-					newImage[(y + 1) * ySize + x + 1] = image[y * (ySize - 2) + x];
+					newImage[((y + 1) * ySize) + x + 1] = image[(y * (ySize - 2)) + x];
 				}
 			}
 			image = (char[])newImage.Clone();
@@ -67,7 +67,7 @@ public class Day20 {
 			for (int y = 0; y < xSize; y++) {
 				for (int x = 0; x < ySize; x++) {
 					int index = GetIndexReference(x, y, image, step, ySize, flippingAlgorithm);
-					newImage[y * ySize + x] = imageEnhancementAlgorithm[index];
+					newImage[(y * ySize) + x] = imageEnhancementAlgorithm[index];
 				}
 			}
 			image = (char[])newImage.Clone();
@@ -84,7 +84,7 @@ public class Day20 {
 			bool oob = OutOfBounds(x, y, DIRECTIONS[i].dX, DIRECTIONS[i].dY, ySize, ySize);
 			index += factor * oob switch {
 				true => flippingAlgorithm ? (step % 2 == 1 ? 0 : 1) : 0,
-				false => image[(y + DIRECTIONS[i].dY) * ySize + x + DIRECTIONS[i].dX] == LIGHT ? 1 : 0,
+				false => image[((y + DIRECTIONS[i].dY) * ySize) + x + DIRECTIONS[i].dX] == LIGHT ? 1 : 0,
 			};
 		}
 

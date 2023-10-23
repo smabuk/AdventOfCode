@@ -89,7 +89,7 @@ public class Day12 {
 		(int, int)[] VECTORS = {    (1, 0), (0, -1), (-1, 0), (0, 1),
 										(1, 0), (0, -1), (-1, 0), (0, 1),
 										(1, 0), (0, -1), (-1, 0), (0, 1)  };
-		int move = (Value / 90) % 4;
+		int move = Value / 90 % 4;
 		int currentIndex = 0;
 		for (int i = 4; i <= 7; i++) {
 			if (current == VECTORS[i]) {

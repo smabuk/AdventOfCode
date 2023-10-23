@@ -49,7 +49,7 @@ public class Day10 {
 				if (runningCount == 2) {
 					runningCount++;
 				}
-				total *= (runningCount - 1);
+				total *= runningCount - 1;
 				runningCount = 0;
 			} else if (nearby > 1) {
 				runningCount += nearby;

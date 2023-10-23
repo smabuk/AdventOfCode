@@ -56,11 +56,11 @@ public static class Day08 {
 	}
 
 	private static Instruction SwapJmpNop(Instruction instruction) => instruction with {
-		Command = (instruction.Command switch {
+		Command = instruction.Command switch {
 			"jmp" => "nop",
 			"nop" => "jmp",
 			_ => instruction.Command
-		})
+		}
 	};
 
 	private static int ExecuteCommand(Instruction instruction) {

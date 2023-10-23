@@ -77,7 +77,7 @@ public sealed partial class Day14 {
 
 		int noOfRows = maxY + 1;
 		int noOfColumns = maxX - minX + (noOfRows * 3) + 1;
-		int xOffset = (maxX - minX) + (noOfRows / 2) + 1;
+		int xOffset = maxX - minX + (noOfRows / 2) + 1;
 		for (int i = 0; i < linePaths.Count; i++) {
 			for (int j = 0; j < linePaths[i].Count; j++) {
 				linePaths[i][j] = linePaths[i][j] with { X = linePaths[i][j].X - minX + xOffset };

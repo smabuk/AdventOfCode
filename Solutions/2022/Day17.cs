@@ -149,7 +149,7 @@ public sealed partial class Day17 {
 			!rock.Rocks.Select(r => r with { X = r.X + (int)direction }).Intersect(rocks).Any();
 
 		public long CalculatedTowerHeight(long noOfrocks) {
-			long value = (noOfrocks / repeatShapeCount) * repeatTowerHeight;
+			long value = noOfrocks / repeatShapeCount * repeatTowerHeight;
 			long moreDrops = noOfrocks % repeatShapeCount;
 			return value + new Chamber(directions).DropRocks(moreDrops).TowerHeight;
 		}

@@ -37,7 +37,7 @@ public class Day02 {
 				newInputs[2] = verb;
 				int result = IntcodeComputer.ExecuteIntcodeProgram(newInputs)[0];
 				if (result == ExpectedResult) {
-					return 100 * noun + verb;
+					return (100 * noun) + verb;
 				};
 			}
 		}

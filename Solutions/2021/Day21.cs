@@ -18,9 +18,9 @@ public class Day21 {
 		int dieRolls = 0;
 		while (players.Where(p => p.Points >= 1000).Any() is false) {
 			int dieScore = 0;
-			dieScore += (++deterministicDie - 1) % 100 + 1;
-			dieScore += (++deterministicDie - 1) % 100 + 1;
-			dieScore += (++deterministicDie - 1) % 100 + 1;
+			dieScore += ((++deterministicDie - 1) % 100) + 1;
+			dieScore += ((++deterministicDie - 1) % 100) + 1;
+			dieScore += ((++deterministicDie - 1) % 100) + 1;
 			dieRolls += 3;
 
 			Player player = players[turn++ % 2];
@@ -71,7 +71,7 @@ public class Day21 {
 			long p2Wins = 0;
 
 			for (int roll = 3; roll <= 9; roll++) {
-				int newP1Position = (p1Position + roll - 1) % 10 + 1;
+				int newP1Position = ((p1Position + roll - 1) % 10) + 1;
 				int newP1Score = p1Score + newP1Position;
 
 				// Other players turn
@@ -97,7 +97,7 @@ public class Day21 {
 
 		public void Move(int sumOfDieRolls) {
 			Position += sumOfDieRolls;
-			Position = (Position - 1) % 10 + 1;
+			Position = ((Position - 1) % 10) + 1;
 			Points += Position;
 		}
 

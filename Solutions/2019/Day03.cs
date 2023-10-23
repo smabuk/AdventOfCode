@@ -12,8 +12,8 @@ public class Day03 {
 
 	record WireRoute(string Direction, int Value);
 	record Point(int X, int Y) {
-		public int ManhattanDistance(int dX, int dY) => (Math.Abs(X - dX) + Math.Abs(Y - dY));
-		public int ManhattanDistance(Point point) => (Math.Abs(X - point.X) + Math.Abs(Y - point.Y));
+		public int ManhattanDistance(int dX, int dY) => Math.Abs(X - dX) + Math.Abs(Y - dY);
+		public int ManhattanDistance(Point point) => Math.Abs(X - point.X) + Math.Abs(Y - point.Y);
 	};
 
 	private static string Solution1(string[] input) {

@@ -68,7 +68,7 @@ public class Day10 {
 				'<' => 4,
 				_ => throw new Exception()
 			};
-			total = 5 * total + score;
+			total = (5 * total) + score;
 		}
 
 		return total;

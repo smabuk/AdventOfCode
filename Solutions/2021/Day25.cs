@@ -35,8 +35,8 @@ public class Day25 {
 
 			for (int y = 0; y < rows; y++) {
 				for (int x = 0; x < cols; x++) {
-					int i = y * cols + x;
-					int nextI = y * cols + ((x + 1) % cols);
+					int i = (y * cols) + x;
+					int nextI = (y * cols) + ((x + 1) % cols);
 					if (seaFloor[i] == CUCUMBER_RIGHT) {
 						if (seaFloor[nextI] == FLOOR) {
 							noMovement = false;
@@ -62,8 +62,8 @@ public class Day25 {
 
 			for (int y = 0; y < rows; y++) {
 				for (int x = 0; x < cols; x++) {
-					int i = y * cols + x;
-					int nextI = (y + 1) % rows * cols + x;
+					int i = (y * cols) + x;
+					int nextI = ((y + 1) % rows * cols) + x;
 					if (seaFloor[i] == CUCUMBER_DOWN) {
 						if (seaFloor[nextI] == FLOOR) {
 							noMovement = false;

@@ -24,10 +24,10 @@ public class Day15 {
 			for (int i = 1; i <= 100; i++) {
 				int qty1 = i;
 				int qty2 = 100 - i;
-				int capacity = ingredient1.Capacity * qty1 + ingredient2.Capacity * qty2;
-				int durability = ingredient1.Durability * qty1 + ingredient2.Durability * qty2;
-				int flavour = ingredient1.Flavour * qty1 + ingredient2.Flavour * qty2;
-				int texture = ingredient1.Texture * qty1 + ingredient2.Texture * qty2;
+				int capacity = (ingredient1.Capacity * qty1) + (ingredient2.Capacity * qty2);
+				int durability = (ingredient1.Durability * qty1) + (ingredient2.Durability * qty2);
+				int flavour = (ingredient1.Flavour * qty1) + (ingredient2.Flavour * qty2);
+				int texture = (ingredient1.Texture * qty1) + (ingredient2.Texture * qty2);
 				capacity = capacity < 0 ? 0 : capacity;
 				durability = durability < 0 ? 0 : durability;
 				flavour = flavour < 0 ? 0 : flavour;
@@ -48,25 +48,25 @@ public class Day15 {
 						for (int d = 0; d < 100; d++) {
 							if (a + b + c + d == 100) {
 								int capacity =
-									ingredientA.Capacity * a
-									+ ingredientB.Capacity * b
-									+ ingredientC.Capacity * c
-									+ ingredientD.Capacity * d;
+									(ingredientA.Capacity * a)
+									+ (ingredientB.Capacity * b)
+									+ (ingredientC.Capacity * c)
+									+ (ingredientD.Capacity * d);
 								int durability =
-									ingredientA.Durability * a
-									+ ingredientB.Durability * b
-									+ ingredientC.Durability * c
-									+ ingredientD.Durability * d;
+									(ingredientA.Durability * a)
+									+ (ingredientB.Durability * b)
+									+ (ingredientC.Durability * c)
+									+ (ingredientD.Durability * d);
 								int flavour =
-									ingredientA.Flavour * a
-									+ ingredientB.Flavour * b
-									+ ingredientC.Flavour * c
-									+ ingredientD.Flavour * d;
+									(ingredientA.Flavour * a)
+									+ (ingredientB.Flavour * b)
+									+ (ingredientC.Flavour * c)
+									+ (ingredientD.Flavour * d);
 								int texture =
-									ingredientA.Texture * a
-									+ ingredientB.Texture * b
-									+ ingredientC.Texture * c
-									+ ingredientD.Texture * d;
+									(ingredientA.Texture * a)
+									+ (ingredientB.Texture * b)
+									+ (ingredientC.Texture * c)
+									+ (ingredientD.Texture * d);
 								capacity = capacity < 0 ? 0 : capacity;
 								durability = durability < 0 ? 0 : durability;
 								flavour = flavour < 0 ? 0 : flavour;
@@ -99,13 +99,13 @@ public class Day15 {
 				int qty1 = i;
 				int qty2 = 100 - i;
 				int calories =
-					ingredient1.Calories * qty1
-					+ ingredient2.Calories * qty2;
+					(ingredient1.Calories * qty1)
+					+ (ingredient2.Calories * qty2);
 				if (calories == CALORIE_COUNT) {
-					int capacity = ingredient1.Capacity * qty1 + ingredient2.Capacity * qty2;
-					int durability = ingredient1.Durability * qty1 + ingredient2.Durability * qty2;
-					int flavour = ingredient1.Flavour * qty1 + ingredient2.Flavour * qty2;
-					int texture = ingredient1.Texture * qty1 + ingredient2.Texture * qty2;
+					int capacity = (ingredient1.Capacity * qty1) + (ingredient2.Capacity * qty2);
+					int durability = (ingredient1.Durability * qty1) + (ingredient2.Durability * qty2);
+					int flavour = (ingredient1.Flavour * qty1) + (ingredient2.Flavour * qty2);
+					int texture = (ingredient1.Texture * qty1) + (ingredient2.Texture * qty2);
 					capacity = capacity < 0 ? 0 : capacity;
 					durability = durability < 0 ? 0 : durability;
 					flavour = flavour < 0 ? 0 : flavour;
@@ -127,31 +127,31 @@ public class Day15 {
 						for (int d = 0; d < 100; d++) {
 							if (a + b + c + d == 100) {
 								int calories =
-									ingredientA.Calories * a
-									+ ingredientB.Calories * b
-									+ ingredientC.Calories * c
-									+ ingredientD.Calories * d;
+									(ingredientA.Calories * a)
+									+ (ingredientB.Calories * b)
+									+ (ingredientC.Calories * c)
+									+ (ingredientD.Calories * d);
 								if (calories == CALORIE_COUNT) {
 									int capacity =
-										ingredientA.Capacity * a
-										+ ingredientB.Capacity * b
-										+ ingredientC.Capacity * c
-										+ ingredientD.Capacity * d;
+										(ingredientA.Capacity * a)
+										+ (ingredientB.Capacity * b)
+										+ (ingredientC.Capacity * c)
+										+ (ingredientD.Capacity * d);
 									int durability =
-										ingredientA.Durability * a
-										+ ingredientB.Durability * b
-										+ ingredientC.Durability * c
-										+ ingredientD.Durability * d;
+										(ingredientA.Durability * a)
+										+ (ingredientB.Durability * b)
+										+ (ingredientC.Durability * c)
+										+ (ingredientD.Durability * d);
 									int flavour =
-										ingredientA.Flavour * a
-										+ ingredientB.Flavour * b
-										+ ingredientC.Flavour * c
-										+ ingredientD.Flavour * d;
+										(ingredientA.Flavour * a)
+										+ (ingredientB.Flavour * b)
+										+ (ingredientC.Flavour * c)
+										+ (ingredientD.Flavour * d);
 									int texture =
-										ingredientA.Texture * a
-										+ ingredientB.Texture * b
-										+ ingredientC.Texture * c
-										+ ingredientD.Texture * d;
+										(ingredientA.Texture * a)
+										+ (ingredientB.Texture * b)
+										+ (ingredientC.Texture * c)
+										+ (ingredientD.Texture * d);
 									capacity = capacity < 0 ? 0 : capacity;
 									durability = durability < 0 ? 0 : durability;
 									flavour = flavour < 0 ? 0 : flavour;

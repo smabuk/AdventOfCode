@@ -88,7 +88,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 				noOfStars = 0;
 				start = page.IndexOf($"a aria-label=\"Day {day}, ") + 21;
 				if (start > 0) {
-					start += (day >= 10 ? 1 : 0);
+					start += day >= 10 ? 1 : 0;
 					if (page[start..(start + 3)] == "one") {
 						noOfStars = 1;
 					} else if (page[start..(start + 3)] == "two") {

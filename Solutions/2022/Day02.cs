@@ -72,9 +72,9 @@ public sealed partial class Day02 {
 				const int WIN = 6;
 				if (OpponentChoice == MyChoice) {
 					return MyChoiceScore + DRAW;
-				} else if (OpponentChoice == HandShape.Rock && MyChoice == HandShape.Paper
-					|| OpponentChoice == HandShape.Paper && MyChoice == HandShape.Scissors
-					|| OpponentChoice == HandShape.Scissors && MyChoice == HandShape.Rock) {
+				} else if ((OpponentChoice == HandShape.Rock && MyChoice == HandShape.Paper)
+					|| (OpponentChoice == HandShape.Paper && MyChoice == HandShape.Scissors)
+					|| (OpponentChoice == HandShape.Scissors && MyChoice == HandShape.Rock)) {
 					return MyChoiceScore + WIN;
 				}
 				return MyChoiceScore + LOSS;

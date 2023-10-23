@@ -18,7 +18,7 @@ public sealed partial class Day25 {
 
 		for (int i = 2; i <= int.MaxValue; i++) {
 			for (int row = i, col = 1; row > 0; row--, col++) {
-				code = (code * 252533) % 33554393;
+				code = code * 252533 % 33554393;
 				if (targetPosition == new Position(row, col)) {
 					return code;
 				}

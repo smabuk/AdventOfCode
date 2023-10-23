@@ -75,14 +75,14 @@ public static class Day04 {
 
 	private static bool IsFieldValid(string key, string value) {
 		(int intValue, string strValue, string units) = GetFieldParts(key, value);
-		return (key) switch {
+		return key switch {
 			"byr" => intValue >= 1920 && intValue <= 2002,
 			"iyr" => intValue >= 2010 && intValue <= 2020,
 			"eyr" => intValue >= 2020 && intValue <= 2030,
 			"ecl" => new string[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" }.Contains(value),
 			"hcl" => units == "#" && intValue > 0 && strValue.Length == 6,
-			"hgt" when (units == "cm") => intValue >= 150 && intValue <= 193,
-			"hgt" when (units == "in") => intValue >= 59 && intValue <= 76,
+			"hgt" when units == "cm" => intValue >= 150 && intValue <= 193,
+			"hgt" when units == "in" => intValue >= 59 && intValue <= 76,
 			"pid" => intValue > 0 && strValue.Length == 9,
 			"cid" => true,
 			_ => false

@@ -50,7 +50,7 @@ public class Day13 {
 		for (int i = 1; i < buses.Length;) {
 			time += step;
 			if (Enumerable.Range(0, i + 1)
-				.All(x => (time + buses[x].Offset) % (buses[x].Value) == 0)) {
+				.All(x => (time + buses[x].Offset) % buses[x].Value == 0)) {
 				step *= buses[i].Value;
 				i++;
 			}

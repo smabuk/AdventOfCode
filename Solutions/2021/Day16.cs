@@ -43,7 +43,7 @@ public class Day16 {
 					number += transmission[(bitsIndex + 1)..(bitsIndex += 5)];
 				}
 				number += transmission[(bitsIndex + 1)..(bitsIndex += 5)];
-				return (new LiteralPacket(version, type, number), transmission[(bitsIndex)..]);
+				return (new LiteralPacket(version, type, number), transmission[bitsIndex..]);
 			} else {
 				int packetsLength;
 				int lengthTypeId = ToIntFromBinary(transmission[bitsIndex].ToString());
