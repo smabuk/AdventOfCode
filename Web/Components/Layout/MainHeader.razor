@@ -13,7 +13,6 @@
 
     private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
 
-    // To stop this running twice - setting render-mode="Server" in _Host.cshtml
     protected async override Task OnParametersSetAsync() {
         if (Session.IsSummaryLoaded(Year)) {
             UserName = Session.UserName;

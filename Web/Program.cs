@@ -1,16 +1,17 @@
 using AdventOfCode.Services;
 using AdventOfCode.SharedUI;
 using AdventOfCode.Web;
+using AdventOfCode.Web.Components;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services
+	.AddRazorComponents()
+	.AddInteractiveServerComponents();
 
 // Settings
 builder.Services.Configure<AocSettings>(builder.Configuration.GetSection(nameof(AocSettings)));
+builder.Services.AddMemoryCache();
 
 builder.Services.AddHttpClient<AocHttpClient>(httpClient => {
 	httpClient.DefaultRequestHeaders.Add("Cookie", $"session={builder.Configuration["AocSettings:HttpClientSettings:SessionCookie"]};");
@@ -36,10 +37,10 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseRouting();
+app.UseAntiforgery();
 
-
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>()
+	.AddInteractiveServerRenderMode()
+	.AddAdditionalAssemblies(typeof(AdventOfCode.SharedUI.Component1).Assembly);
 
 app.Run();
