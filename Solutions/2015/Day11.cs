@@ -40,8 +40,8 @@ public class Day11 {
 					doublePos.Add((newPassword[i], i));
 				}
 			}
-			foreach ((char value, int pos) item in doublePos) {
-				if (doublePos.Where(p => p.value != item.value && Math.Abs(p.pos - item.pos) > 1).Any()) {
+			foreach ((char value, int pos) in doublePos) {
+				if (doublePos.Where(p => p.value != value && Math.Abs(p.pos - pos) > 1).Any()) {
 					foundDoubles = true;
 				} else {
 					notValid = true;
@@ -114,7 +114,7 @@ public class Day11 {
 
 		StringBuilder sb = new();
 		for (int i = 0; i < values.Length; i++) {
-			sb.Append((char)values[i]);
+			_ = sb.Append((char)values[i]);
 		}
 
 		return sb.ToString();

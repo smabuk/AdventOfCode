@@ -76,13 +76,13 @@ public static class Day04 {
 	private static bool IsFieldValid(string key, string value) {
 		(int intValue, string strValue, string units) = GetFieldParts(key, value);
 		return key switch {
-			"byr" => intValue >= 1920 && intValue <= 2002,
-			"iyr" => intValue >= 2010 && intValue <= 2020,
-			"eyr" => intValue >= 2020 && intValue <= 2030,
+			"byr" => intValue is >= 1920 and <= 2002,
+			"iyr" => intValue is >= 2010 and <= 2020,
+			"eyr" => intValue is >= 2020 and <= 2030,
 			"ecl" => new string[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" }.Contains(value),
 			"hcl" => units == "#" && intValue > 0 && strValue.Length == 6,
-			"hgt" when units == "cm" => intValue >= 150 && intValue <= 193,
-			"hgt" when units == "in" => intValue >= 59 && intValue <= 76,
+			"hgt" when units == "cm" => intValue is >= 150 and <= 193,
+			"hgt" when units == "in" => intValue is >= 59 and <= 76,
 			"pid" => intValue > 0 && strValue.Length == 9,
 			"cid" => true,
 			_ => false
@@ -107,7 +107,7 @@ public static class Day04 {
 				} catch (System.Exception) {
 				}
 				strValue = value[1..];
-				units = value.Substring(0, 1);
+				units = value[..1];
 				break;
 			case "hgt":
 				_ = int.TryParse(value.Replace("cm", "").Replace("in", ""), out intValue);

@@ -36,7 +36,7 @@ public class Day04 {
 					lastWinningBoardResult = board.WinningValue;
 				}
 			}
-			bingoBoards.RemoveAll(b => b.IsWin);
+			_ = bingoBoards.RemoveAll(b => b.IsWin);
 		}
 
 		return lastWinningBoardResult;
@@ -65,7 +65,7 @@ public class Day04 {
 		}
 
 		public bool MarkNo(int number) {
-			_unmarkedNos.Remove(number);
+			_ = _unmarkedNos.Remove(number);
 			foreach (List<int> line in _lines) {
 				if (line.Remove(number) && line.Count == 0) {
 					IsWin = true;

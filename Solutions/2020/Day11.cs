@@ -14,7 +14,7 @@ public static class Day11 {
 	public const char FLOOR = '.';
 	public const char OCCUPIED = '#';
 
-	private static List<(int dX, int dY)> DIRECTIONS = new()
+	private static readonly List<(int dX, int dY)> DIRECTIONS = new()
 			{ (0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1) };
 
 

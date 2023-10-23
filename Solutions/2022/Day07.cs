@@ -80,11 +80,11 @@ public sealed class Day07 {
 		public Dictionary<string, File> Files { get; set; } = new();
 
 		public void AddDirectory(string name) {
-			Directories.TryAdd(name, new Directory(name, this));
+			_ = Directories.TryAdd(name, new Directory(name, this));
 		}
 
 		public void AddFile(string name, int size) {
-			Files.TryAdd(name, new(name, size));
+			_ = Files.TryAdd(name, new(name, size));
 		}
 
 		public int Size => Directories.Sum(x => x.Value.Size) + Files.Sum(x => x.Value.Size);

@@ -24,7 +24,7 @@ public sealed partial class Day09 {
 		Point[] knots= new Point[noOfKnots];
 		
 		int tailKnot = noOfKnots - 1;
-		tailPoints.Add(knots[tailKnot]);
+		_ = tailPoints.Add(knots[tailKnot]);
 
 		foreach (Instruction instruction in _instructions) {
 			for (int i = 0; i < instruction.Steps; i++) {
@@ -32,7 +32,7 @@ public sealed partial class Day09 {
 				for (int knot = 0; knot < noOfKnots - 1; knot++) {
 					knots[knot + 1] = MoveTail(knots[knot], knots[knot+1]);
 				}
-				tailPoints.Add(knots[tailKnot]);
+				_ = tailPoints.Add(knots[tailKnot]);
 			}
 		}
 

@@ -56,7 +56,7 @@ public sealed partial class Day20 {
 				IndexedItem x = gpsInput[i];
 
 				int pos = gps.IndexOf(x);
-				gps.Remove(x);
+				_ = gps.Remove(x);
 
 				int newPos = (pos + (int)(x.Value % newLength)) % newLength;
 				if (newPos == 0) {

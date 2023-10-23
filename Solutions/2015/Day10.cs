@@ -32,23 +32,22 @@ public class Day10 {
 		return newString.Length;
 	}
 	private static string LookAndSay(string inputString) {
-		char current = inputString[0];
 		char c;
 		StringBuilder sb = new();
 		int jump = 0;
 		for (int index = 0; index < inputString.Length; index += jump) {
 			c = inputString[index];
 			if (index + 3 <= inputString.Length && c == inputString[index + 1] && c == inputString[index + 2]) {
-				sb.Append('3');
-				sb.Append(c);
+				_ = sb.Append('3');
+				_ = sb.Append(c);
 				jump = 3;
 			} else if (index + 2 <= inputString.Length && c == inputString[index + 1]) {
-				sb.Append('2');
-				sb.Append(c);
+				_ = sb.Append('2');
+				_ = sb.Append(c);
 				jump = 2;
 			} else if (index + 1 <= inputString.Length) {
-				sb.Append('1');
-				sb.Append(c);
+				_ = sb.Append('1');
+				_ = sb.Append(c);
 				jump = 1;
 			}
 		}

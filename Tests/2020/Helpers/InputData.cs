@@ -4,13 +4,9 @@ public static partial class Helpers {
 	public static string[]? GetInputData(int year, int day, string? username = "") {
 		string[]? input = null;
 
-		string filename;
-		if (string.IsNullOrWhiteSpace(username)) {
-			filename = $"{year}_{day:D2}.txt";
-		} else {
-			filename = $"{year}_{day:D2}_{username}.txt";
-		}
-
+		string filename = string.IsNullOrWhiteSpace(username)
+			? $"{year}_{day:D2}.txt"
+			: $"{year}_{day:D2}_{username}.txt";
 		string fullFilename = Path.GetFullPath(Path.Combine(".", filename));
 
 		// Start: Fix for xUnit test project

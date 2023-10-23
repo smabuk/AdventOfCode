@@ -36,7 +36,7 @@ public class Day07 {
 		Dictionary<string, ushort?> wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);
 
 		ushort newB = CalculateValue(start, instructions, wireValues);
-		instructions.RemoveAll(i => i.OutWire == "b");
+		_ = instructions.RemoveAll(i => i.OutWire == "b");
 		instructions = instructions.Prepend(new NUMBER_Instruction("b", newB)).ToList();
 
 		wireValues = instructions.ToDictionary(i => i.OutWire, i => (ushort?)null);

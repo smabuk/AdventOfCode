@@ -14,16 +14,16 @@ public static class Day01 {
 		foreach (string item in input) {
 			expenseValues.Add(int.Parse(item));
 		}
-		FindSumsEqualTo(2020, expenseValues, 2, out List<int> entries);
+		_ = FindSumsEqualTo(2020, expenseValues, 2, out List<int> entries);
 		return entries.Aggregate(1, (product, entry) => product * entry);
 	}
 
 	public static long Solution2(string[] input) {
-		List<int> expenseValues = new();
+		List<int> expenseValues = [];
 		foreach (string item in input) {
 			expenseValues.Add(int.Parse(item));
 		}
-		FindSumsEqualTo(2020, expenseValues, 3, out List<int> entries);
+		_ = FindSumsEqualTo(2020, expenseValues, 3, out List<int> entries);
 		return entries.Aggregate(1, (product, entry) => product * entry);
 	}
 
@@ -32,7 +32,7 @@ public static class Day01 {
 
 		foreach (int entry in expenseValues) {
 			if (noOfEntries > 2) {
-				List<int> x = new List<int> { entry };
+				List<int> x = [ entry ];
 				if (FindSumsEqualTo(value - entry, expenseValues.Except(x).ToList(), noOfEntries - 1, out List<int> resultT)) {
 					foundEntries.Add(entry);
 					foundEntries.AddRange(resultT);

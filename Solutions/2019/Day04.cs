@@ -49,11 +49,7 @@ public class Day04 {
 			prevDigit = digit;
 		}
 
-		if (adjacentDigits) {
-			return true;
-		}
-
-		return false;
+		return adjacentDigits;
 	}
 
 	private static bool IsValidPassword2(int i) {

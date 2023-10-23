@@ -25,7 +25,7 @@ public sealed partial class Day12 {
 
 		_endPoints = _elevationMap
 			.Walk2dArrayWithValues()
-			.Where(c => c.Value == 'S' || c.Value == 'E')
+			.Where(c => c.Value is 'S' or 'E')
 			.ToDictionary(c => c.Value, c => c.Index);
 
 		_startPoint = _endPoints['S'];

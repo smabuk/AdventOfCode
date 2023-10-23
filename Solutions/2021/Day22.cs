@@ -24,9 +24,9 @@ public class Day22 {
 				for (int y = rebootStep.YMin; y <= rebootStep.YMax; y++) {
 					for (int x = rebootStep.XMin; x <= rebootStep.XMax; x++) {
 						if (rebootStep.TurnOn) {
-							cuboids.Add(new Point3d(x, y, z));
+							_ = cuboids.Add(new Point3d(x, y, z));
 						} else {
-							cuboids.Remove(new Point3d(x, y, z));
+							_ = cuboids.Remove(new Point3d(x, y, z));
 						}
 					}
 				}

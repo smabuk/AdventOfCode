@@ -27,7 +27,7 @@ public sealed partial class Day17 {
 	private static readonly Point[] ROCK_SHAPE_3 = { new(0, 3), new(0, 2), new(0, 1), new(0, 0) };
 	private static readonly Point[] ROCK_SHAPE_4 = { new(0, 1), new(1, 1), new(0, 0), new(1, 0)};
 
-	private static Rock[] ROCK_SHAPES = {
+	private static readonly Rock[] ROCK_SHAPES = {
 		new(4, 1, ROCK_SHAPE_0, ROCK_BOTTOM_0),
 		new(3, 3, ROCK_SHAPE_1, ROCK_BOTTOM_1),
 		new(3, 3, ROCK_SHAPE_2, ROCK_BOTTOM_2),
@@ -65,7 +65,7 @@ public sealed partial class Day17 {
 				.Select(i => i == LEFT ? JetDirection.Left : JetDirection.Right)
 				.ToList();
 			for (int x = 0; x < CHAMBER_WIDTH; x++) {
-				rocks.Add(new(x, -1));
+				_ = rocks.Add(new(x, -1));
 			}
 		}
 
@@ -183,8 +183,8 @@ public sealed partial class Day17 {
 	}
 
 	private sealed record Rock(int X, int Y) {
-		List<Point> _rocks = new();
-		public List<Point> _rockBottoms = new();
+		readonly List<Point> _rocks = [];
+		public List<Point> _rockBottoms = [];
 		public int Width  = 0;
 		public int Height = 0;
 

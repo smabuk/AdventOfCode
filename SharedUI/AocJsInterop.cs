@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace AdventOfCode.SharedUI;
@@ -22,12 +22,12 @@ public class AocJsInterop : IAsyncDisposable {
 
 	public async void CreateCookie(string name, string value, int? days = null) {
 		var module = await moduleTask.Value;
-		await module.InvokeAsync<string>("createCookie", name, value, days);
+		_ = await module.InvokeAsync<string>("createCookie", name, value, days);
 	}
 
 	public async void DeleteCookie(string name) {
 		var module = await moduleTask.Value;
-		await module.InvokeAsync<string>("deleteCookie", name);
+		_ = await module.InvokeAsync<string>("deleteCookie", name);
 	}
 
 	public async ValueTask<string> ReadCookie(string name) {

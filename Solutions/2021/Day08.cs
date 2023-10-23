@@ -34,7 +34,7 @@ public class Day08 {
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 3).Single(), 7);
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 4).Single(), 4);
 			SetPatternNumber(signalPatterns.Where(sp => sp.Length == 7).Single(), 8);
-			signalPatterns.RemoveAll(s => patterns.Contains(s));
+			_ = signalPatterns.RemoveAll(s => patterns.Contains(s));
 
 			foreach (string signalPattern in signalPatterns.Where(sp => sp.Length == 6)) {
 				if (signalPattern.ContainsAllWires(patterns[4])) {
@@ -45,7 +45,7 @@ public class Day08 {
 					SetPatternNumber(signalPattern, 6);
 				}
 			}
-			signalPatterns.RemoveAll(s => patterns.Contains(s));
+			_ = signalPatterns.RemoveAll(s => patterns.Contains(s));
 
 			foreach (string signalPattern in signalPatterns) {
 				if (signalPattern.ContainsAllWires(patterns[1])) {

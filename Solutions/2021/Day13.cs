@@ -45,14 +45,14 @@ public class Day13 {
 						.Where(dot => dot.X > fold.Value)
 						.Select(dot => dot with { X = dot.X - (2 * (dot.X - fold.Value)) })
 						.ToHashSet();
-					dots.RemoveWhere(dot => dot.X > fold.Value);
+					_ = dots.RemoveWhere(dot => dot.X > fold.Value);
 					break;
 				case "y":
 					newDots = dots
 						.Where(dot => dot.Y > fold.Value)
 						.Select(dot => dot with { Y = dot.Y - (2 * (dot.Y - fold.Value)) })
 						.ToHashSet();
-					dots.RemoveWhere(dot => dot.Y > fold.Value);
+					_ = dots.RemoveWhere(dot => dot.Y > fold.Value);
 					break;
 				default:
 					break;

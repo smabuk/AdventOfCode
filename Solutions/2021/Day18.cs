@@ -102,7 +102,6 @@ public class Day18 {
 						lhs = input[..(i - 1)];
 					} else {
 						lhs = input[..i];
-						int index = Math.Min(lhs.IndexOf(']'), lhs.IndexOf(','));
 						int lhsValue = int.Parse(findLastNumber.Last().ValueSpan) + leftValue;
 						lhs = $"{lhs[..findLastNumber.Last().Index]}{lhsValue}{lhs[(findLastNumber.Last().Index + findLastNumber.Last().Length)..^1]}";
 					}

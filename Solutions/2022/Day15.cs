@@ -40,7 +40,7 @@ public sealed partial class Day15 {
 					Point check = new(x, rowToSearch);
 					if (ManhattanDistance(sbp.Sensor, check) <= sbp.ManhattanDistance) {
 						if (!beacons.Contains(check)) {
-							found.Add(check);
+							_ = found.Add(check);
 						}
 					}
 				}

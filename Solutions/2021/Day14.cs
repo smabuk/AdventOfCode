@@ -101,9 +101,9 @@ public class Day14 {
 		StringBuilder newPolymer = new();
 
 		for (int i = 0; i < polymer.Length; i++) {
-			newPolymer.Append(polymer[i]);
+			_ = newPolymer.Append(polymer[i]);
 			if (i + 1 < polymer.Length && rules.TryGetValue(polymer[i..(i+2)], out PairInsertionRule? rule)) {
-				newPolymer.Append(rule.Value);
+				_ = newPolymer.Append(rule.Value);
 			}
 		}
 

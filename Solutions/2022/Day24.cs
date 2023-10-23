@@ -33,14 +33,14 @@ public sealed partial class Day24 {
 	}
 
 	private static string Solution2(string[] input) {
-		Basin basin = Basin.Parse(input);
+		//Basin basin = Basin.Parse(input);
 		return "** Solution not written yet **";
 	}
 
 	private static IEnumerable<Basin> DrunkenWalk(Basin basin, Point expedition) {
 		Random TrueOrFalse = new();
 
-		List<Point> oldWinds = new();
+		List<Point> oldWinds = [];
 		while (expedition != basin.End
 			&& basin.Minute < 800 /* Too slow */
 			) {
@@ -107,7 +107,7 @@ public sealed partial class Day24 {
 		}
 
 		public Basin NextUncachedMinute() {
-			List<Wind> newWinds = new();
+			List<Wind> newWinds = [];
 				foreach (Wind wind in Winds.ToList()) {
 				Wind newWind = wind with { Position = wind.Position + Movement(wind.Direction) };
 				newWind = newWind.Position switch {

@@ -25,7 +25,7 @@ public sealed partial class Day21 {
 		Dictionary<string, Monkey> monkeys = input.Select(Monkey.Parse).ToDictionary(m => m.Name, m => m);
 
 		Monkey me = monkeys[HUMAN];
-		monkeys.Remove(HUMAN);
+		_ = monkeys.Remove(HUMAN);
 
 		MATH_Monkey rootMonkey = (MATH_Monkey)monkeys[ROOT];
 

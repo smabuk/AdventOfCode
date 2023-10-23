@@ -67,8 +67,8 @@ public class Day16 {
 				int position = answers.
 					Where(x => x.name == item.Name)
 					.SingleOrDefault().position;
-				answers.RemoveAll(a => a.name == item.Name);
-				answers.RemoveAll(a => a.position == position);
+				_ = answers.RemoveAll(a => a.name == item.Name);
+				_ = answers.RemoveAll(a => a.position == position);
 				if (item.Name.StartsWith("departure")) {
 					departureValues.Add(instructions.YourTicket.Values[position]);
 				}

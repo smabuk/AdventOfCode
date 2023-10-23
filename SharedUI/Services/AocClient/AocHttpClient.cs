@@ -99,7 +99,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 					Day = day,
 					NoOfStars = noOfStars
 				};
-				summary.Days.TryAdd(day, dayInfo);
+				_ = summary.Days.TryAdd(day, dayInfo);
 			}
 
 			return summary;

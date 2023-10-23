@@ -22,7 +22,7 @@ public class Day23 {
 		Game startGameBoard = new(Game.GameType.Part1);
 		startGameBoard.Init(input);
 		int leastEnergy = 0;
-		Dictionary<GameState, int> gameStates = new();
+		Dictionary<GameState, int> gameStates = [];
 
 		leastEnergy = PlayTheGame(startGameBoard);
 
@@ -43,7 +43,7 @@ public class Day23 {
 			int count = 0;
 			while (!gameBoard.Completed || count > 1000) {
 				count++;
-				gameStates.TryAdd(gameState, gameBoard.EnergyExpended);
+				_ = gameStates.TryAdd(gameState, gameBoard.EnergyExpended);
 				int leastEnergy = int.MaxValue;
 				foreach (var amphipod in gameBoard.Amphipods.Values) {
 					foreach (var move in gameBoard.MovementOptions(amphipod.Name)) {
@@ -94,7 +94,7 @@ public class Day23 {
 		};
 
 		public Amphipod Move(Point target) {
-			List<Direction> directions = new();
+			List<Direction> directions = [];
 			if (target.Y == 1) {
 				if (target.Y - Position.Y < 0) {
 					directions.Add(Direction.Up);
@@ -137,8 +137,8 @@ public class Day23 {
 	public record GameState(string Hash);
 
 	public record struct Game(Game.GameType Type) {
-		int[] POSSIBLE_X = new int[] { 1, 2, 4, 6, 8, 10, 11 };
-		public Dictionary<string, Amphipod> Amphipods = new();
+		readonly int[] POSSIBLE_X = [1, 2, 4, 6, 8, 10, 11];
+		public Dictionary<string, Amphipod> Amphipods = [];
 		public int EnergyExpended => Amphipods.Sum(amp => amp.Value.EnergyExpended);
 		public char[,] Board = new char[13, 7];
 		public char[,] board = new char[13, 7];
@@ -188,7 +188,7 @@ public class Day23 {
 			.All(amp => amp.Position.Y > 1 && amp.IsHome);
 
 		public bool CanMove(Amphipod amphipod) {
-			int[] NextDoorMap = new int[] { 1, 2, 4, 6, 8, 10, 11 };
+			//int[] NextDoorMap = new int[] { 1, 2, 4, 6, 8, 10, 11 };
 			(int x, int y) = amphipod.Position;
 			if (y > BOTTOM) {
 				return false;
@@ -224,7 +224,7 @@ public class Day23 {
 		}
 
 		public IEnumerable<Point> MovementOptions(string Name) {
-			int[] NextDoorMap = new int[] { 1, 2, 4, 6, 8, 10, 11 };
+			//int[] NextDoorMap = new int[] { 1, 2, 4, 6, 8, 10, 11 };
 			Amphipod amphipod = Amphipods[Name];
 			if (CanMove(amphipod)) {
 				if (amphipod.Position.Y == 1) {

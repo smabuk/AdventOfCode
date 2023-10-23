@@ -32,7 +32,7 @@ public class Day24 {
 		}
 
 		int[] digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
-		submarineAlu.ExecuteInstructions(instructions, digits);
+		_ = submarineAlu.ExecuteInstructions(instructions, digits);
 
 		if (debug) {
 			Console.WriteLine();
@@ -74,7 +74,7 @@ public class Day24 {
 		}
 
 		int[] digits = modelNumber.ToString().Select(d => int.Parse($"{d}")).ToArray();
-		submarineAlu.ExecuteInstructions(instructions, digits);
+		_ = submarineAlu.ExecuteInstructions(instructions, digits);
 
 		if (debug) {
 			Console.WriteLine();

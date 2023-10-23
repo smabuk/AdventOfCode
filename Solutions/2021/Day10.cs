@@ -55,7 +55,7 @@ public class Day10 {
 			if (OPEN_CHARS.Contains(character)) {
 				openChars.Push(character);
 			} else {
-				openChars.Pop();
+				_ = openChars.Pop();
 			}
 		}
 

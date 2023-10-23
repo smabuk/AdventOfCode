@@ -36,7 +36,7 @@ public sealed partial class Day18 {
 
 		while ( exteriorQueue.Count > 0 ) {
 			Point3d cube = exteriorQueue.Dequeue();
-			cubes.Add(cube);
+			_ = cubes.Add(cube);
 			foreach (Point3d adjacent in Adjacent(cube)) {
 				if (   InBounds   (adjacent)
 					&& IsSpace    (adjacent)

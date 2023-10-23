@@ -15,7 +15,7 @@ public sealed partial class Day23 {
 
 	private static int Solution1(string[] input, string outputRegister) {
 		Computer computer = new();
-		computer.ExecuteProgram(Instruction.ParseProgram(input));
+		_ = computer.ExecuteProgram(Instruction.ParseProgram(input));
 
 		return computer.registers[outputRegister];
 	}
@@ -23,7 +23,7 @@ public sealed partial class Day23 {
 	private static int Solution2(string[] input) {
 		Computer computer = new();
 		computer.registers["a"] = 1;
-		computer.ExecuteProgram(Instruction.ParseProgram(input));
+		_ = computer.ExecuteProgram(Instruction.ParseProgram(input));
 
 		return computer.registers["b"];
 	}
