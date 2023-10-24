@@ -1,10 +1,10 @@
 # AdventOfCode
 My solutions and a Blazor front end for Advent of Code at https://adventofcode.com/
 
-![Deploy ASP.NET Core Web Application to smabAdventOfCode](https://github.com/smabuk/AdventOfCode/workflows/Deploy%20ASP.NET%20Core%20Web%20Application%20to%20smabAdventOfCode/badge.svg)
+![Deployment of Blazor app to smabAdventOfCode](https://github.com/smabuk/AdventOfCode/workflows/Deploy%20ASP.NET%20Core%20Web%20Application%20to%20smabAdventOfCode/badge.svg)
 
 ## Blazor front-end
-Currently hosted at https:/smabadventofcode.azurewebsites.com currently only links to my progress, but if you host it yourself
+Currently hosted at https:/smabadventofcode.azurewebsites.com and links to my progress, but if you host it yourself
 you can see your own data by change the appsettings.json file and providing your own session cookie.
 
 ## Solving
@@ -30,7 +30,7 @@ This currently has a bug if the data doesn't exist yet
 Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.
 
 ### Use
-Tries to solve for whatever is in the Input Area, so anyone can post in their own data and get a solution
+Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution
 (if I've written one!).
 (May crash with invalid data)
 

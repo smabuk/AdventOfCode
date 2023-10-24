@@ -1,18 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>AdventOfCode.Solutions._2020</RootNamespace>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Smab.Helpers" Version="1.2.12" />
+		<PackageReference Include="Smab.Helpers" />
 	</ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
   "profiles": {
     "AdventOfCode.Console": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\smabr\\source\\repos\\smabuk\\AdventOfCode\\Data"
+      "workingDirectory": "..\\Data"
     }
   }
 }
