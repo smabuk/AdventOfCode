@@ -7,14 +7,32 @@
     <EditForm Model="@inputModel" OnSubmit="@UseInputData">
         <h2>
             --- Input --- <span>
-                <button class="btn btn-primary" disabled="@IsGetDisabled" @onclick="() => LoadInputDataFromAoc()">AoC</button>
-                <button class="btn btn-primary" disabled="@IsGitHubGetDisabled" @onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">@(GitHubUserSelect) GitHub</button>
+                <button class="btn btn-primary"
+						disabled="@IsGetDisabled"
+						title="Retrieves the logged in user's data from the Advent of Code web site https://adventofcode.com and then solves for it."
+						@onclick="() => LoadInputDataFromAoc()">AoC</button>
+                <button class="btn btn-primary"
+						disabled="@IsGitHubGetDisabled"
+						title="Select one of the known GitHub users from the drop-down and then press the button to retrieve their data from GitHub (if available) and then solves for it"
+						@onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">
+					@(GitHubUserSelect) GitHub
+				</button>
             </span>
-            <button type="button" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy</button>
-            <input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary" />
+            <button type="button"
+					class="btn btn-primary"
+					disabled="@IsCopyDisabled"
+					title="Copy the contents of the input box to the clipboard."
+					@onclick="CopyTextToClipboard">
+				Copy <i class="bi-clipboard" aria-hidden="true"></i>
+			</button>
+            <input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary"
+				   title="Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution (if I've written one!). (May crash with invalid data)"
+			/>
         </h2>
         <h5>
-            <InputSelect @bind-Value="GitHubUserSelect" DisplayName="User">
+            <InputSelect @bind-Value="GitHubUserSelect"
+						 DisplayName="User"
+						 title="Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.">
                 <option value="">Select a user</option>
                 @foreach (string name in githubClient.KnownUsersInOrder) {
                     <option value="@name">@name (@githubClient.UserLanguages(name))</option>

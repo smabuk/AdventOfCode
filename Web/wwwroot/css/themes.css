@@ -1,13 +1,16 @@
 ﻿:root {
-    --bg-color: #fff;
-    --text-color: #424242;
-    --text-emphasis: #019dd1;
+	--bg-color: #fff;
+	--text-color: #424242;
+	--text-emphasis: #019dd1;
+	--sb-nav-text-color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-color: #3a0647;
         --text-color: #e1e1ff;
+		
+		--bs-code-color: #00ff00;
     }
 
     pre code  {

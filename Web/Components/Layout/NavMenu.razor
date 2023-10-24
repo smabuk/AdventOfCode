@@ -1,66 +1,66 @@
 ﻿@implements IDisposable
 @inject SessionState Session
 <div class="top-row ps-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">@Brand</a>
+	<a class="navbar-brand" href="">@NavTitle</a>
 </div>
 
 <input type="checkbox" title="Navigation menu" id="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('#navbar-toggler').click()">
-    <ul class="nav flex-column">
-        @if (Year != 0) {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="@Year">
-                    <span class="bi bi-calendar" aria-hidden="true"></span> <span class="pe-1">@(summaryYearExists ? $"{Session.Summaries.GetValueOrDefault(Year, new()).NoOfStars}⭐ " : "")</span> Year @Year
-                </NavLink>
-            </li>
-            <li class="aoc-grid">
-                @for (int i = 1; i <= 25; i++) {
-                    int day = i;
-                    bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
-                    string starsClass = "";
-                    if (summaryYearExists) {
-                        starsClass = Session.Summaries[Year].Days[day].NoOfStars switch {
-                            1 => "onestar",
-                            2 => "twostars",
-                            _ => ""
-                        };
-                    }
-                    <NavLink class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@(tooEarly ? "" : $"{Year}/day/{day}")" Match="NavLinkMatch.All">
-                        <span class="px-1 @(tooEarly ? "bi-ban" : (starsClass=="" ? "bi-puzzle-fill" : "bi-star-fill")) @starsClass" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
-                    </NavLink>
-                }
-            </li>
-        }
-        @for (int i = DateTime.UtcNow.AddMonths(-11).Year; i >= 2015; i--) {
-            int yr = i;
-            if (yr != Year) {
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="@yr">
-                        <span class="bi bi-calendar" aria-hidden="true"></span> <span>@(Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars > 0 ? $"{Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars}⭐ " : "")</span> Year @yr
-                    </NavLink>
-                </li>
-            }
-        }
-    </ul>
+	<ul class="nav flex-column">
+		@if (Year != 0) {
+			<li class="nav-item px-5">
+				<i class="bi-calendar3" aria-hidden="true"></i> <span class="pe-1">@(summaryYearExists ? $"{Session.Summaries.GetValueOrDefault(Year, new()).NoOfStars}⭐ " : "")</span> Year @Year
+			</li>
+			<li class="aoc-grid">
+				@for (int i = 1; i <= 25; i++) {
+					int day = i;
+					bool tooEarly = DateTime.UtcNow < new DateTime(Year, 12, day).AddHours(5);
+					string starsClass = "";
+					if (summaryYearExists) {
+						starsClass = Session.Summaries[Year].Days[day].NoOfStars switch
+						{
+							1 => "onestar",
+							2 => "twostars",
+							_ => ""
+						};
+					}
+					<NavLink class="@($"nav=link {(tooEarly ? "text-danger" : "text-light")}")" style="@($"{(day == 25 ? "grid-column: 1/4;" : "")}")" href="@(tooEarly ? "" : $"{Year}/day/{day}")" Match="NavLinkMatch.All">
+						<span class="px-1 @(tooEarly ? "bi-ban" : (starsClass=="" ? "bi-puzzle-fill" : "bi-star-fill")) @starsClass" aria-hidden="true"></span>@(day < 10 ? "0" : "")@day
+					</NavLink>
+				}
+			</li>
+		}
+		@for (int i = DateTime.UtcNow.AddMonths(-11).Year; i >= 2015; i--) {
+			int yr = i;
+			<li class="nav-item px-3">
+				<NavLink class="nav-link" href="@yr">
+					<span class="bi bi-calendar3" aria-hidden="true"></span> <span>@(Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars > 0 ? $"{Session.Summaries.GetValueOrDefault(yr, new()).NoOfStars}⭐ " : "")</span> Year @yr
+				</NavLink>
+			</li>
+		}
+	</ul>
 </div>
 
 @code {
-    [Parameter] public int Year { get; set; }
+	[Parameter] public int Year { get; set; }
 
-    public string Brand => $"Advent of Code {(Year == 0 ? "" : Year)} ";
-    bool summaryYearExists => Session?.Summaries.ContainsKey(Year) ?? false;
+	public string NavTitle => $"Advent of Code {(Year == 0 ? "" : Year)} ";
+	bool summaryYearExists => Session?.Summaries.ContainsKey(Year) ?? false;
 
-    protected override void OnInitialized() {
-        Session.OnSummaryChange += SummaryHasChanged;
-    }
+	protected override void OnInitialized()
+	{
+		Session.OnSummaryChange += SummaryHasChanged;
+	}
 
-    protected void SummaryHasChanged() {
+	protected void SummaryHasChanged()
+	{
 
-        StateHasChanged();
-    }
+		StateHasChanged();
+	}
 
-    public void Dispose() {
-        Session.OnSummaryChange -= SummaryHasChanged;
-    }
- }
+	public void Dispose()
+	{
+		Session.OnSummaryChange -= SummaryHasChanged;
+	}
+}

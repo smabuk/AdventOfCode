@@ -6,6 +6,9 @@ html, body {
     font-family: 'Fira Mono', monospace;
 }
 
+pre, code {
+	font-size: 1.1rem;
+}
 em {
     color: var(--text-emphasis);
     font-style: normal;

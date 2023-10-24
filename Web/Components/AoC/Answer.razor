@@ -6,12 +6,22 @@
 
 <p class="answer">
     @ChildContent
-    <pre><code @ref="_codeElement"><span>Your puzzle answer is </span>@PuzzleAnswer</code></pre>
+	<pre><code><span>Your puzzle answer is </span></code><code @ref="_codeElement">@PuzzleAnswer</code></pre>
     <span>
-        <button type="button" class="btn btn-primary" hidden="@string.IsNullOrWhiteSpace(PuzzleAnswer)" @onclick="CopyTextToClipboard">Copy</button>
+        <button type="button"
+				class="btn btn-primary"
+				disabled="@(PuzzleAnswer.StartsWith("*") && PuzzleAnswer.EndsWith("*"))"
+				title="Copy the answer to the clipboard."
+				@onclick="CopyTextToClipboard">
+			Copy <i class="bi-clipboard" aria-hidden="true"></i>
+		</button>
     </span>
     <span>
-        <a class="btn btn-primary" href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")" target="_blank">Jump</a>
+        <a class="btn btn-primary"
+		   href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")"
+		   title="Open a new page and navigate to the AdventOfCode site to enter the answer."
+		   target="_blank">
+		   Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i></a>
     </span>
 </p>
 

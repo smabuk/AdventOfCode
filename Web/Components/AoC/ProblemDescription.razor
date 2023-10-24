@@ -1,0 +1,41 @@
+﻿@inject AocHttpClient aocClient
+@inject SessionState Session
+@inject IJSRuntime JSRuntime
+
+@((MarkupString)Article)
+<div @ref="_articleElement" style="display:none">@Article</div>
+<button type="button" hidden="@HideCopyButton" class="btn btn-primary" disabled="@IsCopyDisabled" @onclick="CopyTextToClipboard">Copy <i class="bi-clipboard"></i></button>
+
+@code {
+	[Parameter] public int Year { get; set; }
+	[Parameter] public int Day { get; set; }
+	[Parameter] public int ProblemNo { get; set; }
+	[Parameter] public bool ShowCopyButton { get; set; } = false;
+
+	public string Article { get; set; } = "";
+
+	private bool HideCopyButton => !ShowCopyButton || string.IsNullOrEmpty(Article);
+	private bool IsGetDisabled => isLoading || isLoaded == true;
+	private bool IsCopyDisabled => isLoaded == false || string.IsNullOrEmpty(Article);
+	private bool isLoaded = false;
+	private bool isLoading = false;
+
+	private ElementReference _articleElement;
+
+	protected async override Task OnParametersSetAsync()
+	{
+		if (isLoaded && Session.ProblemDescriptions.ContainsKey(new(Year, Day, ProblemNo))) {
+			Article = Session.GetProblemDescription(Year, Day, ProblemNo);
+		} else {
+			Article = await aocClient.GetProblemDescription(Year, Day, ProblemNo);
+			Session.SetProblemDescription(Year, Day, ProblemNo, Article);
+			isLoaded = true;
+		}
+	}
+
+	private async Task CopyTextToClipboard()
+	{
+		await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _articleElement);
+	}
+
+}

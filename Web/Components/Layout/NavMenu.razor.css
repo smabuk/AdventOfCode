@@ -1,5 +1,8 @@
+div {
+	color: var(--sb-nav-text-color, #fff);
+}
+
 .aoc-grid {
-    color: white;
     display: grid;
     grid-gap: 0rem;
     grid-template-columns: repeat(3, 1fr);
@@ -33,7 +36,6 @@
     cursor: pointer;
     width: 3.5rem;
     height: 2.5rem;
-    color: white;
     position: absolute;
     top: 0.5rem;
     right: 1rem;
@@ -88,15 +90,15 @@
         line-height: 3rem;
     }
 
-        .nav-item ::deep a.active {
-            background-color: rgba(255,255,255,0.25);
-            color: white;
-        }
+		.nav-item ::deep a.active {
+			background-color: rgba(255,255,255,0.25);
+			color: var(--sb-nav-text-color);
+		}
 
-        .nav-item ::deep a:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-        }
+		.nav-item ::deep a:hover {
+			background-color: rgba(255,255,255,0.1);
+			color: var(--sb-nav-text-color);
+		}
 
 .nav-scrollable {
     display: none;
