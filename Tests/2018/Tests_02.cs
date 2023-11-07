@@ -22,17 +22,17 @@ public class Tests_02_Inventory_Management_System
 
 	[Theory]
 	[InlineData((string[])([
-		"abcdef",
-		"bababc",
-		"abbcde",
-		"abcccd",
-		"aabcdd",
-		"abcdee",
-		"ababab",
-	]), 9999)]
-	public void Part2(string[] input, int expected)
+		"abcde",
+		"fghij",
+		"klmno",
+		"pqrst",
+		"fguij",
+		"axcye",
+		"wvxyz",
+	]), "fgij")]
+	public void Part2(string[] input, string expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
 		Assert.Equal(expected, actual);
 	}
 }
