@@ -29,16 +29,17 @@ public sealed partial class Day03 {
 	}
 
 	private static int Solution2(string[] input) {
-		Dictionary<int, HashSet<Point>> Squares = _claims.ToDictionary(c => c.Id, c => c.Squares.ToHashSet());
+		HashSet<Point> allSquares = _claims
+			.SelectMany(c => c.Squares)
+			.GroupBy(square => square)
+			.Where(g => g.Count() == 1)
+			.Select(g =>g.Key)
+			.ToHashSet();
 
-		foreach (int claimId in Squares.Keys.Order()) {
-			HashSet<Point> squares = Squares[claimId];
-			List<Point> allOtherSquares = Squares
-				.Where(c => c.Key != claimId)
-				.SelectMany(c => c.Value)
-				.ToList();
-			if (!squares.Overlaps(allOtherSquares)) {
-				return claimId;
+		foreach (Claim claim in _claims) {
+			HashSet<Point> squares = claim.Squares;
+			if (squares.IsSubsetOf(allSquares)) {
+				return claim.Id;
 			}
 		}
 
@@ -50,7 +51,7 @@ public sealed partial class Day03 {
 		public int Id { get; init; }
 		public Point Start { get; init; }
 		public (int Wide, int Tall) Size { get; init; }
-		public List<Point> Squares { get; } = [];
+		public HashSet<Point> Squares { get; } = [];
 
 		[SetsRequiredMembers]
 		public Claim(int id, Point start, (int Wide, int Tall) size) : this()
@@ -58,7 +59,7 @@ public sealed partial class Day03 {
 			Id = id;
 			Start = start;
 			Size = size;
-			Squares = GetSquares().ToList();
+			Squares = GetSquares().ToHashSet();
 		}
 
 		private IEnumerable<Point> GetSquares()
