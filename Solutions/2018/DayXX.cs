@@ -12,7 +12,7 @@ public sealed partial class DayXX {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	private static IEnumerable<Instruction> _instructions = Array.Empty<Instruction>();
+	private static IEnumerable<Instruction> _instructions = [];
 
 	private static void LoadInstructions(string[] input) {
 		_instructions = input.Select(Instruction.Parse);
