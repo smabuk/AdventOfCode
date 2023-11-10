@@ -29,10 +29,10 @@ public class Tests_06_Chronal_Coordinates
 		5, 5
 		8, 9
 		"""
-		, 9999)]
+		, 16)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, 32), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
