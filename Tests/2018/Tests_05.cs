@@ -17,7 +17,7 @@ public class Tests_05_Alchemical_Reaction
 	}
 
 	[Theory]
-	[InlineData("aA", 9999)]
+	[InlineData("dabAcCaCBAcCcaDA", 4)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
