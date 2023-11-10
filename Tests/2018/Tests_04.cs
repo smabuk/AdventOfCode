@@ -51,7 +51,7 @@ public class Tests_04_Repose_Record
 		[1518-11-05 00:45] falls asleep
 		[1518-11-05 00:55] wakes up
 		"""
-		, 000)]
+		, 4455)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);

@@ -5,16 +5,18 @@
 /// https://adventofcode.com/2018/day/04
 /// </summary>
 [Description("Repose Record")]
-public sealed partial class Day04 {
+public sealed partial class Day04
+{
 
 	[Init]
-	public static    void Init(string[] input, params object[]? _) => LoadShifts(input);
+	public static void   Init(string[] input, params object[]? _)  => LoadShifts(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static readonly List<Asleep> _sleeps = [];
 
-	private static void LoadShifts(string[] input) {
+	private static void LoadShifts(string[] input)
+	{
 		List<string> sortedInput = [.. input];
 		sortedInput.Sort();
 
@@ -37,7 +39,8 @@ public sealed partial class Day04 {
 		static int GetGuardId(string input) => int.Parse(input[26..].Split(' ')[0]);
 	}
 
-	private static int Solution1(string[] _) {
+	private static int Solution1(string[] _)
+	{
 		int guardId = _sleeps
 			.GroupBy(x => x.GuardId)
 			.Select(x => new
@@ -64,11 +67,29 @@ public sealed partial class Day04 {
 		return guardId * bestMinute;
 	}
 
-	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		//List<Guard> instructions = input.Select(ParseLine).ToList();
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input)
+	{
+		int bestGuardId = 0;
+		int bestMinute = 0;
+		int bestCount = 0;
+		for (int minute = 0; minute < 60; minute++) {
+			var sleepCount = _sleeps
+				.GroupBy(x => x.GuardId)
+				.Select(x => new
+				{
+					GuardId = x.Key,
+					TimesAsleep = x.Count(sleep => sleep.IsAsleep(minute))
+				})
+				.OrderByDescending(x => x.TimesAsleep)
+				.First();
+			if (sleepCount.TimesAsleep > bestCount) {
+				bestCount = sleepCount.TimesAsleep;
+				bestGuardId = sleepCount.GuardId;
+				bestMinute = minute;
+			}
+		}
+
+		return bestGuardId * bestMinute;
 	}
 
 	private record Asleep(int GuardId, TimeOnly Start, TimeOnly End)
