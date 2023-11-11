@@ -88,10 +88,10 @@ public class Tests_10_The_Stars_Align
 		position=< 5,  9> velocity=< 1, -2>
 		position=<14,  7> velocity=<-2,  0>
 		position=<-3,  6> velocity=< 2, -1>
-		""", "???")]
-	public void Part2(string input, string expected)
+		""", 3)]
+	public void Part2(string input, int expected)
 	{
-		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }

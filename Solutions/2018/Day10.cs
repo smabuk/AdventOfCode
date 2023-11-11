@@ -19,21 +19,11 @@ public sealed partial class Day10 {
 		_pointsOfLight = input.Select(PointOfLight.Parse);
 	}
 
-	private static string Solution1(string[] _) {
+	private static string Solution1(string[] _)
+	{
 		List<PointOfLight> pointsOfLight = _pointsOfLight.ToList();
 
-		int letterHeight = pointsOfLight.Count < 35 ? 8 : 10;
-
-		int minY = int.MinValue;
-		int maxY = int.MaxValue;
-		do {
-			for (int i = 0; i < pointsOfLight.Count; i++) {
-				pointsOfLight[i] = pointsOfLight[i].Move();
-			}
-
-			minY = pointsOfLight.Min(p => p.Position.Y);
-			maxY = pointsOfLight.Max(p => p.Position.Y);
-		} while (maxY - minY > letterHeight);
+		int noOfSeconds = MoveTheStars(pointsOfLight, out int minY, out int maxY);
 
 		int minX = pointsOfLight.Min(p => p.Position.X);
 		int maxX = pointsOfLight.Max(p => p.Position.X);
@@ -53,9 +43,29 @@ public sealed partial class Day10 {
 		return message;
 	}
 
-	private static string Solution2(string[] input) {
-		List<PointOfLight> pointsOfLight = input.Select(ParseLine).ToList();
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input)
+	{
+		List<PointOfLight> pointsOfLight = _pointsOfLight.ToList();
+		return MoveTheStars(pointsOfLight, out int _, out int _);
+	}
+
+	private static int MoveTheStars(List<PointOfLight> pointsOfLight, out int minY, out int maxY)
+	{
+		int letterHeight = pointsOfLight.Count < 35 ? 8 : 10;
+		int noOfSeconds = 0;
+		minY = int.MinValue;
+		maxY = int.MaxValue;
+		do {
+			for (int i = 0; i < pointsOfLight.Count; i++) {
+				pointsOfLight[i] = pointsOfLight[i].Move();
+			}
+
+			minY = pointsOfLight.Min(p => p.Position.Y);
+			maxY = pointsOfLight.Max(p => p.Position.Y);
+			noOfSeconds++;
+		} while (maxY - minY > letterHeight);
+
+		return noOfSeconds;
 	}
 
 	private record PointOfLight(Point Position, Point Velocity) : IParsable<PointOfLight> {
