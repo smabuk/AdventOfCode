@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AdventOfCode.Solutions._2018;
+﻿namespace AdventOfCode.Solutions._2018;
 
 /// <summary>
 /// Day 08: Memory Maneuver
@@ -25,8 +23,8 @@ public sealed partial class Day08 {
 		return _licenseTree.SumOfMetadataEntries;
 	}
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input) {
+		return _licenseTree.Value;
 	}
 
 	private static (Node Node, int Skip) GetNode(List<int> inputs)
@@ -57,6 +55,22 @@ public sealed partial class Day08 {
 		public List<int> MetaData = [];
 
 		public int SumOfMetadataEntries => Nodes.Sum(n => n.SumOfMetadataEntries) + MetaData.Sum();
+		public int Value
+		{
+			get
+			{
+				if (Nodes.Count == 0) {
+					return MetaData.Sum();
+				}
+				int value = 0;
+				foreach (int metadata in MetaData) {
+					if (metadata <= Nodes.Count) {
+						value += Nodes[metadata - 1].Value;
+					}
+				}
+				return value;
+			}
+		}
 	}
 
 }

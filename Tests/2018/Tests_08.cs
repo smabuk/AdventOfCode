@@ -14,7 +14,7 @@ public class Tests_08_Memory_Maneuver
 	}
 
 	[Theory]
-	[InlineData("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2", 9999)]
+	[InlineData("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2", 66)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, 2, 0), out int actual);
