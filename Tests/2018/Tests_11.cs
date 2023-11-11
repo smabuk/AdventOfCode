@@ -27,11 +27,14 @@ public class Tests_11_Chronal_Charge
 		Assert.Equal(expected, actual);
 	}
 
-	//[Theory]
-	//[InlineData(21, 61)]
-	//public void Part2(string input, int expected)
-	//{
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, 32), out int actual);
-	//	Assert.Equal(expected, actual);
-	//}
+	[Theory]
+	[InlineData("18", 90, 269, 16)]
+	[InlineData("42", 232, 251, 12)]
+	public void Part2(string input, int expectedX, int expectedY, int expectedSize)
+	{
+		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
+		string expected = $"{expectedX},{expectedY},{expectedSize}";
+		Assert.Equal(expected, actual);
+	}
+
 }

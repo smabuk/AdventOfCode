@@ -44,7 +44,38 @@ public sealed partial class Day11 {
 
 	private static string Solution2(string[] input)
 	{
-		return "** Solution not written yet **";
+		const int MAX_GRID_SIZE = 21; // This works for me and keeps the speed down
+		int gridSerialNo = input[0].AsInt();
+
+		int[,] fuelCells = new int[300, 300];
+		foreach ((int cellX, int cellY) in fuelCells.Walk2dArray()) {
+			int value = CalculatePowerValue(gridSerialNo, cellX + 1, cellY + 1);
+			fuelCells[cellX, cellY] = value;
+		}
+
+		int maxValue = int.MinValue;
+		string topLeft = "";
+		for (int y = 0; y < 300; y++) {
+			for (int x = 0; x < 300; x++) {
+				for (int gridSize = 3; gridSize < MAX_GRID_SIZE; gridSize++) {
+					if (x + gridSize >= 300 || y + gridSize >= 300) {
+						break;
+					}
+					int value = 0;
+					for (int dy = 0; dy < gridSize; dy++) {
+						for (int dx = 0; dx < gridSize; dx++) {
+							value += fuelCells[x + dx, y + dy];
+						}
+					}
+					if (value > maxValue) {
+						maxValue = value;
+						topLeft = $"{x + 1},{y + 1},{gridSize}";
+					}
+				}
+			}
+		}
+
+		return topLeft;
 	}
 
 	public static int CalculatePowerValue(int gridSerialNo, int x, int y)
