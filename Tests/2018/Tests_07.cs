@@ -31,10 +31,10 @@ public class Tests_07_The_Sum_of_Its_Parts
 		Step D must be finished before step E can begin.
 		Step F must be finished before step E can begin.
 		"""
-		, 9999)]
+		, 15)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, 32), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, 2, 0), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
