@@ -21,14 +21,15 @@ public class Tests_13_Mine_Cart_Madness
 	}
 
 	[Theory]
-	[InlineData(@"""
-		/->-\        
-		|   |  /----\
-		| /-+--+-\  |
-		| | |  | v  |
-		\-+-/  \-+--/
-		  \------/   
-		""", 9999, 9999)]
+	[InlineData("""
+		/>-<\  
+		|   |  
+		| /<+-\
+		| | | v
+		\>+</ |
+		  |   ^
+		  \<->/
+		""", 6, 4)]
 	public void Part2(string input, int expectedX, int expectedY)
 	{
 		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);

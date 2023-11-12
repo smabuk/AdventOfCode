@@ -25,32 +25,9 @@ public sealed partial class Day13 {
 	private static readonly char[] CART = [CART_UP, CART_DOWN, CART_LEFT, CART_RIGHT, CART_CRASH];
 	private static readonly char[] TRACK = [STRAIGHT_UP_DOWN, STRAIGHT_LEFT_RIGHT, CURVE_1, CURVE_2, INTERSECTION];
 
-	private static string Solution1(string[] input) {
-		char[,] mines = String.Join("", input).To2dArray<char>(input[0].Length);
-		List<Cart> carts = mines
-			.Walk2dArrayWithValues()
-			.Where(m => CART.Contains(m.Value))
-			.Select(m => new Cart(
-				new(m.X, m.Y),
-				m.Value switch
-				{
-					CART_UP => Direction.Up,
-					CART_DOWN => Direction.Down,
-					CART_LEFT => Direction.Left,
-					CART_RIGHT => Direction.Right,
-					_ => throw new NotImplementedException(),
-				}))
-			.ToList();
-
-		char[,] tracks = (char[,])mines.Clone();
-		foreach (Cart cart in carts) {
-			tracks[cart.Position.X, cart.Position.Y] = cart.Facing switch
-			{
-				Direction.Left  or Direction.Right => STRAIGHT_LEFT_RIGHT,
-				Direction.Up  or Direction.Down => STRAIGHT_UP_DOWN,
-				_ => throw new NotImplementedException(),
-			};
-		}
+	private static string Solution1(string[] input)
+	{
+		LoadMinesAndCarts(input, out List<Cart> carts, out char[,] tracks);
 
 		int ticks = 0;
 		bool isCrashed = false;
@@ -72,23 +49,81 @@ public sealed partial class Day13 {
 			}
 			carts = orderedCarts;
 			ticks++;
-		} while (!isCrashed && ticks < 10_000);
+		} while (!isCrashed);
 
 		return $"{crashLocation.X},{crashLocation.Y}";
 	}
 
 	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		return "** Solution not written yet **";
+		LoadMinesAndCarts(input, out List<Cart> carts, out char[,] tracks);
+
+		int ticks = 0;
+		bool isCrashed = false;
+		do {
+			List<Cart> orderedCarts = carts
+				.OrderBy(c => c.Position.Y)
+				.ThenBy(c => c.Position.X)
+				.ToList();
+			for (int cartIndex = 0; cartIndex < orderedCarts.Count; cartIndex++) {
+				Cart cart = orderedCarts[cartIndex];
+				cart = cart.Move(tracks);
+				orderedCarts[cartIndex] = cart;
+				isCrashed = orderedCarts.Where(c => c.IsCrashed is false).GroupBy(c => c.Position).Where(p => p.Count() > 1).Any();
+				if (isCrashed) {
+					for (int i = 0; i < orderedCarts.Count; i++) {
+						if (orderedCarts[i].Position == cart.Position && orderedCarts[i].IsCrashed is false) {
+							orderedCarts[i].IsCrashed = true;
+						}
+					}
+				}
+			}
+			carts = orderedCarts.Where(c => c.IsCrashed is false).ToList();
+			ticks++;
+		} while (carts.Count > 1);
+
+		Point remainingCart = carts.Single().Position;
+
+		return $"{remainingCart.X},{remainingCart.Y}";
+	}
+
+	private static void LoadMinesAndCarts(string[] input, out List<Cart> carts, out char[,] tracks)
+	{
+		char[,] mines = String.Join("", input).To2dArray<char>(input[0].Length);
+		carts = mines
+			.Walk2dArrayWithValues()
+			.Where(m => CART.Contains(m.Value))
+			.Select(m => new Cart(
+				new(m.X, m.Y),
+				m.Value switch
+				{
+					CART_UP => Direction.Up,
+					CART_DOWN => Direction.Down,
+					CART_LEFT => Direction.Left,
+					CART_RIGHT => Direction.Right,
+					_ => throw new NotImplementedException(),
+				}))
+			.ToList();
+		tracks = (char[,])mines.Clone();
+		foreach (Cart cart in carts) {
+			tracks[cart.Position.X, cart.Position.Y] = cart.Facing switch
+			{
+				Direction.Left or Direction.Right => STRAIGHT_LEFT_RIGHT,
+				Direction.Up or Direction.Down => STRAIGHT_UP_DOWN,
+				_ => throw new NotImplementedException(),
+			};
+		}
 	}
 
 	private record Cart(Point Position, Direction Facing) {
 
+		public bool IsCrashed { get; set; } = false;
 		public Turn NextIntersectionDirection { get; private set; } = Turn.Left;
 
 		public Cart Move(char[,] tracks)
 		{
+			if (IsCrashed) {
+				return this;
+			}
 			Point position = Facing switch
 			{
 				Direction.Left => Position.West(),
