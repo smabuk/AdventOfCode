@@ -21,7 +21,7 @@ public class Tests_11_Chronal_Charge
 	[InlineData(57, 122, 79, -5)]
 	[InlineData(39, 217, 196, 0)]
 	[InlineData(71, 101, 153, 4)]
-	public void FuelCellP0werLevel(int gridSerialNo, int x, int y, int expected)
+	public void FuelCellPowerLevel(int gridSerialNo, int x, int y, int expected)
 	{
 		int actual = CalculatePowerValue(gridSerialNo, x, y);
 		Assert.Equal(expected, actual);
