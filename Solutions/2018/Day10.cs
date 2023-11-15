@@ -37,8 +37,18 @@ public sealed partial class Day10 {
 			stars[pointOfLight.Position.X - minX, pointOfLight.Position.Y - minY] = '█';
 		}
 
-		string ocrString = OcrHelpers.IdentifyMessage(stars.PrintAsStringArray(width: 0), ' ', '█', 2, OcrHelpers.OcrLetterSize.Large);
-		string message = ocrString + Environment.NewLine + String.Join(Environment.NewLine, stars.PrintAsStringArray(width: 0)); ;
+		string ocrString = "";
+		IEnumerable<string> blockOfText = stars.PrintAsStringArray(width: 0);
+		try {
+			ocrString = blockOfText.Count() switch
+			{
+				10 => OcrHelpers.IdentifyMessage(blockOfText, ' ', '█', 2, OcrHelpers.OcrLetterSize.Large),
+				_ => OcrHelpers.IdentifyMessage(blockOfText, ' ', '█', 1, OcrHelpers.OcrLetterSize.Medium),
+			};
+		}
+		catch (Exception) {
+		}
+		string message = ocrString + Environment.NewLine + String.Join(Environment.NewLine, blockOfText); ;
 
 		return message;
 	}

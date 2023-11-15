@@ -5,12 +5,8 @@
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
-	<!--<ItemGroup>
-		<PackageReference Include="Smab.Helpers" />
-	</ItemGroup>-->
-
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Smab.Helpers\src\Smab.Helpers\Smab.Helpers.csproj" />
+		<PackageReference Include="Smab.Helpers" />
 	</ItemGroup>
 
 </Project>

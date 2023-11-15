@@ -39,7 +39,7 @@ public class Tests_10_The_Stars_Align
 		position=<-3,  6> velocity=< 2, -1>
 		""",
 		"""
-
+		HI
 		█   █  ███
 		█   █   █ 
 		█   █   █ 

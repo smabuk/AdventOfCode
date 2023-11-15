@@ -1,16 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<RootNamespace>AdventOfCode.Solutions._2021</RootNamespace>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
-	<!--<ItemGroup>
-		<PackageReference Include="Smab.Helpers" />
-	</ItemGroup>-->
-
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Smab.Helpers\src\Smab.Helpers\Smab.Helpers.csproj" />
+		<PackageReference Include="Smab.Helpers" />
 	</ItemGroup>
 
 </Project>
