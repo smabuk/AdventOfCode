@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<PackageReference Include="Smab.Helpers" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\Smab.Helpers\src\Smab.Helpers\Smab.Helpers.csproj" />
 		<ProjectReference Include="..\..\Solutions\2015\AdventOfCode.Solutions.2015.csproj" />
 		<!--<ProjectReference Include="..\..\Solutions\2016\AdventOfCode.Solutions.2016.csproj" />-->
 		<!--<ProjectReference Include="..\..\Solutions\2017\AdventOfCode.Solutions.2017.csproj" />-->
