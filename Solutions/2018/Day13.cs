@@ -10,66 +10,54 @@ public sealed partial class Day13 {
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	private const char STRAIGHT_UP_DOWN = '|';
 	private const char STRAIGHT_LEFT_RIGHT = '-';
-	private const char CURVE_1 = '/';
-	private const char CURVE_2 = '\\';
-	private const char INTERSECTION = '+';
+	private const char STRAIGHT_UP_DOWN    = '|';
+	private const char INTERSECTION        = '+';
+	private const char CURVE_1             = '/';
+	private const char CURVE_2             = '\\';
 
-	private const char CART_UP = '^';
-	private const char CART_DOWN = 'v';
-	private const char CART_LEFT = '<';
+	private const char CART_LEFT  = '<';
 	private const char CART_RIGHT = '>';
+	private const char CART_UP    = '^';
+	private const char CART_DOWN  = 'v';
 	private const char CART_CRASH = 'X';
 
-	private static readonly char[] CART = [CART_UP, CART_DOWN, CART_LEFT, CART_RIGHT, CART_CRASH];
-	private static readonly char[] TRACK = [STRAIGHT_UP_DOWN, STRAIGHT_LEFT_RIGHT, CURVE_1, CURVE_2, INTERSECTION];
+	private static readonly char[] CART  = [CART_UP, CART_DOWN, CART_LEFT, CART_RIGHT, CART_CRASH];
+	//private static readonly char[] TRACK = [STRAIGHT_UP_DOWN, STRAIGHT_LEFT_RIGHT, CURVE_1, CURVE_2, INTERSECTION];
 
 	private static string Solution1(string[] input)
 	{
 		LoadMinesAndCarts(input, out List<Cart> carts, out char[,] tracks);
 
-		int ticks = 0;
-		bool isCrashed = false;
-		Point crashLocation = new();
-		do {
-			List<Cart> orderedCarts = carts
-				.OrderBy(c => c.Position.Y)
-				.ThenBy(c => c.Position.X)
-				.ToList();
-			for (int cartIndex = 0; cartIndex < orderedCarts.Count; cartIndex++) {
-				Cart cart = orderedCarts[cartIndex];
-				cart = cart.Move(tracks);
-				orderedCarts[cartIndex] = cart;
-				isCrashed = orderedCarts.GroupBy(c => c.Position).Where(p => p.Count() > 1).Any();
-				if (isCrashed) {
-					crashLocation = cart.Position;
-					break;
-				}
-			}
-			carts = orderedCarts;
-			ticks++;
-		} while (!isCrashed);
+		Point crashLocation = CartsRunWild(ref carts, tracks, 1);
 
 		return $"{crashLocation.X},{crashLocation.Y}";
 	}
 
-	private static string Solution2(string[] input) {
+	private static string Solution2(string[] input)
+	{
 		LoadMinesAndCarts(input, out List<Cart> carts, out char[,] tracks);
 
+		Point remainingCart = CartsRunWild(ref carts, tracks, 2);
+
+		return $"{remainingCart.X},{remainingCart.Y}";
+	}
+
+	private static Point CartsRunWild(ref List<Cart> carts, char[,] tracks, int part)
+	{
 		int ticks = 0;
 		bool isCrashed = false;
 		do {
-			List<Cart> orderedCarts = carts
-				.OrderBy(c => c.Position.Y)
-				.ThenBy(c => c.Position.X)
-				.ToList();
+			List<Cart> orderedCarts = [.. carts.OrderBy(c => c.Position.Y).ThenBy(c => c.Position.X)];
 			for (int cartIndex = 0; cartIndex < orderedCarts.Count; cartIndex++) {
 				Cart cart = orderedCarts[cartIndex];
 				cart = cart.Move(tracks);
 				orderedCarts[cartIndex] = cart;
 				isCrashed = orderedCarts.Where(c => c.IsCrashed is false).GroupBy(c => c.Position).Where(p => p.Count() > 1).Any();
 				if (isCrashed) {
+					if (part == 1) {
+						return cart.Position;
+					}
 					for (int i = 0; i < orderedCarts.Count; i++) {
 						if (orderedCarts[i].Position == cart.Position && orderedCarts[i].IsCrashed is false) {
 							orderedCarts[i].IsCrashed = true;
@@ -81,9 +69,7 @@ public sealed partial class Day13 {
 			ticks++;
 		} while (carts.Count > 1);
 
-		Point remainingCart = carts.Single().Position;
-
-		return $"{remainingCart.X},{remainingCart.Y}";
+		return carts.Single().Position;
 	}
 
 	private static void LoadMinesAndCarts(string[] input, out List<Cart> carts, out char[,] tracks)
@@ -96,9 +82,9 @@ public sealed partial class Day13 {
 				new(m.X, m.Y),
 				m.Value switch
 				{
-					CART_UP => Direction.Up,
-					CART_DOWN => Direction.Down,
-					CART_LEFT => Direction.Left,
+					CART_UP    => Direction.Up,
+					CART_DOWN  => Direction.Down,
+					CART_LEFT  => Direction.Left,
 					CART_RIGHT => Direction.Right,
 					_ => throw new NotImplementedException(),
 				}))
@@ -108,7 +94,7 @@ public sealed partial class Day13 {
 			tracks[cart.Position.X, cart.Position.Y] = cart.Facing switch
 			{
 				Direction.Left or Direction.Right => STRAIGHT_LEFT_RIGHT,
-				Direction.Up or Direction.Down => STRAIGHT_UP_DOWN,
+				Direction.Up   or Direction.Down  => STRAIGHT_UP_DOWN,
 				_ => throw new NotImplementedException(),
 			};
 		}
@@ -126,10 +112,10 @@ public sealed partial class Day13 {
 			}
 			Point position = Facing switch
 			{
-				Direction.Left => Position.West(),
-				Direction.Right => Position.East(),
-				Direction.Up => Position.North(),
-				Direction.Down => Position.South(),
+				Direction.Left  => Position.Left(),
+				Direction.Right => Position.Right(),
+				Direction.Up    => Position.Up(),
+				Direction.Down  => Position.Down(),
 				_ => throw new NotImplementedException(),
 			};
 
@@ -167,25 +153,25 @@ public sealed partial class Day13 {
 			{
 				Direction.Left => NextIntersectionDirection switch
 				{
-					Turn.Left => Direction.Down,
+					Turn.Left  => Direction.Down,
 					Turn.Right => Direction.Up,
 					_ => direction,
 				},
 				Direction.Right => NextIntersectionDirection switch
 				{
-					Turn.Left => Direction.Up,
+					Turn.Left  => Direction.Up,
 					Turn.Right => Direction.Down,
 					_ => direction,
 				},
 				Direction.Up => NextIntersectionDirection switch
 				{
-					Turn.Left => Direction.Left,
+					Turn.Left  => Direction.Left,
 					Turn.Right => Direction.Right,
 					_ => direction,
 				},
 				Direction.Down => NextIntersectionDirection switch
 				{
-					Turn.Left => Direction.Right,
+					Turn.Left  => Direction.Right,
 					Turn.Right => Direction.Left,
 					_ => direction,
 				},
@@ -194,9 +180,9 @@ public sealed partial class Day13 {
 
 			NextIntersectionDirection = NextIntersectionDirection switch
 			{
-				Turn.Left => Turn.Straight,
+				Turn.Left     => Turn.Straight,
 				Turn.Straight => Turn.Right,
-				Turn.Right => Turn.Left,
+				Turn.Right    => Turn.Left,
 				_ => throw new NotImplementedException(),
 			};
 
