@@ -1,18 +1,21 @@
 ﻿button, input {
-    margin-left: 0rem;
+	margin-left: 0rem;
 }
 
 h5 {
-    font-size: small;
+	font-size: small;
 }
 
 textarea {
-    width: 95%;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+	width: 95%;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	white-space: pre;
+	overflow-wrap: normal;
+	overflow-x: auto;
 }
 
 select {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+	background-color: var(--bg-color);
+	color: var(--text-color);
 }
