@@ -18,6 +18,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		new("rollerss", "c#", "{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs ", "pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt "),
 		new("smabuk", "c#", "{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs ", "smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt "),
 		new("tasagent", "c#", "{GITHUB}TasAgent/AdventOfCode{year}/blob/master/Day{day:D2}/Program.cs ", "TASagent/AdventOfCode{year}/master/input{day:D2}.txt "),
+		new("unclescientist", "rust", "{GITHUB}UncleScientist/aoclib-rs/blob/main/src/bin/run-aoc/aoc{year}/aoc{year}_{day:D2}.rs ", "UncleScientist/aoclib-rs/main/input/{year}-{day:D2}.txt "),
 	];
 
 	public GithubHttpClient(HttpClient httpClient) {
@@ -25,9 +26,10 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		_httpClient = httpClient;
 	}
 
-	public List<string> KnownUsersInOrder => new() {
+	public List<string> KnownUsersInOrder => [
 		"smabuk",
 		"encse",
+		"UncleScientist",
 		"glombek",
 		"dylanbeattie",
 		"internetbird",
@@ -38,7 +40,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		"KevinSjoberg",
 		"Andriamanitra",
 		"Bassel-T"
-	};
+	];
 
 	public string UserLanguages(string username) => 
 		Users.Where(user => user.Name == username.ToLower()).Single().UserLanguages;
@@ -60,29 +62,21 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		if (string.IsNullOrEmpty(path)) {
 			return "";
 		}
-		var response = await _httpClient.GetAsync(path);
+		HttpResponseMessage response = await _httpClient.GetAsync(path);
 
 		return response.IsSuccessStatusCode switch {
 			false => "",
 			_ => await response.Content.ReadAsStringAsync()
 		};
 	}
-	private static string ParseTemplate(string template, int year, int day) {
-		template = template.Replace("{GITHUB}", "https://github.com/");
-		while (template.IndexOf("{year}") > 0) {
-			template = template.Replace("{year}", $"{year}");
-		}
-		while (template.IndexOf("{year % 1000}") > 0) {
-			template = template.Replace("{year % 1000}", $"{year % 1000}");
-		}
-		while (template.IndexOf("{day:D2}") > 0) {
-			template = template.Replace("{day:D2}", $"{day:D2}");
-		}
-		while (template.IndexOf("{day}") > 0) {
-			template = template.Replace("{day}", $"{day}");
-		}
 
-		return template;
+	private static string ParseTemplate(string template, int year, int day) {
+		return template
+			.Replace("{GITHUB}", "https://github.com/")
+			.Replace("{year}", $"{year}")
+			.Replace("{year % 1000}", $"{year % 1000}")
+			.Replace("{day:D2}", $"{day:D2}")
+			.Replace("{day}", $"{day}");
 	}
 
 }
