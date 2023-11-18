@@ -19,7 +19,7 @@ public sealed partial class Day15
 
 	private static readonly char[] UNITS = [GOBLIN, ELF];
 
-	private static int Solution1(string[] input)
+	private static string Solution1(string[] input)
 	{
 		LoadCavern(input, out List<Unit> units, out HashSet<Point> walls, out HashSet<Point> open, out char[,] cavern);
 		int round = 0;
@@ -38,10 +38,11 @@ public sealed partial class Day15
 
 
 			round++;
-		} while (round < 10_000);
+		} while (round < 1_000); // remove this when the function works
 
 		FightOver:
-		return round * units.Sum(u => u.HitPoints);
+		return "** Solution not written yet **";
+		//return round * units.Sum(u => u.HitPoints);
 	}
 
 	private static IEnumerable<Point> InRangePositions(Unit unit, List<Unit> units, HashSet<Point> walls, HashSet<Point> unitPositions)
