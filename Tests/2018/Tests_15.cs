@@ -67,7 +67,7 @@ public class Tests_15_Beverage_Bandits
 		Assert.Equal(expected, actual);
 	}
 
-	[Theory(Skip = "WIP: skipping to work on days I enjoy better.")]
+	[Theory]
 	[InlineData("""
 		#######
 		#.G...#
@@ -76,7 +76,45 @@ public class Tests_15_Beverage_Bandits
 		#..G#E#
 		#.....#
 		#######
-		""", 9999)]
+		""", 4988)]
+	[InlineData("""
+		#######
+		#E..EG#
+		#.#G.E#
+		#E.##E#
+		#G..#.#
+		#..E#.#
+		#######
+		""", 31284)]
+	[InlineData("""
+		#######
+		#E.G#.#
+		#.#G..#
+		#G.#.G#
+		#G..#.#
+		#...E.#
+		#######
+		""", 3478)]
+	[InlineData("""
+		#######
+		#.E...#
+		#.#..G#
+		#.###.#
+		#E#G#G#
+		#...#G#
+		#######
+		""", 6474)]
+	[InlineData("""
+		#########
+		#G......#
+		#.E.#...#
+		#..##..G#
+		#...##..#
+		#...#...#
+		#.G...G.#
+		#.....G.#
+		#########
+		""", 1140)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
