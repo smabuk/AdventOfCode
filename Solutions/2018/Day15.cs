@@ -10,7 +10,23 @@ namespace AdventOfCode.Solutions._2018;
 public sealed partial class Day15
 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	//public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part1(string[] input, params object[]? args)
+	{
+		bool useTestData = GetArgument<bool>(args, argumentNumber: 1, false);
+		if (useTestData) {
+			input = """
+				#######
+				#.E...#
+				#.#..G#
+				#.###.#
+				#E#G#G#
+				#...#G#
+				#######
+				""".Split(Environment.NewLine);
+		}
+		return Solution1(input, useTestData).ToString();
+	}
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 
@@ -21,11 +37,27 @@ public sealed partial class Day15
 
 	private static readonly char[] UNITS = [GOBLIN, ELF];
 
-	private static int Solution1(string[] input)
+	private static int Solution1(string[] input, bool showDebug = false)
 	{
-		LoadCavern(input, out List<Unit> units, out HashSet<Point> walls, out HashSet<Point> open, out char[,] cavern);
-		int round = 0;
+		LoadCavern(input, out List<Unit> units, out HashSet<Point> walls, out char[,] cavern);
 
+		int result = Fight(units, walls, cavern, showDebug);
+		return result;
+	}
+
+	private static int Solution2(string[] input)
+	{
+		return 0;
+	}
+
+	private static int Fight(List<Unit> units, HashSet<Point> walls, char[,] cavern, bool showDebug = false)
+	{
+		int round = 0;
+		if (showDebug) {
+			Console.WriteLine();
+			Console.WriteLine($"Round: {round}");
+			Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
+		}
 		do {
 			HashSet<Point> unitPositions = [.. units.Where(u => u.IsAlive).Select(u => u.Position)];
 			List<Unit> orderedUnits = [.. units.Where(u => u.IsAlive).ReadingOrder()];
@@ -42,17 +74,28 @@ public sealed partial class Day15
 				if (TryAndAttack(unit, units) is false) {
 					Route? route = FindShortestRoute(unit, inRange, obstacles);
 					if (route is not null) {
-						unit.MoveTo(route.Skip(1).First());
+						unit.MoveTo(route.First());
 					}
 					_ = TryAndAttack(unit, units);
 				}
 			}
 
 			round++;
+			if (showDebug) {
+				Console.WriteLine();
+				Console.WriteLine($"Round: {round}");
+				Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
+			}
 		} while (round < 1_000); // remove this when the function works
 
 	FightOver:
-		return (round * units.Where(u => u.IsAlive).Sum(u => u.HitPoints));
+		if (showDebug) {
+			Console.WriteLine();
+			Console.WriteLine($"Round: {round}");
+			Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
+		}
+
+		return round * units.Where(u => u.IsAlive).Sum(u => u.HitPoints);
 	}
 
 	private static bool TryAndAttack(Unit unit, List<Unit> units)
@@ -102,6 +145,7 @@ public sealed partial class Day15
 
 		Route? route = foundRoutes
 			.Where(r => r.Count == shortestRouteLength)
+			.Select(r => new Route(r.Skip(1)))
 			.OrderBy(r => r.First().Y).ThenBy(r => r.First().X)
 			.FirstOrDefault();
 
@@ -139,12 +183,7 @@ public sealed partial class Day15
 		return routes.Count > 0;
 	}
 
-	private static string Solution2(string[] input)
-	{
-		return "** Solution not written yet **";
-	}
-
-	private static void LoadCavern(string[] input, out List<Unit> units, out HashSet<Point> walls, out HashSet<Point> open_cavern, out char[,] cavern)
+	private static void LoadCavern(string[] input, out List<Unit> units, out HashSet<Point> walls, out char[,] cavern)
 	{
 		cavern = String.Join("", input).To2dArray<char>(input[0].Length);
 
@@ -165,11 +204,6 @@ public sealed partial class Day15
 		walls = cavern
 			.Walk2dArrayWithValues()
 			.Where(c => c.Value == WALL)
-			.Select(c => c.Index)
-			.ToHashSet();
-		open_cavern = cavern
-			.Walk2dArrayWithValues()
-			.Where(c => c.Value == OPEN_CAVERN)
 			.Select(c => c.Index)
 			.ToHashSet();
 	}
