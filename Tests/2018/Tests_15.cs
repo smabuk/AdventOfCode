@@ -4,7 +4,7 @@ public class Tests_15_Beverage_Bandits
 {
 	const int DAY = 15;
 
-	[Theory(Skip="WIP: skipping to work on days I enjoy better.")]
+	[Theory]
 	[InlineData("""
 		#######
 		#.G...#
