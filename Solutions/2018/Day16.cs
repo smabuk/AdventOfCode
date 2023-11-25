@@ -52,16 +52,126 @@ public sealed partial class Day16 {
 		return noOfSamplesWith3OrMoreSolutions;
 	}
 
-	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
-		List<Instruction> instructions = input.Select(ParseInstruction).ToList();
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input)
+	{
+		Dictionary<int, string[]> possibleOpCodes = UseSamplesToNarrowDownPossibilities();
+		Dictionary<string, int[]> possibleOpTypes = [];
+
+		Dictionary<int, string> opCodes = [];
+		for (int i = 0; i < 16; i++) {
+			opCodes[i] = possibleOpCodes[i].Length switch
+			{
+				1 => possibleOpCodes[i][0],
+				_ => "",
+			};
+
+			possibleOpTypes[instructionTypes[i]] = [.. possibleOpCodes
+				.Where(kv => kv.Value.Contains(instructionTypes[i]))
+				.Select(kv => kv.Key)
+				];
+		}
+
+		opCodes = FindTheOpcodes(opCodes, possibleOpCodes);
+
+		//long permutations = possibleOpCodes.Aggregate(1, (total, next) => total * next.Value.Length);
+
+
+
+		int[] registers = [0, 0, 0, 0];
+		foreach (Instruction instruction in _instructions) {
+			try {
+				Instruction realInstruction = instruction.Convert(opCodes[instruction.OpCode]);
+				registers = instruction.Execute(registers);
+			}
+			catch (Exception) {
+				return 1234567890;
+			}
+		}
+
+		return registers[0];
+	}
+
+	private static Dictionary<int, string> FindTheOpcodes(Dictionary<int, string> opCodes, Dictionary<int, string[]> possibleOpCodes)
+	{
+		if (opCodes.Count(op => op.Value == "") == 0) {
+			return opCodes;
+		}
+
+		foreach (var item in possibleOpCodes) {
+
+		}
+		return [];
+	}
+
+	private static Dictionary<int, string[]> UseSamplesToNarrowDownPossibilities()
+	{
+		int noOfOpCodes = 16;
+		Dictionary<int, string[]> opCodes = [];
+		for (int i = 0; i < noOfOpCodes; i++) {
+			opCodes.Add(i, [.. instructionTypes]);
+		}
+
+		bool somethingHasChanged = false;
+		do {
+			somethingHasChanged = false;
+			for (int opCode = 0; opCode < noOfOpCodes; opCode++) {
+				if (opCodes[opCode].Length == 1) {
+					continue;
+				}
+				foreach (Sample sample in _samples.Where(ins => ins.Instruction.OpCode == opCode)) {
+					int count = 0;
+					string foundType = "";
+					foreach (string type in opCodes[opCode]) {
+						Instruction instruction = sample.Instruction.Convert(type);
+						int[] after = instruction.Execute(sample.Before);
+						if (sample.After[0] == after[0]
+							&& sample.After[1] == after[1]
+							&& sample.After[2] == after[2]
+							&& sample.After[3] == after[3]
+							) {
+							count++;
+							foundType = type;
+						} else {
+							List<string> codes = [.. opCodes[opCode]];
+							if (codes.Remove(type)) {
+								opCodes[opCode] = [.. codes];
+								somethingHasChanged = false;
+							}
+						}
+					}
+					if (count == 1) {
+						for (int op = 0; op < noOfOpCodes; op++) {
+							if (op == opCode) {
+								opCodes[opCode] = [foundType];
+							} else {
+								List<string> codes = [.. opCodes[op]];
+								if (codes.Remove(foundType)) {
+									opCodes[op] = [.. codes];
+								}
+							}
+						}
+						somethingHasChanged = false;
+						break;
+					}
+
+				}
+
+			}
+
+		} while (somethingHasChanged && opCodes.Values.Count(v => v.Length > 1) != 0);
+
+		return opCodes;
 	}
 
 	private static IEnumerable<Instruction> GetAllPossibleInstructions(Instruction instruction)
 	{
-		string[] instructionTypes = [
+		foreach (string type in instructionTypes) {
+			yield return instruction.Convert(type);
+		}
+
+	}
+
+	private static string[] instructionTypes = [
 			"addr",
 			"addi",
 			"mulr",
@@ -79,31 +189,6 @@ public sealed partial class Day16 {
 			"eqri",
 			"eqrr",
 			];
-
-		foreach (string type in instructionTypes) {
-			yield return type switch
-			{
-				"addr" => new AddrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"addi" => new AddiInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"mulr" => new MulrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"muli" => new MuliInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"banr" => new BanrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"bani" => new BaniInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"borr" => new BorrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"bori" => new BoriInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"setr" => new SetrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"seti" => new SetiInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"gtir" => new GtirInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"gtri" => new GtriInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"gtrr" => new GtrrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"eqir" => new EqirInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"eqri" => new EqriInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				"eqrr" => new EqrrInstruction(instruction.OpCode, instruction.A, instruction.B, instruction.C),
-				_ => throw new NotImplementedException(),
-			};
-		}
-
-	}
 
 	private record AddrInstruction(int OpCode, int A, int B, int C) : Instruction(OpCode, A, B, C)
 	{
@@ -271,6 +356,30 @@ public sealed partial class Day16 {
 	private record Instruction(int OpCode, int A, int B, int C) : IParsable<Instruction> {
 
 		public virtual int[] Execute(int[] startingState) => throw new NotImplementedException();
+
+		public Instruction Convert(string type)
+		{
+			return type switch
+			{
+				"addr" => new AddrInstruction(OpCode, A, B, C),
+				"addi" => new AddiInstruction(OpCode, A, B, C),
+				"mulr" => new MulrInstruction(OpCode, A, B, C),
+				"muli" => new MuliInstruction(OpCode, A, B, C),
+				"banr" => new BanrInstruction(OpCode, A, B, C),
+				"bani" => new BaniInstruction(OpCode, A, B, C),
+				"borr" => new BorrInstruction(OpCode, A, B, C),
+				"bori" => new BoriInstruction(OpCode, A, B, C),
+				"setr" => new SetrInstruction(OpCode, A, B, C),
+				"seti" => new SetiInstruction(OpCode, A, B, C),
+				"gtir" => new GtirInstruction(OpCode, A, B, C),
+				"gtri" => new GtriInstruction(OpCode, A, B, C),
+				"gtrr" => new GtrrInstruction(OpCode, A, B, C),
+				"eqir" => new EqirInstruction(OpCode, A, B, C),
+				"eqri" => new EqriInstruction(OpCode, A, B, C),
+				"eqrr" => new EqrrInstruction(OpCode, A, B, C),
+				_ => throw new ArgumentOutOfRangeException(nameof(type), $"""Cannot convert from type "{type}"."""),
+			};
+		}
 		public static Instruction Parse(string s) => ParseInstruction(s);
 		public static Instruction Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result) => throw new NotImplementedException();
