@@ -21,9 +21,15 @@ static public class SolutionRouter {
 	}
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, params object[]? args)
-		=> SolveDay(year, day, input?.Split(Environment.NewLine), args);
+		=> SolveDay(year, day, input?.Split(Environment.NewLine), null, args);
 
-	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, params object[]? args) {
+	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, Action<string[], bool>? visualise = null, params object[]? args)
+		=> SolveDay(year, day, input?.Split(Environment.NewLine), visualise, args);
+
+	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, params object[]? args)
+		=> SolveDay(year, day, input, null, args);
+
+	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, Action<string[], bool>? visualise = null, params object[]? args) {
 		long startTime;
 		long stopTime;
 		if (input is null) {
@@ -46,7 +52,7 @@ static public class SolutionRouter {
 
 		input = input.StripTrailingBlankLineOrDefault();
 		startTime = Stopwatch.GetTimestamp();
-		InitInput(input, args, methods);
+		InitInput(input, args, methods, visualise);
 		stopTime = Stopwatch.GetTimestamp();
 		yield return new SolutionPhase("Init") with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 
@@ -58,7 +64,7 @@ static public class SolutionRouter {
 		startTime = Stopwatch.GetTimestamp();
 		string answer1 = NO_SOLUTION;
 		if (method1 is not null) {
-			answer1 = InvokeSolutionMethod(input, args, method1);
+			answer1 = InvokeSolutionMethod(input, args, method1, visualise);
 		}
 		stopTime = Stopwatch.GetTimestamp();
 
@@ -74,7 +80,7 @@ static public class SolutionRouter {
 		string answer2 = NO_SOLUTION;
 		startTime = Stopwatch.GetTimestamp();
 		if (method2 is not null) {
-			answer2 = InvokeSolutionMethod(input, args, method2);
+			answer2 = InvokeSolutionMethod(input, args, method2, visualise);
 		}
 		stopTime = Stopwatch.GetTimestamp();
 
@@ -86,9 +92,15 @@ static public class SolutionRouter {
 	}
 
 	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) 
-		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), args);
+		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), null, args);
 
-	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) {
+	public static string SolveProblem(int year, int day, int problemNo, string[] input, params object[]? args) 
+		=> SolveProblem(year, day, problemNo, input, null, args);
+
+	public static string SolveProblem(int year, int day, int problemNo, string? input, Action<string[], bool>? visualise = null, params object[]? args) 
+		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), visualise, args);
+
+	public static string SolveProblem(int year, int day, int problemNo, string[]? input, Action<string[], bool>? visualise = null, params object[]? args) {
 		if (input is null) {
 			return NO_INPUT;
 		}
@@ -100,7 +112,7 @@ static public class SolutionRouter {
 
 		MethodInfo[] methods = dayTypeInfo.GetMethods();
 
-		InitInput(input, args, methods);
+		InitInput(input, args, methods, visualise);
 
 		MethodInfo? method = methods
 			.Where(m => m.Name == $"Part{problemNo}")
@@ -108,7 +120,7 @@ static public class SolutionRouter {
 
 		return method is null
 			? NO_SOLUTION
-			: InvokeSolutionMethod(input, args, method);
+			: InvokeSolutionMethod(input, args, method, visualise);
 	}
 
 	private static TypeInfo? TryGetDayTypeInfo(int year, int day) {
@@ -123,17 +135,17 @@ static public class SolutionRouter {
 		return assembly.DefinedTypes.SingleOrDefault(x => x.Name == $"Day{day:D2}");
 	}
 
-	private static void InitInput(object input, object[]? args, MethodInfo[] methods) {
+	private static void InitInput(object input, object[]? args, MethodInfo[] methods, Action<string[], bool>? visualise) {
 		MethodInfo? initMethod = methods
 			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("InitAttribute")).Any())
 			.SingleOrDefault();
 
 		if (initMethod is not null) {
-			_ = InvokeSolutionMethod(input, args, initMethod);
+			_ = InvokeSolutionMethod(input, args, initMethod, visualise);
 		}
 	}
 
-	private static string InvokeSolutionMethod(object input, object[]? args, MethodInfo method) {
+	private static string InvokeSolutionMethod(object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
 		input = (input as string[]).StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
 		int noOfParameters = parameters.Length;
@@ -144,10 +156,18 @@ static public class SolutionRouter {
 			_ => throw new NotImplementedException(),
 		};
 
-		return noOfParameters switch {
-			0 => NO_PARAMETERS,
-			1 => method.Invoke(0, new object[] { inputObject })?.ToString() ?? "",
-			_ => method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""
+		bool hasVisualiser = parameters.Where(p => p.Name == "visualise").Any();
+		bool useVisualiser = visualise is not null;
+
+		return (noOfParameters, hasVisualiser, useVisualiser) switch {
+			( 0, _    , _    ) => NO_PARAMETERS,
+			( 1, false, _    ) => method.Invoke(0, new object[] { inputObject })                   ?.ToString() ?? "",
+			(>1, false, _    ) => method.Invoke(0, new object[] { inputObject, args! })            ?.ToString() ?? "",
+			( 2, true , false) => method.Invoke(0, new object[] { inputObject, null! })            ?.ToString() ?? "",
+			( 2, true , true ) => method.Invoke(0, new object[] { inputObject, visualise! })       ?.ToString() ?? "",
+			(>2, true , false) => method.Invoke(0, new object[] { inputObject, null!, args! })     ?.ToString() ?? "",
+			(>2, true , true ) => method.Invoke(0, new object[] { inputObject, visualise!, args! })?.ToString() ?? "",
+			_                  => method.Invoke(0, new object[] { inputObject, args! })            ?.ToString() ?? "",
 		};
 	}
 }

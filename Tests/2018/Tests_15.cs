@@ -1,6 +1,8 @@
-﻿namespace AdventOfCode.Tests.Year2018;
+﻿using Xunit.Abstractions;
 
-public class Tests_15_Beverage_Bandits
+namespace AdventOfCode.Tests.Year2018;
+
+public class Tests_15_Beverage_Bandits(ITestOutputHelper testOutputHelper)
 {
 	const int DAY = 15;
 
@@ -63,7 +65,7 @@ public class Tests_15_Beverage_Bandits
 		""", 18740)]
 	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
 		Assert.Equal(expected, actual);
 	}
 
@@ -117,8 +119,18 @@ public class Tests_15_Beverage_Bandits
 		""", 1140)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		Assert.Equal(expected, actual);
+	}
+
+
+	private void Callback(string[] lines, bool _)
+	{
+		if (lines is null or []) {
+			return;
+		}
+
+		testOutputHelper.WriteLine(string.Join(Environment.NewLine, lines));
 	}
 
 }

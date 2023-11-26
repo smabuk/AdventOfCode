@@ -3,6 +3,11 @@
     "AdventOfCode.Console": {
       "commandName": "Project",
       "workingDirectory": "..\\Data"
+    },
+    "Test visualisation": {
+      "commandName": "Project",
+      "commandLineArgs": "2018 15 visualise",
+      "workingDirectory": "..\\Data"
     }
   }
 }

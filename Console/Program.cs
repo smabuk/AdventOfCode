@@ -7,6 +7,7 @@ Console.ResetColor();
 
 DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 DateOnly date = dateNow;
+bool showVisuals = false;
 if (args.Length >= 2) {
 	if (int.TryParse(args[0], out int year) && int.TryParse(args[1], out int day)) {
 		date = new(year, 12, day);
@@ -16,6 +17,9 @@ if (args.Length >= 2) {
 		for (int i = 2; i < args.Length; i++) {
 			if (args[i] is "true" or "false") {
 				solutionArgs[i-2] = args[i] == "true";
+			}
+			if (args[i] is "--debug" or "debug" or "visual" or "visualise" or "visualize") {
+				showVisuals = true;
 			}
 		}
 	}
@@ -30,7 +34,7 @@ System.Diagnostics.Stopwatch totalTimer = new();
 totalTimer.Start();
 
 if (date.Month == 12 && date.Day <= 25) {
-	GetInputDataAndSolve(date.Year, date.Day, null, null, solutionArgs);
+	GetInputDataAndSolve(date.Year, date.Day, null, null, showVisuals, solutionArgs);
 } else {
 	for (int day = 1; day <= 25; day++) {
 		if (dateNow >= new DateOnly(date.Year, 12, day)) {
@@ -42,8 +46,9 @@ if (date.Month == 12 && date.Day <= 25) {
 totalTimer.Stop();
 Console.Write($" Total Elapsed time: {totalTimer.Elapsed}");
 
-static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, params object[]? args) {
+static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, bool showVisuals = false, params object[]? args) {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
+	bool visualise = args?.Contains("visualise") ?? false;
 
 	if (File.Exists(filename)) {
 		input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
@@ -63,7 +68,8 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 	if (input is not null) {
 		ConsoleColor answerColour;
 		timer.Start();
-		foreach (var result in SolveDay(year, day, input, args)) {
+		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
+		foreach (var result in SolveDay(year, day, input, visualiser, args)) {
 			if (result.Phase == "Init") {
 				OutputTimings(result.Elapsed);
 			} else if (result.Phase == "Part1") {
@@ -92,6 +98,18 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		Console.WriteLine();
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
+	}
+
+	static void VisualiseOutput(string[] lines, bool clearScreen = false) {
+		if (lines is null or []) {
+			return;
+		}
+
+		if (clearScreen) {
+			Console.Clear();
+		}
+
+		Console.WriteLine(string.Join(Environment.NewLine, lines));
 	}
 
 	static void OutputTimings(TimeSpan elapsed) {

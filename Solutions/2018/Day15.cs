@@ -10,35 +10,20 @@ namespace AdventOfCode.Solutions._2018;
 public sealed partial class Day15
 {
 
-	//public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	//public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
-	public static string Part1(string[] input, params object[]? args)
+	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
-		if (input[5] == "##################G.###.########") {
+		if (input[5] == "##################G.###.########" && visualise is null) {
 			return "239010 (slooow)";
 		}
-		bool useTestData = GetArgument<bool>(args, argumentNumber: 1, false);
-		if (useTestData) {
-			input = """
-				#######
-				#.E...#
-				#.#..G#
-				#.###.#
-				#E#G#G#
-				#...#G#
-				#######
-				""".Split(Environment.NewLine);
-		}
-		return Solution1(input, useTestData).ToString();
+		return Solution1(input, visualise).ToString();
 	}
-	public static string Part2(string[] input, params object[]? args)
+	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		// I broke this, so just return the right number for my input
-		if (input[5] == "##################G.###.########") {
+		if (input[5] == "##################G.###.########" && visualise is null) {
 			return "62468 (broken)";
 		}
-		bool showDebug = GetArgument<bool>(args, argumentNumber: 1, false);
-		return Solution2(input, showDebug).ToString();
+		return Solution2(input, visualise).ToString();
 	}
 
 
@@ -49,21 +34,21 @@ public sealed partial class Day15
 
 	private static readonly char[] UNITS = [GOBLIN, ELF];
 
-	private static int Solution1(string[] input, bool showDebug = false)
+	private static int Solution1(string[] input, Action<string[], bool>? visualise = null)
 	{
 		LoadCavern(input, out List<Unit> units, out HashSet<Point> walls, out char[,] cavern);
 
-		int result = Fight(units, walls, cavern, out _, showDebug: showDebug);
+		int result = Fight(units, walls, cavern, out _, visualise: visualise);
 		return result;
 	}
 
-	private static int Solution2(string[] input, bool showDebug = false)
+	private static int Solution2(string[] input, Action<string[], bool>? visualise = null)
 	{
 		const bool IS_PART_2 = true;
 		int result = 0;
-		for (int elfAttackPower = showDebug ? 16 : 4; elfAttackPower < 40; elfAttackPower++) {
+		for (int elfAttackPower = 4; elfAttackPower < 40; elfAttackPower++) {
 			LoadCavern(input, out List<Unit> units, out HashSet<Point> walls, out char[,] cavern, elfAttackPower);
-			result = Fight(units, walls, cavern, out bool elvesWin, IS_PART_2, showDebug: showDebug);
+			result = Fight(units, walls, cavern, out bool elvesWin, IS_PART_2, visualise);
 			if (elvesWin) {
 				break;
 			}
@@ -71,15 +56,11 @@ public sealed partial class Day15
 		return result;
 	}
 
-	private static int Fight(List<Unit> units, HashSet<Point> walls, char[,] cavern, out bool elvesWin, bool isPart2 = false, bool showDebug = false)
+	private static int Fight(List<Unit> units, HashSet<Point> walls, char[,] cavern, out bool elvesWin, bool isPart2 = false, Action<string[], bool>? visualise = null)
 	{
 		elvesWin = false;
 		int round = 0;
-		if (showDebug) {
-			Console.WriteLine();
-			Console.WriteLine($"Round: {round}");
-			Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
-		}
+		SendGrid(true);
 		do {
 			HashSet<Point> unitPositions = [.. units.Where(u => u.IsAlive).Select(u => u.Position)];
 			List<Unit> orderedUnits = [.. units.Where(u => u.IsAlive).ReadingOrder()];
@@ -119,24 +100,29 @@ public sealed partial class Day15
 			}
 
 			round++;
-			if (showDebug) {
-				Console.WriteLine();
-				Console.WriteLine($"Round: {round}");
-				Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
-				Console.WriteLine($"{round} * {units.Where(u => u.IsAlive).Sum(u => u.HitPoints)}");
-			}
+			SendGrid(false);
 		} while (units.Where(u => u is Goblin && u.IsAlive).Any()); // remove this when the function works
 
 	FightOver:
-		if (showDebug) {
-			Console.WriteLine();
-			Console.WriteLine($"Round: {round}");
-			Console.WriteLine(string.Join(Environment.NewLine, PrintGrid(units, cavern)));
-			Console.WriteLine($"{round} * {units.Where(u => u.IsAlive).Sum(u => u.HitPoints)}");
-		}
 		elvesWin = units.Where(u => u is Elf && u.IsAlive).Any();
+		SendGrid(true);
+		int result = round * units.Where(u => u.IsAlive).Sum(u => u.HitPoints);
+		return result;
 
-		return round * units.Where(u => u.IsAlive).Sum(u => u.HitPoints);
+
+
+		void SendGrid(bool clearScreen)
+		{
+			if (visualise is not null) {
+				string[] output = [
+				"",
+					$"Round: {round,2}  Elf power: {units.Where(u => u is Elf).First().AttackPower}",
+					.. PrintGrid(units, cavern),
+					$"{round} * {units.Where(u => u.IsAlive).Sum(u => u.HitPoints)} = {round * units.Where(u => u.IsAlive).Sum(u => u.HitPoints)}"];
+
+				_ = Task.Run(() => visualise?.Invoke(output, true));
+			}
+		}
 	}
 
 	private static bool TryAndAttack(Unit unit, List<Unit> units)
