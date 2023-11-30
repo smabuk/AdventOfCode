@@ -1,4 +1,6 @@
-﻿using Route = System.Collections.Generic.List<Smab.Helpers.Point>;
+﻿using AdventOfCode.Solutions.Router;
+
+using Route = System.Collections.Generic.List<Smab.Helpers.Point>;
 
 namespace AdventOfCode.Solutions._2018;
 
@@ -10,6 +12,7 @@ namespace AdventOfCode.Solutions._2018;
 public sealed partial class Day15
 {
 
+	[HasVisualiser]
 	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		if (input[5] == "##################G.###.########" && visualise is null) {
@@ -17,6 +20,7 @@ public sealed partial class Day15
 		}
 		return Solution1(input, visualise).ToString();
 	}
+	[HasVisualiser]
 	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		// I broke this, so just return the right number for my input

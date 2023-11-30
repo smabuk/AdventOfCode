@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
+using AdventOfCode.Solutions.Router;
+
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
@@ -18,6 +20,19 @@ static public class SolutionRouter {
 		return descriptionAttributes.Length > 0
 			? ((DescriptionAttribute)descriptionAttributes.First()).Description
 			: NO_SOLUTION;
+	}
+
+	public static bool HasVisualiser(int year, int day, int part) {
+		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
+		if (dayTypeInfo is null) {
+			return false;
+		}
+
+		return dayTypeInfo
+			.GetMethods()
+			.Where(m => m.Name == $"Part{part}")
+			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("HasVisualiserAttribute")).Any())
+			.SingleOrDefault() is not null;
 	}
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, params object[]? args)
@@ -94,7 +109,7 @@ static public class SolutionRouter {
 	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) 
 		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), null, args);
 
-	public static string SolveProblem(int year, int day, int problemNo, string[] input, params object[]? args) 
+	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) 
 		=> SolveProblem(year, day, problemNo, input, null, args);
 
 	public static string SolveProblem(int year, int day, int problemNo, string? input, Action<string[], bool>? visualise = null, params object[]? args) 

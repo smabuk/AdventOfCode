@@ -24,6 +24,9 @@
 		   Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i></a>
     </span>
 </p>
+<div>
+	<Visualiser @ref="_visualiser" Year="Year" Day="Day" ProblemNo="ProblemNo" />
+</div>
 
 @code {
     const string SOLVING = "** Solving... **";
@@ -35,6 +38,7 @@
 
     public string PuzzleAnswer { get; set; } = "";
 
+    Visualiser _visualiser = null!;
     private ElementReference _codeElement;
 
 
@@ -47,12 +51,44 @@
         DataHasChanged();
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+		try {
+			if (_visualiser is not null && _visualiser.HasVisualiser) {
+			PuzzleAnswer = SolutionRouter.SolveProblem(
+				Year,
+				Day,
+				ProblemNo,
+				Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
+				_visualiser.VisualiseOutput
+				);
+			} else {
+				PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+			}
+		}
+		catch (Exception ex) {
+			PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
+		}
+		base.OnAfterRender(firstRender);
+    }
+
     protected void DataHasChanged() {
         PuzzleAnswer = SOLVING;
-        StateHasChanged();
-        try {
-            PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-                Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+		StateHasChanged();
+		try {
+			if (_visualiser is not null && _visualiser.HasVisualiser) {
+				PuzzleAnswer = SolutionRouter.SolveProblem(
+					Year,
+					Day,
+					ProblemNo,
+					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
+					_visualiser.VisualiseOutput
+					);
+			} else {
+				PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+			}
         } catch (Exception ex) {
             PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
         }

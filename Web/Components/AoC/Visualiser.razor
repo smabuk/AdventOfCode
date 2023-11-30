@@ -1,0 +1,41 @@
+﻿@if (HasVisualiser) {
+	<h3>Visualiser</h3>
+	<div><p>@Output</p></div>
+}
+
+@code {
+	[Parameter] public int Year { get; set; }
+	[Parameter] public int Day { get; set; }
+	[Parameter] public int ProblemNo { get; set; }
+
+	public string Output { get; set; } = "";
+	public bool HasVisualiser { get; private set; } = false;
+
+	protected override Task OnInitializedAsync()
+	{
+		return base.OnInitializedAsync();
+	}
+
+	protected override Task OnParametersSetAsync()
+	{
+		HasVisualiser = SolutionRouter.HasVisualiser(Year, Day, ProblemNo);
+		return base.OnParametersSetAsync();
+	}
+
+	public void VisualiseOutput(string[] lines, bool clearScreen = false)
+	{
+		if (lines is null or []) {
+			return;
+		}
+
+		if (clearScreen) {
+			Output = "";
+		}
+
+		Output += string.Join(Environment.NewLine, lines);
+		Task.Delay(200);
+	}
+
+
+
+}

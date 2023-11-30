@@ -21,7 +21,6 @@ public sealed partial class Day17 {
 
 	private static IEnumerable<ClayVein> _veins = [];
 	private static char[,] _ground = new char[0,0];
-	private static int _maxY = 0;
 	private static int minX = int.MaxValue;
 	private static int minY = 0;
 	private static int maxX = int.MinValue;
