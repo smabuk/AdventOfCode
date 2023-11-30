@@ -1,11 +1,11 @@
 ﻿namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
-/// Day XX: Title
-/// https://adventofcode.com/2023/day/XX
+/// Day 01: Title
+/// https://adventofcode.com/2023/day/01
 /// </summary>
 [Description("")]
-public sealed partial class DayXX {
+public sealed partial class Day01 {
 
 	[Init]
 	public static    void Init(string[] input, params object[]? _) => LoadInstructions(input);
