@@ -18,12 +18,22 @@ public class Tests_01_Trebuchet
 		Assert.Equal(expected, actual);
 	}
 
-	//[Theory(Skip = "Not started yet")]
-	//[InlineData("""
-
-	//	""", 99999)]
-	//public void Part2(string input, int expected) {
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-	//	Assert.Equal(expected, actual);
-	//}
+	[Theory]
+	[InlineData("""
+		two1nine
+		eightwothree
+		abcone2threexyz
+		xtwone3four
+		4nineeightseven2
+		zoneight234
+		7pqrstsixteen
+		""", 281)]
+	[InlineData("""
+		zoneight
+		""", 18)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
 }
