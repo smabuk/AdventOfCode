@@ -18,7 +18,7 @@ public class GithubHttpClient : IGithubHttpClient, IInputDataService {
 		new("rollerss", "c#", "{GITHUB}Rollerss/AOC_{year}/blob/master/AOC/Day{day:D2}.cs ", "pseale/advent-of-code/main/{year}-csharp/Day{day:D2}/input.txt "),
 		new("smabuk", "c#", "{GITHUB}smabuk/AdventOfCode/tree/main/Solutions/{year}/Day{day:D2}.cs ", "smabuk/AdventOfCode/main/Data/{year}_{day:D2}.txt "),
 		new("tasagent", "c#", "{GITHUB}TasAgent/AdventOfCode{year}/blob/master/Day{day:D2}/Program.cs ", "TASagent/AdventOfCode{year}/master/input{day:D2}.txt "),
-		new("unclescientist", "rust", "{GITHUB}UncleScientist/aoclib-rs/blob/main/src/bin/run-aoc/aoc{year}/aoc{year}_{day:D2}.rs ", "UncleScientist/aoclib-rs/main/input/{year}-{day:D2}.txt "),
+		new("unclescientist", "rust", "{GITHUB}UncleScientist/aoclib-rs/blob/main/crates/aoc{year}/src/aoc{year}_{day:D2}.rs ", "UncleScientist/aoclib-rs/main/crates/aoc{year}/input/{year}-{day:D2}.txt "),
 	];
 
 	public GithubHttpClient(HttpClient httpClient) {

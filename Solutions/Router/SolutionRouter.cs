@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-using AdventOfCode.Solutions.Router;
-
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
@@ -69,7 +67,7 @@ static public class SolutionRouter {
 		startTime = Stopwatch.GetTimestamp();
 		InitInput(input, args, methods, visualise);
 		stopTime = Stopwatch.GetTimestamp();
-		yield return new SolutionPhase("Init") with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		yield return new SolutionPhase(SolutionPhase.PHASE_INIT) with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 
 
 		MethodInfo ? method1 = methods
@@ -84,7 +82,7 @@ static public class SolutionRouter {
 		stopTime = Stopwatch.GetTimestamp();
 
 		yield return answer1.Contains("written") switch {
-			false => new SolutionPhase("Part1") with { Answer = answer1, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
+			false => new SolutionPhase(SolutionPhase.PHASE_PART1) with { Answer = answer1, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
 			true => SolutionPhase.NoSolutionPart1,
 		};
 
@@ -100,7 +98,7 @@ static public class SolutionRouter {
 		stopTime = Stopwatch.GetTimestamp();
 
 		yield return answer2.Contains("written") switch {
-			false => new SolutionPhase("Part2") with { Answer = answer2, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
+			false => new SolutionPhase(SolutionPhase.PHASE_PART2) with { Answer = answer2, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
 			true => SolutionPhase.NoSolutionPart2,
 		};
 

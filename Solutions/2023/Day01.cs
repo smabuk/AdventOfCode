@@ -7,13 +7,26 @@
 [Description("Trebuchet?!")]
 public sealed partial class Day01 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? args) => Solution(input, 1, args);
+	public static string Part2(string[] input, params object[]? args) => Solution(input, 2, args);
 
+	/// <summary>
+	/// /This solution supports 2 ways of solving the problem:
+	///		Regex
+	///		Linq
+	/// </summary>
+	private static string Solution(string[] input, int partNo, object[]? args)
+	{
+		return GetArgument(args, 1, "regex").ToLowerInvariant() switch
+		{
+			"regex" => Solution_Using_Regex(input, partNo).ToString(),
+			"linq"  => Solution_Using_Linq(input, partNo).ToString(),
+			_       => "** Solution not written yet **",
+		};
+	}
 
-	private static int Solution1(string[] input) => input.Sum(i => GetCalibrationValue(i, 1));
-	private static int Solution2(string[] input) => input.Sum(i => GetCalibrationValue(i, 2));
-
+	private static int Solution_Using_Linq(string[] input, int partNo)  => input.Sum(i => GetCalibrationValue_Using_Linq(i, partNo));
+	private static int Solution_Using_Regex(string[] input, int partNo) => input.Sum(i => GetCalibrationValue_Using_Regex(i, partNo));
 
 	private static readonly Dictionary<string, int> VALID_MATCHES = new()
 		{
@@ -38,7 +51,7 @@ public sealed partial class Day01 {
 			{ "nine",  9 },
 		};
 
-	private static int GetCalibrationValue(string input, int partNo)
+	private static int GetCalibrationValue_Using_Linq(string input, int partNo)
 	{
 		const int NO_MATCH = -1;
 
@@ -58,4 +71,32 @@ public sealed partial class Day01 {
 
 		return (firstDigit * 10) + lastDigit;
 	}
+
+	private static int GetCalibrationValue_Using_Regex(string input, int partNo)
+	{
+		int firstDigit;
+		int lastDigit;
+
+		if (partNo == 1) {
+			firstDigit = VALID_MATCHES[FirstDigitRegex1().Match(input).Value];
+			lastDigit  = VALID_MATCHES[LastDigitRegex1().Match(input).Value];
+		} else {
+			firstDigit = VALID_MATCHES[FirstDigitRegex2().Match(input).Value];
+			lastDigit  = VALID_MATCHES[LastDigitRegex2().Match(input).Value];
+		}
+		return (firstDigit * 10) + lastDigit;
+	}
+
+	[GeneratedRegex("""(\d)""")]
+	private static partial Regex FirstDigitRegex1();
+
+	[GeneratedRegex("""(\d)""", RegexOptions.RightToLeft)]
+	private static partial Regex LastDigitRegex1();
+
+
+	[GeneratedRegex("""(\d|one|two|three|four|five|six|seven|eight|nine)""")]
+	private static partial Regex FirstDigitRegex2();
+
+	[GeneratedRegex("""(\d|one|two|three|four|five|six|seven|eight|nine)""", RegexOptions.RightToLeft)]
+	private static partial Regex LastDigitRegex2();
 }
