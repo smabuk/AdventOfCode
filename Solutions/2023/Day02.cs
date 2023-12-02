@@ -9,8 +9,8 @@ public sealed partial class Day02 {
 
 	[Init]
 	public static    void Init(string[] input, params object[]? _) => LoadGames(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
 	private static IEnumerable<Game> _games = [];
 
@@ -18,13 +18,11 @@ public sealed partial class Day02 {
 		_games = input.Select(Game.Parse);
 	}
 
-	private static int Solution1(string[] input) {
+	private static int Solution1() {
 		GameCubes startingCubes = new(12, 13, 14);
+		List<int> possibleGames = [.. _games.Select(g => g.Id)];
 
-		List<Game> games = input.Select(Game.Parse).ToList();
-		List<int> possibleGames = [.. games.Select(g => g.Id)];
-
-		foreach (Game game in games) {
+		foreach (Game game in _games) {
 			foreach ((int red, int green, int blue) in game.ShownCubes) {
 				if (red > startingCubes.Red || green > startingCubes.Green || blue > startingCubes.Blue) {
 					_ = possibleGames.Remove(game.Id);
@@ -36,16 +34,23 @@ public sealed partial class Day02 {
 		return possibleGames.Sum();
 	}
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
-	}
+	private static int Solution2() => _games
+		.Select(game => game.MinimumSet.Power)
+		.Sum();
 
 	private record Game(int Id, List<GameCubes> ShownCubes) : IParsable<Game> {
+
+		public GameCubes MinimumSet { get; } = new(
+			ShownCubes.Max(gc => gc.Red),
+			ShownCubes.Max(gc => gc.Green),
+			ShownCubes.Max(gc => gc.Blue)
+			);
+
 		public static Game Parse(string s)
 		{
-			int id = int.Parse(s.Split(':')[0][5..]);
-			List<GameCubes> shownCubes = s
-				.Split(':', StringSplitOptions.TrimEntries)[1]
+			string[] tokens1 = s.Split(':', StringSplitOptions.TrimEntries);
+			int id = int.Parse(tokens1[0][5..]);
+			List<GameCubes> shownCubes = tokens1[1]
 				.Split(';', StringSplitOptions.TrimEntries)
 				.Select(GameCubes.Parse)
 				.ToList();
@@ -58,6 +63,9 @@ public sealed partial class Day02 {
 	}
 
 	private record GameCubes(int Red, int Green, int Blue) : IParsable<GameCubes> {
+
+		public int Power { get; } = Red * Green * Blue;
+
 		public static GameCubes Parse(string s)
 		{
 			int red = 0;
@@ -85,7 +93,6 @@ public sealed partial class Day02 {
 
 			return new(red, green, blue);
 		}
-
 		public static GameCubes Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out GameCubes result) => throw new NotImplementedException();
 	}
