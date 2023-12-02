@@ -11,7 +11,7 @@ public sealed partial class Day01 {
 	public static string Part2(string[] input, params object[]? args) => Solution(input, 2, args);
 
 	/// <summary>
-	/// /This solution supports 2 ways of solving the problem:
+	/// This solution supports 2 ways of solving the problem:
 	///		Regex
 	///		Linq
 	/// </summary>
