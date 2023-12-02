@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AdventOfCode.Solutions._2023;
+﻿namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 02: Cube Conundrum
@@ -52,23 +50,21 @@ public sealed partial class Day02 {
 
 		public static Game Parse(string s)
 		{
-			const int ID_TOKEN       = 0;
-			const int CUBESETS_TOKEN = 1;
-			const int ID_OFFSET      = 5;
+			const int ID        = 0;
+			const int CUBESETS  = 1;
+			const int ID_OFFSET = 5;
 
-			string[] tokens = s.Split((char[])[':',';'], StringSplitOptions.TrimEntries);
+			char[] COLON_AND_SEMICOLON = [':', ';'];
+			string[] tokens = s.Split(COLON_AND_SEMICOLON, StringSplitOptions.TrimEntries);
 
-			int id = tokens[ID_TOKEN][ID_OFFSET..].AsInt();
-			IEnumerable<CubesSet> cubesSets = tokens[CUBESETS_TOKEN..]
-				.Select(CubesSet.Parse);
-
-			return new(id, [.. cubesSets]);
+			return new(tokens[ID][ID_OFFSET..].AsInt(), [.. tokens[CUBESETS..].Select(CubesSet.Parse)]);
 		}
+
 		public static Game ParseUsingRegex(string s)
 		{
 			Match match = GameRegex().Match(s);
 
-			int id = match.Groups["id"].Value.AsInt();
+			int id = match.GroupAsInt("id");
 			IEnumerable<CubesSet> cubesSets = SetsRegex()
 				.Matches(match.Groups["sets"].Value)
 				.Select(m => m.Value)
@@ -114,7 +110,7 @@ public sealed partial class Day02 {
 		{
 			Dictionary<string, int> cubes = CountAndColourRegex()
 				.Matches(s)
-				.ToDictionary(match => match.Groups["colour"].Value, match => match.Groups["count"].Value.AsInt());
+				.ToDictionary(match => match.Groups["colour"].Value, match => match.GroupAsInt("count"));
 
 			return new(cubes.GetValueOrDefault("red"), cubes.GetValueOrDefault("green"), cubes.GetValueOrDefault("blue"));
 		}
