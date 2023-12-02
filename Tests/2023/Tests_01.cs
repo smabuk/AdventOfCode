@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Tests.Year20123;
+﻿namespace AdventOfCode.Tests.Year2023;
 
 public class Tests_01_Trebuchet
 {
