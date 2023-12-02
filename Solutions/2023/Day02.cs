@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2023;
+﻿using System.Collections.Generic;
+
+namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 02: Cube Conundrum
@@ -8,7 +10,7 @@
 public sealed partial class Day02 {
 
 	[Init]
-	public static    void Init(string[] input, params object[]? _) => LoadGames(input);
+	public static   void  Init(string[] input, params object[]? _) => LoadGames(input);
 	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
 	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
@@ -19,81 +21,62 @@ public sealed partial class Day02 {
 	}
 
 	private static int Solution1() {
-		GameCubes startingCubes = new(12, 13, 14);
-		List<int> possibleGames = [.. _games.Select(g => g.Id)];
+		(int red, int green, int blue) = (12, 13, 14);
 
-		foreach (Game game in _games) {
-			foreach ((int red, int green, int blue) in game.ShownCubes) {
-				if (red > startingCubes.Red || green > startingCubes.Green || blue > startingCubes.Blue) {
-					_ = possibleGames.Remove(game.Id);
-					break;
-				}
-			}
-		}
-
-		return possibleGames.Sum();
+		return _games
+			.Where(game => !game.RevealedCubes
+				.Where(cubeSet => cubeSet.Red > red || cubeSet.Green > green || cubeSet.Blue > blue)
+				.Any())
+			.Sum(game => game.Id);
 	}
 
-	private static int Solution2() => _games
-		.Select(game => game.MinimumSet.Power)
-		.Sum();
+	private static int Solution2() => _games.Sum(game => game.MinimumSet.Power);
 
-	private record Game(int Id, List<GameCubes> ShownCubes) : IParsable<Game> {
+	private record Game(int Id, List<CubesSet> RevealedCubes) : IParsable<Game> {
 
-		public GameCubes MinimumSet { get; } = new(
-			ShownCubes.Max(gc => gc.Red),
-			ShownCubes.Max(gc => gc.Green),
-			ShownCubes.Max(gc => gc.Blue)
+		public CubesSet MinimumSet { get; } = new(
+			RevealedCubes.Max(cubes => cubes.Red),
+			RevealedCubes.Max(cubes => cubes.Green),
+			RevealedCubes.Max(cubes => cubes.Blue)
 			);
 
 		public static Game Parse(string s)
 		{
-			string[] tokens1 = s.Split(':', StringSplitOptions.TrimEntries);
-			int id = int.Parse(tokens1[0][5..]);
-			List<GameCubes> shownCubes = tokens1[1]
+			const int ID_TOKEN       = 0;
+			const int CUBESETS_TOKEN = 1;
+			const int ID_OFFSET      = 5;
+
+			string[] tokens = s.Split(':', StringSplitOptions.TrimEntries);
+			int id = tokens[ID_TOKEN][ID_OFFSET..].AsInt();
+			List<CubesSet> revealedCubesSets = tokens[CUBESETS_TOKEN]
 				.Split(';', StringSplitOptions.TrimEntries)
-				.Select(GameCubes.Parse)
+				.Select(CubesSet.Parse)
 				.ToList();
 
-			return new(id, shownCubes);
+			return new(id, revealedCubesSets);
 		}
 
 		public static Game Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result) => throw new NotImplementedException();
 	}
 
-	private record GameCubes(int Red, int Green, int Blue) : IParsable<GameCubes> {
+	private record CubesSet(int Red, int Green, int Blue) : IParsable<CubesSet> {
 
 		public int Power { get; } = Red * Green * Blue;
 
-		public static GameCubes Parse(string s)
+		public static CubesSet Parse(string s)
 		{
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			string[] tokens1 = s.Split(',', StringSplitOptions.TrimEntries);
-			foreach (string colouredCubes in tokens1) {
-				string[] tokens2 = colouredCubes.Split(' ', StringSplitOptions.TrimEntries);
-				int count = int.Parse(tokens2[0]);
-				string colour = tokens2[1];
-				switch (colour) {
-					case "red":
-						red = count;
-						break;
-					case "green":
-						green = count;
-						break;
-					case "blue":
-						blue = count;
-						break;
-					default:
-						break;
-				}
-			}
+			const int COUNT_TOKEN  = 0;
+			const int COLOUR_TOKEN = 1;
 
-			return new(red, green, blue);
+			Dictionary<string, int> cubes = s
+				.Split(',', StringSplitOptions.TrimEntries)
+				.Select(countsAndColours => countsAndColours.Split(' '))
+				.ToDictionary(countAndColour => countAndColour[COLOUR_TOKEN], countAndColour => countAndColour[COUNT_TOKEN].AsInt());
+
+			return new(cubes.GetValueOrDefault("red"), cubes.GetValueOrDefault("green"), cubes.GetValueOrDefault("blue"));
 		}
-		public static GameCubes Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out GameCubes result) => throw new NotImplementedException();
+		public static CubesSet Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out CubesSet result) => throw new NotImplementedException();
 	}
 }
