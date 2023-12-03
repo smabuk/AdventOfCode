@@ -22,4 +22,23 @@ public class Tests_03_Gear_Ratios
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
+
+	[Theory]
+	[InlineData("""
+		467..114..
+		...*......
+		..35..633.
+		......#...
+		617*......
+		.....+.58.
+		..592.....
+		......755.
+		...$.*....
+		.664.598..
+		""", 467835)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
 }
