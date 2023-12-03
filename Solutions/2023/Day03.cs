@@ -22,10 +22,8 @@ public sealed partial class Day03 {
 
 		int sumOfGearRatios = 0;
 		foreach (Point position in gearPositions) {
-			sumOfGearRatios += possibleGears
-				.Where(g => g.Position == position)
-				.Select(g => g.PartNo)
-				.Aggregate(1, (x, y) => x * y);
+			List<PartNoAndAPosition> gears = [.. possibleGears.Where(g => g.Position == position)];
+			sumOfGearRatios += gears[0].PartNo * gears[1].PartNo;
 		}
 
 		return sumOfGearRatios;
@@ -55,21 +53,16 @@ public sealed partial class Day03 {
 			Point corner1 = new(Math.Max(number.Index - 1, 0), Math.Max(row - 1, 0));
 			Point corner2 = new(Math.Min(number.Index + number.Length + 1, maxX), Math.Min(row + 1, maxY));
 			int skip   = Math.Max(number.Length - 2, 1); // Can skip self
-			bool foundPart = false;
 			for (int y = corner1.Y; y <= corner2.Y; y++) {
 				for (int x = corner1.X; x < corner2.X; x += (y == row ? skip : 1)) {
 					if (solutionPartNo == 1) {
 						if (IsSymbol(engineSchematic[x, y])) {
 							list.Add(new(number.Value.AsInt(), new(number.Index, row)));
-							foundPart = true;
-							break;
+							return;
 						}
 					} else if (engineSchematic[x, y] is GEAR) { // Part2
 						list.Add(new(number.Value.AsInt(), new(x, y)));
 					}
-				}
-				if (foundPart) {
-					break;
 				}
 			}
 		}
