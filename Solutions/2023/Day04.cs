@@ -9,27 +9,31 @@ public sealed partial class Day04 {
 
 	[Init]
 	public static   void  Init(string[] input, params object[]? _) => LoadCards(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
 
-	private static IEnumerable<Card> _cards = [];
+	private static List<Card> _cards = [];
 
-	private static void LoadCards(string[] input)
-	{
-		_cards = input.Select(Card.Parse);
+	private static void LoadCards(string[] input) => _cards = [.. input.Select(Card.Parse)];
+
+	private static int Solution1() => _cards.Sum(card => card.Points);
+
+	private static int Solution2() {
+		Dictionary<int, int> cards = _cards.ToDictionary(card => card.Id, _ => 1);
+
+		for (int i = 0; i < _cards.Count; i++) {
+			Card card = _cards[i];
+			foreach (Card copiedCard in _cards.Skip(i + 1).Take(card.NoOfWinners)) {
+				cards[copiedCard.Id] += cards[card.Id];
+			}
+		}
+
+		return cards.Sum(card => card.Value);
 	}
 
-	private static int Solution1(string[] input) {
-		return _cards.Sum(card => card.Points);
-	}
+	private record Card(int Id, HashSet<int> WinningNumbers, HashSet<int> Numbers) : IParsable<Card> {
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
-	}
-
-	private record Card(int Id, List<int> WinningNumbers, List<int> Numbers) : IParsable<Card> {
-
-		public int NoOfWinners { get; } = Numbers.Count(n => WinningNumbers.Contains(n));
+		public int NoOfWinners { get; } = Numbers.Intersect(WinningNumbers).Count();
 		public int Points => (int)Math.Pow(2, NoOfWinners - 1);
 
 		public static Card Parse(string s)
@@ -56,7 +60,4 @@ public sealed partial class Day04 {
 		public static Card Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Card result) => throw new NotImplementedException();
 	}
-
-	[GeneratedRegex("""Card\s+(?<id>\d+): | (?<winners> \d+)+ (?<numbers> \d+)""")]
-	private static partial Regex InputRegEx();
 }
