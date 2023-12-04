@@ -7,8 +7,8 @@
 [Description("Gear Ratios")]
 public sealed partial class Day03 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) => FindPartNosAndGears(input, 1).Select(p => p.PartNo).Sum();
 
@@ -34,14 +34,14 @@ public sealed partial class Day03 {
 		const char GEAR  = '*';
 		const char SPACE = '.';
 
-		char[,] engineSchematic = string.Join("", input).To2dArray(input[0].Length);
-		int maxX = input[0].Length - 1;
-		int maxY = input.Length - 1;
+		char[,] engineSchematic = input.To2dArray();
+		int maxX = engineSchematic.NoOfColumns() - 1;
+		int maxY = engineSchematic.NoOfRows() - 1;
 
 		List<PartNoAndAPosition> list = [];
 
 		for (int row = 0; row < input.Length; row++) {
-			foreach (Match number in NumberRegex().Matches(input[row])) {
+			foreach (Match number in NumberRegex().Matches(input[row]).Cast<Match>()) {
 				SearchAdjacent(row, number);
 			}
 		}

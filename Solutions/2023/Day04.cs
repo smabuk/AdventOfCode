@@ -8,13 +8,13 @@
 public sealed partial class Day04 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? _) => LoadCards(input);
-	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
+	public static   void  Init(string[] input, params object[]? args) => LoadCards(input);
+	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
 	private static List<Card> _cards = [];
 
-	private static void LoadCards(string[] input) => _cards = [.. input.Select(Card.Parse)];
+	private static void LoadCards(string[] input) => _cards = [.. input.As<Card>()];
 
 	private static int Solution1() => _cards.Sum(card => card.Points);
 
@@ -36,28 +36,18 @@ public sealed partial class Day04 {
 		public int NoOfWinners { get; } = Numbers.Intersect(WinningNumbers).Count();
 		public int Points => (int)Math.Pow(2, NoOfWinners - 1);
 
-		public static Card Parse(string s)
+		public static Card Parse(string s, IFormatProvider? provider)
 		{
-			char COLON   = ':';
-			char BAR     = '|';
-			char SPACE   = ' ';
-			char[] COLON_AND_BAR = [COLON, BAR];
+			string[] SEPS = ["Card ", ":", "|"];
 
-			const int ID = 0;
-			const int WINNERS = 1;
-			const int NUMBERS = 2;
-			const int ID_OFFSET = 5;
-
-			string[] tokens = s.Split(COLON_AND_BAR, StringSplitOptions.TrimEntries);
-
-			return new(
-				tokens[ID][ID_OFFSET..].AsInt(),
-				[.. tokens[WINNERS].Split(SPACE, StringSplitOptions.RemoveEmptyEntries).AsInts()],
-				[.. tokens[NUMBERS].Split(SPACE, StringSplitOptions.RemoveEmptyEntries).AsInts()]
-				);
+			return s.Split(SEPS, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) switch
+			{
+				[string id, string winners, string numbers] => new(id.AsInt(), [.. winners.AsInts()], [.. numbers.AsInts()]),
+				_ => throw new InvalidCastException(),
+			};
 		}
 
-		public static Card Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Card result) => throw new NotImplementedException();
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Card result)
+			=> ISimpleParsable<Card>.TryParse(s, provider, out result);
 	}
 }

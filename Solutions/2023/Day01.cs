@@ -87,16 +87,19 @@ public sealed partial class Day01 {
 		return (firstDigit * 10) + lastDigit;
 	}
 
-	[GeneratedRegex("""(\d)""")]
+	// language=regex
+	private const string REGEX_PART1 = @"(\d)";
+	[GeneratedRegex(REGEX_PART1)]
 	private static partial Regex FirstDigitRegex1();
 
-	[GeneratedRegex("""(\d)""", RegexOptions.RightToLeft)]
+	[GeneratedRegex(REGEX_PART1, RegexOptions.RightToLeft)]
 	private static partial Regex LastDigitRegex1();
 
-
-	[GeneratedRegex("""(\d|one|two|three|four|five|six|seven|eight|nine)""")]
+	// language=regex
+	private const string REGEX_PART2 = @"(\d|one|two|three|four|five|six|seven|eight|nine)";
+	[GeneratedRegex(REGEX_PART2)]
 	private static partial Regex FirstDigitRegex2();
 
-	[GeneratedRegex("""(\d|one|two|three|four|five|six|seven|eight|nine)""", RegexOptions.RightToLeft)]
+	[GeneratedRegex(REGEX_PART2, RegexOptions.RightToLeft)]
 	private static partial Regex LastDigitRegex2();
 }

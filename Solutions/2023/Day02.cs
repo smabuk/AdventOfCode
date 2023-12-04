@@ -9,8 +9,8 @@ public sealed partial class Day02 {
 
 	[Init]
 	public static   void  Init(string[] input, params object[]? args) => LoadGames(input, args);
-	public static string Part1(string[] input, params object[]? _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2().ToString();
+	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
 	private static IEnumerable<Game> _games = [];
 
@@ -20,11 +20,12 @@ public sealed partial class Day02 {
 	///		Split
 	/// </summary>
 	private static void LoadGames(string[] input, object[]? args) {
-		_games = GetArgument(args, 1, "split").ToLowerInvariant() switch
+		string parsingType = GetArgument(args, 1, "split").ToLowerInvariant();
+		_games = parsingType switch
 		{
-			"split" => input.Select(Game.Parse),
+			"split" => input.As<Game>(),
 			"regex" => input.Select(Game.ParseUsingRegex),
-			_ => throw new ArgumentOutOfRangeException("That method of parsing is not supported."),
+			_ => throw new ArgumentOutOfRangeException(nameof(args), $"That method of parsing [{parsingType}] is not supported."),
 		};
 	}
 
@@ -48,17 +49,18 @@ public sealed partial class Day02 {
 			RevealedCubes.Max(cubes => cubes.Blue)
 			);
 
-		public static Game Parse(string s)
+		public static Game Parse(string s, IFormatProvider? provider)
 		{
-			const int ID        = 0;
-			const int CUBESETS  = 1;
-			const int ID_OFFSET = 5;
-
-			char[] COLON_AND_SEMICOLON = [':', ';'];
-			string[] tokens = s.Split(COLON_AND_SEMICOLON, StringSplitOptions.TrimEntries);
-
-			return new(tokens[ID][ID_OFFSET..].AsInt(), [.. tokens[CUBESETS..].Select(CubesSet.Parse)]);
+			string[] SEPS = ["Game", ":", ";"];
+			return s.Split(SEPS, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) switch
+			{
+				[string id, .. string[] cubesSets] => new(id.AsInt(), [.. cubesSets.As<CubesSet>()]),
+				_ => throw new InvalidCastException(),
+			};
 		}
+
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result)
+			=> ISimpleParsable<Game>.TryParse(s, provider, out result);
 
 		public static Game ParseUsingRegex(string s)
 		{
@@ -73,7 +75,7 @@ public sealed partial class Day02 {
 			return new(id, [.. cubesSets]);
 		}
 
-		[GeneratedRegex("""Game (?<id>\d+): (?<sets>.*$)""")]
+		[GeneratedRegex(@"Game (?<id>\d+): (?<sets>.*$)")]
 		private static partial Regex GameRegex();
 
 		/// <summary>
@@ -82,43 +84,43 @@ public sealed partial class Day02 {
 		///    Captures everything in-between
 		/// </summary>
 		/// <returns></returns>
-		[GeneratedRegex("""(?<=^|;\s).*?(?=;|$)""")]
+		[GeneratedRegex(@"(?<=^|;\s).*?(?=;|$)")]
 		private static partial Regex SetsRegex();
-
-		public static Game Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result) => throw new NotImplementedException();
 	}
 
 	private partial record CubesSet(int Red, int Green, int Blue) : IParsable<CubesSet> {
 
 		public int Power { get; } = Red * Green * Blue;
 
-		public static CubesSet Parse(string s)
+		public static CubesSet Parse(string s, IFormatProvider? provider)
 		{
-			const int COUNT_TOKEN  = 0;
-			const int COLOUR_TOKEN = 1;
+			const char COMMA = ',';
+			const char SPACE = ' ';
+			char[] SEPS = [COMMA, SPACE];
 
-			Dictionary<string, int> cubes = s
-				.Split(',', StringSplitOptions.TrimEntries)
-				.Select(countsAndColours => countsAndColours.Split(' '))
-				.ToDictionary(countAndColour => countAndColour[COLOUR_TOKEN], countAndColour => countAndColour[COUNT_TOKEN].AsInt());
+			List<string> cubes = [.. s.Split(SEPS, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+			return new(GetCount("red"), GetCount("green"), GetCount("blue"));
 
-			return new(cubes.GetValueOrDefault("red"), cubes.GetValueOrDefault("green"), cubes.GetValueOrDefault("blue"));
+			int GetCount(string colour)
+			{
+				int countIndex = cubes.IndexOf(colour) - 1;
+				return countIndex >= 0 ? cubes[countIndex].AsInt() : 0;
+			}
 		}
+
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out CubesSet result)
+			=> ISimpleParsable<CubesSet>.TryParse(s, provider, out result);
 
 		public static CubesSet ParseUsingRegex(string s)
-		{
-			Dictionary<string, int> cubes = CountAndColourRegex()
-				.Matches(s)
-				.ToDictionary(match => match.Groups["colour"].Value, match => match.GroupAsInt("count"));
+			=> new(	RedRegex()  .Match(s).GroupAsInt("count"),
+					GreenRegex().Match(s).GroupAsInt("count"),
+					BlueRegex() .Match(s).GroupAsInt("count"));
 
-			return new(cubes.GetValueOrDefault("red"), cubes.GetValueOrDefault("green"), cubes.GetValueOrDefault("blue"));
-		}
-
-		[GeneratedRegex("""(?<count>\d+) (?<colour>red|green|blue);?""")]
-		private static partial Regex CountAndColourRegex();
-
-		public static CubesSet Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out CubesSet result) => throw new NotImplementedException();
+		[GeneratedRegex(@"(?<count>\d+) (?<colour>red)")]
+		private static partial Regex RedRegex();
+		[GeneratedRegex(@"(?<count>\d+) (?<colour>green)")]
+		private static partial Regex GreenRegex();
+		[GeneratedRegex(@"(?<count>\d+) (?<colour>blue)")]
+		private static partial Regex BlueRegex();
 	}
 }
