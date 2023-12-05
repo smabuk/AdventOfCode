@@ -8,10 +8,11 @@
 public sealed partial class Day05 {
 
 	[Init]
-	public static void Init(string[] input, params object[]? args)    => LoadMaps(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input, params object[]? args) => LoadMaps(input);
+	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
+	private const int START_OF_NUMBERS = 7;
 	private static readonly string[] MAP_NAMES = [
 		"seed-to-soil",
 		"soil-to-fertilizer",
@@ -23,73 +24,57 @@ public sealed partial class Day05 {
 		];
 
 	static readonly Dictionary<string, Map> _maps = [];
+	static IEnumerable<long> _seedInputValues = [];
 
 	private static void LoadMaps(string[] input)
 	{
-		int inputIndex = 0;
-		List<long> seeds = [.. input[inputIndex][7..].AsLongs()];
+		_seedInputValues = [.. input[0][START_OF_NUMBERS..].AsLongs()];
 
-		inputIndex += 3;
+		int inputIndex = 3;
 		foreach (string mapName in MAP_NAMES) {
 			_maps[mapName] = Map.Parse(input[inputIndex..]);
 			inputIndex += _maps[mapName].Mappings.Count + 2;
 		}
 	}
 
-	private static long Solution1(string[] input) {
-		List<long> seeds = [.. input[0][7..].AsLongs()];
-		long lowestLocationNumber = int.MaxValue;
-
-		foreach (long seed in seeds) {
-			long destination = seed;
-			foreach (string mapName in MAP_NAMES) {
-				destination =  _maps[mapName].Destination(destination);
-			}
-			if (destination < lowestLocationNumber) {
-				lowestLocationNumber = destination;
-			}
+	private static long Solution1() => _seedInputValues.Min(GetLocation);
+	private static long GetLocation(long destination)
+	{
+		foreach (string mapName in MAP_NAMES) {
+			destination = _maps[mapName].Destination(destination);
 		}
-
-		return lowestLocationNumber;
+		return destination;
 	}
 
-	private static long Solution2(string[] input) {
-		List<Range> seedRanges = [];
-		List<long> numbers = [.. input[0][7..].AsLongs()];
-		for (int i = 0; i < numbers.Count; i+= 2) {
-			seedRanges.Add(new Range(numbers[i], numbers[i] + numbers[i + 1] - 1));
-		}
-
-		List<Range> ranges = [];
-		foreach (Range seedRange in seedRanges) {
-			List<Range> sources = [ seedRange ] ;
-			foreach (string mapName in MAP_NAMES[..^1]) {
-				List<Range> newSources = [];
-				foreach (Range sourceRange in sources) {
-					newSources.AddRange([.. _maps[mapName].DestinationRange(sourceRange)]);
-				}
-				sources = [.. newSources];
-			}
-			ranges.AddRange(sources);
-		}
-
-		long lowestLocationNumber = int.MaxValue;
-		foreach (Range lastRange in ranges) {
-			lowestLocationNumber = Math.Min(_maps["humidity-to-location"].Destination(lastRange.Start), lowestLocationNumber);
-		}
-
-		return lowestLocationNumber;
-
+	private static long Solution2()
+	{
+		return _seedInputValues
+			.Chunk(2).Select(n => new Range(n[0], n[0] + n[1] - 1))
+			.SelectMany(GetHumidityRanges)
+			.Select(r => r.Start)
+			.Min(src => _maps["humidity-to-location"].Destination(src));
 	}
 
+	private static IEnumerable<Range> GetHumidityRanges(Range seedRange)
+	{
+		List<Range> nextSourceRanges = [seedRange];
+		foreach (string mapName in MAP_NAMES[..^1]) {
+			nextSourceRanges = [.. nextSourceRanges
+				.Select(srcRange => _maps[mapName].DestinationRange(srcRange))
+				.SelectMany(d => d)];
+		}
+		foreach (Range source in nextSourceRanges) {
+			yield return source;
+		}
+	}
 
 	private record Map(List<Mapping> Mappings) 
 	{
 		public long Destination(long source)
 		{
 			foreach (Mapping mapping in Mappings) {
-				if (mapping.TryMap(source, out long value)) {
-					return value;
+				if (mapping.TryMapToDestination(source, out long destination)) {
+					return destination;
 				}
 			}
 			return source;
@@ -100,17 +85,18 @@ public sealed partial class Day05 {
 			bool overlapFound = false;
 			foreach (Mapping mapping in Mappings) {
 				if (TryGetOverlap(range, new(mapping.SourceStart, mapping.SourceStart + mapping.Length - 1), out Range resultRange)) {
-					_ = mapping.TryMap(resultRange.Start, out long start);
-					_ = mapping.TryMap(resultRange.End, out long end);
+					_ = mapping.TryMapToDestination(resultRange.Start, out long start);
+					_ = mapping.TryMapToDestination(resultRange.End,   out long end);
 
-					yield return new(start, end);
 					overlapFound = true;
+					yield return new(start, end);
 				}
 			}
 			if (overlapFound is false) {
 				yield return range;
 			}
 		}
+
 		private static bool TryGetOverlap(Range range1, Range range2, out Range result)
 		{
 			result = default;
@@ -139,11 +125,11 @@ public sealed partial class Day05 {
 
 	private record Mapping(long DestinationStart, long SourceStart, long Length)
 	{
-		public bool TryMap(long value, out long match)
+		public bool TryMapToDestination(long source, out long destination)
 		{
-			match = 0;
-			if (value >= SourceStart && value < SourceStart + Length) {
-				match = DestinationStart + (value - SourceStart);
+			destination = 0;
+			if (source >= SourceStart && source < SourceStart + Length) {
+				destination = DestinationStart + (source - SourceStart);
 				return true;
 			}
 			return false;
