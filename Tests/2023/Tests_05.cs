@@ -3,9 +3,7 @@
 public class Tests_05_If_You_Give_A_Seed_A_Fertilizer
 {
 	const int DAY = 5;
-
-	[Theory]
-	[InlineData("""
+	private const string TEST_DATA = """
 		seeds: 79 14 55 13
 
 		seed-to-soil map:
@@ -39,10 +37,20 @@ public class Tests_05_If_You_Give_A_Seed_A_Fertilizer
 		humidity-to-location map:
 		60 56 37
 		56 93 4
-		""", 35)]
-	public void Part1(string input, int expected)
+		""";
+
+	[Theory]
+	[InlineData(TEST_DATA, 35)]
+	public void Part(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		Assert.Equal(expected, actual);
+	}
+	[Theory]
+	[InlineData(TEST_DATA, 46)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
 }
