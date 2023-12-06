@@ -20,7 +20,7 @@ public sealed partial class Day02 {
 	///		Split
 	/// </summary>
 	private static void LoadGames(string[] input, object[]? args) {
-		string parsingType = GetArgument(args, 1, "split").ToLowerInvariant();
+		string parsingType = GetArgument(args, argumentNumber: 1, defaultResult: "split").ToLowerInvariant();
 		_games = parsingType switch
 		{
 			"split" => input.As<Game>(),
@@ -30,12 +30,9 @@ public sealed partial class Day02 {
 	}
 
 	private static int Solution1() {
-		(int red, int green, int blue) = (12, 13, 14);
-
 		return _games
 			.Where(game => !game.RevealedCubes
-				.Where(cubeSet => cubeSet.Red > red || cubeSet.Green > green || cubeSet.Blue > blue)
-				.Any())
+				.Any(cubeSet => cubeSet.Red > 12 || cubeSet.Green > 13 || cubeSet.Blue > 14))
 			.Sum(game => game.Id);
 	}
 
@@ -52,11 +49,8 @@ public sealed partial class Day02 {
 		public static Game Parse(string s, IFormatProvider? provider)
 		{
 			string[] SEPS = ["Game", ":", ";"];
-			return s.Split(SEPS, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) switch
-			{
-				[string id, .. string[] cubesSets] => new(id.AsInt(), [.. cubesSets.As<CubesSet>()]),
-				_ => throw new InvalidCastException(),
-			};
+			return s.TrimmedSplit(SEPS)
+				is [string id, .. string[] cubesSets] ? new(id.AsInt(), [.. cubesSets.As<CubesSet>()]) : throw new InvalidCastException(nameof(s));
 		}
 
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result)
@@ -98,7 +92,7 @@ public sealed partial class Day02 {
 			const char SPACE = ' ';
 			char[] SEPS = [COMMA, SPACE];
 
-			List<string> cubes = [.. s.Split(SEPS, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)];
+			List<string> cubes = [.. s.TrimmedSplit(SEPS)];
 			return new(GetCount("red"), GetCount("green"), GetCount("blue"));
 
 			int GetCount(string colour)

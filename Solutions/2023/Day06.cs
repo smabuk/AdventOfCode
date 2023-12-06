@@ -12,9 +12,16 @@ public sealed partial class Day06
 	private const int DIST = 1;
 
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
+
+	/// <summary>
+	/// This solution supports 3 ways of solving Part2:
+	///		Brute force (force)
+	///		Binary Chop (chop)
+	///		Maths       (maths)
+	/// </summary>
 	public static string Part2(string[] input, params object[]? args)
 	{
-		return GetArgument(args, 1, "maths").ToLowerInvariant() switch
+		return GetArgument(args, argumentNumber: 1, defaultResult: "maths").ToLowerInvariant() switch
 		{
 			"force" => Solution2_Using_BruteForce(input).ToString(),
 			"chop"  => Solution2_Using_BinaryChop(input).ToString(),
@@ -28,14 +35,11 @@ public sealed partial class Day06
 		int[] raceTimes     = [.. input[TIME][NUMBERS_OFFSET..].AsInts()];
 		int[] raceDistances = [.. input[DIST][NUMBERS_OFFSET..].AsInts()];
 
-		List<Race> races = [.. raceTimes.Zip(raceDistances).Select(td => new Race(td.First, td.Second))];
-
 		int productOfWins = 1;
-
-		foreach (Race race in races) {
+		foreach ((int raceTime, int raceDistance) in raceTimes.Zip(raceDistances)) {
 			int wins = 0;
-			for (int i = 1; i < race.Time - 1; i++) {
-				wins += Win(i, race.Time, race.Distance) ? 1 : 0;
+			for (int i = 1; i < raceTime; i++) {
+				wins += Win(i, raceTime, raceDistance) ? 1 : 0;
 			}
 			productOfWins *= wins;
 		}
@@ -59,7 +63,7 @@ public sealed partial class Day06
 		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
 
 		long wins = 0;
-		for (long t = 1; t < raceTime - 1; t++) {
+		for (long t = 1; t < raceTime; t++) {
 			wins += Win(t, raceTime, raceDistance) ? 1 : 0;
 		}
 		return wins;
@@ -79,22 +83,6 @@ public sealed partial class Day06
 	public static bool Win(long timeButtonHeld, long timeAllowed, long distanceToBeat) =>
 		((timeAllowed - timeButtonHeld) * timeButtonHeld) > distanceToBeat;
 
-	private static long FindWinsByBruteForce(long time, long distance)
-	{
-		long wins = 0;
-		for (long t = 1; t < time - 1; t++) {
-			wins += Win(t, time, distance) ? 1 : 0;
-		}
-		return wins;
-	}
-
-	/// <summary>
-	///		Uses a binary chop to find the range of wins
-	/// </summary>
-	/// <param name="time"></param>
-	/// <param name="distance"></param>
-	/// <param name="first">if true this finds the first win in the range, otherwise finds the last</param>
-	/// <returns></returns>
 	private static (long Lower, long Upper) FindWinsByBinaryChop(long time, long distance, bool first = true)
 	{
 		long min = 1;
@@ -113,6 +101,4 @@ public sealed partial class Day06
 		}
 		throw new ApplicationException("Didn't find a solution!");
 	}
-
-	private record Race(long Time, long Distance);
 }

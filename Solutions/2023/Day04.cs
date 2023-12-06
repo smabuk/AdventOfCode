@@ -40,7 +40,7 @@ public sealed partial class Day04 {
 		{
 			string[] SEPS = ["Card ", ":", "|"];
 
-			return s.Split(SEPS, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) switch
+			return s.TrimmedSplit(SEPS) switch
 			{
 				[string id, string winners, string numbers] => new(id.AsInt(), [.. winners.AsInts()], [.. numbers.AsInts()]),
 				_ => throw new InvalidCastException(),

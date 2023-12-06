@@ -4,8 +4,7 @@ public class Tests_03_Gear_Ratios
 {
 	const int DAY = 3;
 
-	[Theory]
-	[InlineData("""
+	private const string TEST_DATA = """
 		467..114..
 		...*......
 		..35..633.
@@ -16,29 +15,21 @@ public class Tests_03_Gear_Ratios
 		......755.
 		...$.*....
 		.664.598..
-		""", 4361)]
+		""";
+
+	[Theory]
+	[InlineData(TEST_DATA, 4361)]
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
-	[InlineData("""
-		467..114..
-		...*......
-		..35..633.
-		......#...
-		617*......
-		.....+.58.
-		..592.....
-		......755.
-		...$.*....
-		.664.598..
-		""", 467835)]
+	[InlineData(TEST_DATA, 467835)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 }

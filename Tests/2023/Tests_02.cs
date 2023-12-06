@@ -3,7 +3,7 @@
 public class Tests_02_Cube_Conundrum
 {
 	const int DAY = 2;
-	private const string SAMPLE_GAMES = """
+	private const string TEST_DATA = """
 		Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 		Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 		Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -12,26 +12,26 @@ public class Tests_02_Cube_Conundrum
 		""";
 
 	[Theory]
-	[InlineData(SAMPLE_GAMES, 8)]
+	[InlineData(TEST_DATA, 8)]
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
-	[InlineData(SAMPLE_GAMES, 8)]
+	[InlineData(TEST_DATA, 8)]
 	public void Part1_Using_Regex_Parsing(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, "regex"), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
-	[InlineData(SAMPLE_GAMES, 2286)]
+	[InlineData(TEST_DATA, 2286)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 }

@@ -3,6 +3,7 @@
 public class Tests_05_If_You_Give_A_Seed_A_Fertilizer
 {
 	const int DAY = 5;
+
 	private const string TEST_DATA = """
 		seeds: 79 14 55 13
 
@@ -44,13 +45,14 @@ public class Tests_05_If_You_Give_A_Seed_A_Fertilizer
 	public void Part(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
+
 	[Theory]
 	[InlineData(TEST_DATA, 46)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 }

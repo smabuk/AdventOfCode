@@ -29,7 +29,7 @@ public sealed partial class Day05 {
 	private static void LoadMaps(string[] input)
 	{
 		_seedInputValues = [.. input[0][START_OF_NUMBERS..].AsLongs()];
-
+		
 		int inputIndex = 3;
 		foreach (string mapName in MAP_NAMES) {
 			_maps[mapName] = Map.Parse(input[inputIndex..]);
@@ -49,21 +49,21 @@ public sealed partial class Day05 {
 	private static long Solution2()
 	{
 		return _seedInputValues
-			.Chunk(2).Select(n => new Range(n[0], n[0] + n[1] - 1))
+			.Chunk(2).Select(n => new LongRange(n[0], n[0] + n[1] - 1))
 			.SelectMany(GetHumidityRanges)
 			.Select(r => r.Start)
 			.Min(src => _maps["humidity-to-location"].Destination(src));
 	}
 
-	private static IEnumerable<Range> GetHumidityRanges(Range seedRange)
+	private static IEnumerable<LongRange> GetHumidityRanges(LongRange seedRange)
 	{
-		List<Range> nextSourceRanges = [seedRange];
+		List<LongRange> nextSourceRanges = [seedRange];
 		foreach (string mapName in MAP_NAMES[..^1]) {
 			nextSourceRanges = [.. nextSourceRanges
 				.Select(srcRange => _maps[mapName].DestinationRange(srcRange))
 				.SelectMany(d => d)];
 		}
-		foreach (Range source in nextSourceRanges) {
+		foreach (LongRange source in nextSourceRanges) {
 			yield return source;
 		}
 	}
@@ -80,11 +80,11 @@ public sealed partial class Day05 {
 			return source;
 		}
 
-		public IEnumerable<Range> DestinationRange(Range range)
+		public IEnumerable<LongRange> DestinationRange(LongRange range)
 		{
 			bool overlapFound = false;
 			foreach (Mapping mapping in Mappings) {
-				if (TryGetOverlap(range, new(mapping.SourceStart, mapping.SourceStart + mapping.Length - 1), out Range resultRange)) {
+				if (TryGetOverlap(range, new(mapping.SourceStart, mapping.SourceStart + mapping.Length - 1), out LongRange resultRange)) {
 					_ = mapping.TryMapToDestination(resultRange.Start, out long start);
 					_ = mapping.TryMapToDestination(resultRange.End,   out long end);
 
@@ -97,29 +97,15 @@ public sealed partial class Day05 {
 			}
 		}
 
-		private static bool TryGetOverlap(Range range1, Range range2, out Range result)
-		{
-			result = default;
-			long max = Math.Max(range1.Start, range2.Start);
-			long min = Math.Min(range1.End, range2.End);
-			if (max <= min) {
-				result = new(max, min);
-				return true;
-			} else {
-				return false;
-			}
-		}
+		private static bool TryGetOverlap(LongRange range1, LongRange range2, out LongRange result)
+			=> range1.TryGetOverlap(range2, out result);
 
-		public static Map Parse(string[] s)
+		public static Map Parse(string[] input)
 		{
-			List<Mapping> mappings = [];
-			foreach (string line in s) {
-				if (string.IsNullOrWhiteSpace(line)) {
-					return new(mappings);
-				}
-				mappings.Add(Mapping.Parse(line, null));
-			}
-			return new(mappings);
+			return new([.. input
+				.TakeWhile(i => !string.IsNullOrWhiteSpace(i))
+				.Select(Mapping.Parse)]
+				);
 		}
 	}
 
@@ -135,14 +121,12 @@ public sealed partial class Day05 {
 			return false;
 		}
 
-		public static Mapping Parse(string s, IFormatProvider? provider)
+		public static Mapping Parse(string s)
 		{
 			const char SEP = ' ';
-			long[] values = [.. s.Split(SEP).AsLongs()];
+			long[] values = [.. s.TrimmedSplit(SEP).AsLongs()];
 			return new(values[0], values[1], values[2]);
 		}
 	}
-
-	private record struct Range(long Start, long End);
 }
 

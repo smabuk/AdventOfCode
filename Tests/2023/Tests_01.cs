@@ -14,7 +14,7 @@ public class Tests_01_Trebuchet
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
@@ -33,7 +33,7 @@ public class Tests_01_Trebuchet
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 
@@ -53,7 +53,7 @@ public class Tests_01_Trebuchet
 	public void Part2_Using_Linq(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "linq"), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
@@ -72,6 +72,6 @@ public class Tests_01_Trebuchet
 	public void Part2_Using_Regex(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "regex"), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 }

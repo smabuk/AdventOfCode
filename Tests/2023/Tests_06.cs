@@ -13,7 +13,7 @@ public class Tests_06_Wait_For_It {
 	public void Part(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
@@ -21,7 +21,15 @@ public class Tests_06_Wait_For_It {
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 71503)]
+	public void Part2_Using_BinaryChop(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "chop"), out int actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
@@ -29,7 +37,7 @@ public class Tests_06_Wait_For_It {
 	public void Part2_Using_BruteForce(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "force"), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 
 	[Theory]
@@ -37,6 +45,6 @@ public class Tests_06_Wait_For_It {
 	public void Part2_Using_Maths(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "maths"), out int actual);
-		Assert.Equal(expected, actual);
+		actual.ShouldBe(expected);
 	}
 }

@@ -17,7 +17,7 @@ public sealed partial class Day01 {
 	/// </summary>
 	private static string Solution(string[] input, int partNo, object[]? args)
 	{
-		return GetArgument(args, 1, "regex").ToLowerInvariant() switch
+		return GetArgument(args, argumentNumber: 1, defaultResult: "regex").ToLowerInvariant() switch
 		{
 			"regex" => Solution_Using_Regex(input, partNo).ToString(),
 			"linq"  => Solution_Using_Linq(input, partNo).ToString(),
