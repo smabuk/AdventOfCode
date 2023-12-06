@@ -17,7 +17,7 @@ public class Tests_06_Wait_For_It {
 	}
 
 	[Theory]
-	[InlineData(TEST_DATA, 9999)]
+	[InlineData(TEST_DATA, 71503)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
