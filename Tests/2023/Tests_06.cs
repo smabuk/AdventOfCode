@@ -23,4 +23,20 @@ public class Tests_06_Wait_For_It {
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		Assert.Equal(expected, actual);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 71503)]
+	public void Part2_Using_BruteForce(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "force"), out int actual);
+		Assert.Equal(expected, actual);
+	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 71503)]
+	public void Part2_Using_Maths(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, "maths"), out int actual);
+		Assert.Equal(expected, actual);
+	}
 }
