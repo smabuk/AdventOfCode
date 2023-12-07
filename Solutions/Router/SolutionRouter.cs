@@ -34,10 +34,10 @@ static public class SolutionRouter {
 	}
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, params object[]? args)
-		=> SolveDay(year, day, input?.Split(Environment.NewLine), null, args);
+		=> SolveDay(year, day, input?.ReplaceLineEndings().Split(Environment.NewLine), null, args);
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string? input, Action<string[], bool>? visualise = null, params object[]? args)
-		=> SolveDay(year, day, input?.Split(Environment.NewLine), visualise, args);
+		=> SolveDay(year, day, input?.ReplaceLineEndings().Split(Environment.NewLine), visualise, args);
 
 	public static IEnumerable<SolutionPhase> SolveDay(int year, int day, string[]? input, params object[]? args)
 		=> SolveDay(year, day, input, null, args);
@@ -105,13 +105,13 @@ static public class SolutionRouter {
 	}
 
 	public static string SolveProblem(int year, int day, int problemNo, string? input, params object[]? args) 
-		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), null, args);
+		=> SolveProblem(year, day, problemNo, input?.ReplaceLineEndings().Split(Environment.NewLine), null, args);
 
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, params object[]? args) 
 		=> SolveProblem(year, day, problemNo, input, null, args);
 
 	public static string SolveProblem(int year, int day, int problemNo, string? input, Action<string[], bool>? visualise = null, params object[]? args) 
-		=> SolveProblem(year, day, problemNo, input?.Split(Environment.NewLine), visualise, args);
+		=> SolveProblem(year, day, problemNo, input?.ReplaceLineEndings().Split(Environment.NewLine), visualise, args);
 
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, Action<string[], bool>? visualise = null, params object[]? args) {
 		if (input is null) {
