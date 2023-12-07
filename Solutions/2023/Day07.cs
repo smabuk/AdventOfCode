@@ -37,16 +37,18 @@ public sealed partial class Day07 {
 					cards = [.. cards.Select(card => card.Label == JOKER ? card with { Label = label} : card)];
 				}
 
-				IEnumerable<IGrouping<Card, Card>> counts = cards.GroupBy(card => card);
+				List<int> counts = [.. cards.GroupBy(card => card).Select(cards => cards.Count()).OrderDescending()];
 
-				if (     counts.Any(c => c.Count() == 5))                { return HandType.FiveOfAKind; }
-				else if (counts.Any(c => c.Count() == 4))                { return HandType.FourOfAKind; }
-				else if (counts.Any(c => c.Count() == 3)
-					  && counts.Any(c => c.Count() == 2))                { return HandType.FullHouse; }
-				else if (counts.Any(c => c.Count() == 3))                { return HandType.ThreeOfAKind; }
-				else if (counts.Where(c => c.Count() == 2).Count() == 2) { return HandType.TwoPair; }
-				else if (counts.Any(c => c.Count() == 2))                { return HandType.OnePair; }
-				else                                                     { return HandType.HighCard; }
+				return counts switch
+				{
+					[5]          => HandType.FiveOfAKind,
+					[4, 1]       => HandType.FourOfAKind,
+					[3, 2]       => HandType.FullHouse,
+					[3, 1, 1]    => HandType.ThreeOfAKind,
+					[2, 2, 1]    => HandType.TwoPair,
+					[2, 1, 1, 1] => HandType.OnePair,
+					_            => HandType.HighCard,
+				};
 			}
 		}
 
@@ -55,7 +57,7 @@ public sealed partial class Day07 {
 		public static Hand Parse(string s, IFormatProvider? provider)
 		{
 			 const int LABEL_INDEX = 0;
-			 const int BID_INDEX = 6;
+			 const int BID_INDEX   = 6;
 			 const int NO_OF_CARDS = 5;
 
 			List<Card> cards = [.. s[LABEL_INDEX..(LABEL_INDEX + NO_OF_CARDS)].Select(label => new Card(label))];
