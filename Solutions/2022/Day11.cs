@@ -75,17 +75,17 @@ public sealed partial class Day11 {
 			for (int i = 0; i < noOfMonkeys; i++) {
 				int startLine = i * LinesPerMonkey;
 
-				int name        = input[startLine][7..^1].AsInt();
-				int divisibleBy = input[startLine + 3][21..].AsInt();
-				int trueName    = input[startLine + 4][29..].AsInt();
-				int falseName   = input[startLine + 5][29..].AsInt();
+				int name        = input[startLine][7..^1].As<int>();
+				int divisibleBy = input[startLine + 3][21..].As<int>();
+				int trueName    = input[startLine + 4][29..].As<int>();
+				int falseName   = input[startLine + 5][29..].As<int>();
 
 				List<Item> items = new(input[startLine + 1][17..]
 					.Split(", ")
-					.Select(x => new Item(x.AsInt())));
+					.Select(x => new Item(x.As<int>())));
 				Operation operation = new(
 					Op:    input[startLine + 2][23] == '+' ? Operation.OpType.Add : Operation.OpType.Multiply,
-					Value: input[startLine + 2][25..].AsInt());
+					Value: input[startLine + 2][25..].As<int>());
 
 				yield return new(name, operation, divisibleBy, trueName, falseName) { Items = items };
 			}

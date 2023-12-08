@@ -38,7 +38,7 @@ public sealed partial class Day02 {
 
 	private static int Solution2() => _games.Sum(game => game.MinimumSet.Power);
 
-	private partial record Game(int Id, List<CubesSet> RevealedCubes) : IParsable<Game> {
+	private sealed partial record Game(int Id, List<CubesSet> RevealedCubes) : IParsable<Game> {
 
 		public CubesSet MinimumSet { get; } = new(
 			RevealedCubes.Max(cubes => cubes.Red),
@@ -50,7 +50,7 @@ public sealed partial class Day02 {
 		{
 			string[] SEPS = ["Game", ":", ";"];
 			return s.TrimmedSplit(SEPS)
-				is [string id, .. string[] cubesSets] ? new(id.AsInt(), [.. cubesSets.As<CubesSet>()]) : throw new InvalidCastException(nameof(s));
+				is [string id, .. string[] cubesSets] ? new(id.As<int>(), [.. cubesSets.As<CubesSet>()]) : throw new InvalidCastException(nameof(s));
 		}
 
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result)
@@ -60,7 +60,7 @@ public sealed partial class Day02 {
 		{
 			Match match = GameRegex().Match(s);
 
-			int id = match.GroupAsInt("id");
+			int id = match.As<int>("id");
 			IEnumerable<CubesSet> cubesSets = SetsRegex()
 				.Matches(match.Groups["sets"].Value)
 				.Select(m => m.Value)
@@ -82,7 +82,7 @@ public sealed partial class Day02 {
 		private static partial Regex SetsRegex();
 	}
 
-	private partial record CubesSet(int Red, int Green, int Blue) : IParsable<CubesSet> {
+	private sealed partial record CubesSet(int Red, int Green, int Blue) : IParsable<CubesSet> {
 
 		public int Power { get; } = Red * Green * Blue;
 
@@ -98,7 +98,7 @@ public sealed partial class Day02 {
 			int GetCount(string colour)
 			{
 				int countIndex = cubes.IndexOf(colour) - 1;
-				return countIndex >= 0 ? cubes[countIndex].AsInt() : 0;
+				return countIndex >= 0 ? cubes[countIndex].As<int>() : 0;
 			}
 		}
 
@@ -106,9 +106,9 @@ public sealed partial class Day02 {
 			=> ISimpleParsable<CubesSet>.TryParse(s, provider, out result);
 
 		public static CubesSet ParseUsingRegex(string s)
-			=> new(	RedRegex()  .Match(s).GroupAsInt("count"),
-					GreenRegex().Match(s).GroupAsInt("count"),
-					BlueRegex() .Match(s).GroupAsInt("count"));
+			=> new(	RedRegex()  .Match(s).As<int>("count"),
+					GreenRegex().Match(s).As<int>("count"),
+					BlueRegex() .Match(s).As<int>("count"));
 
 		[GeneratedRegex(@"(?<count>\d+) (?<colour>red)")]
 		private static partial Regex RedRegex();

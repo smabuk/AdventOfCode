@@ -11,7 +11,7 @@ public sealed partial class Day24 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static long Solution1(string[] input) {
-		List<int> packageWeights = input.AsInts().ToList();
+		List<int> packageWeights = input.As<int>().ToList();
 		int targetWeight = packageWeights.Sum() / 3;
 		int maxI = packageWeights.Count;
 		long minQE = long.MaxValue;
@@ -40,7 +40,7 @@ public sealed partial class Day24 {
 	}
 
 	private static long Solution2(string[] input) {
-		List<int> packageWeights = input.AsInts().ToList();
+		List<int> packageWeights = [.. input.As<int>()];
 		int targetWeight = packageWeights.Sum() / 4;
 		int maxI = packageWeights.Count;
 		long minQE = long.MaxValue;

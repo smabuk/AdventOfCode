@@ -73,7 +73,7 @@ public sealed partial class Day09 {
 				_ => throw new ArgumentException(input),
 			};
 
-			return new(direction, tokens[1].AsInt());
+			return new(direction, tokens[1].As<int>());
 		}
 
 	};

@@ -50,7 +50,7 @@ public sealed class Day07 {
 				currentDirectory.AddDirectory(new(directoryName));
 		} else if (Char.IsNumber(output[0])) {
 				string[] tokens = output.Split(" ");
-				currentDirectory.AddFile(tokens[1], tokens[0].AsInt());
+				currentDirectory.AddFile(tokens[1], tokens[0].As<int>());
 			}
 		}
 		return _fileSystem;

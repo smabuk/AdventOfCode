@@ -136,7 +136,7 @@ public sealed partial class Day19 {
 	private record Blueprint(int Id, Dictionary<ResourceType, RobotCost> RobotCosts) : IParsable<Blueprint> {
 		public static Blueprint Parse(string s) {
 			string[] tokens = s.Split(new char[] { ':', '.' });
-			int id = tokens[0].Split(' ').Last().Trim().AsInt();
+			int id = tokens[0].Split(' ').Last().Trim().As<int>();
 			Dictionary<ResourceType, RobotCost> robots = tokens[1..]
 				.Where(s => string.IsNullOrWhiteSpace(s) is false)
 				.Select(RobotCost.Parse)
@@ -171,7 +171,7 @@ public sealed partial class Day19 {
 		public static IEnumerable<Cost> Parse(string[] s) {
 			for (int i = 0; i < s.Length; i++) {
 				if (Char.IsNumber(s[i][0])) {
-					yield return new(Enum.Parse<ResourceType>(s[i + 1]), s[i].AsInt());
+					yield return new(Enum.Parse<ResourceType>(s[i + 1]), s[i].As<int>());
 					i += 2;
 				}
 			}

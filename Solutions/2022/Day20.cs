@@ -13,7 +13,7 @@ public sealed partial class Day20 {
 	private static long Solution1(string[] input) {
 		List<IndexedItem> gpsInput =
 			input
-			.Select((i, index) => new IndexedItem(index, i.AsInt()))
+			.Select((i, index) => new IndexedItem(index, i.As<int>()))
 			.ToList();
 
 		return MixResult(gpsInput);
@@ -24,7 +24,7 @@ public sealed partial class Day20 {
 		
 		List<IndexedItem> gpsInput =
 			input
-			.Select((i, index) => new IndexedItem(index, i.AsInt() * DECRYPTION_KEY))
+			.Select((i, index) => new IndexedItem(index, i.As<int>() * DECRYPTION_KEY))
 			.ToList();
 
 		return MixResult(gpsInput, 10);

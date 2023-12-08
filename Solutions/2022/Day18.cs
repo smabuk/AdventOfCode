@@ -99,7 +99,7 @@ public sealed partial class Day18 {
 	}
 
 	private static Point3d ParseLine(string input) {
-		List<int> numbers = input.Split(',').AsInts().ToList();
+		List<int> numbers = input.Split(',').As<int>().ToList();
 		return new Point3d(numbers[0], numbers[1], numbers[2]);
 	}
 }

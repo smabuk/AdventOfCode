@@ -402,6 +402,6 @@ public sealed partial class Day16 {
 	private record Sample(int[] Before, int[] After, Instruction Instruction)
 	{
 		public static Sample Parse(string[] input) 
-			=> new([.. input[0][9..^1].Split(", ").AsInts()], [.. input[2][9..^1].Split(", ").AsInts()], Instruction.Parse(input[1]));
+			=> new([.. input[0][9..^1].Split(", ").As<int>()], [.. input[2][9..^1].Split(", ").As<int>()], Instruction.Parse(input[1]));
 	}
 }

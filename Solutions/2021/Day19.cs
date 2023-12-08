@@ -155,7 +155,7 @@ public class Day19 {
 				isScannerNameLine = true;
 				continue;
 			} else {
-				int[] coords = line.Split(",").AsInts().ToArray();
+				int[] coords = line.Split(",").As<int>().ToArray();
 				Point3d beacon = new(coords[0], coords[1], coords[2]);
 				scanner.Beacons.Add(beacon);
 			}

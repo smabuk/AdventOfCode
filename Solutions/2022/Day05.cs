@@ -71,7 +71,7 @@ public sealed partial class Day05 {
 		/// <returns></returns>
 		public static Instruction Parse(string input) =>
 			input.Split(new char[] { ' ' }) switch {
-				[_, var n1, _, var n3, _, var n5, ..] => new(n1.AsInt(), n3.AsInt(), n5.AsInt()),
+				[_, var n1, _, var n3, _, var n5, ..] => new(n1.As<int>(), n3.As<int>(), n5.As<int>()),
 				_ => throw new NotImplementedException()
 			};
 	}

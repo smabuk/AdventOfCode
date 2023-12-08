@@ -11,7 +11,7 @@ public sealed partial class Day11 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static string Solution1(string[] input) {
-		int gridSerialNo = input[0].AsInt();
+		int gridSerialNo = input[0].As<int>();
 
 		int[,] fuelCells = new int[300, 300];
 		foreach ((int cellX, int cellY) in fuelCells.Walk2dArray()) {
@@ -45,7 +45,7 @@ public sealed partial class Day11 {
 	private static string Solution2(string[] input)
 	{
 		const int MAX_GRID_SIZE = 21; // This works for me and keeps the speed down
-		int gridSerialNo = input[0].AsInt();
+		int gridSerialNo = input[0].As<int>();
 
 		int[,] fuelCells = new int[300, 300];
 		foreach ((int cellX, int cellY) in fuelCells.Walk2dArray()) {

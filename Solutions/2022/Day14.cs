@@ -65,7 +65,7 @@ public sealed partial class Day14 {
 
 		for (int i = 0; i < input.Length; i++) {
 			List<Point> pathPoints = [];
-			int[] coords = input[i].Replace("-", "").Split(new char[] { '>', ',' }).AsInts().ToArray();
+			int[] coords = input[i].Replace("-", "").Split(['>', ',']).As<int>().ToArray();
 			for (int j = 0; j < coords.Length; j += 2) {
 				pathPoints.Add(new(coords[j], coords[j + 1]));
 				minX = Math.Min(minX, coords[j]);

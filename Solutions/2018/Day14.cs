@@ -11,7 +11,7 @@ public sealed partial class Day14 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static string Solution1(string[] input) {
-		int noOfRecipes = input[0].AsInt();
+		int noOfRecipes = input[0].As<int>();
 
 		List<int> recipes = new([3, 7]);
 		string tail = "37";

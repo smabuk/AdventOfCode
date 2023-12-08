@@ -11,12 +11,12 @@ public sealed partial class Day01 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		return input.AsInts().Sum();
+		return input.As<int>().Sum();
 	}
 
 	private static int Solution2(string[] input) {
 
-		int[] frequencyChanges = input.AsInts().ToArray();
+		int[] frequencyChanges = input.As<int>().ToArray();
 		HashSet<int> results = [0];
 		int index = 0;
 		int result = 0;

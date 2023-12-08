@@ -1,6 +1,4 @@
-﻿
-
-namespace AdventOfCode.Solutions._2023;
+﻿namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 05: If You Give A Seed A Fertilizer
@@ -30,7 +28,7 @@ public sealed partial class Day05 {
 	private static void LoadMaps(string[] input)
 	{
 		const int START_OF_NUMBERS = 7;
-		_seedInputValues = [.. input[0][START_OF_NUMBERS..].AsLongs()];
+		_seedInputValues = [.. input[0][START_OF_NUMBERS..].As<long>(' ')];
 		
 		int inputIndex = 3;
 		foreach (string mapName in MAP_NAMES) {
@@ -71,7 +69,7 @@ public sealed partial class Day05 {
 		}
 	}
 
-	private record Map(List<Mapping> Mappings)  : IParsable<Map>
+	private sealed record Map(List<Mapping> Mappings)  : IParsable<Map>
 	{
 		public long Destination(long source)
 		{
@@ -110,12 +108,11 @@ public sealed partial class Day05 {
 			.TakeWhile(IsNotABlankLine)
 			.As<Mapping>()]);
 
-		public static Map Parse(string s) => Parse(s);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Map result)
 			=> ISimpleParsable<Map>.TryParse(s, provider, out result);
 	}
 
-	private record Mapping(long DestinationStart, long SourceStart, long Length) : IParsable<Mapping>
+	private sealed record Mapping(long DestinationStart, long SourceStart, long Length) : IParsable<Mapping>
 	{
 		public bool TryMapToDestination(long source, out long destination)
 		{
@@ -131,7 +128,7 @@ public sealed partial class Day05 {
 		public static Mapping Parse(string s, IFormatProvider? provider)
 		{
 			const char SEP = ' ';
-			long[] values = [.. s.TrimmedSplit(SEP).AsLongs()];
+			long[] values = [.. s.TrimmedSplit(SEP).As<long>()];
 			return new(values[0], values[1], values[2]);
 		}
 

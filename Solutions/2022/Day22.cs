@@ -346,7 +346,7 @@ public sealed partial class Day22 {
 
 		public static Instruction Parse(string s) {
 			return char.IsNumber(s[0]) switch {
-				true  => new STEP_Instruction(s.AsInt()),
+				true  => new STEP_Instruction(s.As<int>()),
 				false => new ROTATE_Instruction(Enum.Parse<Direction>(s))
 			};
 		}

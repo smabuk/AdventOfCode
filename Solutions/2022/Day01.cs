@@ -39,7 +39,7 @@ public sealed partial class Day01 {
 				}
 				calories = 0;
 			} else {
-				calories += input[i].AsInt();
+				calories += input[i].As<int>();
 			}
 		}
 	}

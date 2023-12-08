@@ -103,7 +103,7 @@ public sealed partial class Day10 {
 	private record struct Instruction(Instruction.InstructionType Command, int Value) {
 		public static Instruction Parse(string input) {
 			string[] tokens = input.Split(' ');
-			int value = tokens.Length > 1 ? tokens[1].AsInt() : 0;
+			int value = tokens.Length > 1 ? tokens[1].As<int>() : 0;
 			return new(Enum.Parse<InstructionType>(tokens[0]), value);
 		}
 		public enum InstructionType { noop, addx }

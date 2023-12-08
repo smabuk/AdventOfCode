@@ -14,7 +14,7 @@ public class Day09 {
 
 	private static int Solution1(string[] input) {
 		int[,] heightMap = input
-			.SelectMany(i =>i.AsDigits())
+			.SelectMany(i =>i.AsDigits<int>())
 			.To2dArray(input[0].Length);
 
 		return heightMap
@@ -36,7 +36,7 @@ public class Day09 {
 
 	private static long Solution2(string[] input) {
 		int[,] heightMap = input
-			.SelectMany(i => i.AsDigits())
+			.SelectMany(i => i.AsDigits<int>())
 			.To2dArray(input[0].Length);
 
 		return heightMap

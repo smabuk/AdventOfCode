@@ -15,7 +15,7 @@ public class Day11 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input, int steps) {
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		int[,] grid = input.SelectMany(i => i.AsDigits<int>()).To2dArray(input[0].Length);
 
 		return Enumerable.Range(1, steps)
 			.Select(i => GenerateStep(grid))
@@ -23,7 +23,7 @@ public class Day11 {
 	}
 
 	private static int Solution2(string[] input) {
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		int[,] grid = input.SelectMany(i => i.AsDigits<int>()).To2dArray(input[0].Length);
 
 		int step = 1;
 		while (GenerateStep(grid) != grid.LongLength) {

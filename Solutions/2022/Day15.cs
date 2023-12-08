@@ -92,8 +92,8 @@ public sealed partial class Day15 {
 		public static SensorBeaconPair Parse(string s) {
 			Match match = SensorBeaconPairRegEx().Match(s);
 			if (match.Success) {
-				return new(new(match.Groups["sx"].Value.AsInt(), match.Groups["sy"].Value.AsInt()),
-					new(match.Groups["bx"].Value.AsInt(), match.Groups["by"].Value.AsInt()));
+				return new(new(match.As<int>("sx"), match.As<int>("sy")),
+					new(match.As<int>("bx"), match.As<int>("by")));
 			}
 			return null!;
 		}

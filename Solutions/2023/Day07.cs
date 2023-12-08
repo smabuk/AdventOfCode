@@ -15,14 +15,14 @@ public sealed partial class Day07 {
 
 	const char JOKER = 'j';
 
-	private record SetOfHands(List<Hand> Hands) {
+	private sealed record SetOfHands(List<Hand> Hands) {
 		public int TotalWinnings => Hands
 			.Order()
 			.Select((hand, index) => (Hand: hand, Rank: index + 1))
 			.Sum(hand => hand.Hand.BidAmount * hand.Rank);
 	}
 
-	private record Hand(IReadOnlyList<Card> Cards, int BidAmount) : IParsable<Hand>, IComparable<Hand> {
+	private sealed record Hand(IReadOnlyList<Card> Cards, int BidAmount) : IParsable<Hand>, IComparable<Hand> {
 		public HandType Type {
 			get
 			{
@@ -58,7 +58,7 @@ public sealed partial class Day07 {
 			 const int NO_OF_CARDS = 5;
 
 			List<Card> cards = [.. s[LABEL_INDEX..(LABEL_INDEX + NO_OF_CARDS)].Select(label => new Card(label))];
-			int bidAmount = s[BID_INDEX..].AsInt();
+			int bidAmount = s[BID_INDEX..].As<int>();
 
 			return new(cards, bidAmount);
 		}
@@ -71,7 +71,7 @@ public sealed partial class Day07 {
 				return this is null ? 0 : 1;
 			}
 
-			string thisSortStrength = $"{(int)Type:D2}{Cards[0].Strength:D2}{Cards[1].Strength:D2}{Cards[2].Strength:D2}{Cards[3].Strength:D2}{Cards[4].Strength:D2}";
+			string thisSortStrength  = $"{(int)Type:D2}{Cards[0].Strength:D2}{Cards[1].Strength:D2}{Cards[2].Strength:D2}{Cards[3].Strength:D2}{Cards[4].Strength:D2}";
 			string otherSortStrength = $"{(int)other.Type:D2}{other.Cards[0].Strength:D2}{other.Cards[1].Strength:D2}{other.Cards[2].Strength:D2}{other.Cards[3].Strength:D2}{other.Cards[4].Strength:D2}";
 
 			return thisSortStrength.CompareTo(otherSortStrength);

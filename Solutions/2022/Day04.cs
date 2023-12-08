@@ -62,8 +62,8 @@ public sealed partial class Day04 {
 	}
 
 	private static (int a, int b, int c, int d) ParseLine(string input) =>
-		input.Split(new char[] { '-', ',' }) switch {
-			[var n1, var n2, var n3, var n4] => (n1.AsInt(), n2.AsInt(), n3.AsInt(), n4.AsInt()),
+		input.Split(['-', ',']) switch {
+			[var n1, var n2, var n3, var n4] => (n1.As<int>(), n2.As<int>(), n3.As<int>(), n4.As<int>()),
 			_ => throw new NotImplementedException()
 		};
 }

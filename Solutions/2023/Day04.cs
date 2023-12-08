@@ -31,7 +31,7 @@ public sealed partial class Day04 {
 		return cards.Sum(card => card.Value);
 	}
 
-	private record Card(int Id, HashSet<int> WinningNumbers, HashSet<int> Numbers) : IParsable<Card> {
+	private sealed record Card(int Id, HashSet<int> WinningNumbers, HashSet<int> Numbers) : IParsable<Card> {
 
 		public int NoOfWinners { get; } = Numbers.Intersect(WinningNumbers).Count();
 		public int Points => (int)Math.Pow(2, NoOfWinners - 1);
@@ -42,7 +42,7 @@ public sealed partial class Day04 {
 
 			return s.TrimmedSplit(SEPS) switch
 			{
-				[string id, string winners, string numbers] => new(id.AsInt(), [.. winners.AsInts()], [.. numbers.AsInts()]),
+				[string id, string winners, string numbers] => new(id.As<int>(), [.. winners.As<int>(' ')], [.. numbers.As<int>(' ')]),
 				_ => throw new InvalidCastException(),
 			};
 		}

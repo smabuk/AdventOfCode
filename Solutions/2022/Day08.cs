@@ -15,7 +15,7 @@ public sealed partial class Day08 {
 	private static int[,] _heightMap = default!;
 
 	private static void CreateMap(string[] input) {
-		_heightMap = input.SelectMany(ParsingHelpers.AsDigits).To2dArray(input[0].Length);
+		_heightMap = input.SelectMany(i=> i.AsDigits<int>()).To2dArray(input[0].Length);
 	}
 
 	private static int Solution1() {

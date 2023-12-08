@@ -15,7 +15,7 @@ public sealed partial class Day08 {
 	private static Node _licenseTree = new();
 
 	private static void BuildTree(string[] input) {
-		List<int> inputs = input[0].Split(' ').AsInts().ToList();
+		List<int> inputs = input[0].Split(' ').As<int>().ToList();
 		(_licenseTree, int _) = GetNode(inputs);
 	}
 

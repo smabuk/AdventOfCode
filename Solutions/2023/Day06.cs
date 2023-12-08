@@ -32,8 +32,8 @@ public sealed partial class Day06
 
 	private static int Solution1(string[] input)
 	{
-		int[] raceTimes     = [.. input[TIME][NUMBERS_OFFSET..].AsInts()];
-		int[] raceDistances = [.. input[DIST][NUMBERS_OFFSET..].AsInts()];
+		int[] raceTimes     = [.. input[TIME][NUMBERS_OFFSET..].As<int>(' ')];
+		int[] raceDistances = [.. input[DIST][NUMBERS_OFFSET..].As<int>(' ')];
 
 		int productOfWins = 1;
 		foreach ((int raceTime, int raceDistance) in raceTimes.Zip(raceDistances)) {
@@ -52,8 +52,8 @@ public sealed partial class Day06
 
 	private static long Solution2_Using_BruteForce(string[] input)
 	{
-		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
-		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
+		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
+		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
 
 		long wins = 0;
 		for (long t = 1; t < raceTime; t++) {
@@ -64,8 +64,8 @@ public sealed partial class Day06
 
 	private static long Solution2_Using_Maths(string[] input)
 	{
-		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
-		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
+		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
+		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
 
 		long firstWin = (long)Math.Ceiling((raceTime - Math.Sqrt((raceTime * raceTime) - (raceDistance * 4))) / 2);
 		long lastWin  = (long)Math.Ceiling((raceTime + Math.Sqrt((raceTime * raceTime) - (raceDistance * 4))) / 2) - 1;
@@ -75,8 +75,8 @@ public sealed partial class Day06
 
 	private static long Solution2_Using_BinaryChop(string[] input)
 	{
-		long raceTime = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
-		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
+		long raceTime = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
+		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
 
 		long firstWin = FindWinsByBinaryChop(raceTime, raceDistance, true);
 		long lastWin  = FindWinsByBinaryChop(raceTime, raceDistance, false);

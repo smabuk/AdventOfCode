@@ -57,11 +57,11 @@ public sealed partial class Day03 {
 				for (int x = corner1.X; x < corner2.X; x += (y == row ? skip : 1)) {
 					if (solutionPartNo == 1) {
 						if (IsSymbol(engineSchematic[x, y])) {
-							list.Add(new(number.Value.AsInt(), new(number.Index, row)));
+							list.Add(new(number.Value.As<int>(), new(number.Index, row)));
 							return;
 						}
 					} else if (engineSchematic[x, y] is GEAR) { // Part2
-						list.Add(new(number.Value.AsInt(), new(x, y)));
+						list.Add(new(number.Value.As<int>(), new(x, y)));
 					}
 				}
 			}

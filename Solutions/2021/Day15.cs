@@ -11,7 +11,7 @@ public class Day15 {
 	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
-		int[,] grid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		int[,] grid = input.SelectMany(i => i.AsDigits<int>()).To2dArray(input[0].Length);
 
 		Point start = new(0, 0);
 		Point end = new(new(grid.GetUpperBound(0), grid.GetUpperBound(1)));
@@ -22,7 +22,7 @@ public class Day15 {
 	}
 
 	private static int Solution2(string[] input) {
-		int[,] inputGrid = input.SelectMany(i => i.AsDigits()).To2dArray(input[0].Length);
+		int[,] inputGrid = input.SelectMany(i => i.AsDigits<int>()).To2dArray(input[0].Length);
 
 		int inputGridWidth = inputGrid.GetLength(0);
 		int inputGridHeight = inputGrid.GetLength(1);

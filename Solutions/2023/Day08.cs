@@ -28,7 +28,7 @@ public sealed partial class Day08 {
 		const char LEFT = 'L';
 
 		Node[] currentNodes = [.. _nodeMaps.Values.Where(kvp => kvp.Name.EndsWith(start))];
-		long[] cycleLengths = new long[currentNodes.Length];
+		int[]  cycleLengths = new int[currentNodes.Length];
 
 		int steps = 0;
 		do {
@@ -48,7 +48,7 @@ public sealed partial class Day08 {
 		return cycleLengths.LowestCommonMultiple();
 	}
 
-	private record Node(string Name, string LeftNode, string RightNode) : IParsable<Node> {
+	private sealed record Node(string Name, string LeftNode, string RightNode) : IParsable<Node> {
 		public static Node Parse(string s, IFormatProvider? provider) => new(s[0..3], s[7..10], s[12..15]);
 
 		public static Node Parse(string s) => Parse(s, null);
@@ -60,22 +60,6 @@ public sealed partial class Day08 {
 file static class Day08Helpers
 {
 	public static long LowestCommonMultiple(this long[] numbers) => numbers.Aggregate(LowestCommonMultipleOf2Numbers);
-
-	/// <summary>
-	///  Uses the Euclidean algorithm
-	///  https://en.wikipedia.org/wiki/Euclidean_algorithm
-	/// </summary>
-	/// <param name="a"></param>
-	/// <param name="b"></param>
-	/// <returns></returns>
-	public static long LowestCommonMultipleOf2Numbers(long a, long b) => Math.Abs(a * b) / GreatestCommonDenominator(a, b);
-
-	/// <summary>
-	/// lcm calculation uses Abs(a*b)/gcd(a,b) , refer to Reduction by the greatest common divisor.
-	/// http://en.wikipedia.org/wiki/Least_common_multiple
-	/// </summary>
-	/// <param name="a"></param>
-	/// <param name="b"></param>
-	/// <returns></returns>
-	public static long GreatestCommonDenominator(long a, long b) => b == 0 ? a : GreatestCommonDenominator(b, a % b);
+	public static long LowestCommonMultipleOf2Numbers(long a, long b) => Math.Abs(a * b) / GreatestCommonDivisor(a, b);
+	public static long GreatestCommonDivisor(long a, long b) => b == 0 ? a : GreatestCommonDivisor(b, a % b);
 }
