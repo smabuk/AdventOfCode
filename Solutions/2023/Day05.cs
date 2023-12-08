@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2023;
+﻿
+
+namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 05: If You Give A Seed A Fertilizer
@@ -12,7 +14,6 @@ public sealed partial class Day05 {
 	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
 	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
-	private const int START_OF_NUMBERS = 7;
 	private static readonly string[] MAP_NAMES = [
 		"seed-to-soil",
 		"soil-to-fertilizer",
@@ -28,11 +29,12 @@ public sealed partial class Day05 {
 
 	private static void LoadMaps(string[] input)
 	{
+		const int START_OF_NUMBERS = 7;
 		_seedInputValues = [.. input[0][START_OF_NUMBERS..].AsLongs()];
 		
 		int inputIndex = 3;
 		foreach (string mapName in MAP_NAMES) {
-			_maps[mapName] = Map.Parse(input[inputIndex..]);
+			_maps[mapName] = string.Join(Environment.NewLine, input[inputIndex..]).As<Map>();
 			inputIndex += _maps[mapName].Mappings.Count + 2;
 		}
 	}
@@ -40,10 +42,11 @@ public sealed partial class Day05 {
 	private static long Solution1() => _seedInputValues.Min(GetLocation);
 	private static long GetLocation(long destination)
 	{
+		long currentDestination = destination;
 		foreach (string mapName in MAP_NAMES) {
-			destination = _maps[mapName].Destination(destination);
+			currentDestination = _maps[mapName].Destination(currentDestination);
 		}
-		return destination;
+		return currentDestination;
 	}
 
 	private static long Solution2()
@@ -68,7 +71,7 @@ public sealed partial class Day05 {
 		}
 	}
 
-	private record Map(List<Mapping> Mappings) 
+	private record Map(List<Mapping> Mappings)  : IParsable<Map>
 	{
 		public long Destination(long source)
 		{
@@ -100,16 +103,19 @@ public sealed partial class Day05 {
 		private static bool TryGetOverlap(LongRange range1, LongRange range2, out LongRange result)
 			=> range1.TryGetOverlap(range2, out result);
 
-		public static Map Parse(string[] input)
-		{
-			return new([.. input
-				.TakeWhile(i => !string.IsNullOrWhiteSpace(i))
-				.Select(Mapping.Parse)]
-				);
-		}
+		private static bool IsNotABlankLine(string s) => !string.IsNullOrWhiteSpace(s); 
+
+		public static Map Parse(string s, IFormatProvider? provider) => new([.. s
+			.Split(Environment.NewLine)
+			.TakeWhile(IsNotABlankLine)
+			.As<Mapping>()]);
+
+		public static Map Parse(string s) => Parse(s);
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Map result)
+			=> ISimpleParsable<Map>.TryParse(s, provider, out result);
 	}
 
-	private record Mapping(long DestinationStart, long SourceStart, long Length)
+	private record Mapping(long DestinationStart, long SourceStart, long Length) : IParsable<Mapping>
 	{
 		public bool TryMapToDestination(long source, out long destination)
 		{
@@ -121,12 +127,17 @@ public sealed partial class Day05 {
 			return false;
 		}
 
-		public static Mapping Parse(string s)
+
+		public static Mapping Parse(string s, IFormatProvider? provider)
 		{
 			const char SEP = ' ';
 			long[] values = [.. s.TrimmedSplit(SEP).AsLongs()];
 			return new(values[0], values[1], values[2]);
 		}
+
+		public static Mapping Parse(string s) => Parse(s, null);
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Mapping result)
+			=> ISimpleParsable<Mapping>.TryParse(s, provider, out result);
 	}
 }
 

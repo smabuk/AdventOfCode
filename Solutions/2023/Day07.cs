@@ -17,12 +17,12 @@ public sealed partial class Day07 {
 
 	private record SetOfHands(List<Hand> Hands) {
 		public int TotalWinnings => Hands
-			.OrderBy(h => h.SortStrength)
+			.Order()
 			.Select((hand, index) => (Hand: hand, Rank: index + 1))
 			.Sum(hand => hand.Hand.BidAmount * hand.Rank);
 	}
 
-	private record Hand(List<Card> Cards, int BidAmount) : IParsable<Hand> {
+	private record Hand(IReadOnlyList<Card> Cards, int BidAmount) : IParsable<Hand>, IComparable<Hand> {
 		public HandType Type {
 			get
 			{
@@ -31,9 +31,8 @@ public sealed partial class Day07 {
 					char label = cards
 						.Where(card => card.Label is not JOKER)
 						.GroupBy(c => c)
-						.OrderByDescending(c => c.Count())
-						.Select(card => card.Key.Label)
-						.FirstOrDefault(JOKER);
+						.MaxBy(c => c.Count())
+						?.FirstOrDefault().Label ?? JOKER;
 					cards = [.. cards.Select(card => card.Label == JOKER ? card with { Label = label} : card)];
 				}
 
@@ -52,8 +51,6 @@ public sealed partial class Day07 {
 			}
 		}
 
-		public string SortStrength => $"{(int)Type:D2}{Cards[0].Strength:D2}{Cards[1].Strength:D2}{Cards[2].Strength:D2}{Cards[3].Strength:D2}{Cards[4].Strength:D2}";
-
 		public static Hand Parse(string s, IFormatProvider? provider)
 		{
 			 const int LABEL_INDEX = 0;
@@ -68,6 +65,17 @@ public sealed partial class Day07 {
 
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Hand result)
 		=> ISimpleParsable<Hand>.TryParse(s, provider, out result);
+		public int CompareTo(Hand? other)
+		{
+			if (other is null) {
+				return this is null ? 0 : 1;
+			}
+
+			string thisSortStrength = $"{(int)Type:D2}{Cards[0].Strength:D2}{Cards[1].Strength:D2}{Cards[2].Strength:D2}{Cards[3].Strength:D2}{Cards[4].Strength:D2}";
+			string otherSortStrength = $"{(int)other.Type:D2}{other.Cards[0].Strength:D2}{other.Cards[1].Strength:D2}{other.Cards[2].Strength:D2}{other.Cards[3].Strength:D2}{other.Cards[4].Strength:D2}";
+
+			return thisSortStrength.CompareTo(otherSortStrength);
+		}
 
 		public enum HandType
 		{

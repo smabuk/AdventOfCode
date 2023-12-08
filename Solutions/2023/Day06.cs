@@ -47,15 +47,8 @@ public sealed partial class Day06
 		return productOfWins;
 	}
 
-	private static long Solution2_Using_BinaryChop(string[] input)
-	{
-		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
-		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
-
-		(long firstWin, long lastWin) = FindWinsByBinaryChop(raceTime, raceDistance);
-
-		return lastWin - firstWin + 1;
-	}
+	public static bool Win(long timeButtonHeld, long timeAllowed, long distanceToBeat) =>
+		((timeAllowed - timeButtonHeld) * timeButtonHeld) > distanceToBeat;
 
 	private static long Solution2_Using_BruteForce(string[] input)
 	{
@@ -80,19 +73,25 @@ public sealed partial class Day06
 		return lastWin - firstWin + 1;
 	}
 
-	public static bool Win(long timeButtonHeld, long timeAllowed, long distanceToBeat) =>
-		((timeAllowed - timeButtonHeld) * timeButtonHeld) > distanceToBeat;
+	private static long Solution2_Using_BinaryChop(string[] input)
+	{
+		long raceTime = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
+		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").AsLong();
 
-	private static (long Lower, long Upper) FindWinsByBinaryChop(long time, long distance, bool first = true)
+		long firstWin = FindWinsByBinaryChop(raceTime, raceDistance, true);
+		long lastWin  = FindWinsByBinaryChop(raceTime, raceDistance, false);
+
+		return lastWin - firstWin + 1;
+	}
+	
+	private static long FindWinsByBinaryChop(long time, long distance, bool first = true)
 	{
 		long min = 1;
 		long max = time - 1;
 		while (min <= max) {
 			long mid = (min + max) / 2;
 			if (Win(mid, time, distance) != Win(mid+1, time, distance)) {
-				return first
-					? (++mid, FindWinsByBinaryChop(time, distance, false).Upper)
-					: (int.MinValue, mid);
+				return first ? ++mid : mid;
 			} else if (Win(mid, time, distance) == first) {
 				max = mid - 1;
 			} else {

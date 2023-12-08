@@ -43,6 +43,7 @@ public sealed partial class DayXX {
 			return null!;
 		}
 
+		public static Instruction Parse(string s) => Parse(s, null);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
 			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
