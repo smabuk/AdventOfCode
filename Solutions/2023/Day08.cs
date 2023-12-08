@@ -7,49 +7,44 @@
 [Description("Haunted Wasteland")]
 public sealed partial class Day08 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	[Init]
+	public static void Init(string[] input, params object[]? args) => LoadInstructionsAndMap(input);
+	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
-	private static readonly char LEFT  = 'L';
+	private static string _instructions = "";
+	private static Dictionary<string, Node> _nodeMap = [];
 
-	private static int Solution1(string[] input) {
-		string instructions = input[0];
-
-		Dictionary<string, Node> nodeMap = input[2..]
-			.As<Node>()
-			.ToDictionary(node => node.Name, node => node);
-
-		int steps = 0;
-		Node currentNode = nodeMap["AAA"];
-		do {
-			char instruction = instructions[steps++ % instructions.Length];
-			string nextNode = instruction == LEFT ? nodeMap[currentNode.Name].LeftNode : nodeMap[currentNode.Name].RightNode;
-			currentNode = nodeMap[nextNode];
-		} while (currentNode.Name != "ZZZ");
-
-		return steps;
+	private static void LoadInstructionsAndMap(string[] input)
+	{
+		_instructions = input[0];
+		_nodeMap      = input[2..].As<Node>().ToDictionary(node => node.Name, node => node);
 	}
 
-	private static long Solution2(string[] input) {
-		string instructions = input[0];
+	private static long Solution1() => CalculateNumberOfSteps("AAA", "ZZZ");
+	private static long Solution2() => CalculateNumberOfSteps("A", "Z");
 
-		Dictionary<string, Node> nodeMap = input[2..]
-			.As<Node>()
-			.ToDictionary(node => node.Name, node => node);
+	static long CalculateNumberOfSteps(string start, string end)
+	{
+		const char LEFT = 'L';
+
+		Node[] currentNodes = [.. _nodeMap.Values.Where(kvp => kvp.Name.EndsWith(start))];
+		long[] cycleLengths = new long[currentNodes.Length];
 
 		int steps = 0;
-		Node[] currentNodes = [.. nodeMap.Values.Where(kvp => kvp.Name.EndsWith('A'))];
-		long[] cycleLengths = [.. Enumerable.Repeat(int.MinValue, currentNodes.Length)];
 		do {
-			char instruction = instructions[steps++ % instructions.Length];
+			char instruction = _instructions[steps++ % _instructions.Length];
 			for (int i = 0; i < currentNodes.Length; i++) {
-				string nextNode = instruction == LEFT ? nodeMap[currentNodes[i].Name].LeftNode : nodeMap[currentNodes[i].Name].RightNode;
-				currentNodes[i] = nodeMap[nextNode];
-				if (cycleLengths[i] < 0 && currentNodes[i].Name.EndsWith('Z')) {
+				if (cycleLengths[i] > 0) { continue; }
+
+				string nextNode = instruction == LEFT ? _nodeMap[currentNodes[i].Name].LeftNode : _nodeMap[currentNodes[i].Name].RightNode;
+				currentNodes[i] = _nodeMap[nextNode];
+
+				if (currentNodes[i].Name.EndsWith(end)) {
 					cycleLengths[i] = steps;
 				}
 			}
-		} while (cycleLengths.Any(cycle => cycle < 0));
+		} while (cycleLengths.Any(cycle => cycle == 0));
 
 		return cycleLengths.LowestCommonMultiple();
 	}
