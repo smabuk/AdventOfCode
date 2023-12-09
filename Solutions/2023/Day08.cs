@@ -51,7 +51,6 @@ public sealed partial class Day08 {
 	private sealed record Node(string Name, string LeftNode, string RightNode) : IParsable<Node> {
 		public static Node Parse(string s, IFormatProvider? provider) => new(s[0..3], s[7..10], s[12..15]);
 
-		public static Node Parse(string s) => Parse(s, null);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Node result)
 			=> ISimpleParsable<Node>.TryParse(s, provider, out result);
 	}

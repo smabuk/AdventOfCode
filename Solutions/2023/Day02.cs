@@ -24,7 +24,7 @@ public sealed partial class Day02 {
 		_games = parsingType switch
 		{
 			"split" => input.As<Game>(),
-			"regex" => input.Select(Game.ParseUsingRegex),
+			"regex" => input.As<Game>(provider: ParsingMethod.Regex),
 			_ => throw new ArgumentOutOfRangeException(nameof(args), $"That method of parsing [{parsingType}] is not supported."),
 		};
 	}
@@ -48,6 +48,10 @@ public sealed partial class Day02 {
 
 		public static Game Parse(string s, IFormatProvider? provider)
 		{
+			if (provider is ParsingMethod method && method.Type == ParsingMethod.ParsingType.Regex ) {
+				return ParseUsingRegex(s);
+			}
+
 			string[] SEPS = ["Game", ":", ";"];
 			return s.TrimmedSplit(SEPS)
 				is [string id, .. string[] cubesSets] ? new(id.As<int>(), [.. cubesSets.As<CubesSet>()]) : throw new InvalidCastException(nameof(s));
@@ -56,7 +60,7 @@ public sealed partial class Day02 {
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Game result)
 			=> ISimpleParsable<Game>.TryParse(s, provider, out result);
 
-		public static Game ParseUsingRegex(string s)
+		private static Game ParseUsingRegex(string s)
 		{
 			Match match = GameRegex().Match(s);
 
@@ -64,7 +68,7 @@ public sealed partial class Day02 {
 			IEnumerable<CubesSet> cubesSets = SetsRegex()
 				.Matches(match.Groups["sets"].Value)
 				.Select(m => m.Value)
-				.Select(CubesSet.ParseUsingRegex);
+				.As<CubesSet>(provider: ParsingMethod.Regex);
 
 			return new(id, [.. cubesSets]);
 		}
@@ -88,6 +92,10 @@ public sealed partial class Day02 {
 
 		public static CubesSet Parse(string s, IFormatProvider? provider)
 		{
+			if (provider is ParsingMethod method && method.Type == ParsingMethod.ParsingType.Regex) {
+				return ParseUsingRegex(s);
+			}
+
 			const char COMMA = ',';
 			const char SPACE = ' ';
 			char[] SEPS = [COMMA, SPACE];
@@ -105,7 +113,7 @@ public sealed partial class Day02 {
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out CubesSet result)
 			=> ISimpleParsable<CubesSet>.TryParse(s, provider, out result);
 
-		public static CubesSet ParseUsingRegex(string s)
+		private static CubesSet ParseUsingRegex(string s)
 			=> new(	RedRegex()  .Match(s).As<int>("count"),
 					GreenRegex().Match(s).As<int>("count"),
 					BlueRegex() .Match(s).As<int>("count"));
@@ -117,4 +125,19 @@ public sealed partial class Day02 {
 		[GeneratedRegex(@"(?<count>\d+) (?<colour>blue)")]
 		private static partial Regex BlueRegex();
 	}
+
+	public sealed class ParsingMethod(ParsingMethod.ParsingType type) : IFormatProvider
+	{
+		public ParsingType Type { get; init; } = type;
+		public static ParsingMethod Split => new(ParsingType.Split);
+		public static ParsingMethod Regex => new(ParsingType.Regex);
+		public object? GetFormat(Type? formatType) => formatType == typeof(ParsingMethod) ? this : (object?)null;
+
+		public enum ParsingType
+		{
+			Split,
+			Regex
+		}
+	}
+
 }
