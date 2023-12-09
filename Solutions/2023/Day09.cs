@@ -1,5 +1,5 @@
-﻿using History    = System.Collections.Generic.IEnumerable<int>;
-using Sequencies = System.Collections.Generic.IEnumerable<System.Collections.Generic.IEnumerable<int>>;
+﻿using Sequence   = System.Collections.Generic.List<int>;
+using Sequencies = System.Collections.Generic.List<System.Collections.Generic.List<int>>;
 
 namespace AdventOfCode.Solutions._2023;
 
@@ -7,10 +7,6 @@ namespace AdventOfCode.Solutions._2023;
 /// Day 09: Mirage Maintenance
 /// https://adventofcode.com/2023/day/09
 /// </summary>
-/// <remarks>
-/// Using lambdas to practice.
-/// Don't like how long the lines of code get, but it's elegant.
-/// </remarks>
 [Description("Mirage Maintenance")]
 public sealed partial class Day09 {
 
@@ -22,25 +18,23 @@ public sealed partial class Day09 {
 	private static Sequencies _histories = [];
 
 	private static void LoadHistories(string[] input)
-		=> _histories = [.. input.Select(i => i.As<int>(' '))];
+		=> _histories = [.. input.Select(i => i.As<int>(' ').ToList())];
 
 	private static int Solution1()
-		=> _histories.Sum(history => Extrapolate(history,
-				(Sequencies x) => x.Select(x => x.Last()).Aggregate((a, b) => a + b)
-			));
+		=> _histories.Sum(history => history.Extrapolate().Select(x => x.Last()).Aggregate((a, b) => a + b));
 
 	private static int Solution2()
-		=> _histories.Sum(history=> Extrapolate(history,
-				(Sequencies x) => x.Select(x => x.First()).Reverse().Aggregate((a, b) => b - a)
-			));
+		=> _histories.Sum(history => history.Extrapolate().Select(x => x.First()).Reverse().Aggregate((a, b) => b - a));
+}
 
-	private static int Extrapolate(History history, Func<Sequencies, int> extrapolate)
+file static class Day09Helpers
+{
+	public static Sequencies Extrapolate(this Sequence history)
 	{
-		List<List<int>> sequences = [[.. history]];
-
-		List<int> differences = [];
+		Sequencies sequences = [[.. history]];
+		Sequence differences = [];
 		do {
-			List<int> sequence = sequences.Last();
+			Sequence sequence = sequences.Last();
 			differences = [];
 			for (int i = 0; i < sequence.Count - 1; i++) {
 				differences.Add(sequence[i + 1] - sequence[i]);
@@ -48,6 +42,6 @@ public sealed partial class Day09 {
 			sequences.Add(differences);
 		} while (differences.Any(x => x != 0));
 
-		return extrapolate(sequences);
+		return sequences;
 	}
 }
