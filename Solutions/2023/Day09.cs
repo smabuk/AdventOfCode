@@ -35,8 +35,8 @@ public static class Day09Helpers
 		do {
 			differences = [.. differences.Zip(differences.Skip(1)).Select(x => x.Second - x.First)];;
 			yield return differences;
-		} while (NotAllZeroes(differences));
+		} while (differences.NotAllZeroes());
 	}
 	
-	private static readonly Predicate<IEnumerable<int>> NotAllZeroes = (IEnumerable<int> sequence) => (!sequence.All(x => x == 0));
+	private static bool NotAllZeroes(this IEnumerable<int> numbers) => (!numbers.All(x => x == 0));
 }
