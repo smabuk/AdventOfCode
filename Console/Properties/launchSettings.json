@@ -1,13 +1,26 @@
 {
   "profiles": {
-    "AdventOfCode.Console": {
+	"AdventOfCode.Console": {
+		"commandName": "Project",
+		"workingDirectory": "..\\Data",
+		"environmentVariables": {
+			"AoCData": ""
+		}
+	},
+	"Test visualisation": {
+		"commandName": "Project",
+		"commandLineArgs": "2018 15 visualise",
+		"workingDirectory": "..\\Data",
+		"environmentVariables": {
+			"AoCData": ""
+		}
+	},
+    "Exception 2015 07": {
       "commandName": "Project",
-      "workingDirectory": "..\\Data"
-    },
-    "Test visualisation": {
-      "commandName": "Project",
-      "commandLineArgs": "2018 15 visualise",
-      "workingDirectory": "..\\Data"
+      "commandLineArgs": "2015 07 /debug",
+      "environmentVariables": {
+        "AoCData": "..\\..\\..\\..\\Data"
+      }
     }
   }
 }

@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>AdventOfCode.Solutions._2023</RootNamespace>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<PublishAot>True</PublishAot>
 	</PropertyGroup>
 
 	<ItemGroup>

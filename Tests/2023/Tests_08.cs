@@ -3,14 +3,6 @@
 public class Tests_08_Haunted_Wasteland {
 	const int DAY = 8;
 
-	private const string TEST_DATA = """
-		LLR
-
-		AAA = (BBB, BBB)
-		BBB = (AAA, ZZZ)
-		ZZZ = (ZZZ, ZZZ)
-		""";
-
 	[Theory]
 	[InlineData("""
 		RL

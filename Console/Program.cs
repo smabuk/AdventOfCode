@@ -1,13 +1,14 @@
 ﻿Console.OutputEncoding = System.Text.Encoding.UTF8;
+
 Console.ResetColor();
 
-(DateOnly date, bool showVisuals, object[]? solutionArgs) = ParseCommandLine(args);
+(DateOnly date, bool showVisuals, bool isDebug, object[]? solutionArgs) = ParseCommandLine(args);
 
 System.Diagnostics.Stopwatch totalTimer = new();
 totalTimer.Start();
 
 if (date.Month == 12 && date.Day <= 25) {
-	GetInputDataAndSolve(date.Year, date.Day, null, null, showVisuals, solutionArgs);
+	GetInputDataAndSolve(date.Year, date.Day, null, null, showVisuals, isDebug, solutionArgs);
 } else {
 	DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 	//Console.WriteLine($"Year dd Description                              Init        Part 1                       Part 2                ");
@@ -22,16 +23,21 @@ if (date.Month == 12 && date.Day <= 25) {
 totalTimer.Stop();
 Console.Write($" Total Elapsed time: {totalTimer.Elapsed}");
 
-static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, bool showVisuals = false, params object[]? args)
+static void GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, bool showVisuals = false, bool isDebug = false, params object[]? args)
 {
 	string filename = Path.GetFullPath(Path.Combine($"{year}_{day:D2}.txt"));
 
 	if (File.Exists(filename)) {
-		input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+		input = File.ReadAllText(filename).ReplaceLineEndings().Split(Environment.NewLine);
 	} else {
-		filename = Path.GetFullPath(Path.Combine($"../Data/{year}_{day:D2}.txt"));
+		filename = Path.GetFullPath(Path.Combine($"{Environment.GetEnvironmentVariable("AocData")}", $"{year}_{day:D2}.txt"));
 		if (File.Exists(filename)) {
-			input = File.ReadAllText(filename).Replace("\r", "").Split("\n");
+			input = File.ReadAllText(filename).ReplaceLineEndings().Split(Environment.NewLine);
+		} else {
+			filename = Path.GetFullPath(Path.Combine("..", "Data", $"{year}_{day:D2}.txt"));
+			if (File.Exists(filename)) {
+				input = File.ReadAllText(filename).ReplaceLineEndings().Split(Environment.NewLine);
+			}
 		}
 	}
 
@@ -45,10 +51,11 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		ConsoleColor answerColour;
 		timer.Start();
 		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
-		foreach (SolutionPhase result in SolveDay(year, day, input, visualiser, args)) {
-			if (result.Phase == "Init") {
+		IEnumerable<SolutionPhase> solveResults = SolveDay(year, day, input, visualiser, args);
+		foreach (SolutionPhase result in solveResults) {
+			if (result.Phase == SolutionPhase.PHASE_INIT) {
 				OutputTimings(result.Elapsed);
-			} else if (result.Phase == "Part1") {
+			} else if (result.Phase == SolutionPhase.PHASE_PART1) {
 				answerColour = ConsoleColor.Green;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
@@ -57,7 +64,7 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 					Console.ForegroundColor = ConsoleColor.Red;
 				}
 				Console.Write($" {result.Answer,-16}");
-			} else if (result.Phase == "Part2") {
+			} else if (result.Phase == SolutionPhase.PHASE_PART2) {
 				answerColour = ConsoleColor.Yellow;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
@@ -66,12 +73,30 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 					Console.ForegroundColor = ConsoleColor.Red;
 				}
 				Console.Write($" {result.Answer,-16}");
+			} else if (result.Phase == SolutionPhase.EXCEPTION_PART1) {
+				answerColour = ConsoleColor.Green;
+				OutputTimings(result.Elapsed);
+				Console.ForegroundColor = answerColour;
+				Console.Write($" Pt1:");
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.Write($" {SolutionPhase.EXCEPTION_MESSAGE,-16}");
+			} else if (result.Phase == SolutionPhase.EXCEPTION_PART2) {
+				answerColour = ConsoleColor.Yellow;
+				OutputTimings(result.Elapsed);
+				Console.ForegroundColor = answerColour;
+				Console.Write($" Pt2:");
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.Write($" {SolutionPhase.EXCEPTION_MESSAGE,-16}");
 			}
 			Console.ResetColor();
 		};
 
 		Console.ResetColor();
 		Console.WriteLine();
+
+		if (isDebug) {
+			OutputExceptions(solveResults);
+		}
 	} else {
 		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
@@ -87,6 +112,18 @@ static void GetInputDataAndSolve(int year, int day, string? title = null, string
 		}
 
 		Console.WriteLine(string.Join(Environment.NewLine, lines));
+	}
+
+
+	static void OutputExceptions(IEnumerable<SolutionPhase> solveResults)
+	{
+		foreach (SolutionPhase result in solveResults.Where(r => r.Result is SolutionResultType.EXCEPTION)) {
+			Console.WriteLine();
+			AnsiConsole.WriteException(result.Exception, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes |
+					ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks);
+			Console.WriteLine();
+			Console.ResetColor();
+		}
 	}
 
 	static void OutputTimings(TimeSpan elapsed)
@@ -113,13 +150,15 @@ static void ShowHelp()
 	Console.WriteLine();
 	Console.WriteLine($"   YYYY         Defaults to the latest year of puzzles.");
 	Console.WriteLine($"     dd         The puzzle day to solve (e.g. 5).");
+	Console.WriteLine($"     /D         Show debug information (e.g. details of exceptions.");
 	Console.WriteLine($"     /V         Uses the visualiser if one exists.");
 }
 
-static (DateOnly date, bool showVisuals, object[]? solutionArgs) ParseCommandLine(string[] args)
+static (DateOnly date, bool showVisuals, bool isDebug, object[]? solutionArgs) ParseCommandLine(string[] args)
 {
 	DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 	bool showVisuals = false;
+	bool isDebug = false;
 	object[]? solutionArgs = [];
 	for (int i = 0; i < args.Length; i++) {
 		if (args[i] is "--help" or "/?" or "-h") {
@@ -134,6 +173,8 @@ static (DateOnly date, bool showVisuals, object[]? solutionArgs) ParseCommandLin
 				solutionArgs[^1] = args[i] == "true";
 			} else if (args[i].ToLowerInvariant() is "/v" or "/visual" or "-v" or "--visual") {
 				showVisuals = true;
+			} else if (args[i].ToLowerInvariant() is "/d" or "/debug" or "-d" or "--debug") {
+				isDebug = true;
 			} else {
 				solutionArgs = new object[solutionArgs.Length + 1];
 				solutionArgs[^1] = args[i];
@@ -150,5 +191,5 @@ static (DateOnly date, bool showVisuals, object[]? solutionArgs) ParseCommandLin
 			date = new(year, 1, 1);
 		}
 	}
-	return (date, showVisuals, solutionArgs);
+	return (date, showVisuals, isDebug, solutionArgs);
 }

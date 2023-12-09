@@ -4,8 +4,9 @@ using System.Reflection;
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
-	private const string NO_SOLUTION = "* No Solution *";
-	private const string NO_INPUT = "* NO INPUT DATA *";
+	private const string EXCEPTION     = "** Exception **";
+	private const string NO_SOLUTION   = "* No Solution *";
+	private const string NO_INPUT      = "* NO INPUT DATA *";
 	private const string NO_PARAMETERS = "* INVALID NO OF PARAMETERS *";
 
 	public static string? GetProblemDescription(int year, int day) {
@@ -75,32 +76,38 @@ static public class SolutionRouter {
 			.SingleOrDefault();
 
 		startTime = Stopwatch.GetTimestamp();
-		string answer1 = NO_SOLUTION;
+		InvokeResult invokeResult1 = new(NO_SOLUTION);
 		if (method1 is not null) {
-			answer1 = InvokeSolutionMethod(input, args, method1, visualise);
+			invokeResult1 = InvokeSolutionMethod(input, args, method1, visualise);
 		}
 		stopTime = Stopwatch.GetTimestamp();
 
-		yield return answer1.Contains("written") switch {
-			false => new SolutionPhase(SolutionPhase.PHASE_PART1) with { Answer = answer1, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
-			true => SolutionPhase.NoSolutionPart1,
-		};
+		if (invokeResult1.Answer.Contains("written")) {
+			yield return SolutionPhase.NoSolutionPart1;
+		} else if (invokeResult1.Exception is not null) {
+			yield return SolutionPhase.ExceptionPart1 with { Answer = invokeResult1.Answer, Exception = invokeResult1.Exception, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		} else {
+			yield return new SolutionPhase(SolutionPhase.PHASE_PART1) with { Answer = invokeResult1.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		}
 
 		MethodInfo? method2 = methods
 			.Where(m => m.Name == $"Part2")
 			.SingleOrDefault();
 
-		string answer2 = NO_SOLUTION;
 		startTime = Stopwatch.GetTimestamp();
+		InvokeResult invokeResult2 = new(NO_SOLUTION);
 		if (method2 is not null) {
-			answer2 = InvokeSolutionMethod(input, args, method2, visualise);
+			invokeResult2 = InvokeSolutionMethod(input, args, method2, visualise);
 		}
 		stopTime = Stopwatch.GetTimestamp();
 
-		yield return answer2.Contains("written") switch {
-			false => new SolutionPhase(SolutionPhase.PHASE_PART2) with { Answer = answer2, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) },
-			true => SolutionPhase.NoSolutionPart2,
-		};
+		if (invokeResult2.Answer.Contains("written")) {
+			yield return SolutionPhase.NoSolutionPart2;
+		} else if (invokeResult2.Exception is not null) {
+			yield return SolutionPhase.ExceptionPart2 with { Answer = invokeResult2.Answer, Exception = invokeResult2.Exception, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		} else {
+			yield return new SolutionPhase(SolutionPhase.PHASE_PART2) with { Answer = invokeResult2.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		}
 
 	}
 
@@ -133,7 +140,7 @@ static public class SolutionRouter {
 
 		return method is null
 			? NO_SOLUTION
-			: InvokeSolutionMethod(input, args, method, visualise);
+			: InvokeSolutionMethod(input, args, method, visualise).Answer;
 	}
 
 	private static TypeInfo? TryGetDayTypeInfo(int year, int day) {
@@ -158,7 +165,7 @@ static public class SolutionRouter {
 		}
 	}
 
-	private static string InvokeSolutionMethod(object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
+	private static InvokeResult InvokeSolutionMethod(object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
 		input = (input as string[]).StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
 		int noOfParameters = parameters.Length;
@@ -172,15 +179,23 @@ static public class SolutionRouter {
 		bool hasVisualiser = parameters.Where(p => p.Name == "visualise").Any();
 		bool useVisualiser = visualise is not null;
 
-		return (noOfParameters, hasVisualiser, useVisualiser) switch {
-			( 0, _    , _    ) => NO_PARAMETERS,
-			( 1, false, _    ) => method.Invoke(0, new object[] { inputObject })                   ?.ToString() ?? "",
-			(>1, false, _    ) => method.Invoke(0, new object[] { inputObject, args! })            ?.ToString() ?? "",
-			( 2, true , false) => method.Invoke(0, new object[] { inputObject, null! })            ?.ToString() ?? "",
-			( 2, true , true ) => method.Invoke(0, new object[] { inputObject, visualise! })       ?.ToString() ?? "",
-			(>2, true , false) => method.Invoke(0, new object[] { inputObject, null!, args! })     ?.ToString() ?? "",
-			(>2, true , true ) => method.Invoke(0, new object[] { inputObject, visualise!, args! })?.ToString() ?? "",
-			_                  => method.Invoke(0, new object[] { inputObject, args! })            ?.ToString() ?? "",
-		};
+		try {
+			return (noOfParameters, hasVisualiser, useVisualiser) switch
+			{
+				(0, _, _)           => new(NO_PARAMETERS),
+				(1, false, _)       => new(method.Invoke(0, new object[] { inputObject })?.ToString() ?? ""),
+				( > 1, false, _)    => new(method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""),
+				(2, true, false)    => new(method.Invoke(0, new object[] { inputObject, null! })?.ToString() ?? ""),
+				(2, true, true)     => new(method.Invoke(0, new object[] { inputObject, visualise! })?.ToString() ?? ""),
+				( > 2, true, false) => new(method.Invoke(0, new object[] { inputObject, null!, args! })?.ToString() ?? ""),
+				( > 2, true, true)  => new(method.Invoke(0, new object[] { inputObject, visualise!, args! })?.ToString() ?? ""),
+				_                   => new(method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""),
+			};
+		}
+		catch (Exception ex) {
+			return new(EXCEPTION, ex);
+		}
 	}
+
+	private record InvokeResult(string Answer, Exception? Exception = null);
 }

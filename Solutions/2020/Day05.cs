@@ -31,7 +31,7 @@ public class Day05 {
 			map.Add(uid);
 		}
 		int myUid = 0;
-		for (int seat = map.LowestValue(); seat < map.HighestValue(); seat++) {
+		for (int seat = map.Min(); seat < map.Max(); seat++) {
 			if (map.Contains(seat)) {
 				continue;
 			}

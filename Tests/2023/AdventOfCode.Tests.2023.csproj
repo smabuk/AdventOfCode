@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>AdventOfCode.Tests._2018</RootNamespace>
 		<IsPackable>false</IsPackable>
+		<PublishAot>True</PublishAot>
 	</PropertyGroup>
 
 	<ItemGroup>
