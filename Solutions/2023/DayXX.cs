@@ -8,7 +8,7 @@
 public sealed partial class DayXX {
 
 	[Init]
-	public static    void Init(string[] input, params object[]? args) => LoadInstructions(input);
+	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
 
@@ -19,26 +19,22 @@ public sealed partial class DayXX {
 	}
 
 	private static string Solution1(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
 		List<Instruction> instructions = [.. input.As<Instruction>()];
 		return "** Solution not written yet **";
 	}
 
 	private static string Solution2(string[] input) {
-		//string inputLine = input[0];
-		//List<string> inputs = input.ToList();
 		List<Instruction> instructions = [.. input.As<Instruction>()];
 		return "** Solution not written yet **";
 	}
 
-	private record Instruction(string Name, int Value) : IParsable<Instruction> {
+	private sealed record Instruction(string Name, int Value) : IParsable<Instruction> {
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
 			//MatchCollection match = InputRegEx().Matches(input);
 			Match match = InputRegEx().Match(s);
 			if (match.Success) {
-				return new(match.Groups["opts"].Value, int.Parse(match.Groups["number"].Value));
+				return new(match.Groups["opts"].Value, match.As<int>("number"));
 			}
 			return null!;
 		}

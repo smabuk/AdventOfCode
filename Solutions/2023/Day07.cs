@@ -41,11 +41,11 @@ public sealed partial class Day07 {
 				return counts switch
 				{
 					[5]          => HandType.FiveOfAKind,
-					[4, 1]       => HandType.FourOfAKind,
+					[4, _]       => HandType.FourOfAKind,
 					[3, 2]       => HandType.FullHouse,
-					[3, 1, 1]    => HandType.ThreeOfAKind,
-					[2, 2, 1]    => HandType.TwoPair,
-					[2, 1, 1, 1] => HandType.OnePair,
+					[3, _, _]    => HandType.ThreeOfAKind,
+					[2, 2, _]    => HandType.TwoPair,
+					[2, _, _, _] => HandType.OnePair,
 					_            => HandType.HighCard,
 				};
 			}
@@ -64,7 +64,8 @@ public sealed partial class Day07 {
 		}
 
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Hand result)
-		=> ISimpleParsable<Hand>.TryParse(s, provider, out result);
+			=> ISimpleParsable<Hand>.TryParse(s, provider, out result);
+
 		public int CompareTo(Hand? other)
 		{
 			if (other is null) {
