@@ -7,44 +7,44 @@
 [Description("Pipe Maze")]
 public sealed partial class Day10 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+		=> Solution1(input, visualise).ToString();
+	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+	{
+		string method = GetArgument(args, argumentNumber: 1, defaultResult: "fill").ToLowerInvariant();
+		SolutionMethod solutionMethod = method switch
+		{
+			"fill"    => SolutionMethod.Fill,
+			"polygon" => SolutionMethod.Polygon,
+			_ => throw new ArgumentOutOfRangeException(nameof(args), $"That solution method [{method}] is not supported."),
+		};
+		return Solution2(input, solutionMethod, visualise).ToString();
+	}
 
-	private const char STRAIGHT_LEFT_RIGHT = '-';
-	private const char STRAIGHT_UP_DOWN    = '|';
-	private const char BEND_TOP_LEFT       = 'F';
-	private const char BEND_TOP_RIGHT      = '7';
-	private const char BEND_BOTTOM_RIGHT   = 'J';
-	private const char BEND_BOTTOM_LEFT    = 'L';
-	private const char GROUND              = '.';
-	private const char EMPTY               = ' ';
-	private const char STARTING_POSITION   = 'S';
-	private const char INSIDE              = 'I';
-	private const char OUTSIDE             = 'O';
-	private static readonly char[] PIPES   = [STRAIGHT_LEFT_RIGHT, STRAIGHT_UP_DOWN, BEND_TOP_LEFT, BEND_TOP_RIGHT, BEND_BOTTOM_RIGHT, BEND_BOTTOM_LEFT];
+	public const char STRAIGHT_LEFT_RIGHT = '-';
+	public const char STRAIGHT_UP_DOWN    = '|';
+	public const char BEND_TOP_LEFT       = 'F';
+	public const char BEND_TOP_RIGHT      = '7';
+	public const char BEND_BOTTOM_LEFT    = 'L';
+	public const char BEND_BOTTOM_RIGHT   = 'J';
+	public const char GROUND              = '.';
+	public const char EMPTY               = ' ';
+	public const char STARTING_POSITION   = 'S';
+	public const char INSIDE              = 'I';
+	public const char OUTSIDE             = 'O';
 
-	private static int Solution1(string[] input) {
+	private static readonly char[] STRAIGHTS   = [STRAIGHT_LEFT_RIGHT, STRAIGHT_UP_DOWN];
+	private static readonly char[] BENDS       = [BEND_TOP_LEFT, BEND_TOP_RIGHT, BEND_BOTTOM_RIGHT, BEND_BOTTOM_LEFT];
+	private static readonly char[] PIPES       = [.. STRAIGHTS, ..BENDS];
+
+	private static int Solution1(string[] input, Action<string[], bool>? visualise = null)
+	{
 		char[,] pipe_maze = input.To2dArray();
-		Point startingPosition = pipe_maze
-			.Walk2dArrayWithValues()
-			.Where(cell => cell.Value == STARTING_POSITION)
-			.Single()
-			.Index;
+		SendPipeMaze(pipe_maze, "Pipe Maze:", visualise);
 
-		Direction startingDirection = Direction.Left;
-		List<Cell<char>> adjacentCells = [.. pipe_maze.GetAdjacentCells(startingPosition)];
-		foreach (Cell<char> cell in adjacentCells) {
-			if (cell.Value is STRAIGHT_LEFT_RIGHT or BEND_BOTTOM_LEFT or BEND_TOP_LEFT && startingPosition.X > cell.X) {
-				startingDirection = Direction.Left;
-				break;
-			}
-			if (cell.Value is STRAIGHT_LEFT_RIGHT or BEND_BOTTOM_RIGHT or BEND_TOP_RIGHT && startingPosition.X < cell.X) {
-				startingDirection = Direction.Right;
-				break;
-			}
-		}
-
+		(Point startingPosition, Direction startingDirection) = FindAnimal(pipe_maze);
 		Animal animal = new(startingPosition, startingDirection);
+
 		int steps = 0;
 		do {
 			animal = animal.Move(pipe_maze);
@@ -54,8 +54,65 @@ public sealed partial class Day10 {
 		return steps / 2;
 	}
 
-	private static int Solution2(string[] input) {
+	private static int Solution2(string[] input, SolutionMethod solutionMethod, Action<string[], bool>? visualise = null) {
 		char[,] pipe_maze = input.To2dArray();
+		SendPipeMaze(pipe_maze, "Pipe Maze:", visualise);
+
+		Animal animal = FindAnimal(pipe_maze);
+
+		Point startingPosition = animal.Position;
+		HashSet<Point> loopRoute = [];
+		do {
+			animal = animal.Move(pipe_maze);
+			_ = loopRoute.Add(animal.Position);
+		} while (animal.Position != startingPosition);
+
+		IEnumerable<Cell<char>> mazeWithoutLoop = pipe_maze
+			.Walk2dArrayWithValues()
+			.Where(cell => !loopRoute.Contains(cell.Index));
+
+		foreach (Cell<char> cell in mazeWithoutLoop) {
+			pipe_maze[cell.X, cell.Y] = INSIDE;
+		}
+
+		// This is what finally cracked it for me
+		// I can get the methods to work when I make more room
+		char[,] biggerPipeMaze = pipe_maze.CreateABiggerPipeMaze();
+		SendPipeMaze(biggerPipeMaze, "Bigger Maze:", visualise);
+
+		if (solutionMethod is SolutionMethod.Fill) {
+			biggerPipeMaze.FloodFillPipeMaze(new(0, 0), [EMPTY, GROUND, INSIDE], OUTSIDE);
+
+			SendPipeMaze(biggerPipeMaze.MakeSmallerMaze(), "Filled Maze:", visualise);
+			return biggerPipeMaze
+				.Walk2dArrayWithValues()
+				.Where(cell => cell.Value == INSIDE)
+				.Count();
+		}
+
+		if (solutionMethod is SolutionMethod.Polygon) {
+			Dictionary<int, (int Min, int Max)> minMaxPerRow = [];
+			for (int y = 0; y < pipe_maze.NoOfRows(); y++) {
+				List<Point> pipes = [.. loopRoute.Where(pipe => pipe.Y == y)];
+				if (pipes.Count == 0) {
+					minMaxPerRow[y] = (int.MaxValue, int.MinValue);
+				} else {
+					minMaxPerRow[y] = (pipes.Min(pipe => pipe.X), pipes.Max(pipe => pipe.X));
+				}
+			}
+
+			return mazeWithoutLoop
+				.Where(cell => cell.Value == INSIDE
+							&& cell.X > minMaxPerRow[cell.Y].Min && cell.X < minMaxPerRow[cell.Y].Max
+							&& loopRoute.IsPointInPolygon4(cell.Index))
+				.Count();
+		}
+
+		throw new ApplicationException("This should never be thrown!");
+	}
+
+	private static Animal FindAnimal(char[,] pipe_maze)
+	{
 		Point startingPosition = pipe_maze
 			.Walk2dArrayWithValues()
 			.Where(cell => cell.Value == STARTING_POSITION)
@@ -75,33 +132,15 @@ public sealed partial class Day10 {
 			}
 		}
 
-		List<Point> loopRoute = [];
+		return new(startingPosition, startingDirection);
+	}
 
-		Animal animal = new(startingPosition, startingDirection);
-		do {
-			animal = animal.Move(pipe_maze);
-			loopRoute.Add(animal.Position);
-		} while (animal.Position != startingPosition);
-
-		List<Point> obstacles = pipe_maze
-			.Walk2dArrayWithValues()
-			.Where(cell => PIPES.Contains(cell.Value))
-			.Select(cell => cell.Index)
-			.Except(loopRoute)
-			.ToList();
-
-		foreach (Cell<char>? cell in pipe_maze.Walk2dArrayWithValues()) {
-			if (loopRoute.Contains(cell.Index)) {
-			} else {
-				pipe_maze[cell.X, cell.Y] = INSIDE;
-			}
+	private static void SendPipeMaze(char[,] pipeMaze, string title, Action<string[], bool>? visualise)
+	{
+		if (visualise is not null) {
+			string[] output = ["", title, .. pipeMaze.PrintAsStringArray(0)];
+			_ = Task.Run(() => visualise?.Invoke(output, false));
 		}
-
-		char[,] biggerPipeMaze = MakeABiggerMaze(pipe_maze);
-		FloodFillPipeMaze(biggerPipeMaze, new(0, 0), [EMPTY, GROUND, INSIDE], OUTSIDE);
-
-		List<Cell<char>> innerTiles = [.. biggerPipeMaze.Walk2dArrayWithValues().Where(cell => cell.Value == INSIDE)];
-		return innerTiles.Count;
 	}
 
 	private record Animal(Point Position, Direction Facing)
@@ -110,38 +149,38 @@ public sealed partial class Day10 {
 		{
 			Point position = Facing switch
 			{
-				Direction.Left => Position.Left(),
+				Direction.Left  => Position.Left(),
 				Direction.Right => Position.Right(),
-				Direction.Up => Position.Up(),
-				Direction.Down => Position.Down(),
+				Direction.Up    => Position.Up(),
+				Direction.Down  => Position.Down(),
 				_ => throw new NotImplementedException(),
 			};
 
-			char track = pipe_maze[position.X, position.Y];
-			Direction facing = track switch
+			char pipe = pipe_maze[position.X, position.Y];
+			Direction facing = pipe switch
 			{
 				BEND_TOP_LEFT => Facing switch
 				{
-					Direction.Left => Direction.Down,
-					Direction.Up => Direction.Right,
+					Direction.Left  => Direction.Down,
+					Direction.Up    => Direction.Right,
 					_ => throw new NotImplementedException(),
 				},
 				BEND_TOP_RIGHT => Facing switch
 				{
 					Direction.Right => Direction.Down,
-					Direction.Up => Direction.Left,
+					Direction.Up    => Direction.Left,
 					_ => throw new NotImplementedException(),
 				},
 				BEND_BOTTOM_RIGHT => Facing switch
 				{
 					Direction.Right => Direction.Up,
-					Direction.Down => Direction.Left,
+					Direction.Down  => Direction.Left,
 					_ => throw new NotImplementedException(),
 				},
 				BEND_BOTTOM_LEFT => Facing switch
 				{
-					Direction.Left => Direction.Up,
-					Direction.Down => Direction.Right,
+					Direction.Left  => Direction.Up,
+					Direction.Down  => Direction.Right,
 					_ => throw new NotImplementedException(),
 				},
 				_ => Facing,
@@ -151,7 +190,60 @@ public sealed partial class Day10 {
 		}
 	}
 
-	private static void FloodFillPipeMaze(char[,] pipe_maze, Point start, char[] space, char outSide)
+	private enum Direction
+	{
+		Left,
+		Right,
+		Up,
+		Down
+	}
+
+	private enum SolutionMethod {
+		Fill,
+		Polygon
+	}
+}
+
+public static class Day10Helpers
+{
+	public static char[,] CreateABiggerPipeMaze(this char[,] pipe_maze)
+	{
+		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.NoOfColumns() * 3) + 3, (pipe_maze.NoOfRows() * 3) + 3, Day10.GROUND);
+		foreach (Cell<char>? cell in pipe_maze.Walk2dArrayWithValues()) {
+			char[,] newPipeValue = cell.Value.ConvertToBigPipe().To2dArray(3);
+			for (int dy = 0; dy < 3; dy++) {
+				for (int dx = 0; dx < 3; dx++) {
+					newMaze[(cell.X * 3) + 1 + dx, (cell.Y * 3) + 1 + dy] = newPipeValue[dx, dy];
+				}
+			}
+		}
+		return newMaze;
+	}
+
+	public static char[,] MakeSmallerMaze(this char[,] pipe_maze)
+	{
+		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.NoOfColumns() / 3), (pipe_maze.NoOfRows() / 3), Day10.EMPTY);
+		for (int y = 0; y < newMaze.NoOfRows() - 1; y++) {
+			for (int x = 0; x < newMaze.NoOfColumns() - 1; x++) {
+				newMaze[x, y] = pipe_maze[(x * 3) + 2, (y * 3) + 2];
+			}
+		}
+		return newMaze;
+	}
+
+	private static string ConvertToBigPipe(this char value) => value switch
+	{
+		Day10.STRAIGHT_UP_DOWN    => " ┃  ┃  ┃ ",
+		Day10.STRAIGHT_LEFT_RIGHT => "   ━━━   ",
+		Day10.BEND_TOP_LEFT       => "    ┏━ ┃ ",
+		Day10.BEND_TOP_RIGHT      => "   ━┓  ┃ ",
+		Day10.BEND_BOTTOM_LEFT    => " ┃  ┗━   ",
+		Day10.BEND_BOTTOM_RIGHT   => " ┃ ━┛    ",
+		Day10.STARTING_POSITION   => " ┃ ━S━ ┃ ",
+		_                         => $"    {value}    ",
+	};
+
+	public static void FloodFillPipeMaze(this char[,] pipe_maze, Point start, char[] space, char outSide)
 	{
 		Queue<Point> queue = [];
 		queue.Enqueue(start);
@@ -167,142 +259,31 @@ public sealed partial class Day10 {
 		}
 	}
 
-	private static char[,] MakeABiggerMaze(char[,] pipe_maze)
+	/// <summary>
+	/// Determines if the given point is inside the polygon
+	/// </summary>
+	/// <param name="polygon">the vertices of polygon</param>
+	/// <param name="testPoint">the given point</param>
+	/// <returns>true if the point is inside the polygon; otherwise, false</returns>
+	/// <see cref="https://stackoverflow.com/questions/4243042/c-sharp-point-in-polygon"/>
+	public static bool IsPointInPolygon4(this IEnumerable<Point> points, Point testPoint)
 	{
-		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.NoOfColumns() * 3) + 3, (pipe_maze.NoOfRows() * 3) + 3, GROUND);
-		foreach (Cell<char>? cell in pipe_maze.Walk2dArrayWithValues()) {
-			char[,] newPipe = ConvertToBigPipe(cell.Value).To2dArray(3);
-			for (int dy = 0; dy < 3; dy++) {
-				for (int dx = 0; dx < 3; dx++) {
-					newMaze[(cell.X * 3) + 1 + dx, (cell.Y * 3) + 1 + dy] = newPipe[dx,dy];
+		Point[] polygon = [..points];
+
+		bool result = false;
+		int j = polygon.Length - 1;
+		for (int i = 0; i < polygon.Length; i++) {
+			if ((polygon[i].Y < testPoint.Y && polygon[j].Y >= testPoint.Y) ||
+				(polygon[j].Y < testPoint.Y && polygon[i].Y >= testPoint.Y)) {
+				if (polygon[i].X + ((testPoint.Y - polygon[i].Y) /
+				   (polygon[j].Y - polygon[i].Y) *
+				   (polygon[j].X - polygon[i].X)) < testPoint.X) {
+					result = !result;
 				}
 			}
+			j = i;
 		}
-		return newMaze;
+		return result;
 	}
-
-	private static string ConvertToBigPipe(char value) => value switch
-		{
-			BEND_TOP_RIGHT      => "   -7  | ",
-			BEND_TOP_LEFT       => "    F- | ",
-			BEND_BOTTOM_LEFT    => " |  L-   ",
-			BEND_BOTTOM_RIGHT   => " | -J    ",
-			STRAIGHT_UP_DOWN    => " |  |  | ",
-			STRAIGHT_LEFT_RIGHT => "   ---   ",
-			STARTING_POSITION   => " | -S- | ",
-			_ => $"    {value}    ",
-		};
-
-	private enum Direction { Left, Right, Up, Down }
-
-
-	#region Failed Attempts
-
-	//******************************************************************************************//
-	//******************************************************************************************//
-	//**               P A R T I A L L Y    F A I L E D    A T T E M P T S                    **//
-	//**                     W O R K    F O R    S O M E    T E S T S                         **//
-	//******************************************************************************************//
-	//******************************************************************************************//
-
-
-	//Dictionary<int, (int Min, int Max)> minMaxPerRow = [];
-	//	for (int row = 0; row<pipe_maze.NoOfRows(); row++) {
-	//		minMaxPerRow[row] = (int.MaxValue, int.MinValue);
-	//	}
-	//minMaxPerRow[animal.Position.Y] = (
-	//	Math.Min(minMaxPerRow[animal.Position.Y].Min, animal.Position.X),
-	//	Math.Max(minMaxPerRow[animal.Position.Y].Max, animal.Position.X));
-
-	//foreach (KeyValuePair<int, (int Min, int Max)> kvp in minMaxPerRow) {
-	//	if (kvp.Value.Min == int.MaxValue) { continue; }
-	//	int y = kvp.Key;
-	//	for (int x = kvp.Value.Min + 1; x < kvp.Value.Max; x++) {
-	//		if (loopRoute.Contains(new Point(x, y))) { continue; }
-
-	//		Point currentPoint = new(x, y);
-	//		if (pipe_maze[x, y] == GROUND) {
-
-	//			if (IsPointInPolygon4([..loopRoute], currentPoint)) {
-	//			//if (FindRoutesFromAToB(currentPoint, startingPosition, int.MaxValue, loopRoute, obstacles, out List<Route> routes)) {
-	//				noOfTiles++;
-	//			}
-	//		}
-	//	}
-	//}
-
-	//private static bool FindRoutesFromAToB(Point startingPosition, Point endingPosition, int maxRouteLength, IEnumerable<Point> loop, IEnumerable<Point> obstacles, [NotNullWhen(true)] out List<Route> routes)
-	//{
-	//	List<Route> foundRoutes = [];
-	//	HashSet<Point> visited = [startingPosition];
-	//	Queue<Route> queue = [];
-	//	queue.Enqueue([startingPosition]);
-	//	int shortestRouteLength = maxRouteLength;
-	//	while (queue.Count != 0) {
-	//		Route routeSoFar = queue.Dequeue();
-	//		Point lastPosition = routeSoFar.Last();
-	//		if (lastPosition == endingPosition) {
-	//			if (routeSoFar.Count <= maxRouteLength) {
-	//				foundRoutes.Add(routeSoFar);
-	//				routes = foundRoutes;
-	//				return true;
-	//			}
-	//		} else if (routeSoFar.Count < maxRouteLength) {
-	//			IEnumerable<Point> nextSteps = lastPosition
-	//				.Adjacent()
-	//				.Where(p => !visited.Contains(p))
-	//				.Except(obstacles);
-	//			foreach (Point step in nextSteps) {
-	//				queue.Enqueue([.. routeSoFar, step]);
-	//				_ = visited.Add(step);
-	//			}
-	//		}
-	//	}
-
-	//	routes = foundRoutes;
-	//	return routes.Count > 0;
-	//}
-
-
-	//private static int CountInversions(Point point, char[,] pipe_maze)
-	//{
-	//	for (int i = 0; i < pipe_maze.NoOfColumns(); i++) {
-	//		for (int j = 0; j < pipe_maze.NoOfColumns(); j++) {
-	//			if (true) {
-
-	//			}
-	//		}
-	//	}
-	//	return 0;
-	//}
-
-
-
-	///// <summary>
-	///// Determines if the given point is inside the polygon
-	///// </summary>
-	///// <param name="polygon">the vertices of polygon</param>
-	///// <param name="testPoint">the given point</param>
-	///// <returns>true if the point is inside the polygon; otherwise, false</returns>
-	//public static bool IsPointInPolygon4(Point[] polygonI, Point testPointI)
-	//{
-	//	System.Drawing.PointF testPoint = new(testPointI.X, testPointI.Y);
-	//	System.Drawing.PointF[] polygon = [.. polygonI.Select(p => new System.Drawing.PointF(p.X, p.Y))];
-
-	//	bool result = false;
-	//	int j = polygon.Length - 1;
-	//	for (int i = 0; i < polygon.Length; i++) {
-	//		if ((polygon[i].Y < testPoint.Y && polygon[j].Y >= testPoint.Y) ||
-	//			(polygon[j].Y < testPoint.Y && polygon[i].Y >= testPoint.Y)) {
-	//			if (polygon[i].X + ((testPoint.Y - polygon[i].Y) /
-	//			   (polygon[j].Y - polygon[i].Y) *
-	//			   (polygon[j].X - polygon[i].X)) < testPoint.X) {
-	//				result = !result;
-	//			}
-	//		}
-	//		j = i;
-	//	}
-	//	return result;
-	//}
-	#endregion
 }
+

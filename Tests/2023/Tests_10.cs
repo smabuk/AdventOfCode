@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode.Tests.Year2023;
 
-public class Tests_10_Pipe_Maze {
+public class Tests_10_Pipe_Maze(ITestOutputHelper testOutputHelper)
+{
 	const int DAY = 10;
 
 	[Theory]
@@ -20,7 +21,7 @@ public class Tests_10_Pipe_Maze {
 		""", 8)]
 	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
 	}
 
@@ -73,7 +74,17 @@ public class Tests_10_Pipe_Maze {
 		""", 10)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	private void Callback(string[] lines, bool _)
+	{
+		if (lines is null or []) {
+			return;
+		}
+
+		testOutputHelper.WriteLine(string.Join(Environment.NewLine, lines));
+	}
+
 }
