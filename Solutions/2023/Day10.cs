@@ -11,11 +11,12 @@ public sealed partial class Day10 {
 		=> Solution1(input, visualise).ToString();
 	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
-		string method = GetArgument(args, argumentNumber: 1, defaultResult: "fill").ToLowerInvariant();
+		string method = GetArgument(args, argumentNumber: 1, defaultResult: "inversion").ToLowerInvariant();
 		SolutionMethod solutionMethod = method switch
 		{
-			"fill"    => SolutionMethod.Fill,
-			"polygon" => SolutionMethod.Polygon,
+			"inversion" => SolutionMethod.InversionCount,
+			"fill"      => SolutionMethod.Fill,
+			"polygon"   => SolutionMethod.Polygon,
 			_ => throw new ArgumentOutOfRangeException(nameof(args), $"That solution method [{method}] is not supported."),
 		};
 		return Solution2(input, solutionMethod, visualise).ToString();
@@ -33,9 +34,9 @@ public sealed partial class Day10 {
 	public const char INSIDE              = 'I';
 	public const char OUTSIDE             = 'O';
 
-	private static readonly char[] STRAIGHTS   = [STRAIGHT_LEFT_RIGHT, STRAIGHT_UP_DOWN];
-	private static readonly char[] BENDS       = [BEND_TOP_LEFT, BEND_TOP_RIGHT, BEND_BOTTOM_RIGHT, BEND_BOTTOM_LEFT];
-	private static readonly char[] PIPES       = [.. STRAIGHTS, ..BENDS];
+	public static readonly char[] STRAIGHTS   = [STRAIGHT_LEFT_RIGHT, STRAIGHT_UP_DOWN];
+	public static readonly char[] BENDS       = [BEND_TOP_LEFT, BEND_TOP_RIGHT, BEND_BOTTOM_RIGHT, BEND_BOTTOM_LEFT];
+	public static readonly char[] PIPES       = [.. STRAIGHTS, ..BENDS];
 
 	private static int Solution1(string[] input, Action<string[], bool>? visualise = null)
 	{
@@ -104,7 +105,13 @@ public sealed partial class Day10 {
 			return mazeWithoutLoop
 				.Where(cell => cell.Value == INSIDE
 							&& cell.X > minMaxPerRow[cell.Y].Min && cell.X < minMaxPerRow[cell.Y].Max
-							&& loopRoute.IsPointInPolygon4(cell.Index))
+							&& loopRoute.IsPointInPolygon(cell.Index))
+				.Count();
+		}
+
+		if (solutionMethod is SolutionMethod.InversionCount) {
+			return mazeWithoutLoop
+				.Where(cell => cell.Value == INSIDE && pipe_maze.InversionsCount(loopRoute, cell.Index))
 				.Count();
 		}
 
@@ -147,7 +154,7 @@ public sealed partial class Day10 {
 	{
 		public Animal Move(char[,] pipe_maze)
 		{
-			Point position = Facing switch
+			Point newPosition = Facing switch
 			{
 				Direction.Left  => Position.Left(),
 				Direction.Right => Position.Right(),
@@ -156,37 +163,21 @@ public sealed partial class Day10 {
 				_ => throw new NotImplementedException(),
 			};
 
-			char pipe = pipe_maze[position.X, position.Y];
-			Direction facing = pipe switch
+			char pipe = pipe_maze[newPosition.X, newPosition.Y];
+			Direction newDirection = pipe switch
 			{
-				BEND_TOP_LEFT => Facing switch
-				{
-					Direction.Left  => Direction.Down,
-					Direction.Up    => Direction.Right,
-					_ => throw new NotImplementedException(),
-				},
-				BEND_TOP_RIGHT => Facing switch
-				{
-					Direction.Right => Direction.Down,
-					Direction.Up    => Direction.Left,
-					_ => throw new NotImplementedException(),
-				},
-				BEND_BOTTOM_RIGHT => Facing switch
-				{
-					Direction.Right => Direction.Up,
-					Direction.Down  => Direction.Left,
-					_ => throw new NotImplementedException(),
-				},
-				BEND_BOTTOM_LEFT => Facing switch
-				{
-					Direction.Left  => Direction.Up,
-					Direction.Down  => Direction.Right,
-					_ => throw new NotImplementedException(),
-				},
+				BEND_TOP_LEFT     when Facing is Direction.Left  => Direction.Down,
+				BEND_TOP_LEFT     when Facing is Direction.Up    => Direction.Right,
+				BEND_TOP_RIGHT    when Facing is Direction.Right => Direction.Down,
+				BEND_TOP_RIGHT    when Facing is Direction.Up    => Direction.Left,
+				BEND_BOTTOM_RIGHT when Facing is Direction.Right => Direction.Up,
+				BEND_BOTTOM_RIGHT when Facing is Direction.Down  => Direction.Left,
+				BEND_BOTTOM_LEFT  when Facing is Direction.Left  => Direction.Up,
+				BEND_BOTTOM_LEFT  when Facing is Direction.Down  => Direction.Right,
 				_ => Facing,
 			};
 
-			return this with { Position = position, Facing = facing };
+			return this with { Position = newPosition, Facing = newDirection };
 		}
 	}
 
@@ -195,12 +186,13 @@ public sealed partial class Day10 {
 		Left,
 		Right,
 		Up,
-		Down
+		Down,
 	}
 
 	private enum SolutionMethod {
 		Fill,
-		Polygon
+		Polygon,
+		InversionCount,
 	}
 }
 
@@ -243,16 +235,16 @@ public static class Day10Helpers
 		_                         => $"    {value}    ",
 	};
 
-	public static void FloodFillPipeMaze(this char[,] pipe_maze, Point start, char[] space, char outSide)
+	public static void FloodFillPipeMaze(this char[,] pipe_maze, Point start, char[] cellTypesToFill, char fillValue)
 	{
 		Queue<Point> queue = [];
 		queue.Enqueue(start);
 		while (queue.Count != 0) {
 			Point point = queue.Dequeue();
-			if (!space.Contains(pipe_maze[point.X, point.Y])) {
+			if (!cellTypesToFill.Contains(pipe_maze[point.X, point.Y])) {
 				continue;
 			}
-			pipe_maze[point.X, point.Y] = outSide;
+			pipe_maze[point.X, point.Y] = fillValue;
 			foreach (Cell<char> adjacent in pipe_maze.GetAdjacentCells(point)) {
 				queue.Enqueue(adjacent.Index);
 			}
@@ -262,11 +254,11 @@ public static class Day10Helpers
 	/// <summary>
 	/// Determines if the given point is inside the polygon
 	/// </summary>
-	/// <param name="polygon">the vertices of polygon</param>
+	/// <param name="points">the vertices of polygon</param>
 	/// <param name="testPoint">the given point</param>
 	/// <returns>true if the point is inside the polygon; otherwise, false</returns>
 	/// <see cref="https://stackoverflow.com/questions/4243042/c-sharp-point-in-polygon"/>
-	public static bool IsPointInPolygon4(this IEnumerable<Point> points, Point testPoint)
+	public static bool IsPointInPolygon(this IEnumerable<Point> points, Point testPoint)
 	{
 		Point[] polygon = [..points];
 
@@ -284,6 +276,31 @@ public static class Day10Helpers
 			j = i;
 		}
 		return result;
+	}
+
+	/// <summary>
+	/// Determines if the given point is inside the polygon by counting the boundaries crossed.
+	/// Starting on the edge we know we are outside at that point, so odd numbers are inside.
+	/// </summary>
+	/// <param name="points">the vertices of polygon</param>
+	/// <param name="testPoint">the given point</param>
+	/// <returns>true if the point is inside the polygon; otherwise, false</returns>
+	public static bool InversionsCount(this char[,] pipe_maze, HashSet<Point> points, Point testPoint)
+	{
+		if (points.Contains(testPoint)) {
+			return false;
+		}
+
+		int y = testPoint.Y;
+		int count = 0;
+		for (int x = 0; x < testPoint.X; x++) {
+			// Every time we cross the vertical boundary we add 1
+			if (pipe_maze[x, y] is Day10.STRAIGHT_UP_DOWN or Day10.BEND_TOP_LEFT or Day10.BEND_TOP_RIGHT or Day10.STARTING_POSITION) {
+				count++;
+			}
+		}
+
+		return count % 2 == 1;
 	}
 }
 
