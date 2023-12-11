@@ -24,11 +24,12 @@ public class Tests_11_Cosmic_Expansion {
 		actual.ShouldBe(expected);
 	}
 
-	//[Theory]
-	//[InlineData(TEST_DATA, 9999)]
-	//public void Part2(string input, int expected)
-	//{
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-	//	actual.ShouldBe(expected);
-	//}
+	[Theory]
+	[InlineData(TEST_DATA,  10, 1030)]
+	[InlineData(TEST_DATA, 100, 8410)]
+	public void Part2(string input, int scale, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, scale), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
