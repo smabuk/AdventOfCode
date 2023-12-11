@@ -98,7 +98,7 @@ public sealed partial class Day10 {
 				if (pipes.Count == 0) {
 					minMaxPerRow[y] = (int.MaxValue, int.MinValue);
 				} else {
-					minMaxPerRow[y] = (pipes.Min(pipe => pipe.X), pipes.Max(pipe => pipe.X));
+					minMaxPerRow[y] = pipes.MinMax();
 				}
 			}
 

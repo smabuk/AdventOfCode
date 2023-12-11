@@ -21,9 +21,9 @@ public sealed partial class Day11 {
 		return input
 			.AsPoints(GALAXY)
 			.ExpandUniverse(scale)
-			.ToArray()
+			.ToHashSet()
 			.Combinations(2)
-			.Sum(pair => pair.First().ManhattanDistance(pair.Last()));
+			.Sum(pair => (long)pair.First().ManhattanDistance(pair.Last()));
 	}
 }
 
@@ -42,20 +42,4 @@ public static class Day11Helpers
 			yield return new Point (galaxy.X + (xShift * (scale - 1)), galaxy.Y + (yShift * (scale - 1)));
 		}
 	}
-
-	public static IEnumerable<Point> AsPoints(this string[] input, char match)
-	{
-		int rows = input.Length;
-		int cols = input[0].Length;
-
-		for (int r = 0; r < rows; r++) {
-			for (int c = 0; c < cols; c++) {
-				if (input[r][c] == match) {
-					yield return new Point(c, r);
-				}
-			}
-		}
-	}
-
-	public static long ManhattanDistance(this Point point1, Point point2) => Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y);
 }
