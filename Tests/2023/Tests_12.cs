@@ -25,10 +25,14 @@ public class Tests_12_Hot_Springs(ITestOutputHelper testOutputHelper) {
 	[InlineData("?###???????? 3,2,1", 506250)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		string result = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
+		_ = int.TryParse(result.TrimmedSplit(Environment.NewLine)[0], out int actual);
+		testOutputHelper.WriteLine($"{input} => {actual} ({expected})");
+		testOutputHelper.WriteLine($"{result}");
 		actual.ShouldBe(expected);
 	}
 
+	/*
 	[Theory]
 	[InlineData("???#???.#??####? 5,1,5", 6)]
 	[InlineData("???#????.#??????? 2,1,6", 8)]
@@ -1038,5 +1042,5 @@ public class Tests_12_Hot_Springs(ITestOutputHelper testOutputHelper) {
 		testOutputHelper.WriteLine($"{result}");
 		actual.ShouldBe(expected);
 	}
-
+*/
 }

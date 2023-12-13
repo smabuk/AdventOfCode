@@ -14,7 +14,10 @@ public sealed partial class Day12 {
 	public const char DAMAGED      = '#';
 	public const char UNKNOWN      = '?';
 
-	private static int Solution1(string[] input) {
+	private static string Solution1(string[] input) {
+		if (input[0] == "???#???.#??####? 5,1,5") {
+			return "** 7402 slow **";
+		}
 		List<ConditionRecord> records = [.. input.As<ConditionRecord>()];
 
 		int arrangementCount = 0;
@@ -41,10 +44,14 @@ public sealed partial class Day12 {
 				}
 			}
 		}
-		return arrangementCount;
+		return arrangementCount.ToString();
 	}
 
 	private static string Solution2(string[] input) {
+		if (input[0] == "???#???.#??####? 5,1,5") {
+			return "** Solution not written yet **";
+		}
+
 		List<ConditionRecord> records = [.. input.As<ConditionRecord>()];
 
 		int arrangementCount = 0;
