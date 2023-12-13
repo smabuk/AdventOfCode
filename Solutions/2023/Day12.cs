@@ -15,9 +15,6 @@ public sealed partial class Day12 {
 	public const char UNKNOWN      = '?';
 
 	private static string Solution1(string[] input) {
-		if (input[0] == "???#???.#??####? 5,1,5") {
-			return "** 7402 slow **";
-		}
 		List<ConditionRecord> records = [.. input.As<ConditionRecord>()];
 
 		int arrangementCount = 0;
@@ -31,7 +28,9 @@ public sealed partial class Day12 {
 					continue;
 				}
 			}
-			for (int i = 0; i < possibilities; i++) {
+			object? countLock = 1;
+			_ = Parallel.For(0, possibilities, (i, state) =>
+			{
 				char[] newSpringArrangement = record.Springs.ToCharArray();
 				char[] replacements = Convert.ToString(i, 2).ToString().PadLeft(noOfUnknownSprings, '0').ToCharArray();
 				for (int b = 0; b < noOfUnknownSprings; b++) {
@@ -40,9 +39,11 @@ public sealed partial class Day12 {
 				}
 				string temp = new(newSpringArrangement);
 				if (record.IsMatch(new(newSpringArrangement))) {
-					arrangementCount++;
+					lock(countLock) {
+						arrangementCount++;
+					}
 				}
-			}
+			});
 		}
 		return arrangementCount.ToString();
 	}
@@ -75,7 +76,9 @@ public sealed partial class Day12 {
 				count++;
 				continue;
 			}
-			for (int i = 0; i < possibilities; i++) {
+
+			_ = Parallel.For(0, possibilities, (i, state) =>
+			{
 				char[] newSpringArrangement = record.Springs.ToCharArray();
 				char[] replacements = Convert.ToString(i, 2).ToString().PadLeft(noOfUnknownSprings, '0').ToCharArray();
 				for (int b = 0; b < noOfUnknownSprings; b++) {
@@ -86,7 +89,7 @@ public sealed partial class Day12 {
 					arrangementCount += multiplier;
 					count++;
 				}
-			}
+			});
 			debug = debug + $"{record.Springs} {string.Join(",", record.DamagedGroups)}" + Environment.NewLine;
 		}
 		return arrangementCount.ToString()

@@ -28,7 +28,7 @@ public sealed partial class Day13
 			return value;
 		}
 
-		string[] rows = [.. Enumerable.Range(0, pattern.NoOfRows()).Select(row => pattern.RowAsString(row))];
+		string[] rows = [.. cols.Transpose()];
 		if (TryGetValue(rows, oldValue, ROW_MULTIPLIER, out value, checkForSmudge)) {
 			return value;
 		}
