@@ -1,5 +1,4 @@
 ﻿using static AdventOfCode.Solutions._2023.Day14;
-
 using Dish = char[,];
 
 namespace AdventOfCode.Solutions._2023;
@@ -75,29 +74,36 @@ public static class Day14Helpers
 	{
 		Dish tiltedDish = (Dish)dish.Clone();
 
-		(int dX, int dY, int xStart, int yStart) = direction switch {
-			Direction.North => ( 0, -1,                      0,                   0),
-			Direction.West  => (-1,  0,                      0,                   0),
-			Direction.South => ( 0,  1,                      0, dish.NoOfRows() - 1),
-			Direction.East  => ( 1,  0, dish.NoOfColumns() - 1,                   0),
-			_ => throw new NotImplementedException(),
+		(int dX, int dY) = direction switch {
+			Direction.North => ( 0, -1),
+			Direction.West  => (-1,  0),
+			Direction.South => ( 0,  1),
+			Direction.East  => ( 1,  0),
+			_ => throw new ArgumentOutOfRangeException(nameof(direction)),
+		};
+
+		(int xStart, int yStart) = direction switch {
+			Direction.North => (0, 0),
+			Direction.West  => (0, 0),
+			Direction.South => (0, dish.RowsMax()),
+			Direction.East  => (dish.ColsMax(),                   0),
+			_ => throw new ArgumentOutOfRangeException(nameof(direction)),
 		};
 
 		int xStep = xStart == 0 ? 1 : -1;
 		int yStep = yStart == 0 ? 1 : -1;
 		for (int y = yStart; dish.InBounds(0, y); y += yStep) {
-			for (int x = xStart; dish.InBounds(x, y); x += xStep) {
-				(int lookAtX, int lookatY) = (x + dX, y + dY);
-				char current = tiltedDish[x, y];
-				if (current == ROUNDED_ROCK && tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
-					while (tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
-						(lookAtX, lookatY) = (lookAtX + dX, lookatY + dY);
-					}
-					tiltedDish[lookAtX - dX, lookatY -dY] = current;
-					tiltedDish[x, y] = EMPTY;
+		for (int x = xStart; dish.InBounds(x, y); x += xStep) {
+			(int lookAtX, int lookatY) = (x + dX, y + dY);
+			char current = tiltedDish[x, y];
+			if (current == ROUNDED_ROCK && tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+				while (tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+					(lookAtX, lookatY) = (lookAtX + dX, lookatY + dY);
 				}
+				tiltedDish[lookAtX - dX, lookatY -dY] = current;
+				tiltedDish[x, y] = EMPTY;
 			}
-		}
+		}}
 
 		return tiltedDish;
 	}
@@ -109,12 +115,11 @@ public static class Day14Helpers
 	{
 		int load = 0;
 		for (int y = 0; dish.InBounds(0, y); y++) {
-			for (int x = 0; dish.InBounds(x, y); x++) {
-				if (dish[x, y] == ROUNDED_ROCK) {
-					load += dish.NoOfRows() - y;
-				}
+		for (int x = 0; dish.InBounds(x, y); x++) {
+			if (dish[x, y] == ROUNDED_ROCK) {
+				load += dish.RowsCount() - y;
 			}
-		}
+		}}
 		
 		return load;
 	}

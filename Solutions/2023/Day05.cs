@@ -49,7 +49,8 @@ public sealed partial class Day05 {
 
 	private static long Solution2()
 	{
-		return _seedInputValues
+		return
+			_seedInputValues
 			.Chunk(2).Select(n => new LongRange(n[0], n[0] + n[1] - 1))
 			.SelectMany(GetHumidityRanges)
 			.Select(r => r.Start)
@@ -103,7 +104,9 @@ public sealed partial class Day05 {
 
 		private static bool IsNotABlankLine(string s) => !string.IsNullOrWhiteSpace(s); 
 
-		public static Map Parse(string s, IFormatProvider? provider) => new([.. s
+		public static Map Parse(string s, IFormatProvider? provider) 
+			=> new([..
+			s
 			.Split(Environment.NewLine)
 			.TakeWhile(IsNotABlankLine)
 			.As<Mapping>()]);

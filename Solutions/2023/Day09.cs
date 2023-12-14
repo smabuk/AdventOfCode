@@ -20,10 +20,15 @@ public sealed partial class Day09 {
 		=> _histories = [.. input.Select(i => i.As<int>(' ').ToList())];
 
 	private static int Solution1()
-		=> _histories.Sum(history => history.Extrapolate().Select(x => x.Last()).Aggregate((a, b) => a + b));
+		=> _histories
+			.Sum(history => history.Extrapolate().Select(x => x.Last())
+			.Aggregate((a, b) => a + b));
 
 	private static int Solution2()
-		=> _histories.Sum(history => history.Extrapolate().Select(x => x.First()).Reverse().Aggregate((a, b) => b - a));
+		=> _histories
+			.Sum(history => history.Extrapolate().Select(x => x.First())
+			.Reverse()
+			.Aggregate((a, b) => b - a));
 }
 
 public static class Day09Helpers

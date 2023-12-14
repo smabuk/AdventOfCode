@@ -18,15 +18,15 @@ public sealed partial class Day14 {
 	private static int Solution1(string[] input) {
 		(
 			List<List<Point>> linePaths, 
-			int noOfColumns, 
-			int noOfRows, 
+			int ColsCount, 
+			int RowsCount, 
 			Point newStartPoint
 		) = LoadPaths(input, startPoint: new(500, 0));
 
 		char[,] cave = BuildCave(
 			linePaths: linePaths,
-			noOfColumns: noOfColumns,
-			noOfRows: noOfRows,
+			ColsCount: ColsCount,
+			RowsCount: RowsCount,
 			startPoint: newStartPoint,
 			includeFloor: false);
 
@@ -39,15 +39,15 @@ public sealed partial class Day14 {
 	private static int Solution2(string[] input) {
 		(
 			List<List<Point>> linePaths,
-			int noOfColumns,
-			int noOfRows,
+			int ColsCount,
+			int RowsCount,
 			Point newStartPoint
 		) = LoadPaths(input, startPoint: new(500, 0));
 
 		char[,] cave = BuildCave(
 			linePaths: linePaths,
-			noOfColumns: noOfColumns,
-			noOfRows: noOfRows,
+			ColsCount: ColsCount,
+			RowsCount: RowsCount,
 			startPoint: newStartPoint,
 			includeFloor: true);
 
@@ -57,7 +57,7 @@ public sealed partial class Day14 {
 			partNo: 2);
 	}
 
-	private static (List<List<Point>> LinePaths, int NoOfColumns, int NoOfrows, Point NewStartPoint) LoadPaths(string[] input, Point startPoint) {
+	private static (List<List<Point>> LinePaths, int ColsCount, int RowsCount, Point NewStartPoint) LoadPaths(string[] input, Point startPoint) {
 		int minX = int.MaxValue;
 		int maxX = int.MinValue;
 		int maxY = int.MinValue;
@@ -75,32 +75,32 @@ public sealed partial class Day14 {
 			linePaths.Add(pathPoints);
 		}
 
-		int noOfRows = maxY + 1;
-		int noOfColumns = maxX - minX + (noOfRows * 3) + 1;
-		int xOffset = maxX - minX + (noOfRows / 2) + 1;
+		int RowsCount = maxY + 1;
+		int ColsCount = maxX - minX + (RowsCount * 3) + 1;
+		int xOffset = maxX - minX + (RowsCount / 2) + 1;
 		for (int i = 0; i < linePaths.Count; i++) {
 			for (int j = 0; j < linePaths[i].Count; j++) {
 				linePaths[i][j] = linePaths[i][j] with { X = linePaths[i][j].X - minX + xOffset };
 			}
 		}
 
-		return (linePaths, noOfColumns, noOfRows, startPoint with { X = startPoint.X - minX + xOffset });
+		return (linePaths, ColsCount, RowsCount, startPoint with { X = startPoint.X - minX + xOffset });
 	}
 
 
-	private static char[,] BuildCave(List<List<Point>> linePaths, int noOfColumns, int noOfRows, Point startPoint, bool includeFloor = false) {
+	private static char[,] BuildCave(List<List<Point>> linePaths, int ColsCount, int RowsCount, Point startPoint, bool includeFloor = false) {
 		if (includeFloor) {
-			noOfRows += 2;
+			RowsCount += 2;
 		}
 
-		char[,] cave = new char[noOfColumns, noOfRows];
+		char[,] cave = new char[ColsCount, RowsCount];
 
 		foreach ((int X, int Y) in cave.Walk2dArray()) {
 			cave[X, Y] = AIR;
 		}
 		if (includeFloor) {
-			for (int i = 0; i < cave.NoOfColumns(); i++) {
-				cave[i, noOfRows - 1] = ROCK;
+			for (int i = 0; i < cave.ColsCount(); i++) {
+				cave[i, RowsCount - 1] = ROCK;
 			}
 		}
 		cave[startPoint.X, startPoint.Y] = SAND_SOURCE;
@@ -123,7 +123,7 @@ public sealed partial class Day14 {
 
 	private static int CalculateUnitsOfSand(char[,] cave, Point startPoint, int partNo) {
 		int unitsOfSand = 0;
-		int floorDepth = cave.NoOfRows() - 1;
+		int floorDepth = cave.RowsCount() - 1;
 
 		do {
 			Point sand = startPoint;

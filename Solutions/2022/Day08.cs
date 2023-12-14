@@ -20,8 +20,8 @@ public sealed partial class Day08 {
 
 	private static int Solution1() {
 		int visibleTrees = 0;
-		int columns = _heightMap.NoOfColumns();
-		int rows = _heightMap.NoOfRows();
+		int columns = _heightMap.ColsCount();
+		int rows = _heightMap.RowsCount();
 
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < columns; col++) {
@@ -61,8 +61,8 @@ public sealed partial class Day08 {
 
 	private static long Solution2() {
 		long scenicScoreMax = 0;
-		int columns = _heightMap.NoOfColumns();
-		int rows = _heightMap.NoOfRows();
+		int columns = _heightMap.ColsCount();
+		int rows = _heightMap.RowsCount();
 
 		for (int row = 1; row < rows - 1; row++) {
 			for (int col = 1; col < columns - 1; col++) {

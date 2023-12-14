@@ -15,7 +15,6 @@ public class Tests_14_Parabolic_Reflector_Dish
 		.......O..
 		#....###..
 		#OO..#....
-		
 		""";
 
 	[Theory]

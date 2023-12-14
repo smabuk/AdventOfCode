@@ -23,7 +23,7 @@ public sealed partial class Day13
 		const int COL_MULTIPLIER = 1;
 		const int ROW_MULTIPLIER = 100;
 
-		string[] cols = [.. Enumerable.Range(0, pattern.NoOfColumns()).Select(col => pattern.ColAsString(col))];
+		string[] cols = [.. Enumerable.Range(0, pattern.ColsCount()).Select(col => pattern.ColAsString(col))];
 		if (TryGetValue(cols, oldValue, COL_MULTIPLIER, out int value, checkForSmudge)) {
 			return value;
 		}
@@ -103,7 +103,7 @@ public sealed partial class Day13
 		int inputIndex = 0;
 		while (inputIndex < input.Length) {
 			char[,] pattern = input[inputIndex..].TakeWhile(IsNotABlankLine).To2dArray();
-			inputIndex += pattern.NoOfRows() + 1;
+			inputIndex += pattern.RowsCount() + 1;
 			yield return pattern;
 		}
 

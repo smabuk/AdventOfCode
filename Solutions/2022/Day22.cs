@@ -144,9 +144,9 @@ public sealed partial class Day22 {
 
 	private static char[,] LoadMap(string[] input) {
 		int maxColumnSize = input.Max(i => i.Length);
-		int noOfRows = input.Length;
+		int RowsCount = input.Length;
 
-		char[,] monkeyMap = new char[maxColumnSize, noOfRows];
+		char[,] monkeyMap = new char[maxColumnSize, RowsCount];
 
 		for (int row = 0; row < input.Length; row++) {
 			string mapRow = input[row];
@@ -183,10 +183,10 @@ public sealed partial class Day22 {
 			do {
 				nextXY += movement;
 				nextXY = nextXY switch {
-					{ X: int x } when x <  0                 => nextXY with { X = map.NoOfColumns() - 1 },
-					{ X: int x } when x >= map.NoOfColumns() => nextXY with { X = 0 },
-					{ Y: int y } when y <  0                 => nextXY with { Y = map.NoOfRows() - 1 },
-					{ Y: int y } when y >= map.NoOfRows()    => nextXY with { Y = 0 },
+					{ X: int x } when x <  0                 => nextXY with { X = map.ColsCount() - 1 },
+					{ X: int x } when x >= map.ColsCount() => nextXY with { X = 0 },
+					{ Y: int y } when y <  0                 => nextXY with { Y = map.RowsCount() - 1 },
+					{ Y: int y } when y >= map.RowsCount()    => nextXY with { Y = 0 },
 					_ => nextXY
 				};
 

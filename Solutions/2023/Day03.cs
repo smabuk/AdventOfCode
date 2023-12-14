@@ -35,8 +35,8 @@ public sealed partial class Day03 {
 		const char SPACE = '.';
 
 		char[,] engineSchematic = input.To2dArray();
-		int maxX = engineSchematic.NoOfColumns() - 1;
-		int maxY = engineSchematic.NoOfRows() - 1;
+		int maxX = engineSchematic.ColsMax();
+		int maxY = engineSchematic.RowsMax();
 
 		List<PartNoAndAPosition> list = [];
 
@@ -54,17 +54,16 @@ public sealed partial class Day03 {
 			Point corner2 = new(Math.Min(number.Index + number.Length + 1, maxX), Math.Min(row + 1, maxY));
 			int skip   = Math.Max(number.Length - 2, 1); // Can skip self
 			for (int y = corner1.Y; y <= corner2.Y; y++) {
-				for (int x = corner1.X; x < corner2.X; x += (y == row ? skip : 1)) {
-					if (solutionPartNo == 1) {
-						if (IsSymbol(engineSchematic[x, y])) {
-							list.Add(new(number.Value.As<int>(), new(number.Index, row)));
-							return;
-						}
-					} else if (engineSchematic[x, y] is GEAR) { // Part2
-						list.Add(new(number.Value.As<int>(), new(x, y)));
+			for (int x = corner1.X; x  < corner2.X; x += (y == row ? skip : 1)) {
+				if (solutionPartNo == 1) {
+					if (IsSymbol(engineSchematic[x, y])) {
+						list.Add(new(number.Value.As<int>(), new(number.Index, row)));
+						return;
 					}
+				} else if (engineSchematic[x, y] is GEAR) { // Part2
+					list.Add(new(number.Value.As<int>(), new(x, y)));
 				}
-			}
+			}}
 		}
 
 		bool IsSymbol(char cell) => (char.IsDigit(cell) || cell is SPACE) is false;

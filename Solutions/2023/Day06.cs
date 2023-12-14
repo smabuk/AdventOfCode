@@ -75,7 +75,7 @@ public sealed partial class Day06
 
 	private static long Solution2_Using_BinaryChop(string[] input)
 	{
-		long raceTime = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
+		long raceTime     = input[TIME][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
 		long raceDistance = input[DIST][NUMBERS_OFFSET..].Replace(" ", "").As<long>();
 
 		long firstWin = FindWinsByBinaryChop(raceTime, raceDistance, true);

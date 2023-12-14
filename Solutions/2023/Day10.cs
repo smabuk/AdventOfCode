@@ -41,7 +41,7 @@ public sealed partial class Day10 {
 	private static int Solution1(string[] input, Action<string[], bool>? visualise = null)
 	{
 		char[,] pipe_maze = input.To2dArray();
-		SendPipeMaze(pipe_maze, "Pipe Maze:", visualise);
+		DisplayPipeMaze(pipe_maze, "Pipe Maze:", visualise);
 
 		(Point startingPosition, Direction startingDirection) = FindAnimal(pipe_maze);
 		Animal animal = new(startingPosition, startingDirection);
@@ -57,7 +57,7 @@ public sealed partial class Day10 {
 
 	private static int Solution2(string[] input, SolutionMethod solutionMethod, Action<string[], bool>? visualise = null) {
 		char[,] pipe_maze = input.To2dArray();
-		SendPipeMaze(pipe_maze, "Pipe Maze:", visualise);
+		DisplayPipeMaze(pipe_maze, "Pipe Maze:", visualise);
 
 		Animal animal = FindAnimal(pipe_maze);
 
@@ -79,12 +79,12 @@ public sealed partial class Day10 {
 		// This is what finally cracked it for me
 		// I can get the methods to work when I make more room
 		char[,] biggerPipeMaze = pipe_maze.CreateABiggerPipeMaze();
-		SendPipeMaze(biggerPipeMaze, "Bigger Maze:", visualise);
+		DisplayPipeMaze(biggerPipeMaze, "Bigger Maze:", visualise);
 
 		if (solutionMethod is SolutionMethod.Fill) {
 			biggerPipeMaze.FloodFillPipeMaze(new(0, 0), [EMPTY, GROUND, INSIDE], OUTSIDE);
 
-			SendPipeMaze(biggerPipeMaze.MakeSmallerMaze(), "Filled Maze:", visualise);
+			DisplayPipeMaze(biggerPipeMaze.MakeSmallerMaze(), "Filled Maze:", visualise);
 			return biggerPipeMaze
 				.Walk2dArrayWithValues()
 				.Where(cell => cell.Value == INSIDE)
@@ -93,7 +93,7 @@ public sealed partial class Day10 {
 
 		if (solutionMethod is SolutionMethod.Polygon) {
 			Dictionary<int, (int Min, int Max)> minMaxPerRow = [];
-			for (int y = 0; y < pipe_maze.NoOfRows(); y++) {
+			for (int y = 0; y < pipe_maze.RowsCount(); y++) {
 				List<Point> pipes = [.. loopRoute.Where(pipe => pipe.Y == y)];
 				if (pipes.Count == 0) {
 					minMaxPerRow[y] = (int.MaxValue, int.MinValue);
@@ -142,7 +142,7 @@ public sealed partial class Day10 {
 		return new(startingPosition, startingDirection);
 	}
 
-	private static void SendPipeMaze(char[,] pipeMaze, string title, Action<string[], bool>? visualise)
+	private static void DisplayPipeMaze(char[,] pipeMaze, string title, Action<string[], bool>? visualise)
 	{
 		if (visualise is not null) {
 			string[] output = ["", title, .. pipeMaze.PrintAsStringArray(0)];
@@ -200,26 +200,24 @@ public static class Day10Helpers
 {
 	public static char[,] CreateABiggerPipeMaze(this char[,] pipe_maze)
 	{
-		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.NoOfColumns() * 3) + 3, (pipe_maze.NoOfRows() * 3) + 3, Day10.GROUND);
+		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.ColsCount() * 3) + 3, (pipe_maze.RowsCount() * 3) + 3, Day10.GROUND);
 		foreach (Cell<char>? cell in pipe_maze.Walk2dArrayWithValues()) {
 			char[,] newPipeValue = cell.Value.ConvertToBigPipe().To2dArray(3);
 			for (int dy = 0; dy < 3; dy++) {
-				for (int dx = 0; dx < 3; dx++) {
-					newMaze[(cell.X * 3) + 1 + dx, (cell.Y * 3) + 1 + dy] = newPipeValue[dx, dy];
-				}
-			}
+			for (int dx = 0; dx < 3; dx++) {
+				newMaze[(cell.X * 3) + 1 + dx, (cell.Y * 3) + 1 + dy] = newPipeValue[dx, dy];
+			}}
 		}
 		return newMaze;
 	}
 
 	public static char[,] MakeSmallerMaze(this char[,] pipe_maze)
 	{
-		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.NoOfColumns() / 3), (pipe_maze.NoOfRows() / 3), Day10.EMPTY);
-		for (int y = 0; y < newMaze.NoOfRows() - 1; y++) {
-			for (int x = 0; x < newMaze.NoOfColumns() - 1; x++) {
-				newMaze[x, y] = pipe_maze[(x * 3) + 2, (y * 3) + 2];
-			}
-		}
+		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.ColsCount() / 3), (pipe_maze.RowsCount() / 3), Day10.EMPTY);
+		for (int y = 0; y < newMaze.RowsMax(); y++) {
+		for (int x = 0; x < newMaze.ColsMax(); x++) {
+			newMaze[x, y] = pipe_maze[(x * 3) + 2, (y * 3) + 2];
+		}}
 		return newMaze;
 	}
 
