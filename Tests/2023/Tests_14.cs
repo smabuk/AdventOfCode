@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace AdventOfCode.Tests.Year2023;
+﻿namespace AdventOfCode.Tests.Year2023;
 
 public class Tests_14_Parabolic_Reflector_Dish(ITestOutputHelper testOutputHelper)
 {
@@ -25,6 +23,14 @@ public class Tests_14_Parabolic_Reflector_Dish(ITestOutputHelper testOutputHelpe
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 64)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
 	}
 
