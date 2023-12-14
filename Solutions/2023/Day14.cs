@@ -1,4 +1,8 @@
-﻿namespace AdventOfCode.Solutions._2023;
+﻿using static AdventOfCode.Solutions._2023.Day14;
+
+using Dish = char[,];
+
+namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 14: Parabolic Reflector Dish
@@ -8,110 +12,110 @@
 public sealed partial class Day14 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
-	{
-		return Solution2(input, visualise).ToString();
-	}
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
-	public const char ROUNDED_ROCK = 'O';
-	public const char FLAT_ROCK    = '#';
+	public const char EMPTY            = '.';
+	public const char ROUNDED_ROCK     = 'O';
+	public const char CUBE_SHAPED_ROCK = '#';
 
 	private static int Solution1(string[] input) {
 		return input
-			.AsCells([ROUNDED_ROCK, FLAT_ROCK])
-			.Tilt(0, 0, 0)
-			.Sum(r => input.Length - r.Y);
+			.To2dArray()
+			.Tilt(Direction.North)
+			.CalculateLoad();
 	}
 
-	private static int Solution2(string[] input, Action<string[], bool>? visualise = null) {
-		long noOfCycles = 1_000_000_000;
-		IEnumerable<Cell<char>> rocks = input.AsCells([ROUNDED_ROCK, FLAT_ROCK]);
-		List<Cell<char>> flatRocks = [..rocks.Where(r => r.Value == FLAT_ROCK)];
-		Dictionary<string, long> state = [];
-
-		int maxX = input[0].Length;
-		int maxY = input.Length;
-		state[rocks.ToState(maxY)] = 0;
-
-		long firstSeen = 0;
-		long interval = 0;
-		for (long i = 0; i < (noOfCycles * 4); i++) {
-			rocks = [..flatRocks, ..rocks.Tilt((int)(i % 4), maxY, maxY)];
-			string stateString = rocks.ToState(maxY);
-			if (interval == 0 && state.TryGetValue(stateString, out firstSeen)) {
-				interval = i - firstSeen;
-				i += (((noOfCycles * 4 / interval) - (i / interval) - 1) * interval);
-			}
-			if (interval == 0) {
-				state[stateString] = i;
-			}
-		}
-
-		long index = ((noOfCycles - firstSeen) % interval);
-		VisualiseGrid(rocks, $"Final: ", maxX, maxY, visualise);
-		return rocks.Where(r => r.Value == ROUNDED_ROCK).Sum(r => input.Length - r.Y);
-	}
-
-	private static void VisualiseGrid(IEnumerable<Cell<char>> rocks, string title, int maxX, int maxY, Action<string[], bool>? visualise)
+	private static int Solution2(string[] input)
 	{
-		char[,] grid = ArrayHelpers.Create2dArray(maxY, maxX, '.');
-		foreach (var rock in rocks) {
-			grid[rock.X, rock.Y] = rock.Value;
-		}
-		if (visualise is not null) {
-			string[] output = ["", title, .. grid.PrintAsStringArray(0)];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
-		}
-	}
-}
-
-public static class Day14Helpers
-{
-	public static string ToState(this IEnumerable<Cell<char>> rocks, int maxY)
-	{
-		int load = rocks.Where(r => r.Value == Day14.ROUNDED_ROCK).Sum(r => maxY - r.Y);
-		return $"{load}|{string.Join(":", rocks.Where(r => r.Value == Day14.ROUNDED_ROCK).Select(r => r.Index.ToString()))}";
+		return input
+			.To2dArray()
+			.Spin(1_000_000_000)
+			.CalculateLoad();
 	}
 
-	public static IEnumerable<Cell<char>> Tilt(this IEnumerable<Cell<char>> rocks, int cycle, int maxX, int maxY)
-	{
-		Direction direction = (Direction)(cycle % 4);
-		List<Cell<char>> theRocks = direction switch
-		{
-			Direction.North => [.. rocks.OrderBy(r => r.Index.Y)],
-			Direction.West  => [.. rocks.OrderBy(r => r.Index.X)],
-			Direction.South => [.. rocks.OrderByDescending(r => r.Index.Y)],
-			Direction.East  => [.. rocks.OrderByDescending(r => r.Index.X)],
-			_ => throw new NotImplementedException(),
-		};
-
-		for (int i = 0; i < theRocks.Count; i++) {
-			Cell<char> rock = theRocks[i];
-			if (rock.Value is Day14.ROUNDED_ROCK) {
-				int newX = rock.X;
-				int newY = rock.Y;
-
-				(newX, newY) = direction switch
-				{
-					Direction.North => (newX, theRocks.Where(r => r.Index.X == rock.X && r.Index.Y < rock.Y).Select(r => r.Y).DefaultIfEmpty(-1).Max() + 1)  ,
-					Direction.West  => (      theRocks.Where(r => r.Index.Y == rock.Y && r.Index.X < rock.X).Select(r => r.X).DefaultIfEmpty(-1).Max() + 1   , newY),
-					Direction.South => (newX, theRocks.Where(r => r.Index.X == rock.X && r.Index.Y > rock.Y).Select(r => r.Y).DefaultIfEmpty(maxY).Min() - 1),
-					Direction.East  => (      theRocks.Where(r => r.Index.Y == rock.Y && r.Index.X > rock.X).Select(r => r.X).DefaultIfEmpty(maxX).Min() - 1 , newY),
-					_ => throw new NotImplementedException(),
-				};
-				Debug.Assert(newX >= 0 && newY >= 0);
-				theRocks[i] = rock with { Index = new(newX, newY) };
-				yield return theRocks[i];
-			}
-		}
-	}
-
-	private enum Direction
+	public enum Direction
 	{
 		North,
 		West,
 		South,
 		East
 	}
+}
 
+public static class Day14Helpers
+{
+	public static Dish Spin(this Dish dish, int noOfCycles)
+	{
+		Dictionary<string, long> state = [];
+
+		Dish spunDish = (Dish)dish.Clone();
+		
+		long firstSeen = 0;
+		long interval = 0;
+
+		for (long i = 0; i < noOfCycles; i++) {
+			spunDish = spunDish
+				.Tilt(Direction.North)
+				.Tilt(Direction.West)
+				.Tilt(Direction.South)
+				.Tilt(Direction.East);
+			if (interval == 0) {
+				string currentState = spunDish.ToState();
+				if (state.TryGetValue(currentState, out firstSeen)) {
+					interval = i - firstSeen;
+					i += ((noOfCycles / interval) - (i / interval) - 1) * interval;
+				}
+				state[currentState] = i;
+			}
+		}
+		return spunDish;
+	}
+
+	public static Dish Tilt(this Dish dish, Direction direction)
+	{
+		Dish tiltedDish = (Dish)dish.Clone();
+
+		(int dX, int dY, int xStart, int yStart) = direction switch {
+			Direction.North => ( 0, -1,                      0,                   0),
+			Direction.West  => (-1,  0,                      0,                   0),
+			Direction.South => ( 0,  1,                      0, dish.NoOfRows() - 1),
+			Direction.East  => ( 1,  0, dish.NoOfColumns() - 1,                   0),
+			_ => throw new NotImplementedException(),
+		};
+
+		int xStep = xStart == 0 ? 1 : -1;
+		int yStep = yStart == 0 ? 1 : -1;
+		for (int y = yStart; dish.InBounds(0, y); y += yStep) {
+			for (int x = xStart; dish.InBounds(x, y); x += xStep) {
+				(int lookAtX, int lookatY) = (x + dX, y + dY);
+				char current = tiltedDish[x, y];
+				if (current == ROUNDED_ROCK && tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+					while (tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+						(lookAtX, lookatY) = (lookAtX + dX, lookatY + dY);
+					}
+					tiltedDish[lookAtX - dX, lookatY -dY] = current;
+					tiltedDish[x, y] = EMPTY;
+				}
+			}
+		}
+
+		return tiltedDish;
+	}
+
+	public static string ToState(this Dish dish)
+		=> $"{string.Join("", dish.Walk2dArrayWithValues().Where(x => x.Value != CUBE_SHAPED_ROCK).Select(x => x.Value.ToString()))}";
+
+	public static int CalculateLoad(this Dish dish)
+	{
+		int load = 0;
+		for (int y = 0; dish.InBounds(0, y); y++) {
+			for (int x = 0; dish.InBounds(x, y); x++) {
+				if (dish[x, y] == ROUNDED_ROCK) {
+					load += dish.NoOfRows() - y;
+				}
+			}
+		}
+		
+		return load;
+	}
 }

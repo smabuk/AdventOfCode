@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2023;
 
-public class Tests_14_Parabolic_Reflector_Dish(ITestOutputHelper testOutputHelper)
+public class Tests_14_Parabolic_Reflector_Dish
 {
 	const int DAY = 14;
 
@@ -30,19 +30,7 @@ public class Tests_14_Parabolic_Reflector_Dish(ITestOutputHelper testOutputHelpe
 	[InlineData(TEST_DATA, 64)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		actual.ShouldBe(expected);
 	}
-
-
-	private void Callback(string[] lines, bool _)
-	{
-		if (lines is null or []) {
-			return;
-		}
-
-		testOutputHelper.WriteLine(string.Join(Environment.NewLine, lines));
-	}
-
-
 }
