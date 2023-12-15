@@ -9,7 +9,6 @@ public class Tests_15_Lens_Library
 		""";
 
 	[Theory]
-	[InlineData(TEST_DATA, 1320)]
 	[InlineData("rn=1",      30)]
 	[InlineData("cm-",      253)]
 	[InlineData("qp=3",      97)]
@@ -21,17 +20,18 @@ public class Tests_15_Lens_Library
 	[InlineData("pc-",       48)]
 	[InlineData("pc=6",     214)]
 	[InlineData("ot=7",     231)]
+	[InlineData(TEST_DATA, 1320)]
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 
-	//[Theory]
-	//[InlineData(TEST_DATA, 9999)]
-	//public void Part2(string input, int expected)
-	//{
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-	//	actual.ShouldBe(expected);
-	//}
+	[Theory]
+	[InlineData(TEST_DATA, 145)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
