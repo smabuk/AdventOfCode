@@ -14,54 +14,51 @@ public sealed partial class Day15 {
 		return input
 			.Single()
 			.TrimmedSplit(",")
-			.As<Step>()
-			.Sum(step => Step.HashNumber(step.Name));
+			.Sum(HashNumber);
 	}
 
 	private static int Solution2(string[] input) {
-		List<Step> initializationSequence = [..
-			input
-			.Single()
-			.TrimmedSplit(",")
-			.As<Step>()];
-
-		Dictionary<int ,Box> boxes = Enumerable.Range(0, 256)
+		Dictionary<int, Box> boxes
+			= Enumerable.Range(0, 256)
 			.Select(i => new Box(i))
 			.ToDictionary(b => b.Number, b => b);
 
-		foreach (Step step in initializationSequence) {
-			Lens lens = step.Lens;
-			int boxNo = Step.HashNumber(lens.Label);
-			boxes[boxNo].ProcessLens(step.Operation, lens);
-		}
+		input
+		.Single()
+		.TrimmedSplit(",")
+		.As<Step>()
+		.ToList()
+		.ForEach(step => boxes[HashNumber(step.Lens.Label)].ProcessStep(step));
 
 		return boxes.Sum(box => box.Value.FocusingPower);
 	}
 
 
-
-	private sealed record Step(string Name) : IParsable<Step>
+	public static int HashNumber(string s)
 	{
-		private const char INSERT = '=';
-
-		public readonly Operation Operation = Name.Contains(INSERT) ? Operation.Insert : Operation.Remove;
-		public readonly Lens Lens = Name.As<Lens>();
-
-		public static int HashNumber(string s)
-		{
-			int result = 0;
-			foreach (char c in s) {
-				result += c;
-				result *= 17;
-				result %= 256;
-			}
-			return result;
+		int result = 0;
+		foreach (char c in s) {
+			result += c;
+			result = result * 17 % 256;
 		}
 
-		public static Step Parse(string s, IFormatProvider? provider) => new(s);
+		return result;
+	}
+
+
+	private record Step(string Instruction) : IParsable<Step>
+	{
+		const char INSERT = '=';
+
+		public readonly Lens Lens = Instruction.As<Lens>();
+
+		public static Step Parse(string s, IFormatProvider? provider) => s.Contains(INSERT) ? new InsertStep(s) : new RemoveStep(s) ;
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Step result)
 			=> ISimpleParsable<Step>.TryParse(s, provider, out result);
 	}
+
+	private record RemoveStep(string Instruction) : Step(Instruction);
+	private record InsertStep(string Instruction) : Step(Instruction);
 
 
 
@@ -72,12 +69,12 @@ public sealed partial class Day15 {
 
 		public int FocusingPower => lensSlot.Select((lens, index) => (Number + 1) * (index + 1) * lens.FocalLength).Sum();
 
-		public void ProcessLens(Operation operation, Lens lens)
+		public void ProcessStep(Step step)
 		{
-			if (operation == Operation.Remove) {
-				Remove(lens);
+			if (step is RemoveStep) {
+				Remove(step.Lens);
 			} else {
-				Insert(lens);
+				Insert(step.Lens);
 			}
 		}
 
@@ -110,20 +107,11 @@ public sealed partial class Day15 {
 			char[] splitBy = [INSERT, REMOVE];
 
 			string[] split = s.TrimmedSplit(splitBy);
-			return s.Contains(INSERT)
-				? new(split[0], split[1].As<int>())
-				: new(split[0], 0);
+
+			return s.Contains(INSERT)   ?   new Lens(split[0], split[1].As<int>())   :   new Lens(split[0], 0);
 		}
 
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Lens result)
 			=> ISimpleParsable<Lens>.TryParse(s, provider, out result);
 	};
-
-
-
-	public enum Operation
-	{
-		Remove,
-		Insert,
-	}
 }
