@@ -13,7 +13,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 
 	public IMemoryCache MemoryCache { get; }
 
-	public async Task<string> GetInputData(int year, int day, string? _) {
+	public async Task<string> GetInputData(int year, int day, string? _ = null) {
 		var response = await _httpClient.GetAsync($"{year}/day/{day}/input");
 
 		string value = response.IsSuccessStatusCode switch {
