@@ -87,7 +87,7 @@ public sealed partial class Day10 {
 			DisplayPipeMaze(biggerPipeMaze.MakeSmallerMaze(), "Filled Maze:", visualise);
 			return biggerPipeMaze
 				.Walk2dArrayWithValues()
-				.Where(cell => cell.Value == INSIDE)
+				.Where(cell => cell == INSIDE)
 				.Count();
 		}
 
@@ -103,15 +103,15 @@ public sealed partial class Day10 {
 			}
 
 			return mazeWithoutLoop
-				.Where(cell => cell.Value == INSIDE
+				.Where(cell => cell == INSIDE
 							&& cell.X > minMaxPerRow[cell.Y].Min && cell.X < minMaxPerRow[cell.Y].Max
-							&& loopRoute.IsPointInPolygon(cell.Index))
+							&& loopRoute.IsPointInPolygon(cell))
 				.Count();
 		}
 
 		if (solutionMethod is SolutionMethod.InversionCount) {
 			return mazeWithoutLoop
-				.Where(cell => cell.Value == INSIDE && pipe_maze.InversionsCount(loopRoute, cell.Index))
+				.Where(cell => cell == INSIDE && pipe_maze.InversionsCount(loopRoute, cell))
 				.Count();
 		}
 
@@ -122,7 +122,7 @@ public sealed partial class Day10 {
 	{
 		Point startingPosition = pipe_maze
 			.Walk2dArrayWithValues()
-			.Where(cell => cell.Value == STARTING_POSITION)
+			.Where(cell => cell == STARTING_POSITION)
 			.Single()
 			.Index;
 

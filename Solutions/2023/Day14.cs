@@ -92,12 +92,12 @@ public static class Day14Helpers
 
 		int xStep = xStart == 0 ? 1 : -1;
 		int yStep = yStart == 0 ? 1 : -1;
-		for (int y = yStart; dish.InBounds(0, y); y += yStep) {
-		for (int x = xStart; dish.InBounds(x, y); x += xStep) {
+		for (int y = yStart; dish.IsInBounds(0, y); y += yStep) {
+		for (int x = xStart; dish.IsInBounds(x, y); x += xStep) {
 			(int lookAtX, int lookatY) = (x + dX, y + dY);
 			char current = tiltedDish[x, y];
-			if (current == ROUNDED_ROCK && tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
-				while (tiltedDish.InBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+			if (current == ROUNDED_ROCK && tiltedDish.IsInBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
+				while (tiltedDish.IsInBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
 					(lookAtX, lookatY) = (lookAtX + dX, lookatY + dY);
 				}
 				tiltedDish[lookAtX - dX, lookatY -dY] = current;
@@ -114,8 +114,8 @@ public static class Day14Helpers
 	public static int CalculateLoad(this Dish dish)
 	{
 		int load = 0;
-		for (int y = 0; dish.InBounds(0, y); y++) {
-		for (int x = 0; dish.InBounds(x, y); x++) {
+		for (int y = 0; dish.IsInBounds(0, y); y++) {
+		for (int x = 0; dish.IsInBounds(x, y); x++) {
 			if (dish[x, y] == ROUNDED_ROCK) {
 				load += dish.RowsCount() - y;
 			}

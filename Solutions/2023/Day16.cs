@@ -108,7 +108,7 @@ public sealed partial class Day16 {
 				};
 
 				Beam possibleBeam = new(newPosition, newDirection);
-				if (contraption.InBounds(newPosition) && !visited.Contains(possibleBeam)) {
+				if (contraption.IsInBounds(newPosition) && !visited.Contains(possibleBeam)) {
 					queue.Enqueue(possibleBeam);
 				}
 			}
