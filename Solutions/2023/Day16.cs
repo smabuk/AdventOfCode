@@ -1,5 +1,7 @@
 ﻿using static AdventOfCode.Solutions._2023.Day16.Direction;
 
+using Contraption = char[,];
+
 namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
@@ -33,15 +35,15 @@ public sealed partial class Day16 {
 	}
 
 	private static int Solution2(string[] input) {
-		char[,] cave = input.To2dArray();
+		Contraption contraption = input.To2dArray();
 
 		object? tileLock = 1;
-		int size = cave.ColsCount();
+		int size = contraption.ColsCount();
 		int maxTiles = int.MinValue;
 		_ = Parallel.For(0, size * 4, (i, state) =>
 		{
 			Beam beam = GetStartBeam(i, size);
-			int tiles = Energise(cave, beam).Count;
+			int tiles = Energise(contraption, beam).Count;
 			lock (tileLock) {
 				maxTiles = int.Max(maxTiles, tiles);
 			}
@@ -56,17 +58,17 @@ public sealed partial class Day16 {
 		int start = i % size;
 		Point point = direction switch
 		{
-			Left => new(size - 1, start),
+			Left  => new(size - 1, start),
 			Right => new(0, start),
-			Up => new(start, size - 1),
-			Down => new(start, 0),
-			_ => throw new NotImplementedException(),
+			Up    => new(start, size - 1),
+			Down  => new(start, 0),
+			_ => throw new ArgumentOutOfRangeException(nameof(direction)),
 		};
 		Beam beam = new(point, direction);
 		return beam;
 	}
 
-	private static HashSet<Point> Energise(char[,] cave, Beam beam)
+	private static HashSet<Point> Energise(Contraption contraption, Beam beam)
 	{
 		HashSet<Beam> visited = [];
 		Queue<Beam> queue = new([beam]);
@@ -74,21 +76,22 @@ public sealed partial class Day16 {
 		while (queue.TryDequeue(out beam)) {
 			_ = visited.Add(beam);
 
-			char obstacle = cave[beam.Position.X, beam.Position.Y];
+			char obstacle = contraption[beam.Position.X, beam.Position.Y];
 			Direction[] newDirections = obstacle switch
 			{
-//				   /
+//		mirror_1: /
 				MIRROR_1 when beam.Direction is Left  => [Down],
 				MIRROR_1 when beam.Direction is Up    => [Right],
 				MIRROR_1 when beam.Direction is Right => [Up],
 				MIRROR_1 when beam.Direction is Down  => [Left],
 
-//				   \
+//		mirror_2: \
 				MIRROR_2 when beam.Direction is Right => [Down],
 				MIRROR_2 when beam.Direction is Up    => [Left],
 				MIRROR_2 when beam.Direction is Left  => [Up],
 				MIRROR_2 when beam.Direction is Down  => [Right],
 
+//		splitters: - |
 				SPLITTER_H when beam.Direction is Down or Up    => [Left, Right],
 				SPLITTER_V when beam.Direction is Left or Right => [Up, Down],
 				_ => [beam.Direction],
@@ -101,17 +104,33 @@ public sealed partial class Day16 {
 					Right => beam.Position.Right(),
 					Up    => beam.Position.Up(),
 					Down  => beam.Position.Down(),
-					_ => throw new NotImplementedException(),
+					_ => throw new ArgumentOutOfRangeException(nameof(newDirection)),
 				};
 
 				Beam possibleBeam = new(newPosition, newDirection);
-				if (cave.InBounds(newPosition) && !visited.Contains(possibleBeam)) {
+				if (contraption.InBounds(newPosition) && !visited.Contains(possibleBeam)) {
 					queue.Enqueue(possibleBeam);
 				}
 			}
 		}
 
 		return [.. visited.Select(b => b.Position)];
+	}
+
+	private static IEnumerable<string> DisplayContraption(Contraption contraption)
+	{
+		string[] output = [..contraption.PrintAsStringArray()];
+		return output;
+	}
+
+	private static IEnumerable<string> DisplayEnergised(Contraption contraption, IEnumerable<Point> energised)
+	{
+		Contraption energisedContraption = ArrayHelpers.Create2dArray(contraption.ColsCount(), contraption.RowsCount(), '.');
+		foreach (Point point in energised) {
+			energisedContraption[point.X, point.Y] = ENERGISED;
+		}
+		string[] output = [.. energisedContraption.PrintAsStringArray()];
+		return output;
 	}
 
 	private record struct Beam(Point Position, Direction Direction);
