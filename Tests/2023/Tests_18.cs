@@ -28,4 +28,12 @@ public class Tests_18_Lavaduct_Lagoon
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 952_408_144_115)]
+	public void Part2(string input, long expected)
+	{
+		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out long actual);
+		actual.ShouldBe(expected);
+	}
 }

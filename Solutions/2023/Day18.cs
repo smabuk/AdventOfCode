@@ -1,5 +1,4 @@
-﻿using static AdventOfCode.Solutions._2023.Day18;
-namespace AdventOfCode.Solutions._2023;
+﻿namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 18: Lavaduct Lagoon
@@ -8,57 +7,36 @@ namespace AdventOfCode.Solutions._2023;
 [Description("Lavaduct Lagoon")]
 public sealed partial class Day18 {
 
-	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? args) => Solution(input, Instruction.Parse).ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution(input, Instruction.SwappedParse).ToString();
 
-	public const char EMPTY  = '.';
-	public const char TRENCH = '#';
+	private static long Solution(string[] input, Func<string, Instruction> parse) {
+		List<Instruction> digPlan = [.. input.Select(parse)];
 
+		Point current = new(0, 0);
+		List<Point> trench = [current];
 
-	private static IEnumerable<Instruction> _digPlan = [];
-
-	private static void LoadInstructions(string[] input) {
-		_digPlan = input.As<Instruction>();
-	}
-
-	private static int Solution1(string[] input) {
-		List<Instruction> digPlan = [.. input.As<Instruction>()];
-		List<Hole> trench = [];
-		Point position = new(0, 0);
+		int distance = 0;
 		foreach (Instruction instruction in digPlan) {
-			List<Hole> newHoles = [.. Dig(position, instruction)];
-			trench.AddRange(newHoles);
-			position = newHoles[^1].Position;
+			(int dX, int dY) dig = (instruction.DigDirection.dX * instruction.Value, instruction.DigDirection.dY * instruction.Value);
+			current += dig;
+			trench.Add(current);
+			distance += int.Abs(dig.dX + dig.dY);
 		}
 
-		List<Point> trenchRoute = [..trench.Select(t => t.Position)];
-		char[,] lagoon = trenchRoute.To2dArray(EMPTY, TRENCH);
+		// Twice the are of an irregular polygon
+		long area = trench
+			.Take(trench.Count - 1)
+			.Select((p, i) => (long)(trench[i + 1].X - p.X) * (long)(trench[i + 1].Y + p.Y))
+			.Sum() / 2;
 
-		Point start = new(lagoon.RowAsString(1).IndexOf(TRENCH) + 1, 1);
-		lagoon.FloodFill(start, [EMPTY], '@');
-		int cubicMetersOfLava = trenchRoute.Count + lagoon.Walk2dArrayWithValues().Count(hole => hole == '@');
+		// Allow for the width of the lines as well
+		long cubicMetersOfLava = Math.Abs(area) + (distance / 2) + 1;
 
 		return cubicMetersOfLava;
 	}
 
-	private static string Solution2(string[] input) {
-		List<Instruction> instructions = [.. input.As<Instruction>()];
-		return "** Solution not written yet **";
-	}
-
-	private static IEnumerable<Hole> Dig(Point position, Instruction instruction)
-	{
-		for (int i = 1; i <= instruction.Value; i++) {
-			(int dX, int dY) dig = (instruction.DigDirection.dX * i, instruction.DigDirection.dY * i);
-			yield return new(new(position + dig), instruction.RgbValue);
-		}
-	}
-
-	public record struct Hole(Point Position, string RgbValue);
-
-	private sealed record Instruction(string Direction, int Value, string RgbValue) : IParsable<Instruction> {
+	private sealed record Instruction(string Direction, int Value) {
 
 		public (int dX, int dY) DigDirection = Direction switch
 		{
@@ -68,31 +46,27 @@ public sealed partial class Day18 {
 			"R" => ArrayHelpers.RIGHT,
 			_ => throw new NotImplementedException(),
 		};
-		public static Instruction Parse(string s, IFormatProvider? provider)
+
+		public static Instruction Parse(string s)
 		{
 			string[] splitBy = [" ", "(", ")"];
 			string[] tokens = s.TrimmedSplit(splitBy);
-			return new(tokens[0], tokens[1].As<int>(), tokens[2]);
+			return new(tokens[0], tokens[1].As<int>());
 		}
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
-			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
-	}
-}
 
-file static class Day18Helpers {
-	public static void FloodFill(this char[,] grid, Point start, char[] cellTypesToFill, char fillValue)
-	{
-		Queue<Point> queue = [];
-		queue.Enqueue(start);
-		while (queue.Count != 0) {
-			Point point = queue.Dequeue();
-			if (!cellTypesToFill.Contains(grid[point.X, point.Y])) {
-				continue;
-			}
-			grid[point.X, point.Y] = fillValue;
-			foreach (Cell<char> adjacent in grid.GetAdjacentCells(point)) {
-				queue.Enqueue(adjacent.Index);
-			}
+		public static Instruction SwappedParse(string s)
+		{
+			string hexValues = s.TrimmedSplit([" ", "(", ")"])[2];
+			string direction = hexValues[^1] switch
+			{
+				'0' => "R",
+				'1' => "D",
+				'2' => "L",
+				'3' => "U",
+				_ => throw new NotImplementedException(),
+			};
+
+			return new(direction, int.Parse(hexValues[1..6], System.Globalization.NumberStyles.HexNumber));
 		}
 	}
 }
