@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2023;
 
-public class Tests_17_Clumst_Crucible
+public class Tests_17_Clumsy_Crucible
 {
 	const int DAY = 17;
 
@@ -25,6 +25,21 @@ public class Tests_17_Clumst_Crucible
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 94)]
+	[InlineData("""
+		111111111111
+		999999999991
+		999999999991
+		999999999991
+		999999999991
+		""", 71)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 }
