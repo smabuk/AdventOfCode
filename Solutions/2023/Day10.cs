@@ -196,7 +196,7 @@ public sealed partial class Day10 {
 	}
 }
 
-public static class Day10Helpers
+file static class Day10Helpers
 {
 	public static char[,] CreateABiggerPipeMaze(this char[,] pipe_maze)
 	{
