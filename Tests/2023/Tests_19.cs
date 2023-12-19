@@ -32,4 +32,11 @@ public class Tests_19_Aplenty
 		actual.ShouldBe(expected);
 	}
 
+	[Theory]
+	[InlineData(TEST_DATA, 1_674_090_798_000)]
+	public void Part2(string input, long expected)
+	{
+		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out long actual);
+		actual.ShouldBe(expected);
+	}
 }
