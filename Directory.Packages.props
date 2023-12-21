@@ -13,6 +13,6 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="Shouldly" Version="4.2.1" />
     <PackageVersion Include="AngleSharp" Version="1.0.7" />
-    <PackageVersion Include="Smab.Helpers" Version="1.5.1" />
+    <PackageVersion Include="Smab.Helpers" Version="1.5.2" />
   </ItemGroup>
 </Project>
