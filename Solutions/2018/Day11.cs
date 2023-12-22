@@ -14,14 +14,14 @@ public sealed partial class Day11 {
 		int gridSerialNo = input[0].As<int>();
 
 		int[,] fuelCells = new int[300, 300];
-		foreach ((int cellX, int cellY) in fuelCells.Walk2dArray()) {
+		foreach ((int cellX, int cellY) in fuelCells.Walk()) {
 			int value = CalculatePowerValue(gridSerialNo, cellX + 1, cellY + 1);
 			fuelCells[cellX, cellY] = value;
 		}
 
 		int maxValue = int.MinValue;
 		string topLeft = "";
-		foreach (Cell<int> fuelCell in fuelCells.Walk2dArrayWithValues()) {
+		foreach (Cell<int> fuelCell in fuelCells.WalkWithValues()) {
 			if (fuelCell.X < 298 && fuelCell.Y < 298) {
 				int value = fuelCell.Value
 					+ fuelCells[fuelCell.X + 1, fuelCell.Y]
@@ -48,7 +48,7 @@ public sealed partial class Day11 {
 		int gridSerialNo = input[0].As<int>();
 
 		int[,] fuelCells = new int[300, 300];
-		foreach ((int cellX, int cellY) in fuelCells.Walk2dArray()) {
+		foreach ((int cellX, int cellY) in fuelCells.Walk()) {
 			int value = CalculatePowerValue(gridSerialNo, cellX + 1, cellY + 1);
 			fuelCells[cellX, cellY] = value;
 		}

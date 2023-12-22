@@ -95,7 +95,7 @@ public sealed partial class Day14 {
 
 		char[,] cave = new char[ColsCount, RowsCount];
 
-		foreach ((int X, int Y) in cave.Walk2dArray()) {
+		foreach ((int X, int Y) in cave.Walk()) {
 			cave[X, Y] = AIR;
 		}
 		if (includeFloor) {

@@ -69,7 +69,7 @@ public sealed partial class Day10 {
 		} while (animal.Position != startingPosition);
 
 		IEnumerable<Cell<char>> mazeWithoutLoop = pipe_maze
-			.Walk2dArrayWithValues()
+			.WalkWithValues()
 			.Where(cell => !loopRoute.Contains(cell.Index));
 
 		foreach (Cell<char> cell in mazeWithoutLoop) {
@@ -86,7 +86,7 @@ public sealed partial class Day10 {
 
 			DisplayPipeMaze(biggerPipeMaze.MakeSmallerMaze(), "Filled Maze:", visualise);
 			return biggerPipeMaze
-				.Walk2dArrayWithValues()
+				.WalkWithValues()
 				.Where(cell => cell == INSIDE)
 				.Count();
 		}
@@ -121,7 +121,7 @@ public sealed partial class Day10 {
 	private static Animal FindAnimal(char[,] pipe_maze)
 	{
 		Point startingPosition = pipe_maze
-			.Walk2dArrayWithValues()
+			.WalkWithValues()
 			.Where(cell => cell == STARTING_POSITION)
 			.Single()
 			.Index;
@@ -201,7 +201,7 @@ file static class Day10Helpers
 	public static char[,] CreateABiggerPipeMaze(this char[,] pipe_maze)
 	{
 		char[,] newMaze = ArrayHelpers.Create2dArray((pipe_maze.ColsCount() * 3) + 3, (pipe_maze.RowsCount() * 3) + 3, Day10.GROUND);
-		foreach (Cell<char>? cell in pipe_maze.Walk2dArrayWithValues()) {
+		foreach (Cell<char>? cell in pipe_maze.WalkWithValues()) {
 			char[,] newPipeValue = cell.Value.ConvertToBigPipe().To2dArray(3);
 			for (int dy = 0; dy < 3; dy++) {
 			for (int dx = 0; dx < 3; dx++) {

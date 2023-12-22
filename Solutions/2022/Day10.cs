@@ -45,7 +45,7 @@ public sealed partial class Day10 {
 			in new CPU() { Mode = CPU.CpuMode.Crt, Cycle = (1, 1) }
 				.ExecuteProgram(_instructions.ToList())
 				.To2dArray(CRT_COLS, CRT_ROWS)
-				.Walk2dArrayWithValues()) {
+				.WalkWithValues()) {
 			crt[cpuCycle.X, cpuCycle.Y] = PixelState(cpuCycle.X, cpuCycle.Value) ? '█' : ' ';
 		}
 

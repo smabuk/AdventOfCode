@@ -18,7 +18,7 @@ public class Day09 {
 			.To2dArray(input[0].Length);
 
 		return heightMap
-			.Walk2dArrayWithValues()
+			.WalkWithValues()
 			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
 			.Select(cell => cell.Value)
 			.Sum(height => height + 1);
@@ -40,7 +40,7 @@ public class Day09 {
 			.To2dArray(input[0].Length);
 
 		return heightMap
-			.Walk2dArray()
+			.Walk()
 			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
 			.AsPoints()
 			.Select(location => 

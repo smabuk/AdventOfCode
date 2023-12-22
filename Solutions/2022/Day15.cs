@@ -61,7 +61,7 @@ public sealed partial class Day15 {
 				int offsetY = yBlock;
 				int offsetX = xBlock;
 				Console.WriteLine($"Checking : {offsetX}, {offsetY}");
-				foreach ((int x, int y) in cave.Walk2dArray()) {
+				foreach ((int x, int y) in cave.Walk()) {
 					cave[x, y] = ' ';
 				}
 				foreach (SensorBeaconPair sbp in _pairs) {
@@ -73,7 +73,7 @@ public sealed partial class Day15 {
 						}
 					}
 				}
-				foreach ((int x, int y, char value) in cave.Walk2dArrayWithValues()) {
+				foreach ((int x, int y, char value) in cave.WalkWithValues()) {
 					if (value == ' ') {
 						return ((x + offsetX) * 4_000_000) + offsetY + y;
 					}

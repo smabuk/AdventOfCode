@@ -37,17 +37,17 @@ public class Day11 {
 		HashSet<Point> flashedPoints = [];
 		int flashesPerStep = 0;
 
-		foreach ((int x, int y) in grid.Walk2dArray()) {
+		foreach ((int x, int y) in grid.Walk()) {
 			grid[x, y]++;
 		}
 
-		foreach ((int x, int y, int energy) in grid.Walk2dArrayWithValues()) {
+		foreach ((int x, int y, int energy) in grid.WalkWithValues()) {
 			if (energy > 9 && flashedPoints.Add(new(x, y))) {
 				flashesPerStep += 1 + CalculateAdjacentChanges(x, y, grid, flashedPoints);
 			}
 		}
 
-		foreach ((int x, int y, int energy) in grid.Walk2dArrayWithValues()) {
+		foreach ((int x, int y, int energy) in grid.WalkWithValues()) {
 			if (energy > 9) {
 				grid[x, y] = 0;
 			}
