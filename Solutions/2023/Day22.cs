@@ -65,13 +65,92 @@ public sealed partial class Day22 {
 		}
 
 		return count;
-		// 183 - too low
-		// 441 - too high, but someone else's answer
 	}
 
-	private static string Solution2(string[] input) {
-		return "** Solution not written yet **";
+	private static int Solution2(string[] input) {
+		List<Brick> bricks = [.. input.As<Brick>()];
+		List<Brick> orderedBricks = [.. bricks.OrderBy(brick => brick.Start.Z)];
+
+		for (int i = 0; i < bricks.Count; i++) {
+			Brick brick = orderedBricks[i];
+			List<Brick> bricksBelow = orderedBricks[0..i];
+			int newZ = bricksBelow
+				.Where(b => (brick.Start.X, brick.End.X).TryGetOverlap((b.Start.X, b.End.X), out _)
+				  && (brick.Start.Y, brick.End.Y).TryGetOverlap((b.Start.Y, b.End.Y), out _))
+				.DefaultIfEmpty(new Brick(new(0, 0, 0), new(0, 0, 0)))
+				.Max(b => b.End.Z) + 1;
+			orderedBricks[i] = brick with
+			{
+				Start = new(brick.Start.X, brick.Start.Y, newZ),
+				End = new(brick.End.X, brick.End.Y, newZ + brick.End.Z - brick.Start.Z)
+			};
+		}
+
+		Dictionary<string, (HashSet<string> SupportedBy, HashSet<string> Supporting)> aboveAndBelow = [];
+
+
+		for (int i = 0; i < bricks.Count; i++) {
+			Brick brick = orderedBricks[i];
+			List<Brick> bricksAbove = orderedBricks[(i + 1)..];
+			HashSet<string> supporting = [..orderedBricks
+				.Where(b => brick.End.Z == b.Start.Z - 1
+						&& (brick.Start.X, brick.End.X).TryGetOverlap((b.Start.X, b.End.X), out _)
+						&& (brick.Start.Y, brick.End.Y).TryGetOverlap((b.Start.Y, b.End.Y), out _))
+				.Select(b => b.Name)];
+			HashSet<string> supportedBy = [..orderedBricks
+				.Where(b => brick.Start.Z == b.End.Z + 1
+						&& (brick.Start.X, brick.End.X).TryGetOverlap((b.Start.X, b.End.X), out _)
+						&& (brick.Start.Y, brick.End.Y).TryGetOverlap((b.Start.Y, b.End.Y), out _))
+				.Select(b => b.Name)];
+			aboveAndBelow[brick.Name] = (supportedBy, supporting);
+		}
+
+		List<string> bricksWontFall = [];
+		List<string> bricksWillFall = [];
+		for (int i = 0; i < orderedBricks.Count; i++) {
+			Brick brick = orderedBricks[i];
+			if (aboveAndBelow[brick.Name].Supporting.Count == 0) {
+				bricksWontFall.Add(brick.Name);
+				continue;
+			}
+			bool ok = true;
+			foreach (string aboveName in aboveAndBelow[brick.Name].Supporting) {
+				if (aboveAndBelow[aboveName].SupportedBy.Count == 1) {
+					ok = false;
+					break;
+				}
+			}
+			if (ok) {
+				bricksWontFall.Add(brick.Name);
+			} else {
+				bricksWillFall.Add(brick.Name);
+			}
+		}
+
+		HashSet<string> seen = [];
+		int count = 0;
+		foreach (string brickName in bricksWillFall) {
+			seen = [brickName];
+			count += CountFallersAbove(brickName);
+		}
+
+		return count;
+
+		int CountFallersAbove(string brickName)
+		{
+			int count = 0;
+			foreach (string name in aboveAndBelow[brickName].Supporting) {
+				int supportedByCount = aboveAndBelow[name].SupportedBy.Except(seen).Count();
+				if (supportedByCount < 1 && !seen.Contains(name)) {
+					_ = seen.Add(name);
+					count++;
+					count += CountFallersAbove(name);
+				}
+			}
+			return count;
+		}
 	}
+
 
 	private sealed record Brick(Point3d Start, Point3d End) : IParsable<Brick> {
 		public string Name => $"({Start.X},{Start.Y},{Start.Z})-({End.X},{End.Y},{End.Z})";
