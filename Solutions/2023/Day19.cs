@@ -252,7 +252,7 @@ public sealed partial class Day19 {
 
 		public static Rule Parse(string s, IFormatProvider? provider)
 		{
-			if (!s.Contains(':')) {
+			if (s.DoesNotContain(':')) {
 				return new(s, Category.None, Operator.GO, 0, s);
 			}
 

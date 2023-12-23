@@ -70,7 +70,7 @@ public sealed partial class Day10 {
 
 		IEnumerable<Cell<char>> mazeWithoutLoop = pipe_maze
 			.WalkWithValues()
-			.Where(cell => !loopRoute.Contains(cell.Index));
+			.Where(cell => loopRoute.DoesNotContain(cell.Index));
 
 		foreach (Cell<char> cell in mazeWithoutLoop) {
 			pipe_maze[cell.X, cell.Y] = INSIDE;
@@ -239,7 +239,7 @@ file static class Day10Helpers
 		queue.Enqueue(start);
 		while (queue.Count != 0) {
 			Point point = queue.Dequeue();
-			if (!cellTypesToFill.Contains(pipe_maze[point.X, point.Y])) {
+			if (cellTypesToFill.DoesNotContain(pipe_maze[point.X, point.Y])) {
 				continue;
 			}
 			pipe_maze[point.X, point.Y] = fillValue;

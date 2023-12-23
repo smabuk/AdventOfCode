@@ -11,8 +11,8 @@ public sealed partial class Day23 {
 
 	[Init]
 	public static   void  Init(string[] input, params object[]? args) => LoadMap(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
+	public static string Part1(string[] input, params object[]? args) => Solution(1).ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution(2).ToString();
 
 	public const char PATH        = '.';
 	public const char FOREST      = '#';
@@ -32,18 +32,12 @@ public sealed partial class Day23 {
 		_end   = new(_map.RowAsString(_map.YMax()).IndexOf(PATH), _map.YMax());
 	}
 
-	private static int Solution1() {
-		return _map
-			.FindAllPathLengths(_start, _end, [])
-			.Max();
-	}
-
-	private static int Solution2()
+	private static int Solution(int part)
 	{
 		return
 			_map
-			.CondenseMap([_start, _end])
-			.BuildGraph()
+			.IdentifyJunctions([_start, _end])
+			.BuildGraph(part)
 			.FindMaxSteps_DepthFirstSearch(_start, []);
 	}
 
@@ -51,7 +45,7 @@ public sealed partial class Day23 {
 
 file static class Day23Helpers
 {
-	public static List<Point> CondenseMap(this char[,] map, List<Point> initialPoints)
+	public static List<Point> IdentifyJunctions(this char[,] map, List<Point> initialPoints)
 	{
 		List<Point> points = [.. initialPoints];
 
@@ -71,7 +65,7 @@ file static class Day23Helpers
 		return points;
 	}
 
-	public static Dictionary<Point, Dictionary<Point, int>> BuildGraph(this List<Point> points)
+	public static Dictionary<Point, Dictionary<Point, int>> BuildGraph(this List<Point> points, int part = 1)
 	{
 		Dictionary<Point, Dictionary<Point, int>> graph = points.ToDictionary(pt => pt, pt => new Dictionary<Point, int>());
 
@@ -90,8 +84,8 @@ file static class Day23Helpers
 					continue;
 				}
 
-				foreach (Point neighbour in _map.GetAdjacentCells(point).Where(adj => adj.Value != FOREST)) {
-					if (!seen.Contains(neighbour)) {
+				foreach (Point neighbour in _map.GetNeighbours(point, part)) {
+					if (seen.DoesNotContain(neighbour)) {
 						stack.Push((neighbour, steps + 1));
 						_ = seen.Add(neighbour);
 					}
@@ -112,7 +106,7 @@ file static class Day23Helpers
 
 		_ = visited.Add(point);
 		foreach (KeyValuePair<Point, int> next in graph[point]) {
-			if (!visited.Contains(next.Key)) {
+			if (visited.DoesNotContain(next.Key)) {
 				maxSteps = Math.Max(maxSteps, FindMaxSteps_DepthFirstSearch(graph, next.Key, visited) + graph[point][next.Key]);
 			}
 		}
@@ -121,28 +115,11 @@ file static class Day23Helpers
 		return maxSteps;
 	}
 
-	public static List<int> FindAllPathLengths(this char[,] map, Point current, Point end, List<Point> isVisited)
-	{
-		if (current == end) {
-			return [isVisited.Count];
-		}
-
-		List<int> pathLengths = [];
-
-		foreach (Point neighbour in map.GetNeighbours(current)) {
-			if (isVisited.Contains(neighbour) is false) {
-				pathLengths.AddRange(FindAllPathLengths(map, neighbour, end, [.. isVisited, neighbour]));
-			}
-		}
-
-		return pathLengths;
-	}
-
-	private static IEnumerable<Point> GetNeighbours(this char[,] _map, Point current)
+	private static IEnumerable<Point> GetNeighbours(this char[,] _map, Point current, int part = 1)
 	{
 		char currentValue = _map[current.X, current.Y];
 
-		if (currentValue.IsIn(SLOPES)) {
+		if (part == 1 && currentValue.IsIn(SLOPES)) {
 			yield return currentValue switch
 			{
 				SLOPE_RIGHT => current.Right(),
@@ -158,4 +135,23 @@ file static class Day23Helpers
 			yield return item.Index;
 		}
 	}
+
+	//public static List<int> FindAllPathLengths(this char[,] map, Point current, Point end, List<Point> isVisited)
+	//{
+	//	if (current == end) {
+	//		return [isVisited.Count];
+	//	}
+
+	//	List<int> pathLengths = [];
+
+	//	foreach (Point neighbour in map.GetNeighbours(current)) {
+	//		if (isVisited.Contains(neighbour) is false) {
+	//			pathLengths.AddRange(FindAllPathLengths(map, neighbour, end, [.. isVisited, neighbour]));
+	//		}
+	//	}
+
+	//	return pathLengths;
+	//}
+
+
 }
