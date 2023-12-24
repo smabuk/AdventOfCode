@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2023;
+﻿using System.Runtime.ExceptionServices;
+
+namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
 /// Day 20: Pulse Propagation
@@ -21,9 +23,40 @@ public sealed partial class Day20 {
 	public const bool ON  = true;
 
 
-	private static long Solution1(string[] input, int noOfButtonPushes) {
-		Dictionary<string, Module> modules = input.As<Module>().ToDictionary(m => m.Name);
+	private static long Solution1(string[] input, int noOfButtonPushes)
+	{
+		Dictionary<string, Module> modules = PrepareModules(input);
+
 		Queue<Pulse> queue = [];
+
+		int noOfLowPulses = 0;
+		int noOfHighPulses = 0;
+		for (int i = 0; i < noOfButtonPushes; i++) {
+			Button.Push(queue);
+			(int lowPulses, int highPulses) = ProcessQueue(queue, modules);
+			noOfLowPulses += lowPulses;
+			noOfHighPulses += highPulses;
+		}
+
+		return noOfLowPulses * noOfHighPulses;
+	}
+
+	private static long Solution2(string[] input)
+	{
+		Dictionary<string, Module> modules = PrepareModules(input);
+
+		List<string> keyRxInputs = [.. 
+			modules["rx"]
+			.Inputs
+			.Select(inp => modules[inp.Key].Inputs)
+			.SelectMany(inp => inp.Keys)];
+
+		return DiscoverCycles(modules, keyRxInputs).Aggregate(1L, (a, b) => a * b);
+	}
+
+	private static Dictionary<string, Module> PrepareModules(string[] input)
+	{
+		Dictionary<string, Module> modules = input.As<Module>().ToDictionary(m => m.Name);
 
 		List<string> existingModules = [.. modules.Keys];
 		foreach (string moduleName in existingModules) {
@@ -36,21 +69,7 @@ public sealed partial class Day20 {
 			}
 		}
 
-		int noOfLowPulses  = 0;
-		int noOfHighPulses = 0;
-		for (int i = 0; i < noOfButtonPushes; i++) {
-			Button.Push(queue);
-			(int lowPulses, int highPulses) = ProcessQueue(queue, modules);
-			noOfLowPulses  += lowPulses;
-			noOfHighPulses += highPulses;
-		}
-
-		return noOfLowPulses * noOfHighPulses;
-	}
-
-	private static string Solution2(string[] input)
-	{
-		return "** Solution not written yet **";
+		return modules;
 	}
 
 	private static (int lowPulses, int highPulses) ProcessQueue(Queue<Pulse> queue, Dictionary<string, Module> modules)
@@ -73,6 +92,30 @@ public sealed partial class Day20 {
 		}
 
 		return (lowPulses, highPulses);
+	}
+
+	private static IEnumerable<int> DiscoverCycles(Dictionary<string, Module> modules, List<string> watchedModules)
+	{
+		Queue<Pulse> queue = [];
+
+		int buttonPushes = 0;
+		while (watchedModules.Count != 0) {
+			if (queue.Count == 0) {
+				buttonPushes++;
+				Button.Push(queue);
+			}
+
+			Pulse pulse = queue.Dequeue();
+
+			if (pulse.Payload == LOW_PULSE && watchedModules.Contains(pulse.Destination)) {
+				_ = watchedModules.Remove(pulse.Destination);
+				yield return buttonPushes;
+			}
+
+			foreach (Pulse newPulse in modules[pulse.Destination].Receive(pulse)) {
+				queue.Enqueue(newPulse);
+			}
+		}
 	}
 
 	private record Module(string Name, List<string> Outputs) : IParsable<Module> {
