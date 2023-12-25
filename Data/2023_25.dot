@@ -1,0 +1,1483 @@
+graph G {
+  bdq -- { hfr, lnm, tmm, sjx }
+  hfr -- { bdq, ncr, vsz, mqg, gvv }
+  lnm -- { bdq, jgl, kkg, fkv }
+  rfq -- { jph, lqj, zrv, mbg, nbv }
+  jph -- { rfq, jcj, bjn, zcl }
+  lqj -- { rfq, bfh, qcd, cjg }
+  zrv -- { rfq, sbm, czq, thr }
+  vnm -- { zkl, bvx, vcx, vqt, lzp }
+  zkl -- { vnm, lqv, rgz, mgd, sfn }
+  bvx -- { vnm, pbk, hvb, rmd, qfk }
+  vcx -- { vnm, ncb, pzj, nqr }
+  vqt -- { vnm, rxz, vdg, gvf }
+  lzp -- { vnm, zxx, dmx, mvg, fdb }
+  ptj -- { pqq, mbk, rfj, rhs }
+  pqq -- { ptj, xzp, clj, vff }
+  vvq -- { tkd, xxt, dhc, dln }
+  tkd -- { vvq, bkn, crh, dkq }
+  xxt -- { vvq, kmv, fsl, lvm }
+  kqb -- { xmj, lqv, rmd, plc }
+  xmj -- { kqb, nkx, pkk, zvj, msq }
+  gdh -- { lzf, qmj, vgn, frn, sdm }
+  lzf -- { gdh, vxd, lrh, zdh }
+  qmj -- { gdh, kdg, qnn, cxf }
+  vgn -- { gdh, ttm, mqd, tsc }
+  frn -- { gdh, pkc, tcx, xgg }
+  gsj -- { ttz, pns, glt, fmg }
+  ttz -- { gsj, vqr, flc, dpp }
+  pns -- { gsj, vqx, dcf, ksn, dzr, dsx }
+  jfk -- { pfp, xbf, dqp, jmj }
+  pfp -- { jfk, xdc, sjx, hbz }
+  xbf -- { jfk, rhl, tgm, mkg }
+  dqp -- { jfk, fzp, djt, zqj, qpj }
+  scc -- { xzd, kzb, czs, sbq }
+  xzd -- { scc, slv, vsf, msp }
+  kzb -- { scc, rfc, dxt, cmv }
+  czs -- { scc, vhr, xlt, ffn }
+  fft -- { ggl, jzl, fvv, mmp }
+  ggl -- { fft, mhg, dpn, pdc }
+  jzl -- { fft, cqh, cdd, smc }
+  fvv -- { fft, msb, llp, hdv }
+  rzx -- { jqt, kfz, lsp, jxk }
+  jqt -- { rzx, qhf, qdc, qzr }
+  mqn -- { jtb, xbl, vxd, kfm }
+  jtb -- { mqn, nsz, tcs, jjm }
+  xbl -- { mqn, gfl, hgb, spj }
+  svf -- { xpq, zvv, fpj, fkv, kfz, hkk }
+  xpq -- { svf, plf, vbp, tpn, bjc }
+  zvv -- { svf, qmv, rqv, zvj, qnn }
+  fpj -- { svf, vkc, rjh, kxq }
+  fkv -- { svf, zkd, kxq, lnm }
+  mgd -- { kxn, sct, sql, zkl, tpf, rbv }
+  kxn -- { mgd, sqq, dmf, dkc }
+  vzt -- { dmx, mpp, fxf, bss, flr, xqv }
+  dmx -- { vzt, czg, lzp, sjh }
+  mpp -- { vzt, kff, qfh, bss, xjs, kdh, jrx, jbn }
+  fxf -- { vzt, hxh, lzq, ghz }
+  bss -- { vzt, dkl, mpp, gpq }
+  flr -- { vzt, cxf, zcs, bjs, bpt }
+  rnh -- { sjv, hlm, vsf, gnj, mbz, qbj }
+  sjv -- { rnh, xts, fhf, nlk }
+  hlm -- { rnh, kmv, xrt, dxt }
+  vsf -- { rnh, hjc, xzd, dcf, fdv }
+  gnj -- { rnh, zbk, fnm, bnn }
+  mbz -- { rnh, hqc, jdm, nlk, pqb, dln }
+  rdn -- { crr, dzr, ljz, pnv }
+  crr -- { rdn, klt, brm, fld }
+  dzr -- { rdn, xsb, zgb, pns, dnt, fbz }
+  ljz -- { rdn, fhp, bcp, lnv, mgb, xpb, jxz }
+  pjh -- { lhj, jlj, tqx, xdc }
+  lhj -- { pjh, rkr, jdn, tgm, sqg }
+  jlj -- { pjh, tlf, dxk, xvm, jmd }
+  cgx -- { vqb, gdm, vzs, jdg }
+  vqb -- { cgx, vzs, hds, psg }
+  gdm -- { cgx, drj, vcn, qrt }
+  vzs -- { cgx, vqb, kxf, nns }
+  jdg -- { cgx, ndf, txm, vfx }
+  dtb -- { lkk, hqf, zqn, xbj }
+  lkk -- { dtb, djz, prn, jgc }
+  hqf -- { dtb, kkf, lpq, gbn }
+  zqn -- { dtb, vjj, fdv, pfc }
+  pbb -- { dtp, cdp, lfp, npl, jsk }
+  dtp -- { pbb, vfl, hlh, nmk, jcn }
+  cdp -- { pbb, gxn, shv, dxv }
+  lfp -- { pbb, srq, rfs, xcj }
+  pvv -- { jzd, tjz, ndq, chl }
+  jzd -- { pvv, qss, bnh, brj }
+  tjz -- { pvv, vph, jlb, pts, tgf }
+  qnk -- { hzp, gmx, mzf, kdr }
+  hzp -- { qnk, jhp, rdj, zcl }
+  kxr -- { kqz, gpx, hlb, fcv }
+  kqz -- { kxr, ssq, xmr, vqq }
+  gpx -- { kxr, rjf, hqc, ksm, pzl }
+  vcr -- { hld, cns, mhx, vtd, qzh }
+  hld -- { vcr, xhp, tzf, zdh }
+  cns -- { vcr, qgg, jfz, dvx }
+  mhx -- { vcr, tcs, lsp, sgb }
+  vtd -- { vcr, tcr, rqv, lkj }
+  hrk -- { rjf, pmv, fcb, bjg }
+  rjf -- { hrk, rql, gpx, rdk }
+  pmv -- { hrk, pqj, ngf, zpt }
+  fcb -- { hrk, pxx, lcs, prv }
+  jpt -- { nfg, kpg, klp, dqk }
+  nfg -- { jpt, tcf, vqs, msq }
+  znb -- { gsc, fcv, gvt, bsq }
+  gsc -- { znb, hqc, vhv, rfs, xhh }
+  fcv -- { znb, jnz, gbc, kxr }
+  tnc -- { snk, rck, smc, lbj, xlg }
+  snk -- { tnc, rgc, cnk, tnq }
+  rck -- { tnc, mtk, zdl, zzh, xvd, ccc }
+  smc -- { tnc, ljn, jzl, qcc }
+  lbj -- { tnc, thc, grf, qgc, bsq }
+  xlg -- { tnc, sdf, lct, zgb, gdt }
+  rmr -- { jhq, tph, pbk, dbp, kmz }
+  jhq -- { rmr, rsl, xhm, dnh, zkt }
+  tph -- { rmr, vnr, szc, cxg, pqk }
+  pbk -- { rmr, hhq, bvx, vsz }
+  dbp -- { rmr, mzp, hqs, gpk }
+  kmz -- { rmr, gfl, hgb, rmt }
+  drr -- { fgm, sqq, xhs, bgz }
+  fgm -- { drr, lhv, vsz, cqj }
+  sqq -- { drr, kxn, xgd, qqr }
+  mzp -- { dbp, tqx, vgr, znz }
+  vfl -- { dtp, mpz, lnv, vpl, dnk, hpj }
+  mpz -- { vfl, phn, vls, rlv }
+  lnv -- { vfl, dpp, cxz, ljz }
+  vpl -- { vfl, bkn, xqf, kqr, ggk, nqp }
+  dnk -- { vfl, jss, vcn, mkb, kdr }
+  cph -- { dmv, tfx, mjp, spx, jfm, mnq }
+  dmv -- { cph, tpf, xxn, ckn }
+  rsl -- { jhq, csd, csz, zpn, spx, qrx, fgv }
+  xhm -- { jhq, kbr, knd, sbg, xrd }
+  dnh -- { jhq, ggr, tzg, qvt, ptv, cth }
+  vhr -- { djz, qzq, czs, dzc, hpd }
+  djz -- { vhr, gdt, lkk, xqg }
+  tqx -- { pjh, qtz, mzp, hbq }
+  qtz -- { tqx, hdf, dll, ccz, fdb }
+  dzx -- { fzl, mss, qvs, mpl }
+  fzl -- { dzx, fzr, xhf, gnz }
+  bkn -- { llf, vpl, tkd, dkt }
+  llf -- { bkn, xnc, fvg, jbt }
+  qcd -- { zpt, vqg, lqj, gzn }
+  zpt -- { qcd, ssl, pdg, rkl, pmv, qzp }
+  ddx -- { rjq, rct, cdr, zcl }
+  rjq -- { ddx, glt, hlh, drg }
+  rct -- { ddx, mkl, xhf, hjt }
+  msb -- { pxx, fvv, qqs, jbm }
+  pxx -- { msb, fcb, zvs, mmf }
+  psn -- { spd, vcn, bjn, zzh, dlg }
+  spd -- { psn, jfj, ndf, cvk }
+  vcn -- { psn, gdm, dnk, qrv }
+  bjn -- { psn, jph, bqp, pzr }
+  zzh -- { psn, rck, qcx, gnm }
+  dlg -- { psn, slr, dpn, rdj }
+  sdm -- { gdh, xhs, mqg, hbq, pjn, lhv }
+  xhs -- { sdm, drr, dsp, jvc, zgh }
+  mqg -- { sdm, vfh, qlk, hfr, hqz }
+  hbq -- { sdm, grl, tqx, zdf, pxs }
+  pjn -- { sdm, mjl, dkm, ctq }
+  lhv -- { sdm, fkt, kzn, fgm }
+  ppx -- { bqg, hkk, glj, qzh }
+  bqg -- { ppx, ghz, mvg, sbh }
+  hkk -- { ppx, rpt, bnf, svf }
+  glj -- { ppx, zgr, ckg, lxp, xgr }
+  qzh -- { ppx, mzc, vcr, vdd, rbj }
+  ksm -- { hjc, djb, gpx, cxz }
+  hjc -- { ksm, vxp, vsf, hnp, dvf, lcs }
+  csd -- { rsl, tnn, tlb, jtq }
+  tnn -- { csd, pjg, rzn, ttc }
+  tlb -- { csd, hxb, hkf, rdx }
+  ssq -- { kqz, klt, hqx, bck }
+  hfd -- { xhc, vjj, xpb, trh, glt }
+  xhc -- { hfd, bzk, pmp, rss }
+  vjj -- { hfd, ttf, zqn, bnn, fpk, lmg }
+  xpb -- { hfd, vnj, ljz, pzp, kbj }
+  trh -- { hfd, czh, ndq, dzm }
+  bsk -- { vqf, klq, rlk, rzn, rnn }
+  vqf -- { bsk, mqv, cfj, hhq }
+  klq -- { bsk, vvh, gpk, rbv }
+  rlk -- { bsk, jbl, tnb, nkl, rpk }
+  rzn -- { bsk, rnn, tnn, dhl }
+  rnn -- { bsk, fdd, rzn, vhp }
+  vnq -- { mzc, nrz, hnc, hcv }
+  mzc -- { vnq, qsj, qzh, qcs }
+  nrz -- { vnq, fxd, ctl, xgc, npr }
+  mlj -- { qkp, xll, kgk, snt }
+  qkp -- { mlj, hpk, czq, ggc, rjm }
+  fzr -- { fzl, qgh, grd, dbn, rhz }
+  qgh -- { fzr, ddj, jlb, zrk, bsq }
+  grd -- { fzr, jfj, dxt, jdm }
+  dbn -- { fzr, vgc, hnl, xnc, msp }
+  xzz -- { vtr, zmg, glm, zvs, rdk }
+  vtr -- { xzz, pmt, pfc, gdd }
+  qmp -- { slt, pvm, zsz, xzq }
+  slt -- { qmp, mzf, lnf, hxk, nmz }
+  pvm -- { qmp, nms, mrv, qtr, jjr, bpp }
+  zsz -- { qmp, fpk, xhh, vsk }
+  xgm -- { ppz, trr, vkx, rcn, gpq }
+  ppz -- { xgm, krp, hmd, zxt }
+  vhz -- { ndf, cpz, xhz, str }
+  ndf -- { vhz, jdg, mzf, spd, lcg }
+  vph -- { tjz, pvz, jzp, htg }
+  cbv -- { vng, vrl, ncg, kdt }
+  vng -- { cbv, dxk, bqm, cxf, szm, gpk }
+  vrl -- { cbv, xgp, fbp, pcs, dsp, znc }
+  ncg -- { cbv, bbg, gqk, qlk, gzx }
+  kdt -- { cbv, sxj, rhl, zdh }
+  rbd -- { xhd, fqn, xkz, tfk }
+  xhd -- { rbd, qhz, vgp, frm }
+  fqn -- { rbd, hjt, zhq, xcj }
+  xkz -- { rbd, txc, djb, khj }
+  tfk -- { rbd, rrq, vsg, drg }
+  jqs -- { kxg, hgt, mfn, zbj }
+  kxg -- { jqs, brm, kjj, cnk, rkl, mnn }
+  dzj -- { zgj, jdl, kdx, bpp }
+  zgj -- { dzj, ztp, ttn, ptt, hpj, khj }
+  xgd -- { sqq, jdn, fxn, mjp, qxv }
+  qqr -- { sqq, ctq, sqp, xqt, rpk, vvz }
+  pvz -- { vph, ssx, xjq, bns }
+  ssx -- { pvz, sjk, bbm, qkk, jpq }
+  qbs -- { xqt, xmg, jdp, qxn, ldj, knd }
+  xqt -- { qbs, jls, lmx, qqr }
+  xmg -- { qbs, kks, mmg, csv, npc, fjs }
+  jdp -- { qbs, bzv, kpg, rkr, vkn, vtj }
+  hxh -- { fxf, zgq, rmt, jkj }
+  lzq -- { fxf, hdj, lfx, bbt, dtl }
+  zgr -- { tpd, qvc, glj, ckn }
+  tpd -- { zgr, kdg, rtz, mzb, dgq }
+  qvc -- { zgr, ccz, hpg, tcx }
+  ckn -- { zgr, jfv, tcs, hgh, dmv }
+  dkl -- { jhz, bss, qsz, mvg }
+  jhz -- { dkl, jtq, jpq, cmp, jsh }
+  qsz -- { dkl, rrt, hqs, xfq, cmp }
+  trr -- { sjh, qgg, djt, xgm }
+  sjh -- { trr, kff, dmx, kqc }
+  qgg -- { trr, znz, sgb, cns, xgg }
+  djt -- { trr, bxk, csv, dqp, fgv }
+  knp -- { tlm, lxh, prn, kgn }
+  tlm -- { knp, rfj, mjm, crl }
+  lxh -- { knp, njk, jtg, fsr, dtj, tgh }
+  dgr -- { mgp, spx, ptv, jmd }
+  mgp -- { dgr, fsz, vkc, jgh, xgv }
+  xgp -- { dbl, szm, jvc, vrl }
+  dbl -- { xgp, bqm, lpv, hqz }
+  szm -- { xgp, mjl, xlm, vng }
+  jvc -- { xgp, trq, lsp, xhs, skx }
+  zqz -- { dxr, pts, chl, pph }
+  dxr -- { zqz, cnk, bsq, dfq }
+  pts -- { zqz, cml, pzn, tjz, nsm, ktl, jrt, shv }
+  chl -- { zqz, pvv, mjm, xqg }
+  qhz -- { hgt, kgv, xhd, rjm, tdj }
+  hgt -- { qhz, jqs, pdc, pvg, jjg }
+  kgv -- { qhz, lnf, fbc, cmv }
+  rjm -- { qhz, kjs, rxh, pzf, qkp, tdj, jcj }
+  vkl -- { qgm, rzm, slb, rxh }
+  qgm -- { vkl, hnp, jnq, lmg }
+  rzm -- { vkl, bfs, zgc, tqp }
+  slb -- { vkl, mmt, qrt, jcn }
+  rxh -- { vkl, hnl, rjm, xmk, clj, crm }
+  jrn -- { vzq, hfx, kfz, knd }
+  vzq -- { jrn, dgz, fsm, qrp }
+  grl -- { grb, qrx, hbq, fkt }
+  grb -- { grl, dss, tmt, xfq, llz, dqv }
+  qrx -- { grl, ghb, rsl, jfm }
+  fkt -- { grl, ctl, lhv, hmd }
+  bmf -- { znz, mqv, lrc, cxg }
+  znz -- { bmf, qgg, qzd, vdd, qxc, mzp, pxs, prz }
+  mqv -- { bmf, hfx, vqf, vsv }
+  zhq -- { xrh, clp, fqn, vxg }
+  xrh -- { zhq, lcs, tgk, brs, nmz }
+  clp -- { zhq, tjt, xvk, cdd, lft, tlg }
+  fsz -- { mgp, mjp, sbs, pxs }
+  pdf -- { kxl, plc, bmh, jsz }
+  kxl -- { pdf, bzv, gcq, bbg }
+  plc -- { pdf, xjq, vdd, tvp, kqb }
+  kkf -- { tmk, hrp, hqf, xbk, dkq }
+  tmk -- { kkf, xqf, fzq, xsb, nxk }
+  hrp -- { kkf, fhm, bsl, jcj }
+  xbk -- { kkf, xtd, lft, ndg }
+  dkq -- { kkf, ccn, tkd, ddg }
+  fnt -- { gvf, xgj, mcc, vhp, xgr }
+  gvf -- { fnt, vqt, pjd, jtx }
+  bmt -- { vgp, hqx, vqq, lmg }
+  vgp -- { bmt, xhd, lqk, nnk }
+  hqx -- { bmt, fpd, ssq, xcj }
+  vqq -- { bmt, sqt, vhv, czh, kpn, zkf, gfh, kqz, ljn }
+  crh -- { sbm, tkd, bgj, vnj, skp }
+  sbm -- { crh, zrv, mzx, fxz }
+  qvp -- { lvt, fdv, mkb, vgt }
+  lvt -- { qvp, nqp, kvn, tdj }
+  fdv -- { qvp, sqt, vsf, bxb, zqn }
+  mkb -- { qvp, knr, dnk, tgf }
+  zgq -- { hxh, qst, dss, ldn }
+  qst -- { zgq, lgm, jtn, sqd }
+  dss -- { zgq, grb, nvd, kdp, pkg }
+  bzv -- { dcg, jdp, qps, kxl }
+  dcg -- { bzv, rxz, qnb, hkf }
+  qps -- { bzv, hvh, xxg, bbd, hbb, qnb, mvq }
+  thk -- { hpk, lqt, ttg, jxf }
+  hpk -- { thk, qkp, pzl, nns, svz }
+  xdc -- { pfp, pjh, qxc, rcx, cqj }
+  qtf -- { znk, nsv, gfh, vgg }
+  znk -- { qtf, sqt, sln, nzf }
+  nsv -- { qtf, lgg, ttn, kgm, pzn }
+  gfh -- { qtf, ngf, vqq, vzj, ndg }
+  dmb -- { pdc, dqs, pqb, czn }
+  pdc -- { dmb, xzp, hgt, xvx, rmx, ggl }
+  dqs -- { dmb, rxm, lft, slk }
+  pqb -- { dmb, kdx, mbz, qrd }
+  czn -- { dmb, tfb, hjr, vpq }
+  qmb -- { tmq, vkc, brn, hgk, bjc }
+  tmq -- { qmb, bph, vvh, pkk, gcq, lgz }
+  vgc -- { zmg, znh, dbn, zrk }
+  zmg -- { vgc, pph, tnt, xzz, dhg }
+  znh -- { vgc, zxf, brr, zvh }
+  zrk -- { vgc, xhf, dnt, qgh, tzd, skp }
+  fpf -- { gkh, zfz, qcx, cdd }
+  gkh -- { fpf, dpn, ttf, nbv, pnf }
+  zfz -- { fpf, pxv, tzd, qxb }
+  qcx -- { fpf, zzh, gbc, gkl }
+  xll -- { mlj, jzr, djr, fcf }
+  jzr -- { xll, fhm, kqt, rgc, nvt, kvm }
+  djr -- { xll, zkc, lfv, lnr, tff }
+  bxk -- { vfs, djt, rdx, mds, xqb }
+  vfs -- { bxk, szq, fhh, jls, cdv }
+  rmn -- { qlv, vqz, zcr, khd }
+  qlv -- { rmn, qkf, xhp, qlt }
+  frr -- { jvm, xzp, crl, kxf, fcf }
+  jvm -- { frr, hgm, cvn, zkc }
+  xzp -- { frr, pdc, pqq, ccc }
+  crl -- { frr, lgg, lcg, tlm }
+  kxf -- { frr, vzs, xth, llp, nxb }
+  lfl -- { mvq, xsc, nln, qxn, xgv }
+  mvq -- { lfl, ptv, qps, hgd }
+  xsc -- { lfl, zxx, jfz, rvv }
+  nln -- { lfl, qxc, vdv, nqz, bph }
+  xts -- { thh, sjv, sjg, nkh }
+  thh -- { xts, crj, xvq, pqz }
+  fbj -- { ctq, kbc, mcc, rbv }
+  ctq -- { fbj, qqr, fhh, pjn }
+  hkf -- { sqg, tlb, tvp, dcg }
+  sqg -- { hkf, slq, qnn, lhj }
+  flk -- { xzs, jhf, dxm, frm }
+  xzs -- { flk, fbz, txc, tcj, rfc }
+  jhf -- { flk, ccn, phn, fcl, lbr, qqs, vff }
+  jll -- { gnz, dfd, mdj, cmv }
+  gnz -- { jll, fzl, hcz, fkn }
+  dfd -- { jll, cfc, hmh, fbl, cbp }
+  fxd -- { nrz, nlg, qzm, jhs }
+  dkj -- { lpr, tzg, jpq, dtl }
+  lpr -- { dkj, hlx, vqz, hvb }
+  nsz -- { sqp, zjf, jtb, tnb, vvk }
+  sqp -- { nsz, tgm, qqr, mpv }
+  zjf -- { nsz, mtc, khd, hmd }
+  tnb -- { nsz, kfz, rlk, tcf, qpj }
+  cvm -- { jtt, bsp, vht, kdr }
+  jtt -- { cvm, jlp, vjq, fls, xxl }
+  bsp -- { cvm, cpz, klc, tzc }
+  njk -- { jbd, lxh, mjm, pnv, xtd }
+  jbd -- { njk, ztn, bxl, gvm, brs }
+  mjm -- { njk, hgm, tlm, chl, pqz }
+  gfl -- { kmz, xbl, hmg, jgl }
+  qzq -- { qzj, vhr, pnv, bsm, srh }
+  qzj -- { qzq, rqp, fls, zmn }
+  trq -- { jvc, lrh, qzm, jbn }
+  qmt -- { jfj, vqr, bjl, mmf }
+  jfj -- { qmt, grd, spd, bxb, hdp, zvh }
+  vqr -- { qmt, tjt, jdm, ttz, qcc }
+  bjl -- { qmt, hmf, npn, xgk, tsn }
+  slv -- { xzd, bjg, rql, rjz }
+  bph -- { cfj, tmq, pqh, nln }
+  cfj -- { bph, tkz, vqf, vtj, xxn }
+  kpg -- { vsx, jdp, jpt, tkz }
+  vsx -- { kpg, szq, sqd, vzf }
+  gkl -- { cnn, lfv, mtg, qcx }
+  cnn -- { gkl, kmv, dxm, fhp }
+  lfv -- { gkl, mgb, djr, zkt }
+  msn -- { znd, csv, hmg, fdk, rpt }
+  znd -- { msn, kbr, smf, ghs }
+  csv -- { msn, jsp, xmg, djt }
+  hmg -- { msn, gfl, vrz, jjn, zpn }
+  vbp -- { jhn, bcq, hmd, xpq }
+  jhn -- { vbp, cxf, czg, xrv }
+  bcq -- { vbp, kjl, tlf, lrc }
+  hmd -- { vbp, fzp, ppz, zjf, fkt }
+  slq -- { xfl, sqg, sgb, qxn }
+  xfl -- { slq, mqd, qct, rnj, lmx }
+  sgb -- { slq, kks, qgg, mhx }
+  ktt -- { jjg, ndq, hvp, str }
+  jjg -- { ktt, pzs, hgt, dnv }
+  zhk -- { ggn, lvs, ddk, lmg }
+  ggn -- { zhk, fqm, bjg, ktl }
+  lvs -- { zhk, pdg, qck, cdr, kfj }
+  ncr -- { knd, nkl, hfr, tzg }
+  knd -- { ncr, qbs, qfh, xhm, jrn }
+  nkl -- { ncr, rlk, mjj, bbd, ddb }
+  tzg -- { ncr, bjb, dnh, dkj, tjb }
+  glt -- { gsj, jlp, bcn, ltd, hfd, rjq, snt }
+  jlp -- { glt, ffh, jtt, rrn }
+  bcn -- { glt, mhg, rsd, kjp, smn }
+  ltd -- { glt, xjf, zmn, gvt }
+  snt -- { glt, mbg, tvc, mlj }
+  qkf -- { qlv, tkg, hlx, qqn }
+  tkg -- { qkf, ggr, pjd, tpf }
+  hlx -- { qkf, lpr, sqd, zst, bng }
+  qqn -- { qkf, krp, sdr, qmd, xlm }
+  klt -- { crr, tbd, ssq, sqt }
+  tbd -- { klt, mhp, txc, gfp }
+  dfm -- { smb, bjb, nxt, xff, mkm, mfk }
+  smb -- { dfm, mcv, dmf, ptd }
+  bjb -- { dfm, tzg, crq, pqc, mnq }
+  txm -- { jdg, drj, zvt, xmk, vht, pdq, pqz }
+  vfx -- { jdg, kjs, zlc, mfs, hkm }
+  kff -- { mpp, hbz, sjh, kkg }
+  hbz -- { kff, crq, jhm, pfp }
+  kkg -- { kff, lfs, lnm, hff }
+  brm -- { ssl, kxg, crr, srh }
+  ssl -- { brm, zpt, vxb, vcm, fhr }
+  cml -- { ggf, pts, lvm, sbq }
+  ggf -- { cml, glr, jsk, xhz }
+  lvm -- { cml, cvk, gct, xxt, flz }
+  sdf -- { gfp, xlg, jdf, gbn }
+  gfp -- { sdf, hlb, tbd, bfh }
+  jdf -- { sdf, mhg, tgg, txq }
+  szq -- { vfs, vsx, qmv, pmh }
+  tkz -- { kpg, cfj, rtz, jmj }
+  rtz -- { tkz, xfq, tpd, fdb, dhp }
+  jmj -- { tkz, jfk, bpt, sbg, fvn, rnx, pkk, lkj }
+  jcj -- { jph, hrp, mlk, dzs, rjm, drg }
+  qmv -- { szq, zvv, ptv, ldn }
+  djv -- { rgg, zlc, ttl, kjj }
+  rgg -- { djv, gmq, thr, hln }
+  zlc -- { djv, vfx, jbt, vqp }
+  srq -- { lfp, qtr, pvg, pqj, gsr }
+  rfs -- { lfp, gsc, llb, nfv }
+  ttm -- { vgn, lhh, prt, rbq, lmc }
+  lhh -- { ttm, rrt, sbs, qzd }
+  mhg -- { bps, jdf, ggl, bcn, lmg }
+  bps -- { mhg, bjg, lct, nzf }
+  fhm -- { hlh, nfv, jzr, hrp, jxh }
+  hlh -- { fhm, dtp, rjq, gmx, gql, thq, ngm }
+  nfv -- { fhm, thc, ggp, jxh, rfs }
+  jxh -- { fhm, tjt, hds, nfv }
+  ggr -- { lgz, qlc, nvd, tkg, dnh }
+  lgz -- { ggr, smt, tmq, lgm }
+  qlc -- { ggr, pdd, jlz, jxd }
+  nvd -- { ggr, nxt, dss, qjb }
+  rvq -- { nlb, crq, tvp, ddl }
+  nlb -- { rvq, rhr, pjg, tkk }
+  crq -- { rvq, hbz, znc, bjb, rxz, hbl, dkm, qzm }
+  ptc -- { fms, kqr, lrj, sqh }
+  fms -- { ptc, npn, nms, kbv, mdc }
+  kqr -- { ptc, jmz, vpl, qcc, ckz }
+  pph -- { rgc, vls, zmg, zqz, vgg }
+  rgc -- { pph, rql, jzr, snk, vhg }
+  vls -- { pph, pgg, mpz, dkt, fdj }
+  kjl -- { bcq, rrt, kfm, rmt }
+  kgm -- { pzf, nsv, mlk, rjp }
+  pzf -- { kgm, vqx, vmg, rmx, hrs, pqj, rjm }
+  hqc -- { gsc, prn, mbz, gpx }
+  sqt -- { vqq, qck, klt, znk, slr, fdv }
+  qck -- { sqt, dcf, mss, lvs }
+  slr -- { sqt, bfg, xsj, dlg, gdd, dvf }
+  jmz -- { kqr, tgg, fcl, lvl, tld, tsn, ltp }
+  hfx -- { mqv, jrn, sxj, jhs }
+  tcs -- { jtb, qgn, cxl, gpl, mhx, ckn }
+  gqr -- { ljq, zvs, xzq, kmv }
+  ljq -- { gqr, nfr, jsk, cdd, kvm }
+  zvs -- { gqr, xzz, pxx, cjg }
+  xzq -- { gqr, qmp, dtd, rdk }
+  kmv -- { gqr, hlm, cnn, jnz, xxt }
+  ttl -- { qbj, glm, dzc, djv }
+  qbj -- { ttl, xhf, rnh, str }
+  glm -- { ttl, pgg, xzz, tff }
+  dzc -- { ttl, vhr, phn, dzq }
+  vgg -- { qtf, pph, dzq, tlg }
+  hdj -- { kpf, gkt, pgf, lzq }
+  kpf -- { hdj, hlt, gfj, cxg, srt }
+  gkt -- { hdj, xjq, bfx, ptr, rvv, mxp }
+  pgf -- { hdj, ldl, bjc, mkg }
+  lcs -- { fcb, xrh, hjc, vsg, dnt }
+  qgn -- { tcs, qsj, dmj, dhp }
+  vdg -- { zrt, vqt, hvb, sgs }
+  zrt -- { vdg, klp, rdx, mpv }
+  sxh -- { fbc, xdm, gdd, hnl, lct }
+  fbc -- { sxh, vhg, kgv, gfq }
+  xdm -- { sxh, jrb, hst, jlv }
+  gdd -- { sxh, slr, nlk, vtr }
+  drj -- { txm, fnm, gdm, tlg }
+  fnm -- { drj, rzt, gnj, nsm, crj }
+  xqf -- { vpl, brj, tmk, drz }
+  brj -- { xqf, ckr, mjd, tgh, jzd }
+  drz -- { xqf, rlv, vxb, jdm }
+  zdl -- { mmj, bnh, rck, fhp }
+  mmj -- { zdl, bsl, vff, fgd }
+  glr -- { ggf, bgj, mnn, rsz }
+  xjf -- { tnt, cnz, ltd, rqc }
+  tnt -- { xjf, zmg, pzp, cnz }
+  cnz -- { xjf, tnt, xln, rqp, tvc }
+  nbt -- { ffh, jcm, gsr, zcg }
+  ffh -- { nbt, jlp, czm, rss }
+  jcm -- { nbt, jqq, gvt, tdj }
+  hpv -- { cps, zxx, sdr, slm }
+  cps -- { hpv, rvf, msm, zgh, fzp }
+  bfh -- { fls, lqj, hvz, crb, gfp }
+  fls -- { bfh, czq, qzj, jtt }
+  fbz -- { xzs, vzj, fld, dzr }
+  ccn -- { gql, dkq, jhf, vqx }
+  gql -- { ccn, hlh, jlm, tgf }
+  dhj -- { dnv, cbp, rgj, vlk, jlv }
+  dnv -- { dhj, xhf, tss, jjg, kcz }
+  cbp -- { dhj, bgp, xvq, dfd }
+  lqt -- { fjr, phn, thk, cpz }
+  fjr -- { lqt, vcq, hrs, flz, jlb }
+  phn -- { lqt, mpz, jhf, dzc, chj }
+  pdd -- { qlc, zpn, kcq, zkd }
+  zpn -- { pdd, rsl, dxb, rhl, hmg }
+  kcq -- { pdd, cfg, tmt, xrd }
+  zkd -- { pdd, fkv, mfm, prz }
+  ldh -- { rdq, fhc, dzp, zqb }
+  rdq -- { ldh, flx, fmx, ksd, gnc, mrk, ztj }
+  fhc -- { ldh, dxk, bbt, pqc, vdv }
+  zvt -- { mtk, txm, tjt, bgj, xvk }
+  mtk -- { zvt, cvn, xvk, rck }
+  tjt -- { zvt, jxh, clp, vqr }
+  lfs -- { kkg, jzp, tsl, dhp }
+  vxd -- { jkd, mqn, lzf, fdk }
+  jkd -- { vxd, pth, hvl, bng, hqs, fsm, dvx, cqj }
+  jnz -- { kmv, tfb, chj, fcv }
+  jgl -- { gfl, zdm, hbl, lnm, xgc, xrv }
+  tfx -- { qzr, lgm, cph, vgr, nxt }
+  qzr -- { tfx, rnx, pqr, jqt }
+  lgm -- { tfx, pkc, rpk, qst, lgz }
+  vgr -- { tfx, xhp, jsp, mzp, rqv }
+  ccz -- { mcg, bbg, qvc, qtz }
+  mcg -- { ccz, jgh, lpv, mkg, xcp }
+  bbg -- { ccz, ppr, ncg, kxl }
+  hvh -- { qps, hgk, dhq, jhs }
+  bsl -- { hrp, dtd, mmj, hdp }
+  gxd -- { cvf, skx, hqb, jrx }
+  cvf -- { gxd, jvf, dgq, vvz }
+  skx -- { gxd, kdh, jvc, hcg }
+  lsl -- { brr, ckr, rrq, rfj, srh }
+  brr -- { lsl, gxn, psg, znh }
+  qdh -- { vkn, cfg, jzp, mcv }
+  vkn -- { qdh, vdd, jdp, dsv }
+  cfg -- { qdh, kcq, bbm, rtd }
+  zxx -- { bbd, gvv, hpv, lzp, xsc }
+  bbd -- { zxx, qps, dmj, nkl }
+  gvv -- { zxx, jfh, vfh, hfr }
+  fpv -- { fdd, sbh, nvr, ctl }
+  fdd -- { fpv, vrz, rnn, tvm, drt, jfh }
+  sbh -- { fpv, xcp, jkj, bqg }
+  nvr -- { fpv, tdp, srx, xqb }
+  tcf -- { nfg, xjb, tmm, tnb }
+  zkf -- { bct, jdl, dvf, vqq, rrn }
+  bct -- { zkf, xbj, qnf, str }
+  kbr -- { tsc, nkx, zst, znd, xhm }
+  tsc -- { kbr, mjp, mdx, vgn }
+  nkx -- { kbr, vnr, tcb, zqj, gbd, xmj }
+  zst -- { kbr, rxz, npc, hlx }
+  ppr -- { nrp, hqb, smf, bbg }
+  nrp -- { ppr, zqb, bfx, hdf, jjn }
+  hqb -- { ppr, sdr, ghs, gxd }
+  smf -- { ppr, jsz, qpr, znd, dzp }
+  kjs -- { rjm, vfx, jlm, czh }
+  jlm -- { kjs, rhz, gql, nxb, pfc }
+  jtn -- { xgc, qkt, qst, hcg }
+  xgc -- { jtn, pkc, jgl, nrz, kds }
+  fzs -- { npc, hcp, szc, nlg }
+  npc -- { fzs, zst, lxp, xmg }
+  hcp -- { fzs, xsx, qmd, xcp }
+  szc -- { fzs, zcs, tph, zcx }
+  bfg -- { slr, bft, kdx, slk }
+  xsj -- { slr, kgk, mnn, mvp, vsg }
+  vkx -- { qmd, zdh, xgm, xgv, qnd }
+  qmd -- { vkx, hcp, qqn, xgg }
+  zdh -- { vkx, kdt, qpr, hld, lzf, qfh }
+  xgv -- { vkx, sdt, cth, mgp, lfl }
+  qnd -- { vkx, mdq, vqm, ksd }
+  rvf -- { hbl, cps, jhs, dtg }
+  hbl -- { rvf, jgl, crq, qxv }
+  jhs -- { rvf, hvh, hfx, ptd, fxd }
+  dtg -- { rvf, xgj, mzb, prx }
+  kfz -- { svf, rzx, jrn, tnb }
+  cfc -- { dfd, kpn, lmq, xth, rdj, kvn, qss, fnv }
+  vgk -- { pqp, dvj, jlv, ndg }
+  pqp -- { vgk, xfb, mjd, pzs, bpp }
+  zdm -- { jgl, tcr, rhr, qzm }
+  tcr -- { zdm, cmh, vtd, dlq }
+  hvl -- { zxt, jkd, rjh, fbm }
+  zxt -- { hvl, msq, pkm, ppz, gnc }
+  ztp -- { zgj, ltp, hgm, qqs }
+  ltp -- { ztp, npl, kvn, jmz }
+  hgm -- { ztp, dfp, mjm, jvm }
+  xjq -- { plc, pvz, hbb, sbg, gkt }
+  hbb -- { xjq, jvf, qvt, qps, ddl, kfr }
+  sbg -- { xjq, jmj, tsq, xhm }
+  vkc -- { qmb, mgp, fpj, pgt }
+  cxl -- { mpm, tcs, krp, kds }
+  mpm -- { cxl, rkr, ldl, tmt, ksz, dsd }
+  xhp -- { vgr, qlv, lxp, hld }
+  lxp -- { xhp, npc, xvm, glj }
+  cxf -- { jhn, flr, jqj, vqs, qmj, vng }
+  jqj -- { cxf, zrf, gck, xsx, hvn }
+  fhh -- { ctq, vfs, hcf, tlt }
+  qsj -- { stm, mzc, kks, qgn }
+  stm -- { qsj, jmd, ctg, prx, qct }
+  kks -- { qsj, hjg, sgb, xmg, fvd }
+  pxv -- { zfz, mrv, mmp, knr, jxz }
+  mrv -- { pxv, kdx, pvm, mzx, pqj, kbj }
+  sqd -- { vsx, hlx, hnc, pdh, tsl, qst }
+  hnc -- { sqd, kbm, vnq, pjg, hcv }
+  pdh -- { sqd, zzg, tmm, vmd }
+  mtc -- { zjf, bjs, nph, vvz }
+  sxj -- { mmg, mjj, ksd, hfx, kdt }
+  mmg -- { sxj, xmg, slm, kfr }
+  mjj -- { sxj, kfd, fxn, hdf, nkl }
+  ksd -- { sxj, dmf, rdq, qvt, qnd }
+  msm -- { cps, gpq, lmd, mjp }
+  gpq -- { msm, cmh, xgm, bss, fmx, xxk }
+  lmd -- { msm, pth, jfh, bpt, ptd }
+  mjp -- { msm, cph, fsz, xgd, tsc }
+  ghz -- { ksr, dkc, zdf, bqg, fxf }
+  ksr -- { ghz, zgh, nql, rbq, xrp }
+  dkc -- { ghz, bdk, tvm, kxn }
+  zdf -- { ghz, mdq, hbq, prx }
+  vxp -- { hjc, ksn, ztn, hxk, hdp }
+  ksn -- { vxp, dcf, pns, czm, gnd }
+  lgg -- { llp, crl, nsv, zxf }
+  llp -- { lgg, kxf, fvv, svz }
+  vhv -- { vqq, gsc, qrd, dsx }
+  qrd -- { vhv, pvg, jjr, pqb }
+  jqq -- { kjp, jcm, nxk, rrn }
+  kjp -- { jqq, qbv, fdj, bcn }
+  nxk -- { jqq, tmk, dnt, lct }
+  rrn -- { jqq, xfr, zkf, jlp }
+  gxn -- { cdp, brr, ckr, zbk }
+  vdl -- { ktl, bmd, djb, npn, ghc }
+  ktl -- { vdl, rgj, ggn, pts }
+  bmd -- { vdl, nvc, bgp, hpd, pmp, fdj }
+  djb -- { vdl, ksm, csj, xkz, gbn, kbj }
+  jkx -- { hvb, xjb, bqm, fbp, dmf }
+  hvb -- { jkx, bvx, lpr, vdg }
+  xjb -- { jkx, tcf, xff, nql }
+  bqm -- { jkx, vfh, dbl, vng }
+  fbp -- { jkx, vqm, vrl, dvx }
+  dmf -- { jkx, smb, zvj, kxn, ksd }
+  hnp -- { qgm, hjc, xnv, nfr }
+  rgj -- { ktl, dhj, ncv, trf, jsk, rfc }
+  ncv -- { rgj, vcq, tzd, lkb }
+  kpn -- { jrb, cfc, vqq, nmn, tlg }
+  jrb -- { kpn, xdm, cpz, ngm }
+  dgm -- { vvh, mxp, drt, trp }
+  vvh -- { dgm, tmq, klq, mzb }
+  mxp -- { dgm, gnl, bnf, jlz, gkt }
+  drt -- { dgm, csz, fdd, ptd }
+  bgj -- { glr, crh, zvt, vqg }
+  vqg -- { bgj, qcd, ttg, ddg, jdl }
+  rrl -- { jbm, zzp, rss, ngf }
+  jbm -- { rrl, xhz, ssc, msb, zcg, mmp }
+  zzp -- { rrl, vkj, nkh, dln, tmf }
+  rss -- { rrl, xhc, ffh, rjz }
+  ngf -- { rrl, gfh, pmv, fdj }
+  hmf -- { pnv, bjl, trf, qgc }
+  pnv -- { hmf, njk, nmn, qzq, rdn, dhg }
+  trf -- { hmf, bbh, xth, rgj }
+  qgc -- { hmf, lbj, tvc, vlk }
+  nvc -- { bmd, fsr, ttg, pzp }
+  cvn -- { gmx, mtk, jvm, llb, xns }
+  gmx -- { cvn, lct, mnl, qnk, hlh }
+  jfv -- { dqv, jhm, ckn, gqk, sks, llz }
+  dqv -- { jfv, jpq, vfj, grb, jts }
+  jhm -- { jfv, pjg, hbz, llz }
+  gqk -- { jfv, gpl, rkr, ncg }
+  sks -- { jfv, hhq, vtj, vvk }
+  llz -- { jfv, zrf, grb, jhm }
+  vqx -- { rjp, pzf, pns, ccn }
+  rjp -- { vqx, xnv, xrt, kgm }
+  zvz -- { lcg, cng, csj, czm }
+  lcg -- { zvz, vxb, ndf, crl }
+  cng -- { zvz, ckr, fzk, bck, xhz, mmf }
+  csj -- { zvz, mnl, djb, jnq }
+  czm -- { zvz, ffh, lqk, ksn }
+  ztn -- { jbd, xsb, vxp, bxb }
+  xsb -- { ztn, gxt, jbt, vxg, tmk, dzr }
+  rhr -- { nlb, mds, zdm, rtc }
+  pjg -- { nlb, jhm, tnn, rqv, hnc }
+  fqm -- { ggn, kgg, lnr, sxq, kfj }
+  kgg -- { fqm, sln, qtr, rpc }
+  lnr -- { fqm, pgt, djr, znm }
+  dcf -- { ksn, vsf, qck, pns, fbl }
+  mtg -- { rjj, mbk, tff, gkl }
+  rjj -- { mtg, pgg, tjk, slk }
+  mbk -- { mtg, tzc, ptj, zbj }
+  tff -- { mtg, jjr, glm, xxl, djr }
+  mjs -- { ksx, nmn, dhc, dfq }
+  ksx -- { mjs, dvj, vkj, thq }
+  nmn -- { mjs, pnv, qtn, kpn }
+  dhc -- { mjs, vvq, mss, hkm }
+  jjr -- { tff, pvm, xhh, qrd }
+  kkc -- { rbn, kfj, bsf, bsq }
+  rbn -- { kkc, vsk, vjb, klc }
+  kfj -- { kkc, jss, lvs, xlt, fqm, qrv }
+  rxz -- { vqt, zst, dcg, crq }
+  nqp -- { lvt, fpd, vpl, psg }
+  csz -- { drt, fxn, rsl, rdx }
+  fxn -- { csz, bmh, xgd, tcx, pcc, mjj }
+  rqc -- { bxl, xvx, jrt, xjf }
+  bxl -- { rqc, jbd, thr, rhs }
+  xvx -- { rqc, pdc, svz, ddk }
+  jrt -- { rqc, xnc, pts, fgd, smn }
+  tfb -- { jnz, czn, gfg, rhs }
+  gfg -- { tfb, vcm, dpn, qnf }
+  vrz -- { mdx, fdd, ksz, hmg, lkq }
+  mdx -- { vrz, tsc, kbm, cth, rlb, jxd, xgg }
+  ksz -- { vrz, hhn, mpm, khv }
+  xfb -- { pqp, tjk, kcz, shv }
+  prn -- { knp, hqc, vqp, tcj, lkk }
+  vqp -- { prn, sjg, zlc, vhg }
+  ttg -- { vqg, nvc, vmg, thk, bpp }
+  ddg -- { vqg, xlt, dkq, vzj }
+  jdl -- { vqg, vjb, xfs, zkf, dzj }
+  rrt -- { lhh, qhh, ztj, kjl, qsz, mqd }
+  qhh -- { rrt, ghb, qnn, lls, lfb }
+  ztj -- { rrt, xsx, rdq, slm }
+  dxm -- { flk, szb, cnn, pzl }
+  szb -- { dxm, zdb, nxb, lkb }
+  pzl -- { dxm, nxb, gpx, hpk }
+  bjg -- { hrk, ggn, bps, slv }
+  xkx -- { gzx, zzg, kfd, dzp, kxq }
+  gzx -- { xkx, tpn, vpp, ncg }
+  zzg -- { xkx, pdh, gcq, hqs }
+  rhz -- { fzr, gks, mfn, dtd, jlm, pnf }
+  gks -- { rhz, jss, lbr, vhg }
+  mfn -- { rhz, pnr, jqs, psx, bcp }
+  dtd -- { rhz, xzq, bfs, xvd, bsl }
+  lmq -- { cfc, cvk, bbb, zfh }
+  cvk -- { lmq, vjb, lvm, spd }
+  bbb -- { lmq, mfs, hcz, znm, kvm }
+  jss -- { dnk, gks, kfj, xhz }
+  plf -- { xpq, jgh, rvv, nqr }
+  bgp -- { bmd, cbp, llb, gvt }
+  czg -- { jhn, dmx, lqv, vvk }
+  mmr -- { hjg, crn, zcr, jvx }
+  hjg -- { mmr, kks, hvn, mvf }
+  crn -- { mmr, brn, mrk, rgz }
+  jzp -- { lfs, qdh, vph, ggs }
+  tgg -- { jmz, jdf, hrs, tzm }
+  xth -- { kxf, trf, cfc, jxz, crm }
+  fcl -- { jmz, jhf, jdm, dln }
+  jdm -- { fcl, mbz, vqr, sbq, grd, grf, drz }
+  hjr -- { czn, gvm, hln, sxq, qnf, svp }
+  gvm -- { hjr, bsf, jbd, tgf }
+  hln -- { hjr, rgg, gsr, ttp }
+  sxq -- { hjr, jxf, tzd, fqm }
+  qnf -- { hjr, prv, gfg, mdj, bct }
+  svp -- { hjr, snd, ttn, bbh }
+  qfh -- { mpp, smt, zdh, knd }
+  klp -- { dzp, fvd, jpt, zrt }
+  dzp -- { klp, ldh, xkx, smf }
+  fvd -- { klp, kks, hgh, rvz, kfr }
+  dvj -- { vgk, ksx, gdt, bck }
+  gdt -- { dvj, djz, xlg, nbv }
+  lrj -- { ptc, tcj, nmk, thc }
+  tcj -- { lrj, ckz, mvn, tld, xzs, prn }
+  nmk -- { lrj, fvl, thc, hxk, dtp }
+  thc -- { lrj, nmk, nfv, lbj }
+  cmh -- { qhf, mpg, tcr, gpq }
+  qhf -- { cmh, jqt, dmg, ldj }
+  mpg -- { cmh, hff, prm, rdz, snb, xxn }
+  xjs -- { cjd, sdt, chh, mpp, rvd, jtx }
+  cjd -- { xjs, rhl, xff, pxs }
+  sdt -- { xjs, xgv, jqp, npr }
+  chh -- { xjs, zjj, svs, tkk }
+  fvl -- { gct, nmk, chj, rkl }
+  gct -- { fvl, bgn, lvm, mhp, fkn }
+  mcv -- { zcx, qdh, smb, xxg, ddb }
+  zcx -- { mcv, mjl, pfl, szc }
+  jvf -- { cvf, hbb, ggs, kdh, jfh }
+  czh -- { bnn, kjs, thq, trh, vqq, cqh }
+  bnn -- { czh, msp, gnj, vjj }
+  thq -- { czh, ksx, frd, hlh }
+  czq -- { fls, qkp, zrv, hmh, hkm }
+  hmh -- { czq, ddj, dfd, rfc }
+  hkm -- { czq, dhc, vfx, dhg, fzk, dfp }
+  sln -- { znk, kgg, rsd, tvc }
+  hxb -- { xsx, mjr, tlb, xlm }
+  xsx -- { hxb, gfv, ztj, hcp, jqj }
+  mjr -- { hxb, jfz, dlq, spj }
+  pzp -- { tnt, xmr, nvc, xpb }
+  tlf -- { vpp, jlj, bcq, jsh, ljk }
+  vpp -- { tlf, fjs, mfm, qjb, gzx }
+  jsh -- { tlf, lfb, znc, jhz }
+  jhp -- { pmp, nvt, hzp, gnd }
+  pmp -- { jhp, xhc, dnj, bmd }
+  nvt -- { jhp, jzr, pmt, kvm }
+  mmp -- { fft, pxv, jlb, jbm }
+  jlb -- { mmp, bft, kgn, fjr, qgh, tjz }
+  fhf -- { sjv, sfb, vgt, ffn }
+  flx -- { lfx, dsd, kzn, rdq }
+  lfx -- { flx, dmh, lzq, kdg, kqc }
+  dsd -- { flx, xxg, ptv, mpm }
+  kzn -- { flx, lhv, jsp, hgd }
+  kfd -- { mjj, jjn, rmd, xkx, fdb }
+  jjn -- { kfd, hmg, lkj, nrp, xbn, cfs, jlz, hqz }
+  rmd -- { kfd, mxb, kqb, bvx }
+  fdb -- { kfd, vrh, bcr, lpv, rtz, lzp, qtz }
+  npn -- { vdl, bjl, fms, cdd, mnn }
+  mnl -- { csj, gmx, rmx, dxt }
+  ttn -- { zgj, nsv, gmq, ggk, svp, llb }
+  gpl -- { gqk, mxt, tcs, ldj }
+  mxt -- { gpl, vmd, bbc, rcn }
+  ggc -- { rxm, qkp, xnc, ptt }
+  rxm -- { ggc, hds, dqs, zfh }
+  xnc -- { ggc, dbn, gsr, jrt, llf }
+  ptt -- { ggc, zgj, dhg, tvt }
+  vdd -- { qzh, vkn, plc, znz, qcs }
+  rbj -- { qzh, khz, xdx, jqp }
+  dxb -- { zpn, dll, tsl, bkr }
+  rhl -- { zpn, kdt, xbf, cjd }
+  pth -- { vqm, lmd, kds, jkd }
+  vqm -- { pth, zvj, khv, fbp, qnd }
+  kds -- { pth, cxl, jpv, sdr, xgc }
+  qgr -- { dhl, qjb, pjd, rvz }
+  dhl -- { qgr, dqk, lkq, rzn, jcq, dsv, dtl }
+  qjb -- { qgr, hcf, nvd, vpp }
+  kfm -- { bfx, kjl, hgh, mqn }
+  bfx -- { kfm, tzf, gkt, nrp }
+  hgh -- { kfm, cfs, ckn, fvd }
+  hnl -- { dbn, sxh, rxh, mdj }
+  jtg -- { hst, lxh, xgk, hpn }
+  hst -- { jtg, fhp, xdm, vsg, vrk }
+  mqd -- { dlr, rrt, vgn, pgt, xfl }
+  dlr -- { mqd, tzf, mdq, snb }
+  pgt -- { mqd, hhn, vkc, lnr, khv }
+  txc -- { xzs, tbd, ttf, xkz, mpl }
+  pzn -- { pts, nsv, mvp, ggp, mmf }
+  bsf -- { rsd, smn, kkc, gvm, frd }
+  rsd -- { bsf, zbq, fvg, sln, bcn }
+  smn -- { bsf, hpj, bcn, jrt }
+  kbm -- { hnc, hpg, rzc, mdx }
+  hpg -- { kbm, qvc, hvn, jgh, dll }
+  rzc -- { kbm, qcs, mpv, mnq }
+  xfq -- { rtz, rvd, qsz, grb }
+  vqz -- { lpr, mvf, rmn, lrc }
+  mvf -- { vqz, sql, ljk, hjg }
+  ggs -- { jvf, jzp, nqz, rcn }
+  nqz -- { ggs, gfj, bpt, nln }
+  smt -- { cmp, lgz, qfh, jtx }
+  cmp -- { smt, fvn, jhz, hhl, qsz }
+  bft -- { jlb, bfg, pzs, ffn }
+  qss -- { jzd, cfc, bqp, phc }
+  nms -- { pvm, xmk, fms, pzr }
+  xmk -- { nms, txm, rxh, rhs, ckz }
+  rkc -- { qxb, tvt, bnb, rpc }
+  qxb -- { rkc, ffn, zfz, mfs }
+  tvt -- { rkc, tss, ptt, qrv, ggk, bmc, mlk }
+  bnb -- { rkc, bnh, dtj, gsr, drc, kbv }
+  rpc -- { rkc, jrf, kgg, czj, dzm, pjf }
+  fsl -- { xxt, xvk, mkl, kjj }
+  xvk -- { fsl, mtk, clp, bgn, zvt, gmq, tld }
+  hgb -- { xbl, kmz, pmh, ckg }
+  pmh -- { hgb, sct, sbs, szq, fbm }
+  qvt -- { hbb, dnh, pqh, ksd }
+  pqh -- { qvt, hhl, rzh, bph, qrp }
+  ddj -- { hmh, qgh, bqd, hxk }
+  bqd -- { ddj, dzs, rkl, fnv }
+  gfv -- { xsx, lrh, vnr, tpp }
+  xbj -- { rdj, dtb, lqk, bct }
+  rdj -- { xbj, xhh, cfc, hzp, dlg }
+  lqk -- { xbj, vgp, lkx, czm }
+  fsr -- { xcj, nvc, jxf, lxh }
+  xcj -- { fsr, fqn, vrk, lfp, hqx }
+  jxf -- { fsr, ljn, sxq, thk }
+  prv -- { jlv, fcb, qnf, fhr }
+  jlv -- { prv, dhj, xdm, vgk, dpp }
+  hhq -- { pbk, sks, dsp, vqf, ktd }
+  vsz -- { pbk, khd, bns, fgm, hfr }
+  vjb -- { jdl, rbn, tnq, cvk }
+  xfs -- { jdl, xhf, qtr, tnq }
+  zcs -- { flr, vsv, vkq, szc }
+  vsv -- { zcs, pkk, mqv, vhp }
+  vkq -- { zcs, bns, xdx, tpp, qcs, htg }
+  rql -- { rgc, xfd, rjf, slv }
+  xfd -- { rql, tmf, mhr, kqt }
+  qct -- { xfl, jgh, pfl, rfx, stm }
+  tzf -- { hld, bfx, dlr, gck }
+  dmh -- { pnc, lfx, kvc, prt }
+  pnc -- { dmh, lls, qkt, ddl }
+  ckr -- { cng, lsl, gxn, brj }
+  pgg -- { rjj, vls, glm, zbj, hpd }
+  zbj -- { pgg, fpd, mbk, jqs, nfr }
+  lqv -- { czg, tvm, kqb, zkl, mbs }
+  tvm -- { lqv, khv, fdd, dkc }
+  mbs -- { lqv, dll, pxp, srx }
+  khz -- { rbj, lmx, tkk, xrv }
+  xdx -- { rbj, vrh, vkq, mrk, jxd, pqk }
+  jqp -- { rbj, dxk, rfx, sdt }
+  sjg -- { xts, vqp, nsm, qtn, crm, pjf, pqz }
+  nsm -- { sjg, fnm, pts, gbc, qzp }
+  bnh -- { jzd, zdl, bnb, vgt, gnm }
+  zvj -- { dmf, xmj, vqm, zvv }
+  bbh -- { trf, svp, zcg, crm }
+  rkr -- { lhj, jdp, mpm, gqk }
+  rnx -- { qzr, cfs, jmj, vfj, qkt }
+  cfs -- { rnx, trp, hgh, jjn }
+  xxg -- { dsd, qps, nlg, mcv }
+  nlg -- { xxg, rzh, fxd, fzs, mfk }
+  gcq -- { zzg, vmd, tmq, kxl }
+  zrf -- { jqj, xvl, lsp, llz }
+  xvl -- { zrf, jxk, zjj, prx }
+  lsp -- { zrf, rzx, mhx, xvm, jvc, spj }
+  vxb -- { lcg, ssl, clj, drz }
+  pnr -- { jcn, xqg, mdj, mfn }
+  jcn -- { pnr, dtp, fnv, slb }
+  xqg -- { pnr, gbc, djz, chl }
+  mdj -- { pnr, qnf, xmr, vpq, jll, hnl }
+  kdx -- { pqb, dzj, tmf, bfg, mrv, cdr }
+  tmf -- { kdx, xfd, tnq, zzp }
+  sfb -- { fhf, mss, xnv, bsq }
+  hvz -- { bfh, hgq, zbk, shr }
+  hgq -- { hvz, nns, frd, kcz }
+  zbk -- { hvz, mdc, gxn, gnj, zgc, mnn }
+  xln -- { dpp, cnz, mgx, dqc }
+  dpp -- { xln, lnv, xvq, jlv, ttz }
+  mgx -- { xln, lkx, skp, lkb }
+  dqc -- { xln, bzk, vkj, qtn }
+  ckg -- { vfj, hdf, glj, hgb }
+  vfj -- { ckg, rnx, hcg, dqv }
+  hdf -- { ckg, dkm, mjj, nrp, dgq, tbc, qtz }
+  dll -- { mbs, dxb, jsp, dkm, hpg, qtz, hgd, pqk }
+  pxp -- { mbs, tcb, kvc, rnj, dtl }
+  bmh -- { pdf, jpv, fxn, jbl }
+  jpv -- { bmh, rdz, vnr, kds }
+  jbl -- { bmh, vzf, rlk, qpr, lkj }
+  zbq -- { rsd, kgn, hjt, skp }
+  kgn -- { zbq, knp, jlb, nrs }
+  hjt -- { zbq, rct, fqn, tgh }
+  vtj -- { sks, jdp, cfj, xrd }
+  svz -- { xvx, fld, cmv, hpk, llp }
+  ddk -- { xvx, lbr, tqp, zhk }
+  vqs -- { cxf, bdk, nfg, bng, ncb }
+  bdk -- { vqs, rtd, dkc, ttc }
+  fpk -- { zsz, vjj, cjg, tzc }
+  xhh -- { zsz, rdj, gsc, jjr }
+  vsk -- { zsz, rbn, vlk, slk }
+  vcq -- { ncv, fjr, hdv, crj }
+  pdg -- { mcf, mlk, zpt, lvs }
+  mcf -- { pdg, zdb, mhr, dsx }
+  mlk -- { pdg, kgm, vnj, tvt, jcj }
+  mjl -- { pjn, zcx, szm, mds }
+  kdg -- { tpd, qfk, lfx, pzj, xlm, qmj }
+  drg -- { rjq, xnv, tfk, rhs, jcj }
+  vpq -- { czn, gbc, mdj, jgc }
+  gbc -- { vpq, mzf, bqp, nsm, xqg, fcv, qcx }
+  crz -- { pkg, cth, dgz, sjx }
+  pkg -- { crz, ldn, xqv, dss }
+  cth -- { crz, mdx, dnh, xgv }
+  vmg -- { pzf, vkj, ttg, hss }
+  zcr -- { rmn, zgh, hcv, mmr }
+  zgh -- { zcr, cps, ksr, xhs }
+  hcv -- { zcr, jvx, vnq, hnc }
+  mdc -- { zbk, kgk, fms, dzs }
+  nrs -- { kgn, hvc, lmg, lkb }
+  mkl -- { mpl, fsl, rct, pfc }
+  mpl -- { mkl, txc, dzx, frd }
+  trp -- { srt, cfs, tbb, dgm }
+  srt -- { trp, ldn, xxk, kpf }
+  tbb -- { trp, qnn, fdk, ctg }
+  jsp -- { vgr, dll, csv, kzn }
+  xvm -- { lsp, lxp, jlj, btd }
+  tgm -- { sqp, kqc, xbf, lhj, sgs }
+  jvx -- { mmr, hcv, tsq, lrc, rbq }
+  tsq -- { jvx, kbc, sbg, bbt, jkj }
+  lrc -- { jvx, vqz, bcq, jgh, bmf }
+  mss -- { qck, sfb, dzx, dhc, vht, mmt }
+  jrf -- { xps, rpc, pvg, hdv }
+  xps -- { jrf, pdq, lkb, kvm }
+  npl -- { ltp, lkx, pbb, jmr }
+  lkx -- { npl, lqk, klx, mmt, mgx, rjz }
+  jmr -- { npl, pzs, kdr, pnf }
+  msp -- { dbn, xzd, bnn, flc }
+  gmq -- { sbq, rgg, ttn, xvk }
+  sbq -- { gmq, vcm, jdm, cml, scc }
+  krp -- { ppz, qqn, cxl, cdv }
+  cdv -- { krp, xbn, htg, vfs }
+  xhf -- { fzl, zrk, rct, dnv, xfs, qbj }
+  rmt -- { mkm, kmz, kjl, hxh }
+  mkm -- { rmt, lrh, dfm, dlq }
+  jbt -- { zlc, xsb, hvm, llf }
+  khv -- { tvm, vqm, qkk, ksz, pgt }
+  xlt -- { czs, ddg, kfj, tzc }
+  psx -- { mfn, zdb, knr, tjk, kvn }
+  bcp -- { mfn, hlb, ljz, vjq }
+  hcf -- { fsm, pqr, fhh, qjb, qpj }
+  fsm -- { hcf, vzq, hlt, jkd }
+  pqr -- { hcf, zqj, qzr, kxq }
+  qpj -- { hcf, nql, tnb, dqp }
+  kbc -- { fbj, xrd, tsq, flp }
+  xrd -- { kbc, kcq, xhm, vtj }
+  flp -- { kbc, sjk, ctg, nqr }
+  jxk -- { rzx, mrk, xvl, rpt, gbd }
+  mrk -- { jxk, ncb, crn, bnf, lmc, xdx, rdq, qlt }
+  rpt -- { jxk, hkk, fzp, msn }
+  gbd -- { jxk, fmx, dgz, nkx }
+  khd -- { zjf, vsz, rmn, ldn }
+  bpt -- { jmj, flr, lmd, nqz }
+  fvn -- { jmj, zjj, lls, cmp }
+  cdr -- { grf, ddx, lvs, kdx }
+  grf -- { cdr, tjk, lbj, jdm }
+  hds -- { rxm, kbj, hdv, vqb, jxh }
+  kbj -- { hds, mrv, xpb, djb }
+  hdv -- { hds, fvv, vcq, jrf }
+  hrs -- { fjr, tgg, pzf, vff }
+  flz -- { fjr, xfc, tgh, lvm, mfs }
+  dvf -- { czj, zkf, hjc, slr }
+  czj -- { dvf, rpc, txq, xxl }
+  xxk -- { vfh, rdz, srt, gpq }
+  vfh -- { xxk, mqg, bqm, jtq, nph, gvv }
+  zdb -- { psx, szb, mcf, jnq }
+  bsm -- { txq, qzq, mjd, vxg }
+  txq -- { bsm, nkh, mgb, jdf, czj, dzq }
+  mjd -- { bsm, lvl, pqp, brj, dfq }
+  znc -- { crq, jsh, rbq, vrl }
+  lct -- { xlg, bps, sxh, gmx, nxk }
+  psg -- { brr, nqp, vqb, gzn, fkn }
+  fmx -- { gbd, rdq, hhn, gpq }
+  dpn -- { gkh, dlg, gfg, ggl }
+  ttf -- { gkh, txc, vjj, hpj }
+  vzf -- { vsx, tmm, jbl, ldj, dxh, tbc }
+  bgn -- { klc, gct, xvk, pvg }
+  klc -- { bgn, pdq, zkc, bsp, rbn }
+  hff -- { mpg, jxd, kkg, sfn, jkj }
+  prm -- { mpg, ctl, jts, gnl }
+  rvd -- { xfq, sjx, xjs, rjh }
+  sjx -- { rvd, dxh, pfp, bdq, crz }
+  rjh -- { rvd, fpj, ghs, hvl }
+  bfs -- { rzm, lvl, dtd, pzr }
+  lvl -- { bfs, mjd, jmz, lnf }
+  spx -- { dgr, cph, rsl, qfk, xgj }
+  qfk -- { spx, kdg, bvx, rtc }
+  xgj -- { spx, dtg, btd, fnt, qkt }
+  tcb -- { dmg, pxp, nkx, xrv }
+  dmg -- { tcb, jsz, hlt, qhf }
+  ctl -- { prm, fkt, nrz, fpv }
+  ptv -- { dnh, mvq, dsd, qmv, dgr }
+  rqp -- { qzj, mzx, rrq, cnz }
+  tnq -- { tmf, vjb, snk, xfs, djs }
+  mfs -- { vfx, bbb, flz, qxb }
+  dxk -- { bbm, jlj, vng, jqp, fhc }
+  bbm -- { dxk, pcs, cfg, kdh, ssx, rcx }
+  vcm -- { gfg, ssl, sbq, pzr }
+  fpd -- { mhp, dkt, nqp, zbj, hqx }
+  mhp -- { fpd, tbd, vsg, gct }
+  dkt -- { fpd, bkn, mzx, vls, xns }
+  zxf -- { mhr, znh, lgg, fxz, ckz }
+  mhr -- { zxf, nkh, nzf, mcf, xfd }
+  fxz -- { zxf, xtd, sbm, dzq }
+  ckz -- { zxf, tcj, kqr, xmk }
+  mzf -- { gbc, ndf, slt, qnk }
+  mdq -- { qnd, zdf, dlr, jtq }
+  ldl -- { pgf, mpm, qxn, jbn }
+  sdr -- { hqb, hpv, qqn, kds }
+  ghs -- { hqb, rjh, mds, mkg, znd }
+  lrh -- { trq, mkm, lzf, dsp, gfv, mkg }
+  dsp -- { lrh, hhq, xhs, vrl }
+  mkg -- { lrh, kxq, ghs, xbf, mcg, pgf }
+  rdx -- { tlb, csz, bxk, zrt }
+  cnk -- { dxr, snk, kxg, shv }
+  bqp -- { bjn, gbc, qss, gfq }
+  tzc -- { mbk, xlt, fpk, bsp }
+  hhn -- { ksz, rpk, pgt, fmx }
+  rpk -- { hhn, rlk, qqr, lgm }
+  tld -- { xvk, jmz, dtj, tcj }
+  knr -- { pxv, scm, mkb, psx }
+  scm -- { knr, ttp, dxv, str }
+  qtr -- { pvm, xfs, srq, kgg, fcf }
+  ghb -- { qhh, sjp, qrx, dlq }
+  sjp -- { ghb, bkr, rfx, ddb }
+  kvc -- { dhq, pxp, vhp, dmh }
+  dhq -- { kvc, brn, slm, hvh }
+  vhp -- { kvc, fnt, jfm, vsv, rnn, jrx }
+  gfj -- { nqz, pcs, kpf, fbm }
+  tzd -- { zfz, fvg, zrk, sxq, ncv }
+  fvg -- { tzd, rsd, djs, llf }
+  kgk -- { xsj, mdc, mlj, crb }
+  vnr -- { tph, qht, jpv, nkx, gfv }
+  hvn -- { hjg, hpg, nxt, jqj, fbm }
+  dfp -- { hgm, hkm, mvn, gfq }
+  bzk -- { dqc, ggk, xhc, hvc, pmt, gzn }
+  xvd -- { rsz, rck, dtd, drc }
+  rsz -- { xvd, brs, glr, nlk }
+  zjj -- { fvn, sjk, chh, bjc, xvl }
+  lls -- { fvn, pnc, qhh, jjm }
+  rmx -- { pzf, pdc, mnl, tdj }
+  lnf -- { lvl, hvm, slt, kgv }
+  tjk -- { rjj, grf, psx, hpn, xfb }
+  hpn -- { tjk, qrt, jtg, zkt }
+  rzh -- { nlg, pqh, xbn, bkr }
+  kbv -- { fms, drc, vxg, bnb }
+  tmt -- { kcq, grb, mpm, jkj }
+  rdz -- { mpg, bkr, xxk, jpv, svs }
+  bkr -- { rdz, dxb, sjp, rzh }
+  xtd -- { fnv, xbk, fxz, njk }
+  fnv -- { xtd, lmg, jcn, bqd, cfc }
+  bng -- { hlx, jkd, vqs, qlk }
+  tmm -- { pdh, bdq, vzf, tcf, mcc }
+  gxt -- { xsb, cpz, dnj, fgd }
+  vht -- { tvc, txm, mss, cvm, bxb }
+  tvc -- { vht, snt, cnz, sln, qgc }
+  mvg -- { pcs, bqg, lzp, dkl, mzb }
+  pcs -- { mvg, bbm, gfj, fdk, vrl }
+  mzb -- { mvg, vvh, dtg, tpd }
+  bns -- { vkq, vsz, pvz, bjs, xrp }
+  bjs -- { bns, flr, jcq, mtc, mnq }
+  xrp -- { bns, pzj, qlk, ksr }
+  vrh -- { xdx, txv, fdb, lpv, jjm }
+  txv -- { vrh, ttc, bbc, mfm }
+  lpv -- { vrh, dbl, fdb, mcg }
+  lbr -- { jhf, ddk, gnm, gks }
+  gnm -- { lbr, shr, zzh, bnh }
+  jgh -- { lrc, qct, plf, hpg, mgp, qlt, mcg }
+  pjd -- { tkg, gzr, gvf, qgr, sjk, qrp }
+  gzr -- { pjd, msq, pcc, dvx }
+  sjk -- { pjd, zjj, ssx, flp }
+  xmr -- { kqz, qqs, mdj, pzp }
+  hqs -- { zzg, qsz, jkd, pcc, dbp }
+  pcc -- { hqs, fxn, rlb, gzr }
+  qqs -- { msb, ztp, jhf, xmr }
+  hvm -- { jbt, dzm, lnf, tss }
+  dzm -- { hvm, kqt, snd, rpc, trh }
+  tss -- { hvm, vsg, dnv, tvt }
+  fzq -- { zcl, tmk, nsr, qbv }
+  zcl -- { fzq, ddx, hzp, jph, cxz }
+  nsr -- { fzq, cxz, ttp, crj, fzk }
+  qbv -- { fzq, shr, gfq, kjp }
+  sct -- { pmh, mgd, dgq, lkq }
+  jfm -- { qrx, vhp, cph, lmc }
+  rgz -- { zkl, ctg, crn, gck }
+  qnb -- { qps, tlt, dcg, dxh }
+  tlt -- { qnb, pfl, fhh, fgv }
+  dxh -- { qnb, sjx, vzf, mfk }
+  nnk -- { vgp, sbv, nfr, zkt }
+  jsz -- { dmg, pdf, smf, tpn }
+  mxb -- { gck, rmd, dmj, qrp }
+  gck -- { mxb, rgz, jqj, tzf }
+  pvg -- { jrf, hgt, bgn, srq, qrd, tqp }
+  tqp -- { pvg, rfj, rzm, ddk }
+  vkj -- { zzp, dqc, ksx, vmg }
+  hpd -- { bmd, sbv, pgg, vhr }
+  sbv -- { hpd, fbl, nnk, pzr }
+  qnn -- { sqg, tbb, svb, qhh, zvv, qmj }
+  svb -- { qnn, jls, zqj, ddl }
+  rzt -- { fnm, ghc, tzm, rdk }
+  nxt -- { nvd, dfm, hvn, tfx }
+  klx -- { ttp, xnv, lkx, djs, pjf }
+  ttp -- { klx, nsr, scm, hln }
+  xnv -- { klx, xrt, hnp, drg, sfb, rjp }
+  djs -- { klx, csp, fvg, tnq, xfc }
+  vsg -- { tss, chj, tfk, mhp, lcs, hst, xsj }
+  qpr -- { jbl, smf, zdh, rbv }
+  tgk -- { zvh, xrh, tsn, ggp }
+  zvh -- { tgk, zmn, znh, lft, jfj }
+  tsn -- { tgk, bjl, jmz, znm }
+  clj -- { pqq, qzp, rxh, hvc, vxb }
+  qzp -- { clj, nsm, zpt, fmg }
+  hvc -- { clj, ndq, bzk, nrs }
+  fdk -- { msn, pcs, tbb, vxd, cqj }
+  cqj -- { fdk, jkd, xdc, fgm }
+  zmn -- { zvh, ltd, mvp, nns, crb, qzj }
+  mvp -- { zmn, drc, pzn, xsj }
+  nns -- { zmn, hgq, hpk, vzs }
+  crb -- { zmn, bmc, bfh, kgk, lpq }
+  zgc -- { zbk, rzm, dnj, ssc, ggp }
+  dnj -- { zgc, pmp, qrt, gxt }
+  sql -- { mgd, qht, mvf, gnl }
+  qht -- { sql, vnr, tpn, bbc }
+  dtj -- { bnb, lxh, qvs, tld, fbl }
+  ttc -- { txv, bdk, tnn, xgr }
+  dgz -- { vzq, tpp, crz, gbd, rvz }
+  tpp -- { dgz, ptr, gfv, vkq }
+  brn -- { mpv, crn, dhq, qmb, tvp }
+  mpv -- { brn, rzc, sqp, zrt }
+  tvp -- { brn, hgk, plc, hkf, rvq }
+  sqh -- { lft, frm, ptc, vhg, fld }
+  lft -- { sqh, dqs, xbk, clp, zvh }
+  frm -- { sqh, lmg, xhd, flk }
+  vhg -- { sqh, vqp, fbc, rgc, gks }
+  jfz -- { cns, zqb, xsc, mjr, tpn }
+  zqb -- { jfz, nrp, ldh, gpk }
+  qvs -- { pdq, dtj, ccc, dzx, vrk }
+  pdq -- { qvs, klc, xps, txm }
+  ccc -- { qvs, rck, xzp, cjg }
+  sbs -- { lhh, pmh, jts, fsz }
+  jts -- { sbs, prm, dhp, dqv }
+  btd -- { xgj, ctg, vmd, xvm }
+  nkh -- { mhr, zzp, xts, txq }
+  nzf -- { mhr, snd, bps, znk }
+  ggk -- { bzk, vpl, ttn, tvt }
+  hlt -- { kpf, qxc, dmg, fsm }
+  qxc -- { hlt, xdc, rnj, znz, nln }
+  xrt -- { xnv, mbg, hlm, rjp }
+  cqh -- { jzl, czh, vnj, flc }
+  vnj -- { cqh, mlk, xpb, lpq, crh, ljn }
+  dnt -- { zrk, lcs, dzr, nxk }
+  kdh -- { skx, mpp, bbm, jvf }
+  hxk -- { slt, nmk, vxp, ddj, pnf }
+  mzx -- { mrv, rqp, sbm, dkt }
+  ptd -- { drt, lmd, jhs, smb }
+  tsl -- { sqd, ktd, lfs, dxb }
+  ktd -- { tsl, hhq, pqk, vvz }
+  cxz -- { nsr, ksm, lnv, zcl }
+  crj -- { nsr, fnm, vcq, thh }
+  pkc -- { frn, lgm, xgc, mds }
+  kqt -- { dzm, xfd, jzr, tlg }
+  tlg -- { kqt, rjz, clp, kpn, drj, vgg, fcf }
+  rrq -- { tfk, rqp, qtn, lsl }
+  qtn -- { rrq, nmn, dqc, sjg }
+  rtd -- { qkk, cfg, jcq, bdk }
+  qkk -- { rtd, ssx, jrx, khv }
+  jcq -- { rtd, pkm, bjs, dhl }
+  jdn -- { xgd, prt, lhj, rlb }
+  prt -- { jdn, ttm, rcx, dmh }
+  thr -- { phc, zrv, rgg, bxl }
+  phc -- { thr, xfr, bmc, qss, gzn }
+  zqj -- { nkx, svb, pqr, dqp }
+  nlk -- { sjv, gdd, mbz, rsz, pmt }
+  chj -- { jnz, fvl, phn, vsg }
+  lpq -- { vnj, crb, zgb, hqf }
+  rqv -- { vtd, vgr, pjg, zvv }
+  khj -- { xkz, fbl, jxz, zgj }
+  pkk -- { jmj, vsv, tmq, xmj }
+  tcx -- { qxv, fxn, frn, qvc }
+  qxv -- { tcx, hbl, xgd, ctg }
+  snd -- { nzf, dzm, hss, svp }
+  qdc -- { jqt, hgk, pkm, srx }
+  vmd -- { mxt, bcr, gcq, pdh, btd, ddb }
+  ctg -- { hhl, rgz, flp, btd, tbb, qxv, stm }
+  hhl -- { ctg, pqh, rfx, cmp }
+  tdp -- { nvr, pzj, snb, sgs }
+  pzj -- { tdp, kdg, vcx, xrp }
+  vjq -- { jtt, zgb, rfc, bcp }
+  hgk -- { tvp, hvh, qmb, qdc }
+  jfh -- { gvv, jvf, fdd, lmd }
+  pqj -- { pmv, pzf, srq, mrv }
+  kjj -- { fsl, djv, kxg, zkc }
+  zkc -- { kjj, klc, jvm, djr }
+  fjs -- { vpp, kxq, xmg, hcg }
+  zgb -- { xlg, vjq, lpq, dzr }
+  pzs -- { jmr, jjg, pqp, bft }
+  mgb -- { txq, mbg, lfv, ljz, xgk }
+  mmt -- { slb, mss, lkx, mmf }
+  dzq -- { fxz, txq, fkn, dzc, vgg }
+  fkn -- { dzq, gnz, gct, psg, fzk }
+  msq -- { zxt, xmj, nfg, gzr }
+  jls -- { snb, vfs, svb, xqt }
+  snb -- { jls, mpg, tdp, dlr }
+  rfj -- { ptj, lsl, tqp, tlm }
+  dkm -- { dll, hdf, crq, pjn }
+  lkj -- { jjn, jmj, jbl, vtd }
+  nxb -- { pzl, kxf, jlm, szb }
+  sfn -- { zkl, lkq, gpk, hff }
+  bcr -- { vmd, gnc, fdb, lmc }
+  gnc -- { bcr, xff, rcx, rdq, zxt }
+  xff -- { xjb, dfm, cjd, gnc }
+  fzp -- { dqp, cps, hmd, rpt }
+  vvk -- { sks, nsz, czg, lfb }
+  lfb -- { vvk, htg, jsh, qhh }
+  pkm -- { zxt, qdc, jcq, rcn }
+  mbg -- { snt, mgb, rfq, xrt }
+  qlt -- { jgh, svs, qlv, mrk }
+  kvn -- { ltp, cfc, lvt, psx, fhr }
+  jlz -- { qlc, rvz, jjn, mxp }
+  cdd -- { clp, pmt, npn, fpf, jzl, ljq }
+  pmt -- { cdd, xfc, bzk, vtr, nlk, nvt }
+  vgt -- { qvp, bnh, fhf, rlv, gvt }
+  rlv -- { vgt, fhr, drz, mpz }
+  bpp -- { pqp, dzj, ttg, pvm }
+  ndq -- { trh, hvc, pvv, ktt }
+  ptr -- { xgr, tpp, gkt, xxn }
+  xgr -- { ptr, fnt, glj, ttc }
+  xxn -- { ptr, kqc, dmv, cfj, mpg }
+  vzj -- { fbz, gfh, ddg, dzs }
+  dzs -- { vzj, bqd, mdc, jcj }
+  cpz -- { lqt, csp, vhz, jrb, gxt, bsp }
+  csp -- { cpz, qrv, djs, shr }
+  hqz -- { dbl, xqv, mqg, jjn }
+  flc -- { fdh, ttz, msp, cqh }
+  fdh -- { flc, hlb, mnn, xns }
+  ljn -- { smc, jxf, vqq, vnj, ssc }
+  bxb -- { fdv, ztn, vht, jfj }
+  htg -- { lfb, vkq, vph, cdv }
+  hdp -- { pzr, jfj, vxp, bsl }
+  pzr -- { hdp, bfs, vcm, sbv, bjn, nms }
+  ldn -- { srt, qmv, khd, gpk, pkg, zgq }
+  gpk -- { ldn, klq, dbp, sfn, zqb, vng }
+  tpn -- { jfz, xpq, qht, jsz, gzx, ljk }
+  ljk -- { tpn, lkq, tlf, mvf }
+  hss -- { snd, vmg, ngm, bck }
+  ngm -- { hss, jnq, hlh, jrb }
+  gsr -- { xnc, bnb, nbt, hln, srq }
+  hlb -- { fdh, gfp, bcp, kxr }
+  tgf -- { gvm, tjz, gql, mkb }
+  ncb -- { vcx, mrk, vqs, xqv }
+  rnj -- { pxp, qxc, xfl, vdv }
+  vdv -- { rnj, mds, nph, fhc, nln }
+  pfl -- { qct, tlt, zcx, dmj }
+  llb -- { ttn, cvn, rfs, bgp }
+  slm -- { mmg, dqk, dhq, ztj, hpv }
+  fhr -- { rlv, xxl, prv, kvn, ssl }
+  xxl -- { fhr, czj, tff, jtt }
+  qxn -- { qbs, lfl, ldl, slq }
+  srx -- { qdc, nvr, mbs, nql }
+  nql -- { srx, qpj, ksr, xjb }
+  fld -- { sqh, fbz, crr, svz }
+  drc -- { xvd, kbv, mvp, bnb }
+  mcc -- { fbj, tmm, fnt, rlb }
+  fhp -- { ljz, cnn, zdl, qcc, hst }
+  qcc -- { fhp, vqr, smc, kqr }
+  bbc -- { mxt, qht, txv, lkq }
+  hcz -- { bbb, hpj, cjg, gnz }
+  lmx -- { khz, xqt, xfl, tbc }
+  dhg -- { ptt, pnv, zmg, hkm }
+  mnq -- { bjs, cph, bjb, rzc }
+  tpf -- { tkg, dmv, prz, mgd }
+  prz -- { tpf, znz, zkd, tjb }
+  jnq -- { csj, ngm, qgm, zdb }
+  xfc -- { flz, ffn, djs, pmt }
+  mfm -- { zkd, vpp, txv, mfk }
+  xqv -- { pkg, hqz, ncb, vzt }
+  rcx -- { xdc, gnc, bbm, prt }
+  xfr -- { phc, rrn, pjf, bsq }
+  pjf -- { xfr, klx, rpc, sjg }
+  mds -- { mjl, ghs, vdv, rhr, pkc, bxk }
+  gnd -- { ksn, crm, jhp, shr }
+  crm -- { gnd, xth, bbh, rxh, sjg, zfh }
+  bjc -- { qmb, pgf, bgz, xpq, zjj }
+  bgz -- { bjc, dhp, drr, kdp }
+  dgq -- { hdf, cvf, sct, tpd }
+  jtq -- { jhz, vfh, csd, mdq }
+  rkl -- { kxg, bqd, zpt, fvl }
+  prx -- { zdf, xvl, dtg, stm }
+  kqc -- { sjh, tgm, xxn, lfx }
+  qrv -- { csp, tvt, vcn, kfj }
+  ffn -- { czs, xfc, bft, fhf, qxb }
+  qzd -- { lhh, znz, jjm, kfr }
+  dqk -- { slm, kdp, jpt, dhl }
+  kdp -- { dqk, dss, hcg, bgz }
+  bmc -- { crb, tvt, phc, dsx }
+  shr -- { gnd, gnm, hvz, csp, qbv }
+  ghc -- { rzt, vdl, hvp, tzm }
+  rhs -- { drg, bxl, ptj, tfb, xmk }
+  svs -- { chh, qlt, rdz, jxd }
+  dsv -- { vkn, jrx, dhl, xlm }
+  gnl -- { tjb, mxp, prm, sql }
+  tjb -- { gnl, sgs, tzg, prz }
+  rjz -- { nmz, rss, slv, lkx, tlg }
+  nmz -- { rjz, xrh, slt, fcf }
+  hpj -- { hcz, vfl, smn, ttf, zgj }
+  rfx -- { hhl, jqp, sjp, qct }
+  qlk -- { mqg, ncg, xrp, bng }
+  brs -- { jbd, xrh, rsz, ndg }
+  ndg -- { brs, xbk, gfh, vgk }
+  lkq -- { dhl, bbc, ljk, sct, vrz, sfn }
+  mvn -- { tcj, hvp, dfp, srh }
+  fgd -- { jrt, vlk, gxt, mmj }
+  hvp -- { ktt, mvn, ghc, xns }
+  frd -- { thq, bsf, mpl, hgq }
+  mnn -- { xsj, glr, dxv, fdh, npn, kxg, zbk }
+  dxv -- { mnn, xvq, cdp, scm }
+  sgs -- { tjb, tdp, vdg, tgm }
+  vlk -- { dhj, vsk, qgc, fgd }
+  nfr -- { ljq, zcg, hnp, nnk, zbj }
+  jsk -- { ljq, ggf, rgj, pbb }
+  rbq -- { znc, ttm, ksr, jvx }
+  jrx -- { mpp, vhp, qkk, gxd, dsv }
+  jmd -- { stm, jlj, dgr, xqb }
+  xqb -- { jmd, nvr, bxk, npr, bnf }
+  bbt -- { xcp, fhc, lzq, tsq }
+  xcp -- { bbt, hgd, sbh, mcg, hcp }
+  fgv -- { tlt, jjm, djt, rsl }
+  zcg -- { nfr, nbt, bbh, jbm }
+  qrt -- { dnj, hpn, slb, gdm }
+  xbn -- { jjn, rzh, cdv, jtx }
+  dmj -- { bbd, pfl, qgn, mxb }
+  ldj -- { qhf, qbs, gpl, vzf }
+  bnf -- { mxp, mrk, hkk, xqb }
+  fbl -- { sbv, dcf, dtj, dfd, khj }
+  rvz -- { fvd, qgr, jlz, dgz }
+  xgk -- { bjl, znm, mgb, jtg }
+  znm -- { xgk, tsn, lnr, bbb }
+  qzm -- { zdm, crq, trq, fxd }
+  tbc -- { hdf, lmx, vzf, qkt }
+  vrk -- { xcj, tzm, hst, qvs }
+  tzm -- { vrk, ghc, tgg, rzt, gbn }
+  lmg -- { bmt, vjj, nrs, fnv, frm, zhk, mhg, qgm }
+  rfc -- { vjq, kzb, rgj, xzs, hmh }
+  tkk -- { chh, khz, nlb, qrp }
+  fzk -- { nsr, hkm, cng, fkn }
+  dln -- { vvq, fcl, mbz, zzp }
+  gvt -- { ltd, jcm, znb, vgt, bgp, nbv }
+  nbv -- { gvt, gdt, gkh, rfq }
+  xvq -- { thh, dxv, cbp, dpp }
+  lmc -- { ttm, bcr, mrk, jfm }
+  jbn -- { trq, ldl, mpp, xgg }
+  xns -- { dkt, cvn, fdh, hvp }
+  skp -- { zrk, zbq, crh, mgx }
+  jpq -- { ssx, dkj, jhz, dqv }
+  tdj -- { rmx, jcm, lvt, rjm, qhz }
+  kxq -- { fjs, xkx, pqr, mkg, fpj, fkv }
+  qcs -- { mzc, vdd, vkq, rzc }
+  bsq -- { sfb, lbj, kkc, znb, dxr, xfr, qgh }
+  nph -- { vdv, mtc, vfh, spj }
+  jxz -- { xth, pxv, ljz, khj }
+  cxg -- { kpf, nqr, bmf, tph }
+  nqr -- { cxg, vcx, flp, plf }
+  bck -- { hss, cng, ssq, dvj }
+  xhz -- { jbm, vhz, cng, ggf, jss }
+  pqc -- { bjb, fhc, npr, rtc }
+  npr -- { pqc, xqb, sdt, nrz }
+  qkt -- { pnc, tbc, xgj, rnx, jtn }
+  rvv -- { xsc, plf, gkt, rtc }
+  ddl -- { hbb, rvq, pnc, svb }
+  tgh -- { hjt, flz, lxh, brj }
+  vxg -- { kcz, bsm, xsb, kbv, zhq }
+  kcz -- { vxg, xfb, hgq, dnv }
+  jjm -- { qzd, vrh, lls, fgv, jtb }
+  slk -- { dqs, bfg, rjj, vsk }
+  dtl -- { dhl, dkj, pxp, lzq }
+  dxt -- { mnl, grd, hlm, kzb }
+  rlb -- { pcc, mdx, mcc, jdn }
+  rbv -- { fbj, mgd, qpr, klq }
+  ssc -- { vff, zgc, ljn, jbm }
+  vff -- { ssc, jhf, hrs, pqq, mmj }
+  gfq -- { qbv, dfp, bqp, fbc, zkt }
+  rdk -- { xzq, rzt, rjf, xzz }
+  dlq -- { mjr, mkm, ghb, tcr }
+  rcn -- { pkm, xgm, mxt, ggs }
+  mfk -- { nlg, dvx, dfm, dxh, mfm }
+  dvx -- { mfk, gzr, jkd, cns, fbp }
+  gbn -- { hqf, tzm, djb, sdf }
+  jxd -- { svs, mdx, xdx, hff, qlc }
+  lkb -- { szb, ncv, xps, mgx, jgc, nrs }
+  jgc -- { lkb, vpq, lkk, dfq }
+  zfh -- { rxm, lmq, crm, fmg }
+  rtc -- { rvv, qfk, pqc, rhr }
+  ggp -- { pzn, tgk, zgc, nfv }
+  dhp -- { lfs, bgz, jts, qgn, rtz }
+  cmv -- { kgv, jll, svz, kzb }
+  hcg -- { jtn, kdp, fjs, vfj, skx }
+  shv -- { cdp, xfb, pts, cnk }
+  xlm -- { dsv, hxb, kdg, szm, qqn }
+  cjg -- { zvs, lqj, hcz, fpk, ccc }
+  kfr -- { qzd, mmg, hbb, fvd }
+  kdr -- { qnk, cvm, dnk, jmr }
+  pxs -- { znz, fsz, hbq, cjd }
+  fdj -- { ngf, kjp, vls, bmd }
+  pfc -- { jlm, zqn, mkl, vtr }
+  hgd -- { mvq, dll, kzn, xcp }
+  fmg -- { qzp, zfh, mmf, gsj }
+  mmf -- { fmg, pxx, pzn, mmt, qmt, cng }
+  gzn -- { qcd, phc, psg, bzk }
+  fbm -- { hvl, pmh, hvn, gfj }
+  zkt -- { gfq, lfv, hpn, jhq, nnk }
+  jkj -- { hff, tmt, hxh, tsq, sbh }
+  srh -- { qzq, lsl, brm, mvn }
+  pqk -- { dll, ktd, xdx, tph }
+  fcf -- { tlg, nmz, frr, qtr, xll }
+  qrp -- { tkk, vzq, pjd, pqh, mxb }
+  vvz -- { ktd, cvf, mtc, qqr }
+  pqz -- { sjg, txm, mjm, thh }
+  spj -- { lsp, mjr, xbl, nph }
+  xrv -- { tcb, jgl, khz, jhn }
+  ddb -- { sjp, mcv, nkl, vmd }
+  xgg -- { mdx, frn, jbn, qgg, qmd }
+  pnf -- { rhz, gkh, hxk, jmr }
+  str -- { vhz, bct, ktt, scm, qbj }
+  dsx -- { vhv, bmc, mcf, pns }
+  jtx -- { xjs, xbn, gvf, smt }
+  kvm -- { nvt, jzr, bbb, ljq, xps }
+  dfq -- { dxr, jgc, mjs, mjd }
+}

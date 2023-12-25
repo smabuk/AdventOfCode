@@ -26,7 +26,7 @@ public sealed partial class Day19 {
 			.Sum(part => part.Rating);
 	}
 
-	private static long Solution2(string[] input) {
+	private static string Solution2(string[] input) {
 		Dictionary<string, Workflow> workflows = input
 			.TakeWhile(IsNotABlankLine)
 			.As<Workflow>()
@@ -38,14 +38,15 @@ public sealed partial class Day19 {
 		categoryRatings["a"] = new (1, 4000);
 		categoryRatings["s"] = new (1, 4000);
 
-		
+
+		return "** No solution written **";
 
 
-		categoryRatings  =  Workflow.CalculateCombinations("in", categoryRatings, workflows);
-		return (categoryRatings["x"].End + 1 - categoryRatings["x"].Start)
-			 * (categoryRatings["m"].End + 1 - categoryRatings["m"].Start)
-			 * (categoryRatings["a"].End + 1 - categoryRatings["a"].Start)
-			 * (categoryRatings["s"].End + 1 - categoryRatings["s"].Start);
+		//categoryRatings =  Workflow.CalculateCombinations("in", categoryRatings, workflows);
+		//return ((categoryRatings["x"].End + 1 - categoryRatings["x"].Start)
+		//	 * (categoryRatings["m"].End + 1 - categoryRatings["m"].Start)
+		//	 * (categoryRatings["a"].End + 1 - categoryRatings["a"].Start)
+		//	 * (categoryRatings["s"].End + 1 - categoryRatings["s"].Start)).ToString();
 
 	}
 
