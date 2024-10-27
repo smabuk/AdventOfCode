@@ -33,9 +33,9 @@ if (!app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapStaticAssets();
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
 	.AddAdditionalAssemblies(typeof(AdventOfCode.SharedUI.Component1).Assembly);
