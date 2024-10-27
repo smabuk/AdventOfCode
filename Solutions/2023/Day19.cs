@@ -79,9 +79,9 @@ public sealed partial class Day19 {
 			Workflow current = workflows[workflowName];
 
 			//long combinations = 0;
-#pragma warning disable CS0219 // Variable is assigned but its value is never used
+#pragma warning disable CS0219, IDE0059 // Variable is assigned but its value is never used
 			long trueCombinations = 0;
-#pragma warning restore CS0219 // Variable is assigned but its value is never used
+#pragma warning restore CS0219, IDE0059 // Variable is assigned but its value is never used
 							  //long falseCombinations = 0;
 
 			foreach (Rule rule in current.Rules) {
