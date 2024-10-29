@@ -13,9 +13,7 @@ builder.Services
 builder.Services.Configure<AocSettings>(builder.Configuration.GetSection(nameof(AocSettings)));
 builder.Services.AddMemoryCache();
 
-builder.Services.AddHttpClient<AocHttpClient>(httpClient => {
-	httpClient.DefaultRequestHeaders.Add("Cookie", $"session={builder.Configuration["AocSettings:HttpClientSettings:SessionCookie"]};");
-});
+builder.Services.AddHttpClient<AocHttpClient>(httpClient => httpClient.DefaultRequestHeaders.Add("Cookie", $"session={builder.Configuration["AocSettings:HttpClientSettings:SessionCookie"]};"));
 builder.Services.AddHttpClient<GithubHttpClient>();
 
 builder.Services.AddScoped<FileSystemInputData>();

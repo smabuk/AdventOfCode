@@ -16,18 +16,15 @@ static public class SolutionRouter {
 		}
 
 		DescriptionAttribute[] descriptionAttributes = (DescriptionAttribute[])dayTypeInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
-		return descriptionAttributes.Length > 0
-			? ((DescriptionAttribute)descriptionAttributes.First()).Description
+		return descriptionAttributes is not []
+			? descriptionAttributes[0].Description
 			: NO_SOLUTION;
 	}
 
 	public static bool HasVisualiser(int year, int day, int part) {
 		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
-		if (dayTypeInfo is null) {
-			return false;
-		}
-
-		return dayTypeInfo
+		return dayTypeInfo is not null && 
+			dayTypeInfo
 			.GetMethods()
 			.Where(m => m.Name == $"Part{part}")
 			.Where(m => m.GetCustomAttributes().Where(attr => (attr.ToString() ?? "").EndsWith("HasVisualiserAttribute")).Any())
@@ -79,7 +76,7 @@ static public class SolutionRouter {
 		InvokeResult invokeResult1 = new(NO_SOLUTION);
 		if (method1 is not null) {
 			invokeResult1 = InvokeSolutionMethod(input, args, method1, visualise);
-		}
+		};
 		stopTime = Stopwatch.GetTimestamp();
 
 		if (invokeResult1.Answer.Contains("written")) {
@@ -98,7 +95,7 @@ static public class SolutionRouter {
 		InvokeResult invokeResult2 = new(NO_SOLUTION);
 		if (method2 is not null) {
 			invokeResult2 = InvokeSolutionMethod(input, args, method2, visualise);
-		}
+		};
 		stopTime = Stopwatch.GetTimestamp();
 
 		if (invokeResult2.Answer.Contains("written")) {
@@ -183,13 +180,13 @@ static public class SolutionRouter {
 			return (noOfParameters, hasVisualiser, useVisualiser) switch
 			{
 				(0, _, _)           => new(NO_PARAMETERS),
-				(1, false, _)       => new(method.Invoke(0, new object[] { inputObject })?.ToString() ?? ""),
-				( > 1, false, _)    => new(method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""),
-				(2, true, false)    => new(method.Invoke(0, new object[] { inputObject, null! })?.ToString() ?? ""),
-				(2, true, true)     => new(method.Invoke(0, new object[] { inputObject, visualise! })?.ToString() ?? ""),
-				( > 2, true, false) => new(method.Invoke(0, new object[] { inputObject, null!, args! })?.ToString() ?? ""),
-				( > 2, true, true)  => new(method.Invoke(0, new object[] { inputObject, visualise!, args! })?.ToString() ?? ""),
-				_                   => new(method.Invoke(0, new object[] { inputObject, args! })?.ToString() ?? ""),
+				(1, false, _)       => new(method.Invoke(0, [inputObject])?.ToString() ?? ""),
+				( > 1, false, _)    => new(method.Invoke(0, [inputObject, args!])?.ToString() ?? ""),
+				(2, true, false)    => new(method.Invoke(0, [inputObject, null!])?.ToString() ?? ""),
+				(2, true, true)     => new(method.Invoke(0, [inputObject, visualise!])?.ToString() ?? ""),
+				( > 2, true, false) => new(method.Invoke(0, [inputObject, null!, args!])?.ToString() ?? ""),
+				( > 2, true, true)  => new(method.Invoke(0, [inputObject, visualise!, args!])?.ToString() ?? ""),
+				_                   => new(method.Invoke(0, [inputObject, args!])?.ToString() ?? ""),
 			};
 		}
 		catch (Exception ex) {

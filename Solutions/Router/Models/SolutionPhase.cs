@@ -25,7 +25,7 @@ public record struct SolutionPhase(SolutionResultType Result, string Phase, stri
 	public static SolutionPhase ExceptionPart1  => new(EXCEPTION,     EXCEPTION_PART1, EXCEPTION_MESSAGE,     new());
 	public static SolutionPhase ExceptionPart2  => new(EXCEPTION,     EXCEPTION_PART2, EXCEPTION_MESSAGE,     new());
 
-	public Exception Exception{ get; init; }
+	public Exception? Exception{ get; init; }
 	//public void SetException(Exception exception) => Exception = exception;
 
 	public static implicit operator (SolutionResultType Result, string Phase, string Answer, TimeSpan Elapsed)(SolutionPhase value)

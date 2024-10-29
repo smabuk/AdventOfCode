@@ -87,7 +87,9 @@ public class Day07 {
 		}
 		if (instruction is NOT_Instruction notI) {
 			ushort v1 = CalculateValue(notI.InWire, instructions, wireValues);
-			ushort value = (ushort)~v1;
+			// ~ is an operator on int so causes an overflow unless constrained to ushort
+			// this is needed as I have enabled all overflows to cause an exception
+			ushort value = (ushort)(~v1 & ushort.MaxValue);
 			wireValues[wireId] = value;
 			return value;
 		}

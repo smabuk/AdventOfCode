@@ -48,7 +48,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 				Console.Write($" Pt1:");
 				if (result.Answer.StartsWith('*')) {
 					Console.ForegroundColor = ConsoleColor.Red;
-				}
+				};
 				Console.Write($" {result.Answer,-16}");
 			} else if (result.Phase == SolutionPhase.PHASE_PART2) {
 				answerColour = ConsoleColor.Yellow;
@@ -57,7 +57,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 				Console.Write($" Pt2:");
 				if (result.Answer.StartsWith('*')) {
 					Console.ForegroundColor = ConsoleColor.Red;
-				}
+				};
 				Console.Write($" {result.Answer,-16}");
 			} else if (result.Phase == SolutionPhase.EXCEPTION_PART1) {
 				answerColour = ConsoleColor.Green;
@@ -73,7 +73,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 				Console.Write($" Pt2:");
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.Write($" {SolutionPhase.EXCEPTION_MESSAGE,-16}");
-			}
+			};
 			Console.ResetColor();
 		};
 
@@ -105,7 +105,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 	{
 		foreach (SolutionPhase result in solveResults.Where(r => r.Result is SolutionResultType.EXCEPTION)) {
 			Console.WriteLine();
-			AnsiConsole.WriteException(result.Exception, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes |
+			AnsiConsole.WriteException(result.Exception!, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes |
 					ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks);
 			Console.WriteLine();
 			Console.ResetColor();
