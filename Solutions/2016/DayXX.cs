@@ -20,12 +20,12 @@ public sealed partial class DayXX {
 
 	private static string Solution1(string[] input) {
 		List<Instruction> instructions = [.. input.As<Instruction>()];
-		return "** Solution not written yet **";
+		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 
 	private static string Solution2(string[] input) {
 		List<Instruction> instructions = [.. input.As<Instruction>()];
-		return "** Solution not written yet **";
+		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 
 	private sealed record Instruction(string Name, int Value) : IParsable<Instruction> {
