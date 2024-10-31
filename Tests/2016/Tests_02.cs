@@ -19,11 +19,11 @@ public class Tests_01_Bathroom_Security
 		actual.ShouldBe(expected);
 	}
 
-	//[Theory]
-	//[InlineData(TEST_INPUT, "9999")]
-	//public void Part2(string input, string expected)
-	//{
-	//	string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
-	//	actual.ShouldBe(expected);
-	//}
+	[Theory]
+	[InlineData(TEST_INPUT, "5DB3")]
+	public void Part2(string input, string expected)
+	{
+		string actual  = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input);
+		actual.ShouldBe(expected);
+	}
 }
