@@ -103,7 +103,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 
 	static void OutputExceptions(IEnumerable<SolutionPhase> solveResults)
 	{
-		foreach (SolutionPhase result in solveResults.Where(r => r.Result is SolutionResultType.EXCEPTION)) {
+		foreach (SolutionPhase result in solveResults.Where(r => r.Exception is not null)) {
 			Console.WriteLine();
 			AnsiConsole.WriteException(result.Exception!, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes |
 					ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks);
