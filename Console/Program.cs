@@ -37,8 +37,8 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 		ConsoleColor answerColour;
 		timer.Start();
 		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
-		IEnumerable<SolutionPhase> solveResults = SolveDay(year, day, input, visualiser, args);
-		foreach (SolutionPhase result in solveResults) {
+		IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
+		foreach (SolutionPhaseResult result in solveResults) {
 			if (result.Phase == PHASE_INIT) {
 				OutputTimings(result.Elapsed);
 			} else if (result.Phase == PHASE_PART1) {
@@ -101,9 +101,9 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 	}
 
 
-	static void OutputExceptions(IEnumerable<SolutionPhase> solveResults)
+	static void OutputExceptions(IEnumerable<SolutionPhaseResult> solveResults)
 	{
-		foreach (SolutionPhase result in solveResults.Where(r => r.Exception is not null)) {
+		foreach (SolutionPhaseResult result in solveResults.Where(r => r.Exception is not null)) {
 			Console.WriteLine();
 			AnsiConsole.WriteException(result.Exception!, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes |
 					ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks);

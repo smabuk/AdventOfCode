@@ -2,7 +2,7 @@
 
 static public partial class SolutionRouter {
 
-	private static InvokeResult InvokeSolutionMethod(object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
+	private static SolutionPhaseResult InvokeSolutionMethod(string phase, object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
 		input = (input as string[]).StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
 		int noOfParameters = parameters.Length;
@@ -32,10 +32,10 @@ static public partial class SolutionRouter {
 			};
 		}
 		catch (Exception ex) {
-			return new(EXCEPTION_MESSAGE, Stopwatch.GetElapsedTime(startTime), ex);
+			return new(phase, EXCEPTION_MESSAGE, Stopwatch.GetElapsedTime(startTime), ex);
 		}
 
-		return new(answer, Stopwatch.GetElapsedTime(startTime));
+		return new(phase, answer.Contains("written") ? NO_SOLUTION_MESSAGE : answer, Stopwatch.GetElapsedTime(startTime));
 	}
 
 }
