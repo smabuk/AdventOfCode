@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2016;
 
-public class Tests_01_Bathroom_Security
+public class Tests_02_Bathroom_Security
 {
 	const int DAY = 02;
 
