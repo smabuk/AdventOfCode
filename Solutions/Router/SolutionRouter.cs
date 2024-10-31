@@ -4,21 +4,16 @@ using System.Reflection;
 namespace AdventOfCode.Solutions;
 
 static public class SolutionRouter {
-	private const string EXCEPTION     = "** Exception **";
-	private const string NO_SOLUTION   = "* No Solution *";
-	private const string NO_INPUT      = "* NO INPUT DATA *";
-	private const string NO_PARAMETERS = "* INVALID NO OF PARAMETERS *";
-
 	public static string? GetProblemDescription(int year, int day) {
 		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
 		if (dayTypeInfo is null) {
-			return NO_SOLUTION;
+			return NO_SOLUTION_MESSAGE;
 		}
 
 		DescriptionAttribute[] descriptionAttributes = (DescriptionAttribute[])dayTypeInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
 		return descriptionAttributes is not []
 			? descriptionAttributes[0].Description
-			: NO_SOLUTION;
+			: NO_SOLUTION_MESSAGE;
 	}
 
 	public static bool HasVisualiser(int year, int day, int part) {
@@ -65,7 +60,7 @@ static public class SolutionRouter {
 		startTime = Stopwatch.GetTimestamp();
 		InitInput(input, args, methods, visualise);
 		stopTime = Stopwatch.GetTimestamp();
-		yield return new SolutionPhase(SolutionPhase.PHASE_INIT) with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+		yield return new SolutionPhase(PHASE_INIT) with { Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 
 
 		MethodInfo ? method1 = methods
@@ -73,7 +68,7 @@ static public class SolutionRouter {
 			.SingleOrDefault();
 
 		startTime = Stopwatch.GetTimestamp();
-		InvokeResult invokeResult1 = new(NO_SOLUTION);
+		InvokeResult invokeResult1 = new(NO_SOLUTION_MESSAGE);
 		if (method1 is not null) {
 			invokeResult1 = InvokeSolutionMethod(input, args, method1, visualise);
 		};
@@ -84,7 +79,7 @@ static public class SolutionRouter {
 		} else if (invokeResult1.Exception is not null) {
 			yield return SolutionPhase.ExceptionPart1 with { Answer = invokeResult1.Answer, Exception = invokeResult1.Exception, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 		} else {
-			yield return new SolutionPhase(SolutionPhase.PHASE_PART1) with { Answer = invokeResult1.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+			yield return new SolutionPhase(PHASE_PART1) with { Answer = invokeResult1.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 		}
 
 		MethodInfo? method2 = methods
@@ -92,7 +87,7 @@ static public class SolutionRouter {
 			.SingleOrDefault();
 
 		startTime = Stopwatch.GetTimestamp();
-		InvokeResult invokeResult2 = new(NO_SOLUTION);
+		InvokeResult invokeResult2 = new(NO_SOLUTION_MESSAGE);
 		if (method2 is not null) {
 			invokeResult2 = InvokeSolutionMethod(input, args, method2, visualise);
 		};
@@ -103,7 +98,7 @@ static public class SolutionRouter {
 		} else if (invokeResult2.Exception is not null) {
 			yield return SolutionPhase.ExceptionPart2 with { Answer = invokeResult2.Answer, Exception = invokeResult2.Exception, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 		} else {
-			yield return new SolutionPhase(SolutionPhase.PHASE_PART2) with { Answer = invokeResult2.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
+			yield return new SolutionPhase(PHASE_PART2) with { Answer = invokeResult2.Answer, Elapsed = Stopwatch.GetElapsedTime(startTime, stopTime) };
 		}
 
 	}
@@ -119,12 +114,12 @@ static public class SolutionRouter {
 
 	public static string SolveProblem(int year, int day, int problemNo, string[]? input, Action<string[], bool>? visualise = null, params object[]? args) {
 		if (input is null) {
-			return NO_INPUT;
+			return NO_INPUT_MESSAGE;
 		}
 
 		TypeInfo? dayTypeInfo = TryGetDayTypeInfo(year, day);
 		if (dayTypeInfo is null) {
-			return NO_SOLUTION;
+			return NO_SOLUTION_MESSAGE;
 		}
 
 		MethodInfo[] methods = dayTypeInfo.GetMethods();
@@ -136,7 +131,7 @@ static public class SolutionRouter {
 			.SingleOrDefault();
 
 		return method is null
-			? NO_SOLUTION
+			? NO_SOLUTION_MESSAGE
 			: InvokeSolutionMethod(input, args, method, visualise).Answer;
 	}
 
@@ -179,7 +174,7 @@ static public class SolutionRouter {
 		try {
 			return (noOfParameters, hasVisualiser, useVisualiser) switch
 			{
-				(0, _, _)           => new(NO_PARAMETERS),
+				(0, _, _)           => new(NO_PARAMETERS_MESSAGE),
 				(1, false, _)       => new(method.Invoke(0, [inputObject])?.ToString() ?? ""),
 				( > 1, false, _)    => new(method.Invoke(0, [inputObject, args!])?.ToString() ?? ""),
 				(2, true, false)    => new(method.Invoke(0, [inputObject, null!])?.ToString() ?? ""),
@@ -190,7 +185,7 @@ static public class SolutionRouter {
 			};
 		}
 		catch (Exception ex) {
-			return new(EXCEPTION, ex);
+			return new(EXCEPTION_MESSAGE, ex);
 		}
 	}
 

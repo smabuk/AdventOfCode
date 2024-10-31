@@ -5,17 +5,17 @@ public record struct SolutionPhase(SolutionResultType Result, string Phase, stri
 	public SolutionPhase(string Phase, string Answer) : this(SUCCESS, Phase, Answer, new()) { }
 	public SolutionPhase(string Phase)                : this(SUCCESS, Phase, "",     new()) { }
 
-	public static readonly string EXCEPTION_MESSAGE     = "** Exception **";
-	public static readonly string NO_SOLUTION_MESSAGE   = "* No solution *";
-	public static readonly string NO_INPUT_MESSAGE      = "* NO INPUT DATA *";
-	public static readonly string NO_PARAMETERS_MESSAGE = "* NO PARAMETERS *";
+	//public static readonly string EXCEPTION_MESSAGE     = "** Exception **";
+	//public static readonly string NO_SOLUTION_MESSAGE   = "* No solution *";
+	//public static readonly string NO_INPUT_MESSAGE      = "* NO INPUT DATA *";
+	//public static readonly string NO_PARAMETERS_MESSAGE = "* NO PARAMETERS *";
 
-	public static readonly string PHASE_SOLUTION = "Solution";
-	public static readonly string PHASE_INIT     = "Init";
-	public static readonly string PHASE_PART1    = "Part1";
-	public static readonly string PHASE_PART2    = "Part2";
-	public static readonly string EXCEPTION_PART1 = "ExceptionPart1";
-	public static readonly string EXCEPTION_PART2 = "ExceptionPart2";
+	//public static readonly string PHASE_SOLUTION = "Solution";
+	//public static readonly string PHASE_INIT     = "Init";
+	//public static readonly string PHASE_PART1    = "Part1";
+	//public static readonly string PHASE_PART2    = "Part2";
+	//public static readonly string EXCEPTION_PART1 = "ExceptionPart1";
+	//public static readonly string EXCEPTION_PART2 = "ExceptionPart2";
 
 	public static SolutionPhase NoInput         => new(NO_INPUT,      PHASE_SOLUTION,  NO_INPUT_MESSAGE,      new());
 	public static SolutionPhase NoSolution      => new(NO_SOLUTION,   PHASE_SOLUTION,  NO_SOLUTION_MESSAGE,   new());

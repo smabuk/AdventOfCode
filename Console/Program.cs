@@ -39,9 +39,9 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
 		IEnumerable<SolutionPhase> solveResults = SolveDay(year, day, input, visualiser, args);
 		foreach (SolutionPhase result in solveResults) {
-			if (result.Phase == SolutionPhase.PHASE_INIT) {
+			if (result.Phase == PHASE_INIT) {
 				OutputTimings(result.Elapsed);
-			} else if (result.Phase == SolutionPhase.PHASE_PART1) {
+			} else if (result.Phase == PHASE_PART1) {
 				answerColour = ConsoleColor.Green;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
@@ -50,7 +50,7 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 					Console.ForegroundColor = ConsoleColor.Red;
 				};
 				Console.Write($" {result.Answer,-16}");
-			} else if (result.Phase == SolutionPhase.PHASE_PART2) {
+			} else if (result.Phase == PHASE_PART2) {
 				answerColour = ConsoleColor.Yellow;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
@@ -59,20 +59,20 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 					Console.ForegroundColor = ConsoleColor.Red;
 				};
 				Console.Write($" {result.Answer,-16}");
-			} else if (result.Phase == SolutionPhase.EXCEPTION_PART1) {
+			} else if (result.Phase == EXCEPTION_PART1) {
 				answerColour = ConsoleColor.Green;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt1:");
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.Write($" {SolutionPhase.EXCEPTION_MESSAGE,-16}");
-			} else if (result.Phase == SolutionPhase.EXCEPTION_PART2) {
+				Console.Write($" {EXCEPTION_MESSAGE,-16}");
+			} else if (result.Phase == EXCEPTION_PART2) {
 				answerColour = ConsoleColor.Yellow;
 				OutputTimings(result.Elapsed);
 				Console.ForegroundColor = answerColour;
 				Console.Write($" Pt2:");
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.Write($" {SolutionPhase.EXCEPTION_MESSAGE,-16}");
+				Console.Write($" {EXCEPTION_MESSAGE,-16}");
 			};
 			Console.ResetColor();
 		};

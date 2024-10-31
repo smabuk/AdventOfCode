@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>AdventOfCode.Solutions._2024</RootNamespace>
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<PublishAot>True</PublishAot>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Smab.Helpers" />
+		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
+		<Using Include="AdventOfCode.Solutions.Core" />
+	</ItemGroup>
+
+</Project>

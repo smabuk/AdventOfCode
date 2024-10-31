@@ -15,4 +15,9 @@
 		<ProjectReference Include="..\Solutions\Router\AdventOfCode.Solutions.Router.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Solutions\Core\AdventOfCode.Solutions.Core.csproj" />
+		<Using Include="AdventOfCode.Solutions.Core" />
+		<Using Static="true" Include="AdventOfCode.Solutions.Core.GlobalConstants" />
+	</ItemGroup>
 </Project>
