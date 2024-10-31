@@ -14,11 +14,11 @@ public class Tests_01_No_Time_for_a_Taxicab
 		actual.ShouldBe(expected);
 	}
 
-	//[Theory]
-	//[InlineData(TEST_DATA, 9999)]
-	//public void Part2(string input, int expected)
-	//{
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-	//	actual.ShouldBe(expected);
-	//}
+	[Theory]
+	[InlineData("R8, R4, R4, R8", 4)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
