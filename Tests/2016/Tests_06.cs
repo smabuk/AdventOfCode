@@ -4,8 +4,7 @@ public class Tests_06_Signals_and_Noise
 {
 	const int DAY = 06;
 
-	[Theory]
-	[InlineData("""
+	private const string TEST_INPUT = """
 		eedadn
 		drvtee
 		eandsr
@@ -22,10 +21,21 @@ public class Tests_06_Signals_and_Noise
 		vrdear
 		dvrsen
 		enarar
-		""", "easter")]
+		""";
+
+	[Theory]
+	[InlineData(TEST_INPUT, "easter")]
 	public void Part1(string input, string expected)
 	{
 		SolutionRouter.SolveProblem(YEAR, DAY, PART1, input)
+			.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_INPUT, "advent")]
+	public void Part2(string input, string expected)
+	{
+		SolutionRouter.SolveProblem(YEAR, DAY, PART2, input)
 			.ShouldBe(expected);
 	}
 }

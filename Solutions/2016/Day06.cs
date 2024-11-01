@@ -23,6 +23,14 @@ public sealed partial class Day06 {
 	}
 
 	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+		return new([..
+			Enumerable.Range(0, input[0].Length)
+			.Select(charIndex =>
+				input
+				.Select(msg => msg[charIndex])
+				.CountBy(c => c)
+				.MinBy(kv => kv.Value)
+				.Key)]
+		);
 	}
 }
