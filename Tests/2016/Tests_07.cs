@@ -20,4 +20,15 @@ public class Tests_07_Internet_Protocol_Version_7
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("aba[bab]xyz", 1)]
+	[InlineData("xyx[xyx]xyx", 0)]
+	[InlineData("aaa[kek]eke", 1)]
+	[InlineData("zazbz[bzb]cdb", 1)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

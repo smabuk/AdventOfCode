@@ -10,7 +10,7 @@ public sealed partial class Day07 {
 	[Init]
 	public static void Init(string[] input, params object[]? args) => LoadIPAddresses(input);
 	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
 
 	private static List<IPAddressV7> _ipAddresses = [];
 
@@ -18,11 +18,25 @@ public sealed partial class Day07 {
 
 	private static int Solution1() => 
 		_ipAddresses
-		.Count(ipAddress => ipAddress.OtherSequences.Any(ContainsABBA) && !ipAddress.HypernetSequences.Any(ContainsABBA));
+		.Count(ipAddress => ipAddress.SupernetSequences.Any(ContainsABBA) && !ipAddress.HypernetSequences.Any(ContainsABBA));
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() =>
+		_ipAddresses
+		.Select(ip =>
+			ip.SupernetSequences
+			.Select(ss =>
+					GetABAs(ss)
+					.Any(aba => ip.HypernetSequences.Any(hs => ContainsBAB(hs, aba)))))
+		.Count(v => v.Any(valid => valid == true));
+
+	private static IEnumerable<string> GetABAs(string s)
+	{
+		if (s.Length < 3) { yield break; }
+		for (int i = 0; i < s.Length - 2; i++) {
+			if (IsABA(s[i..(i + 3)])) { yield return s[i..(i + 3)]; }
+		}
 	}
+
 
 	private static bool ContainsABBA(string s)
 	{
@@ -33,11 +47,31 @@ public sealed partial class Day07 {
 		return false;
 	}
 
+	private static bool ContainsBAB(string s, string aba)
+	{
+		if (s.Length < 3) {  return false; }
+		for (int i = 0; i < s.Length - 2; i++) {
+			if (IsBAB(s[i..(i+3)], aba)) { return true; }
+		}
+		return false;
+	}
+
 	private static bool IsABBA(string s) => 
 		s.Length == 4
 		&& s[0] != s[1]
 		&& s[0] == s[3]
 		&& s[1] == s[2];
+
+	private static bool IsABA(string s) => 
+		s.Length == 3
+		&& s[0] != s[1]
+		&& s[0] == s[2];
+
+	private static bool IsBAB(string s, string aba) => 
+		s.Length == 3
+		&& s[0] == aba[1]
+		&& s[1] == aba[0]
+		&& s[2] == aba[1];
 
 	private sealed record IPAddressV7(string IPAddress) : IParsable<IPAddressV7> {
 
@@ -49,7 +83,7 @@ public sealed partial class Day07 {
 			.Select(x => x[1..^1])
 			.ToArray();
 
-		public string[] OtherSequences { get; set; } = 
+		public string[] SupernetSequences { get; set; } = 
 			InputRegEx()
 			.Matches(IPAddress)
 			.Select(x => x.Value)
