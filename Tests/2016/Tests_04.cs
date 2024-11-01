@@ -20,4 +20,13 @@ public class Tests_04_Security_Through_Obscurity
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("qzmt-zixmtkozy-ivhz", 343, "very encrypted name")]
+	public void Part2(string encrypted, int sectorId, string expected)
+	{
+		Solutions._2016.Day04
+			.Decrypt(encrypted, sectorId)
+			.ShouldBe(expected);
+	}
 }

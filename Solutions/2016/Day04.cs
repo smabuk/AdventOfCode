@@ -7,18 +7,36 @@
 [Description("Security Through Obscurity")]
 public sealed partial class Day04 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	[Init]
+	public static void Init(string[] input) => LoadRoomList(input);
+	public static string Part1(string[] input) => Solution1().ToString();
+	public static string Part2(string[] input) => Solution2().ToString();
 
+	private static List<Room> _roomList = [];
+	private static void LoadRoomList(string[] input) => _roomList = [..input.As<Room>()];
 
-	private static int Solution1(string[] input) =>
-		input
-		.As<Room>()
+	private static int Solution1() =>
+		_roomList
 		.Where(room => room.IsValid)
 		.Sum(room => room.SectorId);
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() =>
+		_roomList
+		.Single(room => room.RealName.Contains("north"))
+		.SectorId;
+
+	public static string Decrypt(string encrypted, int rotationAmount)
+	{
+		string[] tokens = encrypted.Split('-');
+		for (int i = 0; i < tokens.Length; i++) {
+			Span<char> word = tokens[i].ToCharArray();
+			for (int c = 0; c < word.Length; c++) {
+				word[c] = (char)(((word[c] - 'a' + rotationAmount) % 26) + 'a');
+			}
+			tokens[i] = new(word);
+		}
+
+		return string.Join(' ', tokens);
 	}
 
 	private sealed record Room(string EncryptedName, int SectorId, string Checksum) : IParsable<Room> {
@@ -33,6 +51,7 @@ public sealed partial class Day04 {
 			.Select(kv => kv.Key));
 
 		public bool IsValid => Checksum == checksum;
+		public string RealName => IsValid ? Decrypt(EncryptedName, SectorId) : "";
 
 		public static Room Parse(string s, IFormatProvider? provider)
 		{

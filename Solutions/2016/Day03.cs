@@ -7,8 +7,8 @@
 [Description("Squares With Three Sides")]
 public sealed partial class Day03 {
 
-	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+	public static string Part1(string[] input) => Solution1(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 
 	private static int Solution1(string[] input) {
