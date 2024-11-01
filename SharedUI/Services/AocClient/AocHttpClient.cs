@@ -16,6 +16,10 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 	public async Task<string> GetInputData(int year, int day, string? _ = null) {
 		var response = await _httpClient.GetAsync($"{year}/day/{day}/input");
 
+		if (response.StatusCode is System.Net.HttpStatusCode.BadRequest) {
+			Console.WriteLine("Bad request - check AoC cookie");
+		}
+
 		string value = response.IsSuccessStatusCode switch {
 			false => "",
 			_ => await response.Content.ReadAsStringAsync()
