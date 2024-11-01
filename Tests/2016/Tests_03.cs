@@ -13,11 +13,20 @@ public class Tests_03_Squares_With_Three_Sides
 		actual.ShouldBe(expected);
 	}
 
-	//[Theory]
-	//[InlineData("  5 10 25", 9999)]
-	//public void Part2(string input, int expected)
-	//{
-	//	_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
-	//	actual.ShouldBe(expected);
-	//}
+	private const string TEST_INPUT = """
+		101 301 501
+		102 302 502
+		103 303 503
+		201 401 601
+		202 402 602
+		203 403 603
+		""";
+
+	[Theory]
+	[InlineData(TEST_INPUT, 6)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

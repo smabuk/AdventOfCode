@@ -7,27 +7,31 @@
 [Description("Squares With Three Sides")]
 public sealed partial class Day03 {
 
-	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadTriangles(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
+	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
 
-	private static List<Triangle> _triangles = [];
 
-	private static void LoadTriangles(string[] input) => _triangles = [.. input.As<Triangle>()];
-
-	private static int Solution1() {
-		return _triangles
-			.Count(t =>
-				   t.SideLength1 + t.SideLength2 > t.SideLength3 
-				&& t.SideLength1 + t.SideLength3 > t.SideLength2 
-				&& t.SideLength2 + t.SideLength3 > t.SideLength1 
-			);
+	private static int Solution1(string[] input) {
+		return input
+			.As<Triangle>()
+			.Count(IsValidTriangle);
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2(string[] input) {
+		return input
+			.Select(i => i.TrimmedSplit(' ').As<int>().ToList())
+			.To2dArray()
+			.Cast<int>()
+			.Chunk(3)
+			.Select(chunk => new Triangle(chunk[0], chunk[1], chunk[2]))
+			.Count(IsValidTriangle);
 	}
+
+	private static bool IsValidTriangle(Triangle t) =>
+		   t.SideLength1 + t.SideLength2 > t.SideLength3
+		&& t.SideLength1 + t.SideLength3 > t.SideLength2
+		&& t.SideLength2 + t.SideLength3 > t.SideLength1;
+
 
 	private sealed record Triangle(int SideLength1, int SideLength2, int SideLength3) : IParsable<Triangle> {
 		public static Triangle Parse(string s, IFormatProvider? provider)
