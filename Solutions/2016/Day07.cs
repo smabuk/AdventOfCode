@@ -8,9 +8,9 @@
 public sealed partial class Day07 {
 
 	[Init]
-	public static void Init(string[] input, params object[]? args) => LoadIPAddresses(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2().ToString();
+	public static void Init(string[] input) => LoadIPAddresses(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static List<IPAddressV7> _ipAddresses = [];
 
@@ -18,20 +18,21 @@ public sealed partial class Day07 {
 
 	private static int Solution1() => 
 		_ipAddresses
-		.Count(ipAddress => ipAddress.SupernetSequences.Any(ContainsABBA) && !ipAddress.HypernetSequences.Any(ContainsABBA));
+		.Count(ipAddress => 
+			    ipAddress.SupernetSequences.Any(ContainsABBA)
+			&& !ipAddress.HypernetSequences.Any(ContainsABBA));
 
 	private static int Solution2() =>
 		_ipAddresses
 		.Select(ip =>
 			ip.SupernetSequences
-			.Select(ss =>
-					GetABAs(ss)
-					.Any(aba => ip.HypernetSequences.Any(hs => ContainsBAB(hs, aba)))))
-		.Count(v => v.Any(valid => valid == true));
+			.Select(ss => GetABAs(ss).Any(aba => ip.HypernetSequences.Any(hs => ContainsBAB(hs, aba)))))
+		.Count(v => v.Any(supportsSSL => supportsSSL));
 
 	private static IEnumerable<string> GetABAs(string s)
 	{
 		if (s.Length < 3) { yield break; }
+
 		for (int i = 0; i < s.Length - 2; i++) {
 			if (IsABA(s[i..(i + 3)])) { yield return s[i..(i + 3)]; }
 		}
@@ -41,18 +42,22 @@ public sealed partial class Day07 {
 	private static bool ContainsABBA(string s)
 	{
 		if (s.Length < 4) {  return false; }
+
 		for (int i = 0; i < s.Length - 3; i++) {
 			if (IsABBA(s[i..(i+4)])) { return true; }
 		}
+
 		return false;
 	}
 
 	private static bool ContainsBAB(string s, string aba)
 	{
 		if (s.Length < 3) {  return false; }
+
 		for (int i = 0; i < s.Length - 2; i++) {
 			if (IsBAB(s[i..(i+3)], aba)) { return true; }
 		}
+
 		return false;
 	}
 
