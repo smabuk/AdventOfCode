@@ -1,4 +1,8 @@
-﻿namespace AdventOfCode.Solutions._2016;
+﻿using static AdventOfCode.Solutions._2016.Day08Constants;
+using static AdventOfCode.Solutions._2016.Day08Types;
+using static Smab.Helpers.OcrHelpers;
+
+namespace AdventOfCode.Solutions._2016;
 
 /// <summary>
 /// Day 08: Two-Factor Authentication
@@ -23,41 +27,43 @@ public sealed partial class Day08 {
 		return Solution2(screenWidth, screenHeight, visualise).ToString();
 	}
 
-	private const char OFF = '.';
-	private const char ON = '#';
-
-	private static List<Instruction> _instructions = [];
+	internal static List<Instruction> _instructions = [];
 
 	private static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
 
-	private static int Solution1(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null)
-	{
-		char[,] screen = Smab.Helpers.ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF);
-		screen = ExecuteInstructions(screen, visualise);
-		return screen.WalkWithValues().Count(pixel => pixel.Value == ON);
-	}
+	private static int Solution1(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) =>
+		ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF)
+		.ExecuteInstructions(visualise)
+		.WalkWithValues()
+		.Count(pixel => pixel.Value == ON);
 
-	private static string Solution2(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) {
-		char[,] screen = Smab.Helpers.ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF);
-		screen = ExecuteInstructions(screen, visualise);
-		return Smab.Helpers.OcrHelpers.IdentifyMessage(screen.PrintAsStringArray(0));
-	}
+	private static string Solution2(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) =>
+		ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF)
+		.ExecuteInstructions(visualise)
+		.IdentifyMessage();
+}
 
-	private static char[,] ExecuteInstructions(char[,] screenInput, Action<string[], bool>? visualise)
+file static class Day08Extensions
+{
+	public static char[,] ExecuteInstructions(this char[,] screenInput, Action<string[], bool>? visualise)
 	{
 		char[,] screen = (char[,])screenInput.Clone();
-		DisplayScreen(screen, "Initial", visualise);
+		screen.VisualiseGrid("Initial", visualise);
 
-		foreach (Instruction instruction in _instructions) {
+		foreach (Instruction instruction in Day08._instructions) {
 			screen = instruction.Action(screen);
-			DisplayScreen(screen, $"{instruction.ToString().Replace("Instruction", "")}", visualise);
+			screen.VisualiseGrid($"{instruction.ToString().Replace("Instruction", "")}", visualise);
 		}
 
-		DisplayScreen(screen, $"Final", visualise);
+		screen.VisualiseGrid($"Final", visualise);
 		return screen;
 	}
+}
 
-	private abstract record Instruction() : IParsable<Instruction> {
+internal sealed partial class Day08Types
+{
+	public abstract record Instruction() : IParsable<Instruction>
+	{
 		public abstract char[,] Action(char[,] screen);
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
@@ -65,7 +71,7 @@ public sealed partial class Day08 {
 			return tokens[0] switch
 			{
 				"rect" => new RectInstruction(tokens[1].As<int>(), tokens[2].As<int>()),
-				"rotate" when tokens[1] == "row"    => new RotateRowInstruction(tokens[2].As<int>(), tokens[4].As<int>()),
+				"rotate" when tokens[1] == "row" => new RotateRowInstruction(tokens[2].As<int>(), tokens[4].As<int>()),
 				"rotate" when tokens[1] == "column" => new RotateColInstruction(tokens[2].As<int>(), tokens[4].As<int>()),
 				_ => null!,
 			};
@@ -76,23 +82,23 @@ public sealed partial class Day08 {
 			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
-	private record RectInstruction(int Width, int Height) : Instruction()
+	public record RectInstruction(int Width, int Height) : Instruction()
 	{
 		public override char[,] Action(char[,] screen)
 		{
 			char[,] screenCopy = (char[,])screen.Clone();
 
 			for (int row = 0; row < Height; row++) {
-			for (int col = 0; col < Width; col++) {
-				screenCopy[col, row] = ON;
-			}
+				for (int col = 0; col < Width; col++) {
+					screenCopy[col, row] = ON;
+				}
 			}
 
 			return screenCopy;
 		}
 	}
 
-	private record RotateRowInstruction(int Row, int By) : Instruction()
+	public record RotateRowInstruction(int Row, int By) : Instruction()
 	{
 		public override char[,] Action(char[,] screen)
 		{
@@ -107,7 +113,7 @@ public sealed partial class Day08 {
 		}
 	}
 
-	private record RotateColInstruction(int Col, int By) : Instruction()
+	public record RotateColInstruction(int Col, int By) : Instruction()
 	{
 		public override char[,] Action(char[,] screen)
 		{
@@ -122,12 +128,10 @@ public sealed partial class Day08 {
 			return screenCopy;
 		}
 	}
+}
 
-	private static void DisplayScreen(char[,] screen, string title, Action<string[], bool>? visualise)
-	{
-		if (visualise is not null) {
-			string[] output = ["", title, .. screen.PrintAsStringArray(0)];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
-		}
-	}
+file static class Day08Constants
+{
+	public const char OFF = '.';
+	public const char ON = '#';
 }

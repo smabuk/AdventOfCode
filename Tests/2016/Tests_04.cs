@@ -25,7 +25,7 @@ public class Tests_04_Security_Through_Obscurity
 	[InlineData("qzmt-zixmtkozy-ivhz", 343, "very encrypted name")]
 	public void Part2(string encrypted, int sectorId, string expected)
 	{
-		Solutions._2016.Day04
+		Solutions._2016.Day04.Room
 			.Decrypt(encrypted, sectorId)
 			.ShouldBe(expected);
 	}

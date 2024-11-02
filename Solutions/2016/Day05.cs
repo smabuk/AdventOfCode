@@ -34,7 +34,7 @@ public sealed partial class Day05 {
 		const char PLACE_HOLDER = '_';
 		const int PASSWORD_LENGTH = 8;
 		const int POSITION_INDEX = 5;
-		const int PASSWORD_CHAR_INDEX = 8;
+		const int PASSWORD_CHAR_INDEX = 6;
 
 		string doorId = input[0];
 		Span<char> password = new string(PLACE_HOLDER, PASSWORD_LENGTH).ToCharArray();
@@ -58,7 +58,7 @@ public sealed partial class Day05 {
 			string hex = Convert.ToHexStringLower(MD5.HashData(Encoding.UTF8.GetBytes($"{doorId}{i}")));
 			if (hex.StartsWith("00000")) {
 				yield return hex;
-			}
+			};
 			i++;
 		}
 	}

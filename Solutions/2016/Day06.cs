@@ -7,8 +7,8 @@
 [Description("Signals and Noise")]
 public sealed partial class Day06 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input) => Solution1(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	private static string Solution1(string[] input) {
 		return new([..

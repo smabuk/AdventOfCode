@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2016;
+﻿using static AdventOfCode.Solutions._2016.DayXXConstants;
+using static AdventOfCode.Solutions._2016.DayXXTypes;
+namespace AdventOfCode.Solutions._2016;
 
 /// <summary>
 /// Day XX: Title
@@ -27,8 +29,17 @@ public sealed partial class DayXX {
 		List<Instruction> instructions = [.. input.As<Instruction>()];
 		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
+}
 
-	private sealed record Instruction(string Name, int Value) : IParsable<Instruction> {
+file static class DayXXExtensions
+{
+}
+
+internal sealed partial class DayXXTypes
+{
+
+	public sealed record Instruction(string Name, int Value) : IParsable<Instruction>
+	{
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
 			//MatchCollection match = InputRegEx().Matches(input);
@@ -45,5 +56,9 @@ public sealed partial class DayXX {
 	}
 
 	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
-	private static partial Regex InputRegEx();
+	public static partial Regex InputRegEx();
+}
+
+file static class DayXXConstants
+{
 }

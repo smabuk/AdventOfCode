@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2016;
+﻿using static AdventOfCode.Solutions._2016.Day07Types;
+
+namespace AdventOfCode.Solutions._2016;
 
 /// <summary>
 /// Day 07: Internet Protocol Version 7
@@ -16,20 +18,24 @@ public sealed partial class Day07 {
 
 	private static void LoadIPAddresses(string[] input) => _ipAddresses = [.. input.As<IPAddressV7>()];
 
-	private static int Solution1() => 
+	private static int Solution1() =>
 		_ipAddresses
-		.Count(ipAddress => 
-			    ipAddress.SupernetSequences.Any(ContainsABBA)
-			&& !ipAddress.HypernetSequences.Any(ContainsABBA));
+		.Count(ipAddress =>
+				ipAddress.SupernetSequences.Any(ss => ss.ContainsABBA())
+			&& !ipAddress.HypernetSequences.Any(hs => hs.ContainsABBA()));
 
 	private static int Solution2() =>
 		_ipAddresses
 		.Select(ip =>
 			ip.SupernetSequences
-			.Select(ss => GetABAs(ss).Any(aba => ip.HypernetSequences.Any(hs => ContainsBAB(hs, aba)))))
+			.Select(ss => ss.GetABAs().Any(aba => ip.HypernetSequences.Any(hs => hs.ContainsBAB(aba)))))
 		.Count(v => v.Any(supportsSSL => supportsSSL));
 
-	private static IEnumerable<string> GetABAs(string s)
+	}
+
+file static class Day07Extensions
+{
+	public static IEnumerable<string> GetABAs(this string s)
 	{
 		if (s.Length < 3) { yield break; }
 
@@ -39,46 +45,50 @@ public sealed partial class Day07 {
 	}
 
 
-	private static bool ContainsABBA(string s)
+	public static bool ContainsABBA(this string s)
 	{
-		if (s.Length < 4) {  return false; }
+		if (s.Length < 4) { return false; }
 
 		for (int i = 0; i < s.Length - 3; i++) {
-			if (IsABBA(s[i..(i+4)])) { return true; }
+			if (IsABBA(s[i..(i + 4)])) { return true; }
 		}
 
 		return false;
 	}
 
-	private static bool ContainsBAB(string s, string aba)
+	public static bool ContainsBAB(this string s, string aba)
 	{
-		if (s.Length < 3) {  return false; }
+		if (s.Length < 3) { return false; }
 
 		for (int i = 0; i < s.Length - 2; i++) {
-			if (IsBAB(s[i..(i+3)], aba)) { return true; }
+			if (IsBAB(s[i..(i + 3)], aba)) { return true; }
 		}
 
 		return false;
 	}
 
-	private static bool IsABBA(string s) => 
+	public static bool IsABBA(this string s) =>
 		s.Length == 4
 		&& s[0] != s[1]
 		&& s[0] == s[3]
 		&& s[1] == s[2];
 
-	private static bool IsABA(string s) => 
+	public static bool IsABA(this string s) =>
 		s.Length == 3
 		&& s[0] != s[1]
 		&& s[0] == s[2];
 
-	private static bool IsBAB(string s, string aba) => 
+	public static bool IsBAB(this string s, string aba) =>
 		s.Length == 3
 		&& s[0] == aba[1]
 		&& s[1] == aba[0]
 		&& s[2] == aba[1];
 
-	private sealed record IPAddressV7(string IPAddress) : IParsable<IPAddressV7> {
+}
+
+internal sealed partial class Day07Types
+{
+	public sealed record IPAddressV7(string IPAddress) : IParsable<IPAddressV7> {
 
 		public string[] HypernetSequences { get; set; } = 
 			InputRegEx()
