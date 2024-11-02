@@ -8,15 +8,20 @@
 public sealed partial class Day08 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+	public static   void  Init(string[] input) => LoadInstructions(input);
+	public static string Part1(string[] _, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		int screenWidth = GetArgument<int>(args, argumentNumber: 1, defaultResult: 50);
 		int screenHeight = GetArgument<int>(args, argumentNumber: 2, defaultResult: 6);
 		return Solution1(screenWidth, screenHeight, visualise).ToString();
 	}
 
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] _, Action<string[], bool>? visualise = null, params object[]? args)
+	{
+		int screenWidth = GetArgument<int>(args, argumentNumber: 1, defaultResult: 50);
+		int screenHeight = GetArgument<int>(args, argumentNumber: 2, defaultResult: 6);
+		return Solution2(screenWidth, screenHeight, visualise).ToString();
+	}
 
 	private const char OFF = '.';
 	private const char ON = '#';
@@ -27,7 +32,20 @@ public sealed partial class Day08 {
 
 	private static int Solution1(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null)
 	{
-		char[,] screen = Smab.Helpers.ArrayHelpers.Create2dArray(screenWidth ,screenHeight, OFF);
+		char[,] screen = Smab.Helpers.ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF);
+		screen = ExecuteInstructions(screen, visualise);
+		return screen.WalkWithValues().Count(pixel => pixel.Value == ON);
+	}
+
+	private static string Solution2(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) {
+		char[,] screen = Smab.Helpers.ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF);
+		screen = ExecuteInstructions(screen, visualise);
+		return Smab.Helpers.OcrHelpers.IdentifyMessage(screen.PrintAsStringArray(0));
+	}
+
+	private static char[,] ExecuteInstructions(char[,] screenInput, Action<string[], bool>? visualise)
+	{
+		char[,] screen = (char[,])screenInput.Clone();
 		DisplayScreen(screen, "Initial", visualise);
 
 		foreach (Instruction instruction in _instructions) {
@@ -35,21 +53,10 @@ public sealed partial class Day08 {
 			DisplayScreen(screen, $"{instruction.ToString().Replace("Instruction", "")}", visualise);
 		}
 
-		return screen.WalkWithValues().Count(pixel => pixel.Value == ON);
+		DisplayScreen(screen, $"Final", visualise);
+		return screen;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
-
-	private static void DisplayScreen(char[,] screen, string title, Action<string[], bool>? visualise)
-	{
-		if (visualise is not null) {
-			string[] output = ["", title, .. screen.PrintAsStringArray(0)];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
-		}
-	}
-	
 	private abstract record Instruction() : IParsable<Instruction> {
 		public abstract char[,] Action(char[,] screen);
 		public static Instruction Parse(string s, IFormatProvider? provider)
@@ -113,6 +120,14 @@ public sealed partial class Day08 {
 			}
 
 			return screenCopy;
+		}
+	}
+
+	private static void DisplayScreen(char[,] screen, string title, Action<string[], bool>? visualise)
+	{
+		if (visualise is not null) {
+			string[] output = ["", title, .. screen.PrintAsStringArray(0)];
+			_ = Task.Run(() => visualise?.Invoke(output, false));
 		}
 	}
 }
