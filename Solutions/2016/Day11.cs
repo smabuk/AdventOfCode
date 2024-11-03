@@ -9,14 +9,14 @@ namespace AdventOfCode.Solutions._2016;
 [Description("Radioisotope Thermoelectric Generators")]
 public sealed partial class Day11 {
 
-	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+	public static string Part1(string[] input, Action<string[], bool>? visualise = null)
 		=> Solution1(input, visualise).ToString();
 	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
 
 
 	private static string Solution1(string[] input, Action<string[], bool>? visualise = null)
 	{
-		int noOfSteps = 0;
+		//int noOfSteps = 0;
 		int elevatorFloor = 0;
 		List<Thing>[] floors = [];
 		floors = PopulateInitialState(input, floors);
