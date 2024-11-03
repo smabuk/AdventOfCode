@@ -11,7 +11,7 @@ public sealed partial class Day10 {
 
 	[Init]
 	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] _, Action<string[], bool>? visualise = null, params object[]? args)
+	public static string Part1(string[] _, params object[]? args)
 	{
 		int compare1 = GetArgument<int>(args, argumentNumber: 1, defaultResult: 61);
 		int compare2 = GetArgument<int>(args, argumentNumber: 2, defaultResult: 17);
@@ -24,16 +24,11 @@ public sealed partial class Day10 {
 	private static void LoadInstructions(string[] input) => _instructions = input.As<Instruction>();
 
 	private static int Solution1(int compare1, int compare2) {
+		(int compareLow, int compareHigh) = ((int[])[compare1, compare2]).MinMax();
+		int foundBotNo = NOT_FOUND;
 		Dictionary<int, Bot> bots = (_instructions
-			.Where(i => i is ValueInstruction vi)
-			.Select(i => new Bot(((ValueInstruction)i).BotNo, [])))
-			.Union(_instructions
-			.Where(i => i is GiveInstruction gi && gi.BotIsLow)
-			.Select(i => new Bot(((GiveInstruction)i).LowDestination, [])))
-			.Union(_instructions
-			.Where(i => i is GiveInstruction gi && gi.BotIsHigh)
-			.Select(i => new Bot(((GiveInstruction)i).HighDestination, [])))
-			.DistinctBy(b => b.No)
+			.Where(i => i is GiveInstruction gi)
+			.Select(i => new Bot(i.BotNo, (GiveInstruction)i, [])))
 			.ToDictionary(b => b.No, bot => bot);
 
 		Dictionary<int, OutputBin> bins = (_instructions
@@ -45,36 +40,14 @@ public sealed partial class Day10 {
 			.DistinctBy(b => b.No)
 			.ToDictionary(b => b.No, bin => bin);
 
-		foreach (Instruction instruction in _instructions) {
+		foreach (ValueInstruction instruction in _instructions.Where(i => i is ValueInstruction).Cast<ValueInstruction>()) {
 			int botNo = instruction.BotNo;
 			Bot bot = bots[botNo];
-			if (instruction is ValueInstruction valueIns) {
-				bot.Chips.Add(valueIns.Value);
-			}
-		}
-		foreach (Instruction instruction in _instructions) {
-			int botNo = instruction.BotNo;
-			Bot bot = bots[botNo];
-			if (instruction is GiveInstruction giveIns) {
-				(int low, int high) = bot.Chips.MinMax();
-				if (low == compare1 && high == compare2) {
-					return botNo;
-				}
-				if (giveIns.BotIsLow) {
-					_ = bot.Chips.Remove(low);
-					bots[giveIns.LowDestination].Chips.Add(low);
-				}
-				if (giveIns.BotIsHigh) {
-					_ = bot.Chips.Remove(high);
-					bots[giveIns.HighDestination].Chips.Add(high);
-				}
-				if (giveIns.BotIsLow is false) {
-					_ = bot.Chips.Remove(low);
-					bins[giveIns.LowDestination].Chips.Add(low);
-				}
-				if (giveIns.BotIsHigh is false) {
-					_ = bot.Chips.Remove(high);
-					bins[giveIns.HighDestination].Chips.Add(high);
+			bot.Chips.Add(instruction.Value);
+			if (bot.Chips.Count == 2) {
+				foundBotNo = bot.ExecuteRule(bots, bins, compareLow , compareHigh);
+				if (foundBotNo != NOT_FOUND) {
+					return foundBotNo;
 				}
 			}
 		}
@@ -95,7 +68,46 @@ file static class Day10Extensions
 internal sealed partial class Day10Types
 {
 
-	public record Bot(int No, List<int> Chips);
+	public record Bot(int No, GiveInstruction Rule, List<int> Chips)
+	{
+		internal int ExecuteRule(Dictionary<int, Bot> bots, Dictionary<int, OutputBin> bins, int compareLow, int compareHigh)
+		{
+			(int low, int high) = Chips.MinMax();
+			if (low == compareLow && high == compareHigh) {
+				return No;
+			}
+			if (Rule.BotIsLow) {
+				_ = Chips.Remove(low);
+				bots[Rule.LowDestination].Chips.Add(low);
+				if (bots[Rule.LowDestination].Chips.Count == 2) {
+					int foundBotNo = bots[Rule.LowDestination].ExecuteRule(bots, bins, compareLow, compareHigh);
+					if (foundBotNo != NOT_FOUND) {
+						return foundBotNo;
+					}
+				}
+			}
+			if (Rule.BotIsHigh) {
+				_ = Chips.Remove(high);
+				bots[Rule.HighDestination].Chips.Add(high);
+				if (bots[Rule.HighDestination].Chips.Count == 2) {
+					int foundBotNo = bots[Rule.HighDestination].ExecuteRule(bots, bins, compareLow, compareHigh);
+					if (foundBotNo != NOT_FOUND) {
+						return foundBotNo;
+					}
+				}
+			}
+			if (Rule.BotIsLow is false) {
+				_ = Chips.Remove(low);
+				bins[Rule.LowDestination].Chips.Add(low);
+			}
+			if (Rule.BotIsHigh is false) {
+				_ = Chips.Remove(high);
+				bins[Rule.HighDestination].Chips.Add(high);
+			}
+			return NOT_FOUND;
+		}
+	}
+
 	public record OutputBin(int No, List<int> Chips);
 
 	public abstract record Instruction(int BotNo) : IParsable<Instruction>
@@ -128,4 +140,5 @@ internal sealed partial class Day10Types
 
 file static class Day10Constants
 {
+	public const int NOT_FOUND = int.MinValue;
 }
