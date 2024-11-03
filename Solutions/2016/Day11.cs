@@ -14,7 +14,7 @@ public sealed partial class Day11 {
 	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
 
 
-	private static int Solution1(string[] input, Action<string[], bool>? visualise = null)
+	private static string Solution1(string[] input, Action<string[], bool>? visualise = null)
 	{
 		int noOfSteps = 0;
 		int elevatorFloor = 0;
@@ -23,7 +23,7 @@ public sealed partial class Day11 {
 		floors.VisualiseFloors(elevatorFloor, "Initial", visualise);
 
 		floors.VisualiseFloors(elevatorFloor, "Final", visualise);
-		return noOfSteps;
+		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 
 	private static List<Thing>[] PopulateInitialState(string[] input, List<Thing>[] floors)

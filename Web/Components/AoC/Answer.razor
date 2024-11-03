@@ -5,50 +5,51 @@
 @using Microsoft.Extensions.Options
 
 <p class="answer">
-    @ChildContent
+	@ChildContent
 	<pre><code><span>Your puzzle answer is </span></code><code @ref="_codeElement">@PuzzleAnswer</code></pre>
-    <span>
-        <button type="button"
-				class="btn btn-primary"
-				disabled="@(PuzzleAnswer.StartsWith("*") && PuzzleAnswer.EndsWith("*"))"
-				title="Copy the answer to the clipboard."
-				@onclick="CopyTextToClipboard">
+	<span>
+		<button type="button"
+		class="btn btn-primary"
+		disabled="@(PuzzleAnswer.StartsWith("*") && PuzzleAnswer.EndsWith("*"))"
+		title="Copy the answer to the clipboard."
+		@onclick="CopyTextToClipboard">
 			Copy <i class="bi-clipboard" aria-hidden="true"></i>
 		</button>
-    </span>
-    <span>
-        <a class="btn btn-primary"
-		   href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")"
-		   title="Open a new page and navigate to the AdventOfCode site to enter the answer."
-		   target="_blank">
-		   Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i></a>
-    </span>
+	</span>
+	<span>
+		<a class="btn btn-primary"
+		href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")"
+		title="Open a new page and navigate to the AdventOfCode site to enter the answer."
+		target="_blank">
+			Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i></a>
+	</span>
 </p>
 <div>
 	<Visualiser @ref="_visualiser" Year="Year" Day="Day" ProblemNo="ProblemNo" />
 </div>
 
 @code {
-    const string SOLVING = "** Solving... **";
+	const string SOLVING = "** Solving... **";
 
-    [Parameter] public int Year { get; set; }
-    [Parameter] public int Day { get; set; }
-    [Parameter] public int ProblemNo { get; set; }
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+	[Parameter] public int Year { get; set; }
+	[Parameter] public int Day { get; set; }
+	[Parameter] public int ProblemNo { get; set; }
+	[Parameter] public RenderFragment? ChildContent { get; set; }
 
-    public string PuzzleAnswer { get; set; } = "";
+	public string PuzzleAnswer { get; set; } = "";
 
-    Visualiser _visualiser = null!;
-    private ElementReference _codeElement;
+	Visualiser _visualiser = null!;
+	private ElementReference _codeElement;
 
 
-    protected override void OnInitialized() {
-        Session.OnProblemInputChange += DataHasChanged;
-        PuzzleAnswer = "";
-    }
+	protected override void OnInitialized() {
+		Session.OnProblemInputChange += DataHasChanged;
+		PuzzleAnswer = "";
+	}
 
-    protected override void OnParametersSet() {
-        // DataHasChanged();
+	protected override void OnParametersSet() {
+		PuzzleAnswer = "";
+		// DataHasChanged();
     }
 
     protected override void OnAfterRender(bool firstRender)
