@@ -10,20 +10,31 @@ namespace AdventOfCode.Solutions._2016;
 public sealed partial class Day12 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input) => LoadInstructions(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static List<Instruction> _instructions = [];
 
-	private static void LoadInstructions(string[] input) {
-		_instructions = [..input.As<Instruction>()];
+	private static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+
+	private static int Solution1()
+	{
+		int[] registers = [0, 0, 0, 0];
+		ExecuteCode(registers);
+		return registers["a".RegIndex()];
 	}
 
-	private static int Solution1(string[] input) {
-		int[] registers = [0, 0, 0, 0];
+	private static int Solution2()
+	{
+		int[] registers = [0, 0, 1, 0];
+		ExecuteCode(registers);
+		return registers["a".RegIndex()];
+	}
 
-		for (int assembunnyPtr = 0; assembunnyPtr < _instructions.Count(); assembunnyPtr++) {
+	private static void ExecuteCode(int[] registers)
+	{
+		for (int assembunnyPtr = 0; assembunnyPtr < _instructions.Count; assembunnyPtr++) {
 			Instruction instruction = _instructions[assembunnyPtr];
 			switch (instruction) {
 				case CpyInstruction cpyInstruction:
@@ -44,12 +55,6 @@ public sealed partial class Day12 {
 					break;
 			}
 		}
-
-		return registers["a".RegIndex()];
-	}
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 }
 
