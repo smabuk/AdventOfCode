@@ -13,6 +13,7 @@ public sealed partial class Day08 {
 
 	[Init]
 	public static   void  Init(string[] input) => LoadInstructions(input);
+	[HasVisualiser]
 	public static string Part1(string[] _, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		int screenWidth = GetArgument<int>(args, argumentNumber: 1, defaultResult: 50);
@@ -20,6 +21,7 @@ public sealed partial class Day08 {
 		return Solution1(screenWidth, screenHeight, visualise).ToString();
 	}
 
+	[HasVisualiser]
 	public static string Part2(string[] _, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		int screenWidth = GetArgument<int>(args, argumentNumber: 1, defaultResult: 50);
