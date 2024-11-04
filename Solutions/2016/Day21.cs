@@ -18,8 +18,11 @@ public sealed partial class Day21 {
 		string password = GetArgument<string>(args, argumentNumber: 1, defaultResult: "abcdefgh");
 		return Solution1(input, password).ToString();
 	}
-
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input, params object[]? args)
+	{
+		string password = GetArgument<string>(args, argumentNumber: 1, defaultResult: "fbgdceah");
+		return Solution2(input, password).ToString();
+	}
 
 	private static List<Instruction> _instructions = [];
 
@@ -36,8 +39,15 @@ public sealed partial class Day21 {
 		return scrambled;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static string Solution2(string[] input, string scrambled) {
+		string unscrambled = scrambled;
+		List<Instruction> instructions = [.._instructions];
+		instructions.Reverse();
+		foreach (Instruction instruction in instructions) {
+			unscrambled = instruction.UnScramble(unscrambled);
+		}
+
+		return unscrambled;
 	}
 }
 
@@ -51,6 +61,7 @@ internal sealed partial class Day21Types
 	public abstract record Instruction() : IParsable<Instruction>
 	{
 		public abstract string Scramble(ReadOnlySpan<char> input);
+		public abstract string UnScramble(ReadOnlySpan<char> input);
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
 			string[] tokens = s.TrimmedSplit([' ']);
@@ -80,6 +91,8 @@ internal sealed partial class Day21Types
 			(output[X], output[Y]) = (output[Y], output[X]); 
 			return output.ToString();
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => Scramble(input);
 	}
 
 	public record SwapLetter(char X, char Y) : Instruction
@@ -91,6 +104,8 @@ internal sealed partial class Day21Types
 			output[input.IndexOf(Y)] = X;
 			return output.ToString();
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => Scramble(input);
 	}
 
 	public record RotateLeft(int X) : Instruction
@@ -100,6 +115,8 @@ internal sealed partial class Day21Types
 			int amount = X % input.Length;
 			return new string([..input[amount..], ..input[0..amount]]);
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => new RotateRight(X).Scramble(input);
 	}
 
 	public record RotateRight(int X) : Instruction
@@ -109,6 +126,8 @@ internal sealed partial class Day21Types
 			int amount = input.Length - (X % input.Length);
 			return new string([.. input[amount..], .. input[0..amount]]);
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => new RotateLeft(X).Scramble(input);
 	}
 
 	public record RotateRightBasedOnPosition(char X) : Instruction
@@ -119,6 +138,8 @@ internal sealed partial class Day21Types
 			RotateRight rotateRight = new(1 + indexX + ((indexX >= 4) ? 1 : 0));
 			return rotateRight.Scramble(input);
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => throw new NotImplementedException();
 	}
 
 	public record ReversePositions(int X, int Y) : Instruction
@@ -132,6 +153,8 @@ internal sealed partial class Day21Types
 
 			return output.ToString();
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => Scramble(input);
 	}
 
 	public record MovePosition(int X, int Y) : Instruction
@@ -143,6 +166,8 @@ internal sealed partial class Day21Types
 			output.Insert(Y, input[X]);
 			return string.Join("", output);
 		}
+
+		public override string UnScramble(ReadOnlySpan<char> input) => new MovePosition(Y, X).Scramble(input);
 	}
 }
 
