@@ -3,28 +3,26 @@ using static AdventOfCode.Solutions._2016.Day18Types;
 namespace AdventOfCode.Solutions._2016;
 
 /// <summary>
-/// Day 18: Title
+/// Day 18: Like a Rogue
 /// https://adventofcode.com/2016/day/18
 /// </summary>
-[Description("")]
+[Description("Like a Rogue")]
 public sealed partial class Day18 {
 
 	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
 		int noOfRows = GetArgument<int>(args, argumentNumber: 1, defaultResult: 40);
-		return Solution1(input, noOfRows, visualise).ToString();
+		return Solve(input, noOfRows, visualise).ToString();
 	}
 
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solve(input, 400_000).ToString();
 
-	private static int Solution1(string[] input, int noOfRows, Action<string[], bool>? visualise = null) {
+	private static int Solve(string[] input, int noOfRows, Action<string[], bool>? visualise = null) {
 		string[] room = [..input[0].RoomRows().Take(noOfRows)];
-		room.VisualiseStrings("Final", visualise);
+		if (noOfRows < 50) {
+			room.VisualiseStrings("Final", visualise);
+		}
 		return room.Sum(r => r.Count(c => c == SAFE));
-	}
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 }
 
