@@ -10,20 +10,19 @@ namespace AdventOfCode.Solutions._2016;
 public sealed partial class Day15 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) => input.As<Disc>().FindAlignment();
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution2(string[] input) => 
+		input.As<Disc>()
+		.Append(new(input.Length + 1, 11, 0))
+		.FindAlignment();
 }
 
 file static class Day15Extensions
 {
 	public static int FindAlignment(this IEnumerable<Disc> discs)
 	{
-		// Assume discs have a prime number of positions
 		for (int time = 0; ; time++) {
 			if (discs
 				.All(disc => (disc.PositionAtTimeZero + time + disc.DiscNo) % disc.NoOfPositions == 0)) {
@@ -35,7 +34,6 @@ file static class Day15Extensions
 
 internal sealed partial class Day15Types
 {
-
 	public sealed record Disc(int DiscNo, int NoOfPositions, int PositionAtTimeZero) : IParsable<Disc>
 	{
 		public readonly int OffsetToZero = (NoOfPositions - PositionAtTimeZero - DiscNo) % NoOfPositions;
@@ -48,6 +46,7 @@ internal sealed partial class Day15Types
 					match.As<int>("positions"),
 					match.As<int>("position"));
 			}
+
 			return null!;
 		}
 
