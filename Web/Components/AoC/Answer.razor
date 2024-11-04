@@ -1,4 +1,5 @@
 ﻿@implements IDisposable
+@attribute [ExcludeFromInteractiveRouting]
 @inject SessionState Session
 @inject AocJsInterop aocJS
 @inject IOptions<AocSettings> aocSettings
@@ -43,6 +44,7 @@
 
 
 	protected override void OnInitialized() {
+		Session.OnProblemInputChange -= DataHasChanged;
 		Session.OnProblemInputChange += DataHasChanged;
 		PuzzleAnswer = "";
 	}
@@ -52,27 +54,29 @@
 		// DataHasChanged();
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-		try {
-			if (_visualiser is not null && _visualiser.HasVisualiser) {
-			PuzzleAnswer = SolutionRouter.SolveProblem(
-				Year,
-				Day,
-				ProblemNo,
-				Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
-				_visualiser.VisualiseOutput
-				);
-			} else {
-				PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
-			}
-		}
-		catch (Exception ex) {
-			PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
-		}
-		base.OnAfterRender(firstRender);
-    }
+  //   protected override void OnAfterRender(bool firstRender)
+  //   {
+		// try {
+		// 	if (_visualiser is not null && _visualiser.HasVisualiser) {
+		// 	PuzzleAnswer = SolutionRouter.SolveProblem(
+		// 		Year,
+		// 		Day,
+		// 		ProblemNo,
+		// 		Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
+		// 		_visualiser.VisualiseOutput
+		// 		);
+		// 	}
+		// 	else if (string.IsNullOrEmpty(PuzzleAnswer))
+		// 	{
+		// 		PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
+		// 			Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+		// 	}
+		// }
+		// catch (Exception ex) {
+		// 	PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
+		// }
+		// base.OnAfterRender(firstRender);
+  //   }
 
     protected void DataHasChanged() {
         PuzzleAnswer = SOLVING;
