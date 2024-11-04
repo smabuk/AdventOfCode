@@ -14,17 +14,16 @@ public sealed partial class Day20 {
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
 	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
 
-	private static IEnumerable<Exclusion> _exclusions = [];
+	private static List<Exclusion> _exclusions = [];
 
 	private static void LoadExclusions(string[] input) {
-		_exclusions = input.As<Exclusion>();
+		_exclusions = [.. input.As<Exclusion>().OrderBy(e => e.MinValue)];
 	}
 
 	private static uint Solution1(string[] input) {
-		List<Exclusion> exclusions = [.. input.As<Exclusion>().OrderBy(e => e.MinValue)];
 		uint currentMax = 0;
 
-		foreach (Exclusion exclusion in exclusions) {
+		foreach (Exclusion exclusion in _exclusions) {
 			if (exclusion.MinValue <= currentMax) {
 				currentMax = uint.Max(exclusion.MaxValue, currentMax);
 			} else {
@@ -35,8 +34,24 @@ public sealed partial class Day20 {
 		return currentMax + 1;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static uint Solution2(string[] input) {
+		uint currentMax = 0;
+		uint count = 0;
+
+		foreach (Exclusion exclusion in _exclusions) {
+			if (exclusion.MinValue <= currentMax) {
+				currentMax = uint.Max(exclusion.MaxValue, currentMax);
+			} else {
+				count += exclusion.MinValue - currentMax - 1;
+				currentMax = exclusion.MaxValue;
+			}
+		}
+
+		if (currentMax < MaxIPValue) {
+			count += (MaxIPValue - currentMax);
+		}
+
+		return count;
 	}
 }
 
@@ -63,4 +78,5 @@ internal sealed partial class Day20Types
 
 file static class Day20Constants
 {
+	public const uint MaxIPValue = 4294967295;
 }
