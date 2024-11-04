@@ -26,7 +26,21 @@ public sealed partial class Day19 {
 	}
 
 	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+		// Maybe use a linked list ???
+		if (input[0].As<int>() > 10_000) {
+			return "** Takes too long **";
+		}
+		Queue<int> circle = new(Enumerable.Range(1, input[0].As<int>()));
+
+		while (circle.Count > 1) {
+			int thief = circle.Dequeue();
+			List<int> elves = [.. circle];
+			int victim = elves[int.IsEvenInteger(elves.Count) ? ((elves.Count / 2) - 1) : (elves.Count / 2) ];
+			_ = elves.Remove(victim);
+			circle = new([..elves, thief]);
+		};
+
+		return circle.Peek().ToString();
 	}
 }
 

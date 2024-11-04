@@ -42,7 +42,7 @@ file static class Day16Extensions
 	public static string Checksum(this string a)
 	{
 		string checksum = a;
-		while (checksum.Length.IsEven()) {
+		while (int.IsEvenInteger(checksum.Length)) {
 			checksum = string.Join("", checksum
 				.Chunk(2)
 				.Select(c => c[0] == c[1] ? ONE : ZERO));
@@ -50,8 +50,6 @@ file static class Day16Extensions
 
 		return checksum;
 	}
-
-	public static bool IsEven(this int number) => number %2 == 0;
 }
 
 internal sealed partial class Day16Types
