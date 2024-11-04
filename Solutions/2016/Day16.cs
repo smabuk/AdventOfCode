@@ -11,23 +11,19 @@ public sealed partial class Day16 {
 
 	public static string Part1(string[] input, params object[]? args)
 	{
-		int diskLength = GetArgument<int>(args, argumentNumber: 1, defaultResult: 272);
-		return Solution1(input, diskLength).ToString();
+		int diskLength = GetArgument<int>(args, argumentNumber: 1, defaultResult: DISK_LENGTH_PART1);
+		return Solve(input, diskLength).ToString();
 	}
 
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solve(input, DISK_LENGTH_PART2).ToString();
 
-	private static string Solution1(string[] input, int diskLength) {
+	private static string Solve(string[] input, int diskLength) {
 		string state = input[0];
 		while (diskLength > state.Length) {
 			state = state.GenerateDragonCurve();
 		}
 
 		return state[..diskLength].Checksum();
-	}
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 }
 
@@ -64,6 +60,9 @@ internal sealed partial class Day16Types
 
 file static class Day16Constants
 {
+	public const int DISK_LENGTH_PART1 = 272;
+	public const int DISK_LENGTH_PART2 = 35651584;
+
 	public const char ONE = '1'; 
 	public const char ZERO = '0'; 
 }
