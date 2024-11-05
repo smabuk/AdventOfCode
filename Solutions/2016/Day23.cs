@@ -25,9 +25,11 @@ public sealed partial class Day23 {
 		return registers["a".RegIndex()];
 	}
 
-	private static string Solution2()
+	private static int Solution2()
 	{
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+		int[] registers = [12, 0, 0, 0];
+		ExecuteCode(registers);
+		return registers["a".RegIndex()];
 	}
 
 	private static void ExecuteCode(int[] registers)
