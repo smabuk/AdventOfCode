@@ -10,7 +10,7 @@ namespace AdventOfCode.Solutions._2016;
 public sealed partial class Day22 {
 
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args) => Solution2(input, visualise).ToString();
 	private static int Solution1(string[] input) {
 		return input
 			.Skip(2)
@@ -19,33 +19,76 @@ public sealed partial class Day22 {
 			.Count(pair => pair.IsViablePair());
 	}
 
-	private static string Solution2(string[] input) {
+	private static string Solution2(string[] input, Action<string[], bool>? visualise = null) {
+		List<Node> nodes = [..input
+			.Skip(2)
+			.As<Node>()];
+
+		int colsX = nodes.Max(n => n.Position.X) + 1;
+		int colsY = nodes.Max(n => n.Position.Y) + 1;
+		Point goal = new(colsX - 1, 0);
+		Node[,] grid = new Node[colsX, colsY];
+		foreach (Node node in nodes) {
+			grid[node.Position.X, node.Position.Y] = node;
+		}
+
+		grid.VisualiseGrid(goal, "Initial", visualise);
+
+		// Solve
+
+		grid.VisualiseGrid(goal, "Final", visualise);
 		return NO_SOLUTION_WRITTEN_MESSAGE;
 	}
 }
 
 file static class Day22Extensions
 {
-	public static bool IsViablePair(this IEnumerable<Node> pair)
+	public static bool IsViablePair(this Node[] nodes)
 	{
-		Node[] nodes = [.. pair];
-		Node nodeA = nodes[0];
-		Node nodeB = nodes[1];
+		const int A = 0;
+		const int B = 1;
 
-		if (nodeA.Used == 0) {
-			return false;
-		}
-
-		if (nodeA.Name == nodeB.Name) {
-			return false;
-		}
-
-		if (nodeA.Used > nodeB.Available) {
-			return false;
-		}
-
-		return true;
+		return nodes[A].Used != 0
+			&& nodes[A].Name != nodes[B].Name
+			&& nodes[A].Used <= nodes[B].Available;
 	}
+
+	[HasVisualiser]
+	public static void VisualiseGrid(this Node[,] grid, Point goal, string title, Action<string[], bool>? visualise)
+	{
+		const char GOAL = 'G';
+		const char EMPTY_NODE = '_';
+		const char SMALL_ENOUGH_NODE = '.';
+		const char VERY_FULL_NODE = '#';
+
+		if (visualise is not null) {
+			string[] gridPlan = [];
+
+			int veryLargeVeryFull = grid.WalkWithValues().Max(cell => cell.Value.Size);
+			for (int y = 0; y < grid.RowsCount(); y++) {
+				string row = "";
+		
+				for (int x = 0; x < grid.ColsCount(); x++) {
+					Node node = grid[x, y];
+					char c = SMALL_ENOUGH_NODE;
+					if (node.Position == goal) {
+						c = GOAL;
+					} else if (node.Used == 0) {
+						c = EMPTY_NODE;
+					} else if (node.Size == veryLargeVeryFull) {
+						c = VERY_FULL_NODE;
+					}
+					row = node.Position == Point.Zero ? $"{row}({c})" : $"{row} {c} ";
+				}
+
+				gridPlan = [.. gridPlan.Append(row)];
+			}
+
+			string[] output = ["", title, .. gridPlan];
+			_ = Task.Run(() => visualise?.Invoke(output, false));
+		}
+	}
+
 }
 
 internal sealed partial class Day22Types

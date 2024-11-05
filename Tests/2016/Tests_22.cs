@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2016;
 
-public class Tests_22_Grid_Computing
+public class Tests_22_Grid_Computing(ITestOutputHelper testOutputHelper)
 {
 	const int DAY = 22;
 
@@ -37,5 +37,34 @@ public class Tests_22_Grid_Computing
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData("""
+		root@ebhq-gridcenter# df -h
+		Filesystem            Size  Used  Avail  Use%
+		/dev/grid/node-x0-y0   10T    8T     2T   80%
+		/dev/grid/node-x0-y1   11T    6T     5T   54%
+		/dev/grid/node-x0-y2   32T   28T     4T   87%
+		/dev/grid/node-x1-y0    9T    7T     2T   77%
+		/dev/grid/node-x1-y1    8T    0T     8T    0%
+		/dev/grid/node-x1-y2   11T    7T     4T   63%
+		/dev/grid/node-x2-y0   10T    6T     4T   60%
+		/dev/grid/node-x2-y1    9T    8T     1T   88%
+		/dev/grid/node-x2-y2    9T    6T     3T   66%
+		""", 7)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	private void Callback(string[] lines, bool _)
+	{
+		if (lines is null or []) {
+			return;
+		}
+
+		testOutputHelper.WriteLine(string.Join(Environment.NewLine, lines));
 	}
 }
