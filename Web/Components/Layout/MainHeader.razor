@@ -9,23 +9,36 @@
     public int Day { get; set; } = 1;
     public int NoOfStars { get; set; }
     public string UserName { get; set; } = "";
-    public AocSummary? Summary { get; set; } = default!;
-
+ 
     private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
 
     protected async override Task OnParametersSetAsync() {
+		for (int year = 2015; year < DateTime.UtcNow.Year + (DateTime.UtcNow.Month == 12 ? 1 : 0); year++)
+		{
+			if (!Session.IsSummaryLoaded(year)) {
+				AocSummary? summary = await aocClient.GetSummaryInfo(year);
+				if (summary is not null)
+				{
+					UserName = summary.UserName;
+					Session.UserName = summary.UserName;
+					Session.SetNoOfStars(year, summary.NoOfStars);
+					Session.SetSummary(year, summary);
+				}
+			}
+		}
+
         if (Session.IsSummaryLoaded(Year)) {
             UserName = Session.UserName;
             NoOfStars = Session.GetNoOfStars(Year);
         } else {
             if (Year >= 2015) {
-                Summary = await aocClient.GetSummaryInfo(Year);
-                if (Summary is not null) {
-                    UserName = Summary.UserName;
-                    NoOfStars = Summary.NoOfStars;
-                    Session.UserName = Summary.UserName;
-                    Session.SetNoOfStars(Year, Summary.NoOfStars);
-                    Session.SetSummary(Year, Summary);
+				AocSummary? summary = await aocClient.GetSummaryInfo(Year);
+                if (summary is not null) {
+                    UserName = summary.UserName;
+                    NoOfStars = summary.NoOfStars;
+                    Session.UserName = summary.UserName;
+                    Session.SetNoOfStars(Year, summary.NoOfStars);
+                    Session.SetSummary(Year, summary);
                     StateHasChanged();
                 }
             }
