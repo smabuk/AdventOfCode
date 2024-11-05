@@ -39,15 +39,22 @@ public sealed partial class Day21 {
 		return scrambled;
 	}
 
-	private static string Solution2(string[] input, string scrambled) {
-		string unscrambled = scrambled;
-		List<Instruction> instructions = [.._instructions];
-		instructions.Reverse();
-		foreach (Instruction instruction in instructions) {
-			unscrambled = instruction.UnScramble(unscrambled);
+	private static string Solution2(string[] input, string unscrambled) {
+		string possible = "";
+		foreach (char[] possibility in unscrambled.Permute()) {
+			string scrambled = string.Join("", possibility);
+			possible = scrambled;
+
+			foreach (Instruction instruction in _instructions) {
+				scrambled = instruction.Scramble(scrambled);
+			}
+
+			if (unscrambled == scrambled) {
+				break;
+			}
 		}
 
-		return unscrambled;
+		return possible;
 	}
 }
 
@@ -139,7 +146,17 @@ internal sealed partial class Day21Types
 			return rotateRight.Scramble(input);
 		}
 
-		public override string UnScramble(ReadOnlySpan<char> input) => throw new NotImplementedException();
+		/// <summary>
+		/// Can't work out how this one should work in all scenarios
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public override string UnScramble(ReadOnlySpan<char> input)
+		{
+			int indexX = input.IndexOf(X);
+			RotateLeft rotateLeft = new((1 + indexX + ((indexX < 4) ? 0 : 1)));
+			return rotateLeft.Scramble(input);
+		}
 	}
 
 	public record ReversePositions(int X, int Y) : Instruction
