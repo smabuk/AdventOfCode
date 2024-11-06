@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
 		<Using Include="AdventOfCode.Solutions.Core" />
+		<Using Static="true" Include="AdventOfCode.Solutions.Core.GlobalConstants" />
 	</ItemGroup>
 
 </Project>
