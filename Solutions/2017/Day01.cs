@@ -9,23 +9,30 @@ namespace AdventOfCode.Solutions._2017;
 [Description("Inverse Captcha")]
 public sealed partial class Day01 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input) => Solution1(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) => 
 		input[0].AsDigits<int>().ToList()
-		.CheckSum();
+		.CheckSumPt1();
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution2(string[] input) =>
+		input[0].AsDigits<int>().ToList()
+		.CheckSumPt2();
 }
 
 file static class Day01Extensions
 {
-	public static int CheckSum(this List<int> digits)
+	public static int CheckSumPt1(this List<int> digits)
 	{
 		return digits.Zip([.. digits[1..], digits[0]])
+			.Where(pair => pair.First == pair.Second)
+			.Sum(pair => pair.First);
+	}
+
+	public static int CheckSumPt2(this List<int> digits)
+	{
+		return digits.Zip([.. digits[(digits.Count/2)..], ..digits[..(digits.Count/2)]])
 			.Where(pair => pair.First == pair.Second)
 			.Sum(pair => pair.First);
 	}
