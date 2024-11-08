@@ -24,33 +24,51 @@ public sealed partial class Day03 {
 
 	private static int Solution2(string[] input) {
 		int target = input[0].As<int>();
-		int[,] grid = new int[21, 21];
-		Point current = new(10, 10);
-		grid[current.X, current.Y] = 1;
 
-		for (int level = 2; ; level += 2) {
-			// Step right, move up 1 level, left 1 level, down 1 level, right 1 level
-			List<Point> points = [
-				current += (1, 0),
-				..Enumerable.Range(1, level - 1).Select(i => new Point(current.X, current.Y - i)),
-				..Enumerable.Range(1, level).Select(i => new Point(current.X - i, current.Y - level + 1)),
-				..Enumerable.Range(1, level).Select(i => new Point(current.X - level, current.Y - level + i + 1)),
-				..Enumerable.Range(1, level).Select(i => new Point(current.X - level + i, current.Y + 1)),
-			];
-			foreach (var nextCell in points) {
-				current = nextCell;
-				int newValue = grid.GetAdjacentCells(current, includeDiagonals: true).Sum(cell => cell.Value);
-				if (newValue > target) {
-					return newValue;
-				}
-				grid[current.X, current.Y] = newValue;
+		int[,] grid = new int[GRID_SIZE, GRID_SIZE];
+		Point start = new(GRID_SIZE / 2, GRID_SIZE / 2);
+		grid[start.X, start.Y] = 1;
+
+		foreach (Point point in start.SpiralPoints()) {
+			grid[point.X, point.Y] = grid
+				.GetAdjacentCells(point, includeDiagonals: true)
+				.Sum(cell => cell.Value);
+
+			if (grid[point.X, point.Y] > target) {
+				return grid[point.X, point.Y];
 			}
 		}
+
+		throw new ApplicationException("Should never reach here!");
 	}
 }
 
 file static class Day03Extensions
 {
+	public static IEnumerable<Point> SpiralPoints(this Point start)
+	{
+		Point current = start;
+
+		for (int level = 2; ; level += 2) {
+			// Move right
+			current += (1, 0);
+			yield return current;
+
+			// Move up 1 level, left 1 level, down 1 level, right 1 level
+			List<Point> points = [
+				..Enumerable.Range(1, level - 1).Select(i => new Point(current.X, current.Y - i)),
+				..Enumerable.Range(1, level).Select(i => new Point(current.X - i, current.Y - level + 1)),
+				..Enumerable.Range(1, level).Select(i => new Point(current.X - level, current.Y - level + i + 1)),
+				..Enumerable.Range(1, level).Select(i => new Point(current.X - level + i, current.Y + 1)),
+			];
+
+			foreach (var point in points) {
+				yield return point;
+			}
+
+			current = points[^1];
+		}
+	}
 }
 
 internal sealed partial class Day03Types
@@ -59,4 +77,5 @@ internal sealed partial class Day03Types
 
 file static class Day03Constants
 {
+	public const int GRID_SIZE = 21;
 }
