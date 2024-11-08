@@ -3,35 +3,41 @@ using static AdventOfCode.Solutions._2017.Day04Types;
 namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
-/// Day 04: Title
+/// Day 04: High-Entropy Passphrases
 /// https://adventofcode.com/2016/day/04
 /// </summary>
-[Description("")]
+[Description("High-Entropy Passphrases")]
 public sealed partial class Day04 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
-	private static int Solution1(string[] input) {
-		int validCount = 0;
+	private static int Solution1(string[] input) =>
+		input.Count(passphrase => passphrase.HasNoRepeatingWords());
 
-		foreach (string passphrase in input) {
-			string[] words = passphrase.TrimmedSplit(SPACE);
-			if (words.Length == words.Distinct().Count()) {
-				validCount += 1;
-			}
-		}
-
-		return validCount;
-	}
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution2(string[] input) =>
+		input.Count(passphrase => passphrase.HasNoRepeatingWords() && passphrase.HasNoAnagrams());
 }
 
 file static class Day04Extensions
 {
+	public static bool HasNoRepeatingWords(this string passphrase)
+	{
+		string[] words = passphrase.TrimmedSplit(SPACE);
+		return words.Length == words.Distinct().Count();
+	}
+
+	public static bool HasNoAnagrams(this string passphrase)
+	{
+		List<string> words = [.. passphrase.TrimmedSplit(SPACE)];
+		foreach (string word in words) {
+			if (words.Count(w => word.Order().SequenceEqual(w.Order())) != 1) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
 
 internal sealed partial class Day04Types
