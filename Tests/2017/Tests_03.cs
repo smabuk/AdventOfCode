@@ -15,4 +15,16 @@ public class Tests_03_Spiral_Memory
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input.ToString()), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(4, 5)]
+	[InlineData(11, 23)]
+	[InlineData(59, 122)]
+	[InlineData(330, 351)]
+	[InlineData(747, 806)]
+	public void Part2(int input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input.ToString()), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
