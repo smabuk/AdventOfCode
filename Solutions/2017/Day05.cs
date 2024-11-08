@@ -25,8 +25,19 @@ public sealed partial class Day05 {
 		return steps;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2(string[] input) {
+		int[] jumps = [.. input.As<int>()];
+		int jumpPtr = 0;
+		int steps = 0;
+
+		while (jumpPtr >= 0 && jumpPtr < jumps.Length) {
+			int prevPtr = jumpPtr;
+			jumpPtr += jumps[jumpPtr];
+			jumps[prevPtr] += jumps[prevPtr] >= 3 ? -1 : 1;
+			steps++;
+		}
+
+		return steps;
 	}
 }
 

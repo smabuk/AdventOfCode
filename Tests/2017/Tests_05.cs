@@ -17,4 +17,18 @@ public class Tests_05_A_Maze_of_Twisty_Trampolines_All_Alike
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("""
+		0
+		3
+		0
+		1
+		-3
+		""", 10)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
