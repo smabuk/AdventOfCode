@@ -12,20 +12,38 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day09 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
-	private static int Solution1(string[] input) =>
-		input[0]
-			.RemoveGarbage()
-			.ScoreStream();
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution1(string[] input) => input[0].RemoveGarbage().ScoreStream();
+	private static int Solution2(string[] input) => input[0].CountGarbage();
 }
 
 file static class Day09Extensions
 {
+	public static int CountGarbage(this string stream)
+	{
+		int count = 0;
+
+		bool isInGarbage = false;
+
+		for (int i = 0; i < stream.Length; i++) {
+			char character = stream[i];
+			if (isInGarbage) {
+				if (character is CLOSE_GARBAGE) {
+					isInGarbage = false;
+				} else if (character is CANCEL) {
+					i++;
+				} else {
+					count++;
+				}
+			} else if (character is OPEN_GARBAGE) {
+				isInGarbage = true;
+			}
+		}
+
+		return count;
+	}
+
 	public static string RemoveGarbage(this string stream)
 	{
 		StringBuilder sb = new();
@@ -50,6 +68,7 @@ file static class Day09Extensions
 
 		return sb.ToString();
 	}
+
 	public static int ScoreStream(this string stream)
 	{
 		int score = 0;

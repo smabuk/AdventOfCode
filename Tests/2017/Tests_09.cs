@@ -18,4 +18,18 @@ public class Tests_09_Stream_Processing
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("""<>""", 0)]
+	[InlineData("""<random characters>""", 17)]
+	[InlineData("""<<<<>""", 3)]
+	[InlineData("""<{!>}>""", 2)]
+	[InlineData("""<!!>""", 0)]
+	[InlineData("""<!!!>>""", 0)]
+	[InlineData("""<{o"i!a,<{i<a>""", 10)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
