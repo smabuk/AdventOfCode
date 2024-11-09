@@ -10,17 +10,15 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day08 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input) => LoadInstructions(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static IEnumerable<Instruction> _instructions = [];
 
-	private static void LoadInstructions(string[] input) {
-		_instructions = input.As<Instruction>();
-	}
+	private static void LoadInstructions(string[] input) => _instructions = input.As<Instruction>();
 
-	private static int Solution1(string[] input) {
+	private static int Solution1() {
 		Dictionary<string, int> registers = [];
 
 		foreach (Instruction instruction in _instructions) {
@@ -32,20 +30,33 @@ public sealed partial class Day08 {
 					? regValue + instruction.Value
 					: regValue - instruction.Value;
 			}
-
 		}
 
 		return registers.Values.Max();
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() {
+		Dictionary<string, int> registers = [];
+		int maxValue = int.MinValue;
+
+		foreach (Instruction instruction in _instructions) {
+			int opRegValue = registers.GetValueOrDefault(instruction.Predicate.Register);
+
+			if (instruction.Predicate.IsTrue(opRegValue)) {
+				int regValue = registers.GetValueOrDefault(instruction.TargetRegister);
+				registers[instruction.TargetRegister] = instruction is IncInstruction
+					? regValue + instruction.Value
+					: regValue - instruction.Value;
+				maxValue = int.Max(maxValue, registers[instruction.TargetRegister]);
+			}
+		}
+
+		return maxValue;
 	}
 }
 
 file static class Day08Extensions
 {
-
 	public static bool IsTrue(this InstructionPredicate ip, int regValue = 0)
 	{
 		return ip.Operator switch
@@ -78,7 +89,6 @@ file static class Day08Extensions
 
 internal sealed partial class Day08Types
 {
-
 	public abstract record Instruction(string TargetRegister, int Value, InstructionPredicate Predicate) : IParsable<Instruction>
 	{
 		public static Instruction Parse(string s, IFormatProvider? provider)
@@ -105,7 +115,6 @@ internal sealed partial class Day08Types
 
 	public sealed record DecInstruction(string TargetRegister, int Value, InstructionPredicate Predicate)
 		: Instruction(TargetRegister, Value, Predicate);
-
 
 	public record InstructionPredicate(string Register, Operator Operator, int Value);
 
