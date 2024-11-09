@@ -12,18 +12,11 @@ public sealed partial class Day07 {
 	public static string Part1(string[] input) => Solution1(input).ToString();
 	public static string Part2(string[] input) => Solution2(input).ToString();
 
-	private static string Solution1(string[] input) {
-		List<Program> programs = [.. input.As<Program>()];
-		HashSet<string> subprograms =
-			[..programs.SelectMany(program => program.ProgramNames)];
-		return programs.Single(program => subprograms.DoesNotContain(program.Name)).Name;
-	}
+	private static string Solution1(string[] input) => input.As<Program>().FindTowerBase().Name;
 
 	private static int Solution2(string[] input) {
 		List<Program> programs = [.. input.As<Program>()];
-		HashSet<string> subprograms =
-			[..programs.SelectMany(program => program.ProgramNames)];
-		Program currentBase = programs.Single(program => subprograms.DoesNotContain(program.Name));
+		Program currentBase = programs.FindTowerBase();
 
 		Program prevBase = currentBase;
 		int newWeight = int.MaxValue;
@@ -52,6 +45,13 @@ public sealed partial class Day07 {
 
 file static class Day07Extensions
 {
+
+	public static Program FindTowerBase(this IEnumerable<Program> programs)
+	{
+		HashSet<string> subprograms =[.. programs.SelectMany(program => program.ProgramNames)];
+		return programs.Single(program => subprograms.DoesNotContain(program.Name));
+	}
+
 	public static Program GetProgram(this List<Program> programs, string programName) =>
 		programs.Single(p => p.Name == programName);
 
@@ -64,7 +64,6 @@ file static class Day07Extensions
 
 internal sealed partial class Day07Types
 {
-
 	public sealed record Program(string Name, int Weight, List<string> ProgramNames) : IParsable<Program>
 	{
 		public static Program Parse(string s, IFormatProvider? provider)
