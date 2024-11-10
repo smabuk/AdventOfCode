@@ -17,6 +17,19 @@ public class Tests_13_Packet_Scanners(ITestOutputHelper testOutputHelper)
 		actual.ShouldBe(expected);
 	}
 
+	[Theory]
+	[InlineData("""
+		0: 3
+		1: 2
+		4: 4
+		6: 4
+		""", 10)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
 
 	private void Callback(string[] lines, bool _)
 	{

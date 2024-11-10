@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-using static AdventOfCode.Solutions._2017.Day13Constants;
+﻿using static AdventOfCode.Solutions._2017.Day13Constants;
 using static AdventOfCode.Solutions._2017.Day13Types;
 namespace AdventOfCode.Solutions._2017;
 
@@ -15,7 +13,7 @@ public sealed partial class Day13 {
 	public static   void  Init(string[] input) => LoadInstructions(input);
 	public static string Part1(string[] _, Action<string[], bool>? visualise = null)
 		=> Solution1(visualise).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static Dictionary<int, Scanner> _scanners = [];
 
@@ -23,11 +21,10 @@ public sealed partial class Day13 {
 		_scanners = input.As<Scanner>().ToDictionary(s => s.Depth);
 
 	private static int Solution1(Action<string[], bool>? visualise = null) {
-		int tick = 0;
 		int maxDepth = _scanners.Max(s => s.Key);
 		_scanners.VisualiseScanners(-1, 0, "Initial", visualise);
 		int sum = 0;
-		for (tick = 0; tick <= maxDepth; tick++) {
+		for (int tick = 0; tick <= maxDepth; tick++) {
 			_scanners.VisualiseScanners(tick, tick, $"Picosecond {tick}:", visualise);
 			Scanner? scanner = _scanners.GetValueOrDefault(tick);
 			if (scanner is not null && scanner.IsCaptured(0, tick)) {
@@ -35,12 +32,26 @@ public sealed partial class Day13 {
 			}
 		}
 
-		_scanners.VisualiseScanners(0, tick, "Final", visualise);
 		return sum;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() {
+		int delay = 0;
+		int maxDepth = _scanners.Max(s => s.Key);
+		bool caught = true;
+		do {
+			delay++;
+			caught = false;
+			for (int tick = 0; tick <= maxDepth; tick++) {
+				Scanner? scanner = _scanners.GetValueOrDefault(tick);
+				if (scanner is not null && scanner.IsCaptured(0, tick + delay)) {
+					caught = true;
+					break;
+				}
+			}
+		} while (caught is true);
+
+		return delay;
 	}
 }
 
