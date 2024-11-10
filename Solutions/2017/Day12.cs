@@ -10,9 +10,9 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day12 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadPipes(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input) => LoadPipes(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static List<Pipe> _pipes = [];
 
@@ -28,36 +28,47 @@ public sealed partial class Day12 {
 		_pipes = [.._pipes.Distinct()];
 	}
 
-	private static int Solution1() => _pipes.PipesInGroup();
-
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution1() => _pipes.PipesInGroup(0).Count;
+	private static int Solution2() => _pipes.GroupsInPipes();
 }
 
 file static class Day12Extensions
 {
-	public static int PipesInGroup(this IEnumerable<Pipe> pipes)
+	public static HashSet<int> PipesInGroup(this IEnumerable<Pipe> pipes, int id)
 	{
-		HashSet<int> group0 = [0];
+		HashSet<int> group = [id];
 		int added = 0;
 		do {
 			added = 0;
 			foreach (var pipe in pipes
-				.Where(p => group0.Contains(p.Id1)
-				&& group0.DoesNotContain(p.Id2))) {
+				.Where(p => group.Contains(p.Id1)
+				&& group.DoesNotContain(p.Id2))) {
 
-				if (group0.Add(pipe.Id2)) {
+				if (group.Add(pipe.Id2)) {
 					added++;
 				}
 			}
 		} while (added != 0);
-		return group0.Count;
+		return group;
+	}
+
+	public static int GroupsInPipes(this IEnumerable<Pipe> pipes)
+	{
+		int count = 0;
+		HashSet<int> seen = [];
+
+		foreach (int id in pipes.Select(p => p.Id1).Distinct()) {
+			if (seen.DoesNotContain(id)) {
+				seen.UnionWith(pipes.PipesInGroup(id));
+				count++;
+			}
+		}
+
+		return count;
 	}
 }
 
-	internal sealed partial class Day12Types
+internal sealed partial class Day12Types
 {
 	public record Pipe(int Id1, int Id2);
 }
