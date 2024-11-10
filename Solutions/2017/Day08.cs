@@ -3,10 +3,10 @@ using static AdventOfCode.Solutions._2017.Day08Types;
 namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
-/// Day 08: Title
+/// Day 08: I Heard You Like Registers
 /// https://adventofcode.com/2016/day/08
 /// </summary>
-[Description("")]
+[Description("I Heard You Like Registers")]
 public sealed partial class Day08 {
 
 	[Init]
