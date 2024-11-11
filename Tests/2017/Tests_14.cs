@@ -8,7 +8,15 @@ public class Tests_14_Disk_Defragmentation(ITestOutputHelper testOutputHelper)
 	[InlineData("flqrgnkx", 8108)]
 	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData("flqrgnkx", 1242)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
 	}
 

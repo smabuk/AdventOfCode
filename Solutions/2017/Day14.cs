@@ -10,7 +10,7 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day14 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input)
 	{
@@ -19,14 +19,49 @@ public sealed partial class Day14 {
 			.Sum();
 	}
 
-
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2(string[] input) {
+		return Enumerable.Range(0, 128)
+			.Select(i => $"{input[0]}-{i}".KnotHash().AsBinaryFromHex()[..128])
+			.To2dArray()
+			.CountRegions((char c) => c is ONE);
 	}
 }
 
 file static class Day14Extensions
 {
+	public static int CountRegions(this char[,] grid, Func<char, bool> predicate)
+	{
+		int count = 0;
+		bool[,] visited = new bool[grid.ColsCount(), grid.RowsCount()];
+
+		foreach (Cell<char> cell in grid.WalkWithValues()) {
+			if (predicate(cell.Value) && !visited[cell.Col, cell.Row]) {
+				DFS(grid, visited, cell.Col, cell.Row, predicate);
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	public static void DFS(char[,] grid, bool[,] visited, int col, int row, Func<char, bool> predicate)
+	{
+		Stack<(int, int)> stack = [];
+		stack.Push((col, row));
+		visited[col, row] = true;
+
+		while (stack.Count > 0) {
+			(int currentCol, int currentRow) = stack.Pop();
+
+			foreach (Cell<char> adjacentCell in grid.GetAdjacentCells(currentCol, currentRow)) {
+				if (predicate(adjacentCell.Value) && !visited[adjacentCell.Col, adjacentCell.Row]) {
+					stack.Push((adjacentCell.Col, adjacentCell.Row));
+					visited[adjacentCell.Col, adjacentCell.Row] = true;
+				}
+			}
+		}
+	}
+
 	public static string ToHexString(this List<byte> hash) => Convert.ToHexStringLower([.. hash]);
 
 	public static string KnotHash(this string keyString)
