@@ -11,4 +11,12 @@ public class Tests_16_Permutation_Promenade
 		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, programs);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("""s1,x3/4,pe/b""", "abcde", "abcde")]
+	public void Part2(string input, string programs,string expected)
+	{
+		string actual = SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, programs);
+		actual.ShouldBe(expected);
+	}
 }

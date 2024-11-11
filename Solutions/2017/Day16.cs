@@ -17,7 +17,11 @@ public sealed partial class Day16 {
 		return Solution1(programs).ToString();
 	}
 
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input, params object[]? args)
+	{
+		string programs = GetArgument<string>(args, argumentNumber: 1, defaultResult: "abcdefghijklmnop");
+		return Solution2(programs).ToString();
+	}
 
 	private static List<Instruction> _instructions = [];
 
@@ -26,8 +30,22 @@ public sealed partial class Day16 {
 
 	private static string Solution1(string programs) => _instructions.Dance(programs);
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static string Solution2(string programs) {
+		const int ONE_BILLION = 1_000_000_000;
+
+		List<string> seen = [programs];
+
+		int loop;
+		for (loop = 1; loop <= ONE_BILLION; loop++) {
+			programs = _instructions.Dance(programs);
+			if (seen.Contains(programs)) {
+				break;
+			} else {
+				seen.Add(programs);
+			}
+		}
+
+		return seen[ONE_BILLION % loop];
 	}
 }
 
