@@ -9,19 +9,29 @@ namespace AdventOfCode.Solutions._2017;
 [Description("Disk Defragmentation")]
 public sealed partial class Day14 {
 
-	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input) => Solution2(input).ToString();
+	[Init]
+	public static void Init(string[] input) => LoadInstructions(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static int Solution1(string[] input)
+	private static List<string> _binaryKnotHashes = [];
+
+	private static void LoadInstructions(string[] input)
 	{
-		return Enumerable.Range(0, 128)
-			.Select(i => $"{input[0]}-{i}".KnotHash().AsBinaryFromHex()[..128].Count(c => c == ONE))
+		_binaryKnotHashes = [
+			..Enumerable.Range(0, 128)
+			.Select(i => $"{input[0]}-{i}".KnotHash().AsBinaryFromHex()[..128])];
+	}
+
+	private static int Solution1()
+	{
+		return _binaryKnotHashes
+			.Select(i => i.Count(c => c is ONE))
 			.Sum();
 	}
 
-	private static int Solution2(string[] input) {
-		return Enumerable.Range(0, 128)
-			.Select(i => $"{input[0]}-{i}".KnotHash().AsBinaryFromHex()[..128])
+	private static int Solution2() {
+		return _binaryKnotHashes
 			.To2dArray()
 			.CountRegions((char c) => c is ONE);
 	}
@@ -29,7 +39,7 @@ public sealed partial class Day14 {
 
 file static class Day14Extensions
 {
-	public static int CountRegions(this char[,] grid, Func<char, bool> predicate)
+	public static int CountRegions(this char[,] grid, Predicate<char> predicate)
 	{
 		int count = 0;
 		bool[,] visited = new bool[grid.ColsCount(), grid.RowsCount()];
@@ -44,7 +54,7 @@ file static class Day14Extensions
 		return count;
 	}
 
-	public static void DFS(char[,] grid, bool[,] visited, int col, int row, Func<char, bool> predicate)
+	public static void DFS(char[,] grid, bool[,] visited, int col, int row, Predicate<char> predicate)
 	{
 		Stack<(int, int)> stack = [];
 		stack.Push((col, row));
