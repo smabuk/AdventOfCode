@@ -9,8 +9,8 @@ namespace AdventOfCode.Solutions._2017;
 [Description("Spinlock")]
 public sealed partial class Day17 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input) => Solution1(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	private static int Solution1(string[] input) {
 		int steps = input[0].As<int>();
@@ -18,7 +18,7 @@ public sealed partial class Day17 {
 		List<int> buffer = [0];
 
 		int currentIndex = 0;
-		for (int i = 1; i <= NO_OF_INSERTIONS; i++) {
+		for (int i = 1; i <= NO_OF_INSERTIONS_PART1; i++) {
 			currentIndex = ((currentIndex + steps) % buffer.Count) + 1;
 			buffer.Insert(currentIndex, i);
 		}
@@ -26,8 +26,19 @@ public sealed partial class Day17 {
 		return buffer[currentIndex + 1];
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2(string[] input) {
+		int steps = input[0].As<int>();
+
+		int value = 0;
+		int currentIndex = 0;
+		for (int i = 1; i <= NO_OF_INSERTIONS_PART2; i++) {
+			currentIndex = ((currentIndex + steps) % i) + 1;
+			if (currentIndex == 1) {
+				value = i;
+			}
+		}
+
+		return value;
 	}
 }
 
@@ -41,5 +52,6 @@ internal sealed partial class Day17Types
 
 file static class Day17Constants
 {
-	public const int NO_OF_INSERTIONS = 2017;
+	public const int NO_OF_INSERTIONS_PART1 = 2017;
+	public const int NO_OF_INSERTIONS_PART2 = 50_000_000;
 }
