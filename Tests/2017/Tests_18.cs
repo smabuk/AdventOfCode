@@ -22,4 +22,20 @@ public class Tests_18_Duet
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("""
+		snd 1
+		snd 2
+		snd p
+		rcv a
+		rcv b
+		rcv c
+		rcv d
+		""", 3)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

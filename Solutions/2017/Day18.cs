@@ -10,9 +10,9 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day18 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
+	public static   void  Init(string[] input) => LoadInstructions(input);
 	public static string Part1(string[] _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static List<Instruction> _instructions = [];
 
@@ -24,8 +24,13 @@ public sealed partial class Day18 {
 		return _instructions.ExecuteCodePart1(registers);
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() {
+		long[][] registers = [new long[26], new long[26]];
+		registers[0]["p".RegIndex()] = 0;
+		registers[1]["p".RegIndex()] = 1;
+
+
+		return int.MinValue;
 	}
 }
 
@@ -35,6 +40,50 @@ file static class Day18Extensions
 	{
 		long lastSound = int.MinValue;
 
+		for (int ptr = 0; ptr < instructions.Count; ptr++) {
+			Instruction instruction = instructions[ptr];
+			switch (instruction) {
+				case SndInstruction sndInstruction:
+					lastSound = sndInstruction.X.GetValue(registers);
+					break;
+				case SetInstruction setInstruction:
+					registers[setInstruction.X.RegIndex()] = setInstruction.Y.GetValue(registers);
+					break;
+				case AddInstruction addInstruction:
+					registers[addInstruction.X.RegIndex()] += addInstruction.Y.GetValue(registers);
+					break;
+				case MulInstruction mulInstruction:
+					registers[mulInstruction.X.RegIndex()] *= mulInstruction.Y.GetValue(registers);
+					break;
+				case ModInstruction modInstruction:
+					registers[modInstruction.X.RegIndex()] %= modInstruction.Y.GetValue(registers);
+					break;
+				case RcvInstruction rcvInstruction:
+					if (rcvInstruction.X.GetValue(registers) != 0) {
+						return lastSound;
+					};
+					break;
+				case JgzInstruction jgzInstruction:
+					ptr += jgzInstruction.X.GetValue(registers) > 0
+						? (int)jgzInstruction.Y.GetValue(registers) - 1
+						: 0;
+					break;
+				default:
+					break;
+			}
+		}
+
+		return lastSound;
+	}
+
+	public static long ExecuteCodePart2_Duet(this List<Instruction> instructions, long[][] allRegisters)
+	{
+		long lastSound = int.MinValue;
+
+		long[] registers = allRegisters[0];
+
+		int ptr0 = 0;
+		int ptr1 = 0;
 		for (int ptr = 0; ptr < instructions.Count; ptr++) {
 			Instruction instruction = instructions[ptr];
 			switch (instruction) {
