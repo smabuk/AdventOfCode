@@ -25,9 +25,20 @@ public sealed partial class Day18 {
 	}
 
 	private static int Solution2() {
-		long[][] registers = [new long[26], new long[26]];
-		registers[0]["p".RegIndex()] = 0;
-		registers[1]["p".RegIndex()] = 1;
+		Program[] programs = [
+			new(0, new long[26], _instructions, [], []),
+			new(1, new long[26], _instructions, [], []),
+		];
+
+		programs[0].Registers["p".RegIndex()] = 0;
+		programs[1].Registers["p".RegIndex()] = 1;
+
+		programs[0] = programs[0] with { Input = programs[1].Output };
+		programs[1] = programs[1] with { Input = programs[0].Output };
+		
+		//programs[1].Output.Enqueue(111);
+		//programs[0].Output.Enqueue(222);
+
 
 
 		return int.MinValue;
@@ -76,19 +87,18 @@ file static class Day18Extensions
 		return lastSound;
 	}
 
-	public static long ExecuteCodePart2_Duet(this List<Instruction> instructions, long[][] allRegisters)
+	public static long ExecuteCodePart2_Duet(this Program[] programs)
 	{
-		long lastSound = int.MinValue;
+		List<Instruction> instructions = programs[0].Instructions;
+		long[] registers = programs[0].Registers;
+		Queue<long> input = programs[0].Input;
+		Queue<long> output = programs[0].Output;
 
-		long[] registers = allRegisters[0];
-
-		int ptr0 = 0;
-		int ptr1 = 0;
 		for (int ptr = 0; ptr < instructions.Count; ptr++) {
 			Instruction instruction = instructions[ptr];
 			switch (instruction) {
 				case SndInstruction sndInstruction:
-					lastSound = sndInstruction.X.GetValue(registers);
+					output.Enqueue(sndInstruction.X.GetValue(registers));
 					break;
 				case SetInstruction setInstruction:
 					registers[setInstruction.X.RegIndex()] = setInstruction.Y.GetValue(registers);
@@ -103,9 +113,12 @@ file static class Day18Extensions
 					registers[modInstruction.X.RegIndex()] %= modInstruction.Y.GetValue(registers);
 					break;
 				case RcvInstruction rcvInstruction:
-					if (rcvInstruction.X.GetValue(registers) != 0) {
-						return lastSound;
-					};
+					if (input.Count != 0) {
+						registers[rcvInstruction.X.RegIndex()] = input.Dequeue();
+					} else {
+						ptr--;
+					}
+
 					break;
 				case JgzInstruction jgzInstruction:
 					ptr += jgzInstruction.X.GetValue(registers) > 0
@@ -117,7 +130,7 @@ file static class Day18Extensions
 			}
 		}
 
-		return lastSound;
+		return -999;
 	}
 
 	public static long GetValue(this string valueOrReg, long[] registers)
@@ -126,11 +139,14 @@ file static class Day18Extensions
 			? registers[valueOrReg.RegIndex()]
 			: valueOrReg.As<long>();
 	}
+
 	public static int RegIndex(this string registerName) => registerName[0] - REG_OFFSET;
 }
 
 internal sealed partial class Day18Types
 {
+
+	public record Program(int Id, long[] Registers, List<Instruction> Instructions, Queue<long> Input, Queue<long> Output);
 
 	public abstract record Instruction() : IParsable<Instruction>
 	{
