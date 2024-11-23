@@ -1,6 +1,9 @@
 ﻿using static Smab.Helpers.ArrayHelpers;
 using static AdventOfCode.Solutions._2017.Day19Constants;
 using static AdventOfCode.Solutions._2017.Day19Types;
+
+using Direction = Smab.Helpers.Point;
+
 namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
@@ -34,41 +37,30 @@ file static class Day19Extensions
 	{
 		int steps = 1;
 		string path = "";
-		Cell<char> current = diagram.WalkWithValues().Single(cell => cell.Y == 0 && cell.Value == VERTICAL);
-		Point direction = new(DOWN);
+		Direction direction = new(DOWN);
+		Point current = diagram.WalkWithValues().Single(cell => cell.Y == 0 && cell.Value == VERTICAL).Index + direction;
 
-		while (diagram.IsInBounds(current)) {
-			if (char.IsAsciiLetter(current.Value)) {
-				path = $"{path}{current.Value}";
-			}
-
-			if (current.Value == JOIN) {
-				if (direction.X == 0) {
-					Point possible = current.Index.Left();
-					direction = diagram.IsInBounds(possible) && diagram[possible.X, possible.Y] is not (VERTICAL or SPACE)
-						? new(LEFT)
-						: new(RIGHT);
-				} else {
-					Point possible = current.Index.Up();
-					direction = diagram.IsInBounds(possible) && diagram[possible.X, possible.Y] is not (HORIZONTAL or SPACE)
-						? new(UP)
-						: new(DOWN);
-				}
-			}
-
-			Point next = current.Index + direction;
-
-			if (diagram.IsOutOfBounds(next)) {
-				break;
-			}
-
-			current = diagram.GetAdjacentCells(current).Single(cell => cell.Index == next);
-
-			if (diagram[current.X, current.Y] == SPACE) {
-				break;
-			}
-
+		while (diagram.TryGetValue(current, out char value) && value != SPACE) {
 			steps++;
+
+			if (char.IsAsciiLetter(value)) {
+				path = $"{path}{value}";
+			}
+
+			direction = value switch
+			{
+				JOIN when direction.X is 0
+					=> diagram.TryGetValue(current.Left(), out value) && value is not (VERTICAL or SPACE)
+						? new(LEFT)
+						: new(RIGHT),
+				JOIN when direction.Y is 0
+					=> diagram.TryGetValue(current.Up(), out value) && value is not (HORIZONTAL or SPACE)
+						? new(UP)
+						: new(DOWN),
+				_ => direction,
+			};
+
+			current += direction;
 		}
 
 		return (path, steps);
