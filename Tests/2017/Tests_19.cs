@@ -20,6 +20,22 @@ public class Tests_19_A_Series_of_Tubes(ITestOutputHelper testOutputHelper)
 	}
 
 
+	[Theory]
+	[InlineData("""
+		    |          
+		    |  +--+    
+		    A  |  C    
+		F---|----E|--+ 
+		    |  |  |  D 
+		    +B-+  +--+ 
+		""", 38)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+
 	private void Callback(string[] lines, bool _)
 	{
 		if (lines is null or []) {
