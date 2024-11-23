@@ -24,7 +24,13 @@ public sealed partial class Day18 {
 		return _instructions.ExecuteCodePart1(registers);
 	}
 
-	private static int Solution2() {
+	private static int Solution2() =>
+		InitPrograms()
+		.ExecuteCodePart2_Duet()
+		.Count(progId => progId == 1);
+
+	private static Program[] InitPrograms()
+	{
 		Program[] programs = [
 			new(0, new long[26], _instructions, [], []),
 			new(1, new long[26], _instructions, [], []),
@@ -33,15 +39,11 @@ public sealed partial class Day18 {
 		programs[0].Registers["p".RegIndex()] = 0;
 		programs[1].Registers["p".RegIndex()] = 1;
 
+		// One program's input is another one's output
 		programs[0] = programs[0] with { Input = programs[1].Output };
 		programs[1] = programs[1] with { Input = programs[0].Output };
-		
-		//programs[1].Output.Enqueue(111);
-		//programs[0].Output.Enqueue(222);
 
-
-
-		return int.MinValue;
+		return programs;
 	}
 }
 
@@ -87,18 +89,18 @@ file static class Day18Extensions
 		return lastSound;
 	}
 
-	public static long ExecuteCodePart2_Duet(this Program[] programs)
+	public static IEnumerable<int> ExecuteCodePart2_Duet(this Program[] programs)
 	{
-		List<Instruction> instructions = programs[0].Instructions;
-		long[] registers = programs[0].Registers;
-		Queue<long> input = programs[0].Input;
-		Queue<long> output = programs[0].Output;
+		int progId = 0;
+		long[] registers;
 
-		for (int ptr = 0; ptr < instructions.Count; ptr++) {
-			Instruction instruction = instructions[ptr];
-			switch (instruction) {
+		while (programs.All(p => p.IsRunning) && !programs.All(p => p.IsWaiting)) {
+			programs[progId] = programs[progId].Next();
+			registers = programs[progId].Registers;
+			switch (programs[progId].Instruction) {
 				case SndInstruction sndInstruction:
-					output.Enqueue(sndInstruction.X.GetValue(registers));
+					programs[progId].Output.Enqueue(sndInstruction.X.GetValue(registers));
+					yield return progId;
 					break;
 				case SetInstruction setInstruction:
 					registers[setInstruction.X.RegIndex()] = setInstruction.Y.GetValue(registers);
@@ -113,24 +115,24 @@ file static class Day18Extensions
 					registers[modInstruction.X.RegIndex()] %= modInstruction.Y.GetValue(registers);
 					break;
 				case RcvInstruction rcvInstruction:
-					if (input.Count != 0) {
-						registers[rcvInstruction.X.RegIndex()] = input.Dequeue();
+					if (programs[progId].Input.Count != 0) {
+						registers[rcvInstruction.X.RegIndex()] = programs[progId].Input.Dequeue();
 					} else {
-						ptr--;
-					}
-
+						programs[progId] = programs[progId].Wait();
+						progId = (progId + 1) % 2;
+					};
 					break;
 				case JgzInstruction jgzInstruction:
-					ptr += jgzInstruction.X.GetValue(registers) > 0
+					int delta = jgzInstruction.X.GetValue(registers) > 0
 						? (int)jgzInstruction.Y.GetValue(registers) - 1
 						: 0;
+					programs[progId] = programs[progId].Next(delta);
 					break;
 				default:
 					break;
 			}
+			
 		}
-
-		return -999;
 	}
 
 	public static long GetValue(this string valueOrReg, long[] registers)
@@ -146,7 +148,18 @@ file static class Day18Extensions
 internal sealed partial class Day18Types
 {
 
-	public record Program(int Id, long[] Registers, List<Instruction> Instructions, Queue<long> Input, Queue<long> Output);
+	public record Program(int Id, long[] Registers, List<Instruction> Instructions, Queue<long> Input, Queue<long> Output)
+	{
+		int ptr = -1;
+		bool waiting = false;
+
+		public Program Next(int delta = 1) => this with { ptr = ptr + delta, waiting = false };
+		public Program Wait(int delta = -1) => this with { ptr = ptr + delta, waiting = true };
+		public Instruction Instruction => Instructions[ptr];
+
+		public bool IsRunning => ptr < Instructions.Count;
+		public bool IsWaiting => waiting && Input.Count == 0;
+	}
 
 	public abstract record Instruction() : IParsable<Instruction>
 	{
