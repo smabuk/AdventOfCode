@@ -12,7 +12,9 @@ public sealed partial class Day20 {
 	[Init]
 	public static   void  Init(string[] input, params object[]? args) => LoadParticles(input);
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] input, params object[]? args) => input.Length > 10
+		? NO_SOLUTION_WRITTEN_MESSAGE
+		: Solution2(input).ToString();
 
 	private static List<Particle> _particles = [];
 
@@ -32,8 +34,28 @@ public sealed partial class Day20 {
 			.Id;
 	}
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2(string[] input) {
+
+		List<Particle> particles = [.. _particles];
+
+		for (int iter = 0; iter < 10_000; iter++) {
+			for (int i = 0; i < particles.Count; i++) {
+				particles[i] = particles[i].Update();
+			}
+
+			HashSet<Point3d> dupePositions = [..particles
+				.CountBy(p => p.Position)
+				.Where(kvp => kvp.Value > 1)
+				.Select(kvp => kvp.Key)];
+
+			_ = particles.RemoveAll(p => p.Position.IsIn(dupePositions));
+
+			if (particles.Count == 1) {
+				break;
+			}
+		}
+
+		return particles.Count;
 	}
 }
 
