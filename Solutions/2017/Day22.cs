@@ -24,65 +24,42 @@ public sealed partial class Day22 {
 		return Solution2(input, noOfBursts).ToString();
 	}
 
-	private static int Solution1(string[] input, int noOfBursts) {
-		Dictionary<Point, bool> nodes =
-			input
-			.Index()
-			.SelectMany(row =>
-					row.Item
-					.Index()
-					.Select(col => new Node(new(col.Index, row.Index), col.Item == INFECTED ? Infected : Clean)))
-			.ToDictionary(n => n.Position, n => n.State == Infected);
-
-		int mid = (input.Length - 1) / 2;
-		Carrier current = new(new Point(mid, mid), Up);
-		
-		int infectionBursts = 0;
-		for (int burst = 0; burst < noOfBursts; burst++) {
-			bool infected = nodes.GetValueOrDefault(current.Position, false);
-			current = infected
-				? current.TurnRight()
-				: current.TurnLeft();
-
-			if (infected) {
-				nodes[current.Position] = false;
-			} else {
-				nodes[current.Position] = true;
-				infectionBursts++;
-			}
-
-			current = current.Move();
-		}
-
-		return infectionBursts;
+	private static int Solution1(string[] input, int noOfBursts)
+	{
+		return input.ParseInput().InfectedBursts(
+			noOfBursts,
+			new(new Point((input.Length - 1) / 2, (input.Length - 1) / 2), Up), 
+			(State state) => state.FlipState(),
+			(Carrier carrier, State state) => carrier.Turn(state)
+			);
 	}
 
+
 	private static int Solution2(string[] input, int noOfBursts) {
-		Dictionary<Point, State> nodes =
-			input
-			.Index()
-			.SelectMany(row =>
-					row.Item
-					.Index()
-					.Select(col => new Node(new(col.Index, row.Index), col.Item == INFECTED ? Infected : Clean)))
-			.ToDictionary(n => n.Position, n => n.State);
+		return input.ParseInput().InfectedBursts(
+			noOfBursts,
+			new(new Point((input.Length - 1) / 2, (input.Length - 1) / 2), Up),
+			(State state) => state.NextState(),
+			(Carrier carrier, State state) => carrier.Turn(state)
+			);
+	}
+}
 
-		int mid = (input.Length - 1) / 2;
-		Carrier current = new(new Point(mid, mid), Up);
-
+file static class Day22Extensions
+{
+	public static int InfectedBursts(
+		this Dictionary<Point, State> nodes,
+		int noOfBursts,
+		Carrier current,
+		Func<State, State> nextState,
+		Func<Carrier, State, Carrier> nextDirection)
+	{
 		int infectionBursts = 0;
 		for (int burst = 0; burst < noOfBursts; burst++) {
 			State state = nodes.GetValueOrDefault(current.Position, Clean);
-			current = state switch
-			{
-				Clean => current.TurnLeft(),
-				Weakened => current,
-				Infected => current.TurnRight(),
-				Flagged => current.TurnAround(),
-				_ => throw new NotImplementedException(),
-			};
+			current = nextDirection(current, state);
 
-			State newState = state.NextState();
+			State newState = nextState(state);
 			if (newState is Infected) {
 				infectionBursts++;
 			}
@@ -93,10 +70,7 @@ public sealed partial class Day22 {
 
 		return infectionBursts;
 	}
-}
 
-file static class Day22Extensions
-{
 	public static Carrier Move(this Carrier carrier)
 	{
 		return carrier with
@@ -109,6 +83,19 @@ file static class Day22Extensions
 				Left  => carrier.Position.Left() ,
 				_ => throw new NotImplementedException(),
 			}
+		};
+	}
+
+
+	public static Carrier Turn(this Carrier carrier, State state)
+	{
+		return state switch
+		{
+			Clean    => carrier.TurnLeft(),
+			Weakened => carrier,
+			Infected => carrier.TurnRight(),
+			Flagged  => carrier.TurnAround(),
+			_ => throw new NotImplementedException(),
 		};
 	}
 
@@ -156,6 +143,15 @@ file static class Day22Extensions
 			}
 		};
 	}
+	public static State FlipState(this State state)
+	{
+		return state switch
+			{
+				Clean    => Infected,
+				Infected => Clean,
+				_ => throw new NotImplementedException(),
+			};
+	}
 
 	public static State NextState(this State state)
 	{
@@ -167,6 +163,17 @@ file static class Day22Extensions
 				Flagged  => Clean,
 				_ => throw new NotImplementedException(),
 			};
+	}
+
+	public static Dictionary<Point, State> ParseInput(this string[] input)
+	{
+		return input
+			.Index()
+			.SelectMany(row =>
+					row.Item
+					.Index()
+					.Select(col => new Node(new(col.Index, row.Index), col.Item == INFECTED ? Infected : Clean)))
+			.ToDictionary(n => n.Position, n => n.State);
 	}
 }
 
