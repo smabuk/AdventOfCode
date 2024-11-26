@@ -10,9 +10,9 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day23 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input) => LoadInstructions(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static List<Instruction> _instructions = [];
 
@@ -20,12 +20,16 @@ public sealed partial class Day23 {
 		_instructions = [.. input.As<Instruction>()];
 	}
 
-	private static long Solution1(string[] input) {
+	private static long Solution1() {
 		return _instructions.ExecuteCodePart1(new long[8]);
 	}
 
-	private static string Solution2(string[] input) {
+	private static string Solution2() {
 		return NO_SOLUTION_WRITTEN_MESSAGE;
+		//long[] registers = new long[8];
+		//registers[0] = 1;
+		//_ = _instructions.ExecuteCodePart1(registers);
+		//return "h".GetValue(registers).ToString();
 	}
 }
 
@@ -39,7 +43,7 @@ file static class Day23Extensions
 			Instruction instruction = instructions[ptr];
 			switch (instruction) {
 				case SetInstruction setInstruction:
-					registers[setInstruction.X.RegIndex()] = setInstruction.Y.GetValue(registers);
+					_ = registers.SetValue(setInstruction.X, setInstruction.Y);
 					break;
 				case SubInstruction subInstruction:
 					registers[subInstruction.X.RegIndex()] -= subInstruction.Y.GetValue(registers);
@@ -66,6 +70,12 @@ file static class Day23Extensions
 		return Char.IsLetter(valueOrReg[0])
 			? registers[valueOrReg.RegIndex()]
 			: valueOrReg.As<long>();
+	}
+
+	public static long[] SetValue(this long[] registers, string reg, string valueOrReg )
+	{
+		registers[reg.RegIndex()] = valueOrReg.GetValue(registers);
+		return registers;
 	}
 
 	public static int RegIndex(this string registerName) => registerName[0] - REG_OFFSET;
