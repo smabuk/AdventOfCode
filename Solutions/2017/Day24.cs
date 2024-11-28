@@ -10,55 +10,52 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day24 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadComponents(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static   void  Init(string[] input) => LoadBridges(input);
+	public static string Part1(string[] _) => Solution1().ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static IEnumerable<MagneticComponent> _components = [];
+	private static List<MagneticComponent> _components = [];
+	private static List<Bridge> _bridges = [];
 
-	private static void LoadComponents(string[] input) {
-		_components = input.As<MagneticComponent>();
+	private static void LoadBridges(string[] input) {
+		_components = [.. input.As<MagneticComponent>()];
+		_bridges = [
+			.. _components
+			.Where(mc => mc.PortType1 == 0)
+			.SelectMany(mc => new Bridge([mc], mc.PortType2).BuildBridges([.. _components.Except([mc])]))
+			];
 	}
 
-	private static int Solution1(string[] input) {
-		//List<MagneticComponent> components = [.. input.As<MagneticComponent>()];
-		return _components
-			.Where(c => c.PortType1 == 0)
-			.Select(c => new Bridge([c], c.PortType2).BridgeSize([.._components]))
-			.Max();
-	}
+	private static int Solution1() => _bridges.Max(b => b.Size);
 
-	private static string Solution2(string[] input) {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() {
+		return _bridges
+			.OrderByDescending(b => b.Length)
+			.ThenByDescending(b => b.Size)
+			.First()
+			.Size;
 	}
 }
 
 file static class Day24Extensions
 {
-	public static int BridgeSize(this Bridge bridge, List<MagneticComponent> components)
+	public static List<Bridge> BuildBridges(this Bridge bridge, List<MagneticComponent> components)
 	{
-		List<MagneticComponent> subcomponents = [..components.Except(bridge.MagneticComponents)];
-		List<MagneticComponent> comp1 = [.. subcomponents.Where(c => c.PortType1 == bridge.End)];
-		List<MagneticComponent> comp2 = [.. subcomponents.Where(c => c.PortType2 == bridge.End)];
+		List<MagneticComponent> components1 = [.. components.Where(c => c.PortType1 == bridge.End)];
+		List<MagneticComponent> components2 = [.. components.Where(c => c.PortType2 == bridge.End && c.PortType1 != c.PortType2)];
 
-		if (comp1 is [] && comp2 is []) {
-			return bridge.Size;
-		}
-
-		int max = int.MinValue;
-		foreach (MagneticComponent comp in comp1) {
-			max = int.Max(max, (bridge with { MagneticComponents = [.. bridge.MagneticComponents, comp], End = comp.PortType2 }).BridgeSize(subcomponents));
-		}
-
-		foreach (MagneticComponent comp in comp2) {
-			max = int.Max(
-				max,
-				(bridge with {
-					MagneticComponents = [.. bridge.MagneticComponents, comp],
-					End = comp.PortType1 }).BridgeSize(subcomponents));
-		}
-
-		return max;
+		return components1 switch
+		{
+			[] when components2 is [] => [bridge],
+			_ => [
+				..components1
+					.SelectMany(comp => (bridge with { MagneticComponents = [.. bridge.MagneticComponents, comp], End = comp.PortType2 })
+					.BuildBridges([..components.Except([comp])])),
+				..components2
+					.SelectMany(comp => (bridge with { MagneticComponents = [.. bridge.MagneticComponents, comp], End = comp.PortType1 })
+					.BuildBridges([..components.Except([comp])])),
+				]
+		};
 	} 
 }
 
@@ -83,6 +80,7 @@ internal sealed partial class Day24Types
 	public record Bridge(List<MagneticComponent> MagneticComponents, int End)
 	{
 		public int Size => MagneticComponents.Sum(mc => mc.Size);
+		public int Length => MagneticComponents.Count;
 	};
 }
 
