@@ -19,40 +19,23 @@ public sealed partial class Day11 {
 	private static void LoadDirections(string[] input) => 
 		_directions = [
 			.. input[0]
-				.TrimmedSplit(',')
-				.Select(d => Enum.Parse<Direction>(d.ToUpperInvariant()))];
+				.ToUpperInvariant()
+				.TrimmedSplit(COMMA)
+				.Select(Enum.Parse<Direction>)];
 
-	private static int Solution1() => _directions.Move().Last().Distance;
-
-	private static string Solution2() {
-		return NO_SOLUTION_WRITTEN_MESSAGE;
-	}
+	private static int Solution1() => _directions.Travel().Last().Distance;
+	private static int Solution2() => _directions.Travel().Max(h => h.Distance);
 }
 
 file static class Day11Extensions
 {
-	public static IEnumerable<HexCoordinate> Move(this IEnumerable<Direction> directions)
+	public static IEnumerable<HexCoordinate> Travel(this IEnumerable<Direction> directions)
 	{
 		HexCoordinate current = new(0, 0, 0);
 
-		foreach (var direction in directions) {
-			current = current.Move(direction);
-			yield return current;
+		foreach (Direction direction in directions) {
+			yield return current = current.Step(direction);
 		}
-	} 
-
-	public static HexCoordinate Move(this HexCoordinate hexCoordinate, Direction direction)
-	{
-		return direction switch
-		{
-			Direction.NW => hexCoordinate with { X = hexCoordinate.X - 1, Y = hexCoordinate.Y + 1, Z = hexCoordinate.Z + 0 },
-			Direction.N  => hexCoordinate with { X = hexCoordinate.X + 0, Y = hexCoordinate.Y + 1, Z = hexCoordinate.Z - 1 },
-			Direction.NE => hexCoordinate with { X = hexCoordinate.X + 1, Y = hexCoordinate.Y + 0, Z = hexCoordinate.Z - 1 },
-			Direction.SW => hexCoordinate with { X = hexCoordinate.X - 1, Y = hexCoordinate.Y + 0, Z = hexCoordinate.Z + 1 },
-			Direction.S  => hexCoordinate with { X = hexCoordinate.X + 0, Y = hexCoordinate.Y - 1, Z = hexCoordinate.Z + 1 },
-			Direction.SE => hexCoordinate with { X = hexCoordinate.X + 1, Y = hexCoordinate.Y - 1, Z = hexCoordinate.Z + 0 },
-			_ => throw new NotImplementedException(),
-		};
 	} 
 }
 
@@ -69,12 +52,33 @@ internal sealed partial class Day11Types
 		SW
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="X">Represents the NW <--> SE axis</param>
+	/// <param name="Y">Represents the  N <--> S  axis</param>
+	/// <param name="Z">Represents the NE <--> SW axis</param>
 	public record HexCoordinate(int X, int Y, int Z)
 	{
 		public int Distance => (int.Abs(X) + int.Abs(Y) + int.Abs(Z)) / 2;
+
+		public HexCoordinate Step(Direction direction)
+		{
+			return direction switch
+			{
+				Direction.NW => this with { X = X - 1, Y = Y + 1, Z = Z + 0 },
+				Direction.N  => this with { X = X + 0, Y = Y + 1, Z = Z - 1 },
+				Direction.NE => this with { X = X + 1, Y = Y + 0, Z = Z - 1 },
+				Direction.SW => this with { X = X - 1, Y = Y + 0, Z = Z + 1 },
+				Direction.S  => this with { X = X + 0, Y = Y - 1, Z = Z + 1 },
+				Direction.SE => this with { X = X + 1, Y = Y - 1, Z = Z + 0 },
+				_ => throw new NotImplementedException(),
+			};
+		}
 	}
 }
 
 file static class Day11Constants
 {
+	public const char COMMA = ',';
 }
