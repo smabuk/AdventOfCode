@@ -14,7 +14,7 @@ public class Day15 {
 		int[,] grid = input.SelectMany(i => i.AsDigits<int>()).To2dArray(input[0].Length);
 
 		Point start = new(0, 0);
-		Point end = new(new(grid.GetUpperBound(0), grid.GetUpperBound(1)));
+		Point end = new(grid.GetUpperBound(0), grid.GetUpperBound(1));
 
 		Dictionary<Point, int> costs = Dijkstras(grid, start, end);
 
@@ -45,7 +45,7 @@ public class Day15 {
 		}
 
 		Point start = new(0, 0);
-		Point end = new(new(grid.GetUpperBound(0), grid.GetUpperBound(1)));
+		Point end = new(grid.GetUpperBound(0), grid.GetUpperBound(1));
 
 		Dictionary<Point, int> costs = Dijkstras(grid, start, end);
 
