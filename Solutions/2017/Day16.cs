@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 16: Permutation Promenade
-/// https://adventofcode.com/2016/day/16
+/// https://adventofcode.com/2017/day/16
 /// </summary>
 [Description("Permutation Promenade")]
 public sealed partial class Day16 {

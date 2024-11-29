@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 03: Spiral Memory
-/// https://adventofcode.com/2016/day/03
+/// https://adventofcode.com/2017/day/03
 /// </summary>
 [Description("Spiral Memory")]
 public sealed partial class Day03 {

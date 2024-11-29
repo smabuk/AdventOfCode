@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 24: Electromagnetic Moat
-/// https://adventofcode.com/2016/day/24
+/// https://adventofcode.com/2017/day/24
 /// </summary>
 [Description("Electromagnetic Moat")]
 public sealed partial class Day24 {

@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 05: A Maze of Twisty Trampolines, All Alike
-/// https://adventofcode.com/2016/day/05
+/// https://adventofcode.com/2017/day/05
 /// </summary>
 [Description("A Maze of Twisty Trampolines, All Alike")]
 public sealed partial class Day05 {

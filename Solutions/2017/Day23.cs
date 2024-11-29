@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 23: Coprocessor Conflagration
-/// https://adventofcode.com/2016/day/23
+/// https://adventofcode.com/2017/day/23
 /// </summary>
 [Description("Coprocessor Conflagration")]
 public sealed partial class Day23 {

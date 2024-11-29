@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 15: Dueling Generators
-/// https://adventofcode.com/2016/day/15
+/// https://adventofcode.com/2017/day/15
 /// </summary>
 [Description("Dueling Generators")]
 public sealed partial class Day15 {

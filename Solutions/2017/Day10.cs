@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 10: Knot Hash
-/// https://adventofcode.com/2016/day/10
+/// https://adventofcode.com/2017/day/10
 /// </summary>
 [Description("Knot Hash")]
 public sealed partial class Day10 {

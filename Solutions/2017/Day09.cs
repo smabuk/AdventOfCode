@@ -6,7 +6,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 09: Stream Processing
-/// https://adventofcode.com/2016/day/09
+/// https://adventofcode.com/2017/day/09
 /// </summary>
 [Description("Stream Processing")]
 public sealed partial class Day09 {

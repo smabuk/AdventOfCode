@@ -7,7 +7,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 22: Sporifica Virus
-/// https://adventofcode.com/2016/day/22
+/// https://adventofcode.com/2017/day/22
 /// </summary>
 [Description("Sporifica Virus")]
 public sealed partial class Day22 {

@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 12: Digital Plumber
-/// https://adventofcode.com/2016/day/12
+/// https://adventofcode.com/2017/day/12
 /// </summary>
 [Description("Digital Plumber")]
 public sealed partial class Day12 {

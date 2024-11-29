@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 07: Recursive Circus
-/// https://adventofcode.com/2016/day/07
+/// https://adventofcode.com/2017/day/07
 /// </summary>
 [Description("Recursive Circus")]
 public sealed partial class Day07 {

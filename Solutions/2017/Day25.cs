@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 25: The Halting Problem
-/// https://adventofcode.com/2016/day/25
+/// https://adventofcode.com/2017/day/25
 /// </summary>
 [Description("The Halting Problem")]
 public sealed partial class Day25 {

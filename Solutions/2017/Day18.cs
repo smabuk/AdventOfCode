@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 18: Duet
-/// https://adventofcode.com/2016/day/18
+/// https://adventofcode.com/2017/day/18
 /// </summary>
 [Description("Duet")]
 public sealed partial class Day18 {

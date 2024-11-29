@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 06: Memory Reallocation
-/// https://adventofcode.com/2016/day/06
+/// https://adventofcode.com/2017/day/06
 /// </summary>
 [Description("Memory Reallocation")]
 public sealed partial class Day06 {

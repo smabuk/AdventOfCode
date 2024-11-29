@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 14: Disk Defragmentation
-/// https://adventofcode.com/2016/day/14
+/// https://adventofcode.com/2017/day/14
 /// </summary>
 [Description("Disk Defragmentation")]
 public sealed partial class Day14 {

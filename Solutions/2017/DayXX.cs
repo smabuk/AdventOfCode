@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day XX: Title
-/// https://adventofcode.com/2016/day/XX
+/// https://adventofcode.com/2017/day/XX
 /// </summary>
 [Description("")]
 public sealed partial class DayXX {

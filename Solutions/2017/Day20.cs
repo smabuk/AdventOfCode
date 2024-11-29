@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 20: Particle Swarm
-/// https://adventofcode.com/2016/day/20
+/// https://adventofcode.com/2017/day/20
 /// </summary>
 [Description("Particle Swarm")]
 public sealed partial class Day20 {

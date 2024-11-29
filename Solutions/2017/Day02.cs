@@ -7,7 +7,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 02: Corruption Checksum
-/// https://adventofcode.com/2016/day/02
+/// https://adventofcode.com/2017/day/02
 /// </summary>
 [Description("Corruption Checksum")]
 public sealed partial class Day02 {

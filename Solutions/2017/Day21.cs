@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 21: Fractal Art
-/// https://adventofcode.com/2016/day/21
+/// https://adventofcode.com/2017/day/21
 /// </summary>
 [Description("Fractal Art")]
 public sealed partial class Day21 {

@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 04: High-Entropy Passphrases
-/// https://adventofcode.com/2016/day/04
+/// https://adventofcode.com/2017/day/04
 /// </summary>
 [Description("High-Entropy Passphrases")]
 public sealed partial class Day04 {

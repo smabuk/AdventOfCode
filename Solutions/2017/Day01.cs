@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Day 01: Inverse Captcha
-/// https://adventofcode.com/2016/day/01
+/// https://adventofcode.com/2017/day/01
 /// </summary>
 [Description("Inverse Captcha")]
 public sealed partial class Day01 {

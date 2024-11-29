@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 13: Packet Scanners
-/// https://adventofcode.com/2016/day/13
+/// https://adventofcode.com/2017/day/13
 /// </summary>
 [Description("Packet Scanners")]
 public sealed partial class Day13 {

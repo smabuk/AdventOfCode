@@ -8,7 +8,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 19: A Series of Tubes
-/// https://adventofcode.com/2016/day/19
+/// https://adventofcode.com/2017/day/19
 /// </summary>
 [Description("A Series of Tubes")]
 public sealed partial class Day19 {

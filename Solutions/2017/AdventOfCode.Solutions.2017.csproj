@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>AdventOfCode.Solutions._2017</RootNamespace>
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-		<!--<PublishAot>True</PublishAot>-->
+		<PublishAot>True</PublishAot>
 	</PropertyGroup>
 
 	<ItemGroup>

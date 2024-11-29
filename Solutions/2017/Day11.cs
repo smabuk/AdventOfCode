@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions._2017;
 
 /// <summary>
 /// Day 11: Hex Ed
-/// https://adventofcode.com/2016/day/11
+/// https://adventofcode.com/2017/day/11
 /// </summary>
 [Description("Hex Ed")]
 public sealed partial class Day11 {
