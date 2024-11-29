@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿using static AdventOfCode.Solutions._2024.DayXXConstants;
+using static AdventOfCode.Solutions._2024.DayXXTypes;
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day XX: Title
@@ -14,29 +16,29 @@ public sealed partial class DayXX {
 
 	private static IEnumerable<Instruction> _instructions = [];
 
-	private static void LoadInstructions(string[] input) {
-		_instructions = input.As<Instruction>();
-	}
+	private static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
 
-	private static string Solution1(string[] input) {
-		List<Instruction> instructions = [.. input.As<Instruction>()];
-		return "** Solution not written yet **";
-	}
+	private static string Solution1(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
 
-	private static string Solution2(string[] input) {
-		List<Instruction> instructions = [.. input.As<Instruction>()];
-		return "** Solution not written yet **";
-	}
+	private static string Solution2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
+}
 
-	private sealed record Instruction(string Name, int Value) : IParsable<Instruction> {
+file static class DayXXExtensions
+{
+}
+
+internal sealed partial class DayXXTypes
+{
+
+	public sealed record Instruction(string Name, int Value) : IParsable<Instruction>
+	{
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
 			//MatchCollection match = InputRegEx().Matches(input);
 			Match match = InputRegEx().Match(s);
-			if (match.Success) {
-				return new(match.Groups["opts"].Value, match.As<int>("number"));
-			}
-			return null!;
+			return match.Success
+				? new(match.Groups["opts"].Value, match.As<int>("number"))
+				: null!;
 		}
 
 		public static Instruction Parse(string s) => Parse(s, null);
@@ -45,5 +47,9 @@ public sealed partial class DayXX {
 	}
 
 	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
-	private static partial Regex InputRegEx();
+	public static partial Regex InputRegEx();
+}
+
+file static class DayXXConstants
+{
 }
