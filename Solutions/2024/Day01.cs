@@ -9,27 +9,21 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Historian Hysteria")]
 public sealed partial class Day01 {
 
-	[Init]
-	public static void Init(string[] input) => LoadLists(input);
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static (List<int> Left, List<int> Right) _lists = default;
+	private static List<int> _left  = [];
+	private static List<int> _right = [];
 
-	private static void LoadLists(string[] input)
+	[Init]
+	public static void LoadLists(string[] input)
 	{
-		_lists.Left  = [.. input.GetList(LEFT)];
-		_lists.Right = [.. input.GetList(RIGHT)];
+		_left  = [.. input.GetList(LEFT)];
+		_right = [.. input.GetList(RIGHT)];
 	}
 
-	private static int Solution1() => _lists.TotalDistance();
-
-	private static int Solution2()
-	{
-		return
-			(_lists.Left, _lists.Right.CountBy(n => n).ToDictionary())
-			.TotalSimilarityScore();
-	}
+	private static int Solution1() => (_left, _right).TotalDistance();
+	private static int Solution2() => _left.TotalSimilarityScore(_right.CountBy(n => n).ToDictionary());
 }
 
 file static class Day01Extensions
@@ -44,12 +38,11 @@ file static class Day01Extensions
 		.Zip(lists.List2.Order())
 		.Sum(Distance);
 
-	public static int SimilarityScore(this int number, Dictionary<int, int> list2Counts) =>
-		number * list2Counts.GetValueOrDefault(number, 0);
+	public static int SimilarityScore(this int number, Dictionary<int, int> counts) =>
+		number * counts.GetValueOrDefault(number, 0);
 
-	public static int TotalSimilarityScore(this (IEnumerable<int> List1, Dictionary<int, int> List2Counts) lists) =>
-		lists.List1
-		.Sum(number => number.SimilarityScore(lists.List2Counts));
+	public static int TotalSimilarityScore(this IEnumerable<int> list, Dictionary<int, int> counts) =>
+		list.Sum(number => number.SimilarityScore(counts));
 }
 
 internal sealed partial class Day01Types
