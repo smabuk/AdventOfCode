@@ -1,5 +1,4 @@
 ﻿using static AdventOfCode.Solutions._2024.Day01Constants;
-using static AdventOfCode.Solutions._2024.Day01Types;
 namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
@@ -22,37 +21,34 @@ public sealed partial class Day01 {
 		_right = [.. input.GetList(RIGHT)];
 	}
 
-	private static int Solution1() => (_left, _right).TotalDistance();
-	private static int Solution2() => _left.TotalSimilarityScore(_right.CountBy(n => n).ToDictionary());
+	private static int Solution1() => _left.TotalDistance(_right);
+	private static int Solution2() => _left.TotalSimilarityScore(_right);
 }
 
 file static class Day01Extensions
 {
-	public static IEnumerable<int> GetList(this string[] input, int index) =>
-		[.. input.Select(i => i.TrimmedSplit(SPACE)[index].As<int>())];
+	public static IEnumerable<int> GetList(this string[] input, int index)
+		=> [.. input.Select(i => i.TrimmedSplit().As<int>().Skip(index).First())];
 
-	public static int Distance(this (int First, int Second) numbers) => int.Abs(numbers.First - numbers.Second);
+	public static int Distance(this int first, int second) => int.Abs(first - second);
 
-	public static int TotalDistance(this (IEnumerable<int> List1, IEnumerable<int> List2) lists) =>
-		lists.List1.Order()
-		.Zip(lists.List2.Order())
-		.Sum(Distance);
+	public static int TotalDistance(this IEnumerable<int> list1, IEnumerable<int> list2)
+		=> list1.Order()
+			.Zip(list2.Order(), Distance)
+			.Sum();
 
-	public static int SimilarityScore(this int number, Dictionary<int, int> counts) =>
-		number * counts.GetValueOrDefault(number, 0);
+	public static int SimilarityScore(this int number, Dictionary<int, int> counts)
+		=> number * counts.GetValueOrDefault(number, 0);
 
-	public static int TotalSimilarityScore(this IEnumerable<int> list, Dictionary<int, int> counts) =>
-		list.Sum(number => number.SimilarityScore(counts));
-}
-
-internal sealed partial class Day01Types
-{
+	public static int TotalSimilarityScore(this IEnumerable<int> list1, IEnumerable<int> list2)
+	{
+		Dictionary<int, int> counts = list2.CountBy(n => n).ToDictionary();
+		return list1.Sum(number => number.SimilarityScore(counts));
+	}
 }
 
 file static class Day01Constants
 {
-	public const char SPACE = ' ';
-
 	public const int  LEFT  = 0;
 	public const int  RIGHT = 1;
 }
