@@ -9,21 +9,21 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Red-Nosed Reports")]
 public sealed partial class Day02 {
 
-	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] input) => Solution2(input).ToString();
+	public static string Part1(string[] _) => Solution(Day02Extensions.IsSafe).ToString();
+	public static string Part2(string[] _) => Solution(Day02Extensions.IsTolerablySafe).ToString();
 
-	private static int Solution1(string[] input)
-		=> input.GetReports().Count(r => r.IsSafe());
+	private static IEnumerable<IEnumerable<int>> _reports = [];
 
-	private static int Solution2(string[] input)
-		=> input.GetReports().Count(r => r.IsTolerablySafe());
+	[Init]
+	public static void LoadReports(string[] input)
+		=> _reports = [.. input.Select(i => i.As<int>(SPACE))];
+
+	private static int Solution(Func<IEnumerable<int>, bool> isSafe)
+		=> _reports.Count(isSafe);
 }
 
 file static class Day02Extensions
 {
-	public static IEnumerable<IEnumerable<int>> GetReports(this IEnumerable<string> input)
-		=> input.Select(i => i.As<int>(SPACE));
-
 	public static bool HasMinMaxGap(this (int First, int Second) pair)
 		=> int.Abs(pair.First - pair.Second) is >= MIN_GAP and <= MAX_GAP;
 
