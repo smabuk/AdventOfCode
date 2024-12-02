@@ -26,4 +26,18 @@ public class Tests_02_Red_Nosed_Reports
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 4)]
+	[InlineData("7 6 4 2 1", 1)]
+	[InlineData("1 2 7 8 9", 0)]
+	[InlineData("9 7 6 2 1", 0)]
+	[InlineData("1 3 2 4 5", 1)]
+	[InlineData("8 6 4 4 1", 1)]
+	[InlineData("1 3 6 7 9", 1)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
