@@ -16,13 +16,13 @@ public sealed partial class Day03 {
 
 	[Init]
 	public static void LoadInstructions(string[] input)
-		=> _instructions = [.. Instruction.Parse(string.Join("", input))];
+		=> _instructions = [.. input.GetInstructions()];
 
 	private static int Solution1() => _instructions.OfType<MulInstruction>().ProcessProgram();
 	private static int Solution2() => _instructions.ProcessProgram();
 }
 
-file static class Day03Extensions
+file static partial class Day03Extensions
 {
 	public static int ProcessProgram(this IEnumerable<Instruction> instructions)
 	{
@@ -33,45 +33,44 @@ file static class Day03Extensions
 				(Sum: 0, DoIt: true),
 				((int Sum, bool DoIt) agg, Instruction instruction) => instruction switch
 				{
-					DoInstruction  doi               => (agg.Sum            , doi.DoIt),
+					DoInstruction                    => (agg.Sum            , true),
+					DontInstruction                  => (agg.Sum            , false),
 					MulInstruction mul when agg.DoIt => (agg.Sum + mul.Value, true),
 					_ => agg,
 				},
 				agg => agg.Sum
 			);
 	}
+
+	public static IEnumerable<Instruction> GetInstructions(this string[] input)
+	{
+		foreach (Match match in InstructionRegEx().Matches(string.Join("", input))) {
+			yield return match.Value switch
+			{
+				DO   => new DoInstruction(match.Index),
+				DONT => new DontInstruction(match.Index),
+				_    => new MulInstruction(match.Index, match.As<int>("number1"), match.As<int>("number2")),
+			};
+		}
+	}
 }
 
 internal sealed partial class Day03Types
 {
-	public abstract record Instruction(int Index)
-	{
-		public static IEnumerable<Instruction> Parse(string s)
-		{
-			MatchCollection matches = InstructionRegEx().Matches(s);
-			foreach (Match match in matches) {
-				yield return match.Value[0] switch
-				{
-					'm' => new MulInstruction(match.Index, match.As<int>("number1"), match.As<int>("number2")),
-					'd' => new DoInstruction (match.Index, match.Value == "do()"),
-					_ => throw new NotImplementedException(),
-				};
-			}
-		}
-	}
-
+	public abstract record Instruction(int Index);
+	public sealed record DoInstruction(int Index) : Instruction(Index);
+	public sealed record DontInstruction(int Index) : Instruction(Index);
 	public sealed record MulInstruction(int Index, int Value1, int Value2) : Instruction(Index)
 	{
 		public int Value => Value1 * Value2;
 	}
 
-	public sealed record DoInstruction(int Index, bool DoIt) : Instruction(Index);
-
-
-	[GeneratedRegex("""mul\((?<number1>\d+),(?<number2>\d+)\)|do\(\)|don't\(\)""")]
+	[GeneratedRegex("""mul\((?<number1>\d{1,3}),(?<number2>\d{1,3})\)|do\(\)|don't\(\)""")]
 	public static partial Regex InstructionRegEx();
 }
 
 file static class Day03Constants
 {
+	public const string DO   = "do()";
+	public const string DONT = "don't()";
 }
