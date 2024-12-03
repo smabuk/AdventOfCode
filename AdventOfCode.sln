@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{FAC3FC96-CF98-423A-A096-8871B725BBB5}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		README.md = README.md
@@ -74,6 +75,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Tests.2016", "Tests\2016\AdventOfCode.Tests.2016.csproj", "{20F5685F-1B60-4A03-9B63-AA96846D73E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Tests.2017", "Tests\2017\AdventOfCode.Tests.2017.csproj", "{5ECB4924-0A7C-4A3F-AE73-38A053212E09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smab.AdventOfCode.Templates", "Templates\Smab.AdventOfCode.Templates.csproj", "{DAFCCCA0-9875-B58B-32CA-535F181149FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -181,6 +186,10 @@ Global
 		{5ECB4924-0A7C-4A3F-AE73-38A053212E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ECB4924-0A7C-4A3F-AE73-38A053212E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ECB4924-0A7C-4A3F-AE73-38A053212E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAFCCCA0-9875-B58B-32CA-535F181149FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAFCCCA0-9875-B58B-32CA-535F181149FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAFCCCA0-9875-B58B-32CA-535F181149FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAFCCCA0-9875-B58B-32CA-535F181149FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,6 +220,7 @@ Global
 		{ABE0EB70-C938-47C5-A4EB-CB3F293EC064} = {0E2403F5-DB07-48D7-B90F-A59012F1A227}
 		{20F5685F-1B60-4A03-9B63-AA96846D73E3} = {BE373B6C-BB7D-4721-9BC1-0208BB78B0D5}
 		{5ECB4924-0A7C-4A3F-AE73-38A053212E09} = {BE373B6C-BB7D-4721-9BC1-0208BB78B0D5}
+		{DAFCCCA0-9875-B58B-32CA-535F181149FA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A54B320-6F3A-4DDC-AA01-887E5AAE5660}
