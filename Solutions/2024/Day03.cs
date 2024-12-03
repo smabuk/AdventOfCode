@@ -9,32 +9,34 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Mull It Over")]
 public sealed partial class Day03 {
 
-	[Init]
-	public static   void  Init(string[] input) => LoadInstructions(input);
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static IEnumerable<Instruction> _instructions = [];
 
-	private static void LoadInstructions(string[] input)
+	[Init]
+	public static void LoadInstructions(string[] input)
 		=> _instructions = [.. Instruction.ParseAll(input)];
 
 	private static int Solution1()
-		=> _instructions
-			.OfType<MulInstruction>()
-			.Sum(mul => mul.Value1 * mul.Value2);
+		=> _instructions.OfType<MulInstruction>().Sum(mul => mul.Value);
 
-	private static int Solution2()
+	private static int Solution2() => _instructions.ProcessProgram();
+
+}
+
+file static class Day03Extensions
+{
+	public static int ProcessProgram(this IEnumerable<Instruction> instructions)
 	{
 		int sum = 0;
 		bool doit = true;
 
-		foreach (Instruction? instruction in _instructions.OrderBy( i => i.Index)) {
+		foreach (Instruction instruction in instructions.OrderBy(i => i.Index)) {
 			if (instruction is DoInstruction doInstruction) {
 				doit = doInstruction.DoIt;
 			} else if (doit) {
-				MulInstruction mul = (MulInstruction)instruction;
-				sum += mul.Value1 * mul.Value2;
+				sum += ((MulInstruction)instruction).Value;
 			}
 		}
 
@@ -42,51 +44,38 @@ public sealed partial class Day03 {
 	}
 }
 
-file static class Day03Extensions
-{
-}
-
 internal sealed partial class Day03Types
 {
-	public abstract record Instruction(int Index) : IParsable<Instruction>
+	public abstract record Instruction(int Index)
 	{
 		public static IEnumerable<Instruction> ParseAll(string[] s)
 		{
-			const int INDEX_MULTIPLIER = 10_000;
+			const int INDEX_MULTIPLIER = 100_000;
 
 			for (int i = 0; i < s.Length; i++) {
-				string line = s[i];
-				MatchCollection matches = MulRegEx().Matches(line);
+				MatchCollection matches = InstructionRegEx().Matches(s[i]);
 				foreach (Match match in matches) {
-					yield return new MulInstruction((i * INDEX_MULTIPLIER) + match.Index, match.As<int>("number1"), match.As<int>("number2"));
-				}
-			}
-
-			for (int i = 0; i < s.Length; i++) {
-				string line = s[i];
-				MatchCollection matches = DoRegEx().Matches(line);
-				foreach (Match match in matches) {
-					yield return new DoInstruction((i * INDEX_MULTIPLIER) + match.Index, match.Value == "do()");
+					yield return match.Value[0] switch
+					{
+						'm' => new MulInstruction((i * INDEX_MULTIPLIER) + match.Index, match.As<int>("number1"), match.As<int>("number2")),
+						'd' => new DoInstruction((i * INDEX_MULTIPLIER) + match.Index, match.Value == "do()"),
+						_ => throw new NotImplementedException(),
+					};
 				}
 			}
 		}
-
-		public static Instruction Parse(string s, IFormatProvider? provider) => null!;
-
-		public static Instruction Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
-			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
-	public sealed record MulInstruction(int Index, int Value1, int Value2) : Instruction(Index);
+	public sealed record MulInstruction(int Index, int Value1, int Value2) : Instruction(Index)
+	{
+		public int Value => Value1 * Value2;
+	}
+
 	public sealed record DoInstruction(int Index, bool DoIt) : Instruction(Index);
 
 
-	[GeneratedRegex("""mul\((?<number1>\d+),(?<number2>\d+)\)""")]
-	public static partial Regex MulRegEx();
-
-	[GeneratedRegex("""(?<do>do\(\)|don't\(\))""")]
-	public static partial Regex DoRegEx();
+	[GeneratedRegex("""mul\((?<number1>\d+),(?<number2>\d+)\)|(?<do>do\(\)|don't\(\))""")]
+	public static partial Regex InstructionRegEx();
 }
 
 file static class Day03Constants
