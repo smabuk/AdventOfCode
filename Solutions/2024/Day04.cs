@@ -12,7 +12,7 @@ namespace AdventOfCode.Solutions._2024;
 public sealed partial class Day04 {
 
 	public static string Part1(string[] _) => Solution1().ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part2(string[] _) => Solution2().ToString();
 
 	private static char[,] _wordSearch = default!;
 
@@ -21,20 +21,34 @@ public sealed partial class Day04 {
 
 	private static int Solution1()
 	{
-		int count = 0;
-		count += XmasRegEx().Count(string.Join(" ", _wordSearch.RowsAsStrings()));
-		count += XmasRegEx().Count(string.Join(" ", _wordSearch.ColsAsStrings()));
-		count += XmasRegEx().Count(string.Join(" ", _wordSearch.DiagonalsLRAsStrings()));
-		count += XmasRegEx().Count(string.Join(" ", _wordSearch.DiagonalsRLAsStrings()));
-
-		return count;
+		return XmasRegEx().Count(_wordSearch.RowsAsStrings().AsString())
+			 + XmasRegEx().Count(_wordSearch.ColsAsStrings().AsString())
+			 + XmasRegEx().Count(_wordSearch.DiagonalsAsStrings().AsString());
 	}
 
-	private static string Solution2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int Solution2() => _wordSearch.Walk().Count(_wordSearch.IsXmasCross);
 }
 
 file static class Day04Extensions
 {
+	public static bool IsXmasCross(this char[,] array, (int Col, int Row) point)
+	{
+		if (array[point.Col, point.Row] == A) {
+			char[,] subArray = array.SubArray(point.Col - 1, point.Row - 1, 3, 3);
+
+			if (MasRegEx().Count(subArray.DiagonalsLRAsStrings().AsString()) == 1 &&
+				MasRegEx().Count(subArray.DiagonalsRLAsStrings().AsString()) == 1) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static string AsString(this IEnumerable<string> strings) => string.Join(SPACE, strings);
+	public static IEnumerable<string> DiagonalsAsStrings(this char[,] array) =>
+		[.. array.DiagonalsLRAsStrings(), .. array.DiagonalsRLAsStrings()];
+
 	public static IEnumerable<string> DiagonalsLRAsStrings(this char[,] array)
 	{
 		StringBuilder stringBuilder = new();
@@ -100,10 +114,15 @@ file static class Day04Extensions
 
 internal sealed partial class Day04Types
 {
-	[GeneratedRegex("""(?={XMAS}|SAMX)""")]
+	[GeneratedRegex("""(?=XMAS|SAMX)""")]
 	public static partial Regex XmasRegEx();
+
+	[GeneratedRegex("""(MAS|SAM)""")]
+	public static partial Regex MasRegEx();
 }
 
 file static class Day04Constants
 {
+	public const char A = 'A';
+	public const char SPACE = ' ';
 }
