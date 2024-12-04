@@ -20,7 +20,7 @@ public sealed partial class Day04 {
 	public static void LoadWordSearch(string[] input) => _wordSearch = input.To2dArray();
 
 	private static int Solution1() => _wordSearch.XmasCount();
-	private static int Solution2() => _wordSearch.Walk().Count(_wordSearch.IsXmasCross);
+	private static int Solution2() => _wordSearch.XmasCrossCount();
 }
 
 file static class Day04Extensions
@@ -33,15 +33,21 @@ file static class Day04Extensions
 			 + XmasRegEx().Count(array.DiagonalsAsStrings().AsString());
 	}
 
-	public static int XmasCrossCount(this char[,] array) => array.Walk().Count(array.IsXmasCross);
+	public static int XmasCrossCount(this char[,] array) => array.ForEachInner().Count(array.IsXmasCross);
 
-	public static bool IsXmasCross(this char[,] array, (int Col, int Row) point)
+	public static bool IsXmasCross(this char[,] array, (int Col, int Row) index)
 	{
-		if (array[point.Col, point.Row] is not A) { return false; }
+		(int col, int row) = index;
 
-		// get the 4 adjacent corners using a helper
-		char[] corners = [.. array.GetAdjacentCells(point.Col, point.Row, includeDiagonals: true).Skip(4)];
-		
+		if (array[col, row] is not A) { return false; }
+
+		char[] corners = [
+			array[col - 1, row - 1],
+			array[col + 1, row - 1],
+			array[col - 1, row + 1],
+			array[col + 1, row + 1],
+			];
+
 		return corners is [M, S, M, S] or [S, M, S, M] or [M, M, S, S] or [S, S, M, M];
 	}
 
@@ -54,24 +60,13 @@ file static class Day04Extensions
 	{
 		StringBuilder stringBuilder = new();
 
-		for (int col = array.ColsMax(); col >= 0; col--) {
+		for (int col = array.ColsMax(); col > -array.ColsMax(); col--) {
+			bool stop = false;
 			for (int row = 0; row < array.RowsCount(); row++) {
 				if (array.TryGetValue(col + row, row, out char c)) {
+					stop = true;
 					_ = stringBuilder.Append(c);
-				} else {
-					break;
-				}
-			}
-
-			yield return stringBuilder.ToString();
-			_ = stringBuilder.Clear();
-		}
-
-		for (int row = 1; row < array.RowsCount(); row++) {
-			for (int col = 0; col < array.ColsCount(); col++) {
-				if (array.TryGetValue(col, row + col, out char c)) {
-					_ = stringBuilder.Append(c);
-				} else {
+				} else if (stop) {
 					break;
 				}
 			}
@@ -85,11 +80,13 @@ file static class Day04Extensions
 	{
 		StringBuilder stringBuilder = new();
 
-		for (int col = 0; col < array.ColsCount(); col++) {
+		for (int col = 0; col < array.ColsCount() * 2; col++) {
+			bool stop = false;
 			for (int row = 0; row < array.RowsCount(); row++) {
 				if (array.TryGetValue(col - row, row, out char c)) {
+					stop = true;
 					_ = stringBuilder.Append(c);
-				} else {
+				} else if (stop) {
 					break;
 				}
 			}
@@ -97,18 +94,17 @@ file static class Day04Extensions
 			yield return stringBuilder.ToString();
 			_ = stringBuilder.Clear();
 		}
+	}
 
-		for (int row = 1; row < array.RowsCount(); row++) {
-			for (int col = 0; col < array.ColsCount(); col++) {
-				if (array.TryGetValue(array.ColsMax() - col, row + col, out char c)) {
-					_ = stringBuilder.Append(c);
-				} else {
-					break;
-				}
+	public static IEnumerable<(int Col, int Row)> ForEachInner<T>(this T[,] array)
+	{
+		int cols = array.ColsCount();
+		int rows = array.RowsCount();
+
+		for (int row = 1; row < rows - 1; row++) {
+			for (int col = 1; col < cols - 1; col++) {
+				yield return new(col, row);
 			}
-
-			yield return stringBuilder.ToString();
-			_ = stringBuilder.Clear();
 		}
 	}
 }
