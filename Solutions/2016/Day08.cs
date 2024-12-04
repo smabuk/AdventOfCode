@@ -36,7 +36,7 @@ public sealed partial class Day08 {
 	private static int Solution1(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) =>
 		ArrayHelpers.Create2dArray(screenWidth, screenHeight, OFF)
 		.ExecuteInstructions(visualise)
-		.WalkWithValues()
+		.ForEachCell()
 		.Count(pixel => pixel.Value == ON);
 
 	private static string Solution2(int screenWidth, int screenHeight, Action<string[], bool>? visualise = null) =>

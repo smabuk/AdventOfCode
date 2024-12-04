@@ -28,7 +28,7 @@ public sealed partial class Day21 {
 
 	private static int Solution1(string[] input, int noOfSteps) {
 		char[,] garden = input.To2dArray();
-		Point start = garden.WalkWithValues().Where(g => g.Value == START).Single();
+		Point start = garden.ForEachCell().Where(g => g.Value == START).Single();
 		HashSet<Point> plots = [start]; 
 		for (int i = 0; i < noOfSteps; i++) {
 			HashSet<Point> nextPlots = []; 
@@ -42,7 +42,7 @@ public sealed partial class Day21 {
 
 	private static int Solution2(string[] input, int noOfSteps) {
 		char[,] garden = input.To2dArray();
-		Point start = garden.WalkWithValues().Where(g => g.Value == START).Single();
+		Point start = garden.ForEachCell().Where(g => g.Value == START).Single();
 		//garden = ArrayHelpers.Create2dArray(1001, 1001, '.');
 		//start = new(500, 500);
 		HashSet<Point> plots = [start];

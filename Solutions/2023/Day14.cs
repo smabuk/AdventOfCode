@@ -109,7 +109,7 @@ public static class Day14Helpers
 	}
 
 	public static string ToState(this Dish dish)
-		=> $"{string.Join("", dish.WalkWithValues().Where(x => x.Value != CUBE_SHAPED_ROCK).Select(x => x.Value.ToString()))}";
+		=> $"{string.Join("", dish.ForEachCell().Where(x => x.Value != CUBE_SHAPED_ROCK).Select(x => x.Value.ToString()))}";
 
 	public static int CalculateLoad(this Dish dish)
 	{

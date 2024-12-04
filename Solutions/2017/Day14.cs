@@ -44,7 +44,7 @@ file static class Day14Extensions
 		int count = 0;
 		bool[,] visited = new bool[grid.ColsCount(), grid.RowsCount()];
 
-		foreach (Cell<char> cell in grid.WalkWithValues()) {
+		foreach (Cell<char> cell in grid.ForEachCell()) {
 			if (predicate(cell.Value) && !visited[cell.Col, cell.Row]) {
 				DFS(grid, visited, cell.Col, cell.Row, predicate);
 				count++;

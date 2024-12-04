@@ -57,7 +57,7 @@ public sealed partial class Day17 {
 	}
 
 	private static int Solution1(string[] input, Action<string[], bool>? visualise = null) {
-		int tiles = _ground.WalkWithValues().Count(g => g.Value is DRIED_SAND or WATER_AT_REST);
+		int tiles = _ground.ForEachCell().Count(g => g.Value is DRIED_SAND or WATER_AT_REST);
 		return tiles;
 	}
 

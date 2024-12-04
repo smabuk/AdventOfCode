@@ -38,7 +38,7 @@ file static class Day19Extensions
 		int steps = 1;
 		string path = "";
 		Direction direction = new(DOWN);
-		Point current = diagram.WalkWithValues().Single(cell => cell.Y == 0 && cell.Value == VERTICAL).Index + direction;
+		Point current = diagram.ForEachCell().Single(cell => cell.Y == 0 && cell.Value == VERTICAL).Index + direction;
 
 		while (diagram.TryGetValue(current, out char value) && value != SPACE) {
 			steps++;

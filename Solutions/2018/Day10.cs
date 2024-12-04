@@ -29,7 +29,7 @@ public sealed partial class Day10 {
 		int maxX = pointsOfLight.Max(p => p.Position.X);
 		char[,] stars = new char[maxX - minX + 1, maxY - minY + 1];
 
-		foreach ((int X, int Y) in stars.Walk()) { 
+		foreach ((int X, int Y) in stars.Indexes()) { 
 			stars[X, Y] = ' ';
 		}
 

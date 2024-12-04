@@ -24,7 +24,7 @@ public sealed partial class Day12 {
 			.To2dArray(input[0].Length);
 
 		_endPoints = _elevationMap
-			.WalkWithValues()
+			.ForEachCell()
 			.Where(c => c.Value is 'S' or 'E')
 			.ToDictionary(c => c.Value, c => c.Index);
 
@@ -41,7 +41,7 @@ public sealed partial class Day12 {
 	private static int Solution1() => _costs[_startPoint];
 	private static int Solution2() =>
 		_elevationMap
-			.WalkWithValues()
+			.ForEachCell()
 			.Where(x => x.Value == 'a' && _costs.ContainsKey(x.Index))
 			.Select(x => _costs[x.Index] -_costs[_endPoint])
 			.Min();

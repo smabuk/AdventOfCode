@@ -219,7 +219,7 @@ public sealed partial class Day15
 		cavern = String.Join("", input).To2dArray<char>(input[0].Length);
 
 		units = cavern
-			.WalkWithValues()
+			.ForEachCell()
 			.Where(c => c.Value is ELF or GOBLIN)
 			.Select(c => (Unit)(c.Value switch
 			{
@@ -233,7 +233,7 @@ public sealed partial class Day15
 		}
 
 		walls = cavern
-			.WalkWithValues()
+			.ForEachCell()
 			.Where(c => c.Value == WALL)
 			.Select(c => c.Index)
 			.ToHashSet();

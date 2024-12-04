@@ -64,7 +64,7 @@ file static class Day22Extensions
 		if (visualise is not null) {
 			string[] gridPlan = [];
 
-			int veryLargeVeryFull = grid.WalkWithValues().Max(cell => cell.Value.Size);
+			int veryLargeVeryFull = grid.ForEachCell().Max(cell => cell.Value.Size);
 			for (int y = 0; y < grid.RowsCount(); y++) {
 				string row = "";
 		

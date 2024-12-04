@@ -5,11 +5,11 @@
 	"classifications": [
 		"AdventOfCode/Day"
 	],
-	"name": "DayXX",
+	"name": "AocDayXX",
 	"description": "Creates a new Day__.cs used in Advent of Code.",
 	"precedence": "0",
 	"identity": "Smab.AdventOfCode.DayXX",
-	"shortName": "dayxx",
+	"shortName": "aocday",
 	"tags": {
 		"$comment": "TODO: fill the language and type below. Common types are: project, item, solution.",
 		"language": "C#",

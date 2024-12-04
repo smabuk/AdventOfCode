@@ -32,7 +32,7 @@ public sealed partial class Day21 {
 			grid = grid.Enhance(_rules);
 		}
 
-		return grid.WalkWithValues().Count(g => g.Value == ON);
+		return grid.ForEachCell().Count(g => g.Value == ON);
 	}
 }
 

@@ -3,10 +3,10 @@
 namespace AdventOfCode.Solutions._2023;
 
 /// <summary>
-/// Day 23: A Long Walk
+/// Day 23: A Long Indexes
 /// https://adventofcode.com/2023/day/23
 /// </summary>
-[Description("A Long Walk")]
+[Description("A Long Indexes")]
 public sealed partial class Day23 {
 
 	[Init]

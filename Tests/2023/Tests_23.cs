@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2023;
 
-public class Tests_23_A_Long_Walk
+public class Tests_23_A_Long_Indexes
 {
 	const int DAY = 23;
 

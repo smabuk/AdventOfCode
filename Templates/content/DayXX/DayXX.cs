@@ -15,7 +15,7 @@ public sealed partial class DayXX {
 	private static IEnumerable<Instruction> _instructions = [];
 
 	[Init]
-	private static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
 
 	private static string Solution1(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
 

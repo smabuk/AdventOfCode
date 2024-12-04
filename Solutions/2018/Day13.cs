@@ -76,7 +76,7 @@ public sealed partial class Day13 {
 	{
 		char[,] mines = String.Join("", input).To2dArray<char>(input[0].Length);
 		carts = mines
-			.WalkWithValues()
+			.ForEachCell()
 			.Where(m => CART.Contains(m.Value))
 			.Select(m => new Cart(
 				new(m.X, m.Y),

@@ -26,7 +26,7 @@ public sealed partial class Day24 {
 
 		int minutes = int.MaxValue;
 		for (int i = 0; i < 100; i++) {
-			minutes = Math.Min(DrunkenWalk(basin, basin.Start).Count(), minutes);
+			minutes = Math.Min(DrunkenIndexes(basin, basin.Start).Count(), minutes);
 			Debug.WriteLine($"{i} - Minutes = {minutes}");
 		}
 		return minutes;
@@ -37,7 +37,7 @@ public sealed partial class Day24 {
 		return "** Solution not written yet **";
 	}
 
-	private static IEnumerable<Basin> DrunkenWalk(Basin basin, Point expedition) {
+	private static IEnumerable<Basin> DrunkenIndexes(Basin basin, Point expedition) {
 		Random TrueOrFalse = new();
 
 		List<Point> oldWinds = [];
