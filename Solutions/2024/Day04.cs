@@ -19,37 +19,38 @@ public sealed partial class Day04 {
 	[Init]
 	public static void LoadWordSearch(string[] input) => _wordSearch = input.To2dArray();
 
-	private static int Solution1()
-	{
-		return XmasRegEx().Count(_wordSearch.RowsAsStrings().AsString())
-			 + XmasRegEx().Count(_wordSearch.ColsAsStrings().AsString())
-			 + XmasRegEx().Count(_wordSearch.DiagonalsAsStrings().AsString());
-	}
-
+	private static int Solution1() => _wordSearch.XmasCount();
 	private static int Solution2() => _wordSearch.Walk().Count(_wordSearch.IsXmasCross);
 }
 
 file static class Day04Extensions
 {
+	public static int XmasCount(this char[,] array)
+	{
+		// RowsAsStrings() and ColsAsStrings() are existing helpers
+		return XmasRegEx().Count(array.RowsAsStrings().AsString())
+			 + XmasRegEx().Count(array.ColsAsStrings().AsString())
+			 + XmasRegEx().Count(array.DiagonalsAsStrings().AsString());
+	}
+
+	public static int XmasCrossCount(this char[,] array) => array.Walk().Count(array.IsXmasCross);
+
 	public static bool IsXmasCross(this char[,] array, (int Col, int Row) point)
 	{
-		if (array[point.Col, point.Row] == A) {
-			char[,] subArray = array.SubArray(point.Col - 1, point.Row - 1, 3, 3);
+		if (array[point.Col, point.Row] is not A) { return false; }
 
-			if (MasRegEx().Count(subArray.DiagonalsLRAsStrings().AsString()) == 1 &&
-				MasRegEx().Count(subArray.DiagonalsRLAsStrings().AsString()) == 1) {
-				return true;
-			}
-		}
-
-		return false;
+		// get the 4 adjacent corners using a helper
+		char[] corners = [.. array.GetAdjacentCells(point.Col, point.Row, includeDiagonals: true).Skip(4)];
+		
+		return corners is [M, S, M, S] or [S, M, S, M] or [M, M, S, S] or [S, S, M, M];
 	}
 
 	public static string AsString(this IEnumerable<string> strings) => string.Join(SPACE, strings);
-	public static IEnumerable<string> DiagonalsAsStrings(this char[,] array) =>
-		[.. array.DiagonalsLRAsStrings(), .. array.DiagonalsRLAsStrings()];
 
-	public static IEnumerable<string> DiagonalsLRAsStrings(this char[,] array)
+	public static IEnumerable<string> DiagonalsAsStrings(this char[,] array) =>
+		[.. array.DiagonalsSouthEastAsStrings(), .. array.DiagonalsSouthWestAsStrings()];
+
+	public static IEnumerable<string> DiagonalsSouthEastAsStrings(this char[,] array)
 	{
 		StringBuilder stringBuilder = new();
 
@@ -80,7 +81,7 @@ file static class Day04Extensions
 		}
 	}
 
-	public static IEnumerable<string> DiagonalsRLAsStrings(this char[,] array)
+	public static IEnumerable<string> DiagonalsSouthWestAsStrings(this char[,] array)
 	{
 		StringBuilder stringBuilder = new();
 
@@ -116,13 +117,12 @@ internal sealed partial class Day04Types
 {
 	[GeneratedRegex("""(?=XMAS|SAMX)""")]
 	public static partial Regex XmasRegEx();
-
-	[GeneratedRegex("""(MAS|SAM)""")]
-	public static partial Regex MasRegEx();
 }
 
 file static class Day04Constants
 {
-	public const char A = 'A';
+	public const char A     = 'A';
+	public const char M     = 'M';
+	public const char S     = 'S';
 	public const char SPACE = ' ';
 }
