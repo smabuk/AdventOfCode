@@ -31,12 +31,12 @@ public class Tests_05_Print_Queue
 		""";
 
 	[Theory]
-	[InlineData("75,47,61,53,29", 61)]
-	[InlineData("97,61,53,29,13", 53)]
-	[InlineData("75,29,13",       29)]
-	[InlineData("75,97,47,61,53",  0)]
-	[InlineData("61,13,29",        0)]
-	[InlineData("97,13,75,29,47",  0)]
+	[InlineData("75,47,61,53,29", "lookup", 61)]
+	[InlineData("97,61,53,29,13", "lookup", 53)]
+	[InlineData("75,29,13"      , "lookup", 29)]
+	[InlineData("75,97,47,61,53", "lookup",  0)]
+	[InlineData("61,13,29"      , "lookup",  0)]
+	[InlineData("97,13,75,29,47", "lookup",  0)]
 	[InlineData("""
 		75,47,61,53,29
 		97,61,53,29,13
@@ -44,11 +44,25 @@ public class Tests_05_Print_Queue
 		75,97,47,61,53
 		61,13,29
 		97,13,75,29,47
-		""", 143)]
-	public void Part1(string input, int expected)
+		""", "lookup", 143)]
+	[InlineData("75,47,61,53,29", "sort", 61)]
+	[InlineData("97,61,53,29,13", "sort", 53)]
+	[InlineData("75,29,13"      , "sort", 29)]
+	[InlineData("75,97,47,61,53", "sort",  0)]
+	[InlineData("61,13,29"      , "sort",  0)]
+	[InlineData("97,13,75,29,47", "sort",  0)]
+	[InlineData("""
+		75,47,61,53,29
+		97,61,53,29,13
+		75,29,13
+		75,97,47,61,53
+		61,13,29
+		97,13,75,29,47
+		""", "sort", 143)]
+	public void Part1(string input, string method, int expected)
 	{
 		string fullInput = TEST_INPUT_BASE + input;
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, fullInput), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, fullInput, method), out int actual);
 		actual.ShouldBe(expected);
 	}
 
@@ -61,10 +75,26 @@ public class Tests_05_Print_Queue
 		61,13,29
 		97,13,75,29,47
 		""", 123)]
-	public void Part2(string input, int expected)
+	public void Part2_Using_Lookup(string input, int expected)
 	{
 		string fullInput = TEST_INPUT_BASE + input;
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, fullInput), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, fullInput, "lookup"), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData("""
+		75,47,61,53,29
+		97,61,53,29,13
+		75,29,13
+		75,97,47,61,53
+		61,13,29
+		97,13,75,29,47
+		""", 123)]
+	public void Part2_Using_Sort(string input, int expected)
+	{
+		string fullInput = TEST_INPUT_BASE + input;
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, fullInput, "sort"), out int actual);
 		actual.ShouldBe(expected);
 	}
 }
