@@ -15,8 +15,8 @@ public sealed partial class Day05 {
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static Dictionary<int, HashSet<int>> _before = [];
-	private static Dictionary<int, HashSet<int>> _after = [];
+	private static ILookup<int, int> _before = default!;
+	private static ILookup<int, int> _after = default!;
 	private static List<PageSet> _pageSets = [];
 
 	[Init]
@@ -34,27 +34,8 @@ public sealed partial class Day05 {
 			.Select(i => i.As<int>(separator: ','))
 			];
 
-		_before =
-			rules
-			.Select(r => r.PageBefore)
-			.Distinct()
-			.ToDictionary(
-				page => page,
-				page => rules
-						.Where(r => r.PageBefore == page)
-						.Select(r => r.PageAfter)
-						.ToHashSet());
-
-		_after =
-			rules
-			.Select(r => r.PageAfter)
-			.Distinct()
-			.ToDictionary(
-				page => page,
-				page => rules
-						.Where(r => r.PageAfter == page)
-						.Select(r => r.PageBefore)
-						.ToHashSet());
+		_before = rules.ToLookup(rule => rule.PageBefore, rule => rule.PageAfter);
+		_after = rules.ToLookup(rule => rule.PageAfter, rule => rule.PageBefore);
 	}
 
 	private static int Solution1()
@@ -71,11 +52,11 @@ public sealed partial class Day05 {
 
 file static class Day05Extensions
 {
-	public static bool ObeysTheRules(this PageSet pages, Dictionary<int, HashSet<int>> before)
+	public static bool ObeysTheRules(this PageSet pages, ILookup<int, int> before)
 	{
 		List<int> pageSet = [.. pages];
 		for (int i = 0; i < pageSet.Count; i++) {
-			if (before.GetValueOrDefault(pageSet[i], []).Intersect(pageSet[..i]).Any()) {
+			if (before[pageSet[i]].Intersect(pageSet[..i]).Any()) {
 				return false;
 			}
 		}
@@ -85,19 +66,19 @@ file static class Day05Extensions
 
 	public static PageSet FixPageOrdering(
 		this PageSet pageSet,
-		Dictionary<int, HashSet<int>> _before,
-		Dictionary<int, HashSet<int>> _after)
+		ILookup<int, int> before,
+		ILookup<int, int> after)
 	{
 		List<int> newPageSet = [];
 
 		foreach (int page in pageSet) {
 			List<int> ixAfter = [..
-				_after.GetValueOrDefault(page, [])
+				after[page]
 				.Select(p => newPageSet.IndexOf(p))
 				.Where(IndexFound)
 				];
 			List<int> ixBefore = [..
-				_before.GetValueOrDefault(page, [])
+				before[page]
 				.Select(p => newPageSet.IndexOf(p))
 				.Where(IndexFound)
 				];
