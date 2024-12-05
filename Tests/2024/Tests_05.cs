@@ -4,8 +4,7 @@ public class Tests_05_Print_Queue
 {
 	const int DAY = 05;
 
-	[Theory]
-	[InlineData("""
+	private const string TEST_INPUT = """
 		47|53
 		97|13
 		97|61
@@ -34,10 +33,21 @@ public class Tests_05_Print_Queue
 		75,97,47,61,53
 		61,13,29
 		97,13,75,29,47
-		""", 143)]
+		""";
+
+	[Theory]
+	[InlineData(TEST_INPUT, 143)]
 	public void Part1(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_INPUT, 123)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 }
