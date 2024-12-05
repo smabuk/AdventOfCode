@@ -15,13 +15,14 @@ public sealed partial class Day05 {
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static List<Rule> _rules = [];
+	private static Dictionary<int, HashSet<int>> _before = [];
+	private static Dictionary<int, HashSet<int>> _after = [];
 	private static List<PageSet> _pageSets = [];
 
 	[Init]
 	public static void LoadRules(string[] input)
 	{
-		_rules = [.. 
+		List<Rule> rules = [.. 
 			input
 			.TakeWhile(StringHelpers.HasNonWhiteSpaceContent)
 			.As<Rule>()
@@ -29,30 +30,52 @@ public sealed partial class Day05 {
 
 		_pageSets = [..
 			input
-			.Skip(_rules.Count + 1)
+			.Skip(rules.Count + 1)
 			.Select(i => i.As<int>(separator: ','))
 			];
+
+		_before =
+			rules
+			.Select(r => r.PageBefore)
+			.Distinct()
+			.ToDictionary(
+				page => page,
+				page => rules
+						.Where(r => r.PageBefore == page)
+						.Select(r => r.PageAfter)
+						.ToHashSet());
+
+		_after =
+			rules
+			.Select(r => r.PageAfter)
+			.Distinct()
+			.ToDictionary(
+				page => page,
+				page => rules
+						.Where(r => r.PageAfter == page)
+						.Select(r => r.PageBefore)
+						.ToHashSet());
 	}
 
 	private static int Solution1()
 		=> _pageSets
-			.Where(pages => pages.ObeysTheRules(_rules))
-			.Sum(pages => pages.Middle());
+			.Where(pageSet => pageSet.ObeysTheRules(_before))
+			.Sum(pageSet => pageSet.Middle());
 
 	private static int Solution2()
 		=> _pageSets
-			.NotWhere(pages => pages.ObeysTheRules(_rules))
-			.Select(pages => pages.FixPageOrdering(_rules))
-			.Sum(pages => pages.Middle());
+			.NotWhere(pageSet => pageSet.ObeysTheRules(_before))
+			.Select(pageSet => pageSet.FixPageOrdering(_before, _after))
+			.Sum(pageSet => pageSet.Middle());
 }
 
 file static class Day05Extensions
 {
-	public static bool ObeysTheRules(this PageSet pages, IEnumerable<Rule> rules)
+	public static bool ObeysTheRules(this PageSet pages, Dictionary<int, HashSet<int>> before)
 	{
 		List<int> pageSet = [.. pages];
 		for (int i = 0; i < pageSet.Count; i++) {
-			if (rules.Any(r => r.PageBefore == pageSet[i] && pageSet[..i].Contains(r.PageAfter))) {
+			if (before.GetValueOrDefault(pageSet[i], []).Intersect(pageSet[..i]).Any()) {
 				return false;
 			}
 		}
@@ -60,21 +83,22 @@ file static class Day05Extensions
 		return true;
 	}
 
-	public static PageSet FixPageOrdering(this PageSet pageSet, IEnumerable<Rule> rules)
+	public static PageSet FixPageOrdering(
+		this PageSet pageSet,
+		Dictionary<int, HashSet<int>> _before,
+		Dictionary<int, HashSet<int>> _after)
 	{
 		List<int> newPageSet = [];
 
 		foreach (int page in pageSet) {
 			List<int> ixAfter = [..
-				rules
-				.Where(r => r.PageAfter == page)
-				.Select(r => newPageSet.IndexOf(r.PageBefore))
+				_after.GetValueOrDefault(page, [])
+				.Select(p => newPageSet.IndexOf(p))
 				.Where(IndexFound)
 				];
 			List<int> ixBefore = [..
-				rules
-				.Where(r => r.PageBefore == page)
-				.Select(r => newPageSet.IndexOf(r.PageAfter))
+				_before.GetValueOrDefault(page, [])
+				.Select(p => newPageSet.IndexOf(p))
 				.Where(IndexFound)
 				];
 
