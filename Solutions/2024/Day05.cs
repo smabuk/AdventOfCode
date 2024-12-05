@@ -1,5 +1,4 @@
 ﻿using PageSet = System.Collections.Generic.IEnumerable<int>;
-using Rule = (int PageBefore, int PageAfter);
 
 namespace AdventOfCode.Solutions._2024;
 
@@ -24,7 +23,7 @@ public sealed partial class Day05 {
 			input
 			.TakeWhile(StringHelpers.HasNonWhiteSpaceContent)
 			.Select(i => i.As<int>(separator: '|').ToArray())
-			.Select(ints => (ints[0], ints[1]))
+			.Select(ints => new Rule(ints[0], ints[1]))
 			];
 
 		_pageSets = [..
@@ -47,6 +46,8 @@ public sealed partial class Day05 {
 			.NotWhere(pageSet => pageSet.ObeysTheRules(_mustAppearAfter))
 			.Select(pageSet => pageSet.FixPageOrdering(_mustAppearAfter, _mustAppearBefore))
 			.Sum(pageSet => pageSet.MiddlePage());
+
+	private record Rule(int PageBefore, int PageAfter);
 }
 
 file static class Day05Extensions
