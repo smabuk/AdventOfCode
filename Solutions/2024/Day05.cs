@@ -1,7 +1,5 @@
-﻿using static AdventOfCode.Solutions._2024.Day05Constants;
-using static AdventOfCode.Solutions._2024.Day05Types;
-
-using PageSet = System.Collections.Generic.IEnumerable<int>;
+﻿using PageSet = System.Collections.Generic.IEnumerable<int>;
+using Rule = (int PageBefore, int PageAfter);
 
 namespace AdventOfCode.Solutions._2024;
 
@@ -15,8 +13,8 @@ public sealed partial class Day05 {
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static ILookup<int, int> _before = default!;
-	private static ILookup<int, int> _after = default!;
+	private static ILookup<int, int> _mustAppearAfter = default!;
+	private static ILookup<int, int> _mustAppearBefore = default!;
 	private static List<PageSet> _pageSets = [];
 
 	[Init]
@@ -25,7 +23,8 @@ public sealed partial class Day05 {
 		List<Rule> rules = [.. 
 			input
 			.TakeWhile(StringHelpers.HasNonWhiteSpaceContent)
-			.As<Rule>()
+			.Select(i => i.As<int>(separator: '|').ToArray())
+			.Select(ints => (ints[0], ints[1]))
 			];
 
 		_pageSets = [..
@@ -34,92 +33,86 @@ public sealed partial class Day05 {
 			.Select(i => i.As<int>(separator: ','))
 			];
 
-		_before = rules.ToLookup(rule => rule.PageBefore, rule => rule.PageAfter);
-		_after = rules.ToLookup(rule => rule.PageAfter, rule => rule.PageBefore);
+		_mustAppearAfter  = rules.ToLookup(rule => rule.PageBefore, rule => rule.PageAfter);
+		_mustAppearBefore = rules.ToLookup(rule => rule.PageAfter , rule => rule.PageBefore);
 	}
 
 	private static int Solution1()
 		=> _pageSets
-			.Where(pageSet => pageSet.ObeysTheRules(_before))
-			.Sum(pageSet => pageSet.Middle());
+			.Where(pageSet => pageSet.ObeysTheRules(_mustAppearAfter))
+			.Sum(pageSet => pageSet.MiddlePage());
 
 	private static int Solution2()
 		=> _pageSets
-			.NotWhere(pageSet => pageSet.ObeysTheRules(_before))
-			.Select(pageSet => pageSet.FixPageOrdering(_before, _after))
-			.Sum(pageSet => pageSet.Middle());
+			.NotWhere(pageSet => pageSet.ObeysTheRules(_mustAppearAfter))
+			.Select(pageSet => pageSet.FixPageOrdering(_mustAppearAfter, _mustAppearBefore))
+			.Sum(pageSet => pageSet.MiddlePage());
 }
 
 file static class Day05Extensions
 {
-	public static bool ObeysTheRules(this PageSet pages, ILookup<int, int> before)
+	public static bool ObeysTheRules(this PageSet pages, ILookup<int, int> mustAppearAfter)
 	{
 		List<int> pageSet = [.. pages];
 		for (int i = 0; i < pageSet.Count; i++) {
-			if (before[pageSet[i]].Intersect(pageSet[..i]).Any()) {
+			int pageNo = pageSet[i];
+			// Make sure none of the pages that must appear after pageNo are in the
+			// subset of pages before pageNo.
+			if (mustAppearAfter[pageNo].Intersect(pageSet[..i]).Any()) {
 				return false;
 			}
 		}
 
 		return true;
 	}
-
-	public static PageSet FixPageOrdering(
-		this PageSet pageSet,
-		ILookup<int, int> before,
-		ILookup<int, int> after)
-	{
-		List<int> newPageSet = [];
-
-		foreach (int page in pageSet) {
-			List<int> ixAfter = [..
-				after[page]
-				.Select(p => newPageSet.IndexOf(p))
-				.Where(IndexFound)
-				];
-			List<int> ixBefore = [..
-				before[page]
-				.Select(p => newPageSet.IndexOf(p))
-				.Where(IndexFound)
-				];
-
-			if (ixAfter  is []) { ixAfter  = [0]; };
-			if (ixBefore is []) { ixBefore = [newPageSet.Count]; };
-
-			int ix = int.Max(ixAfter.Max(), ixBefore.Min());
-
-			newPageSet.Insert(ix, page);
-		}
-
-		return newPageSet;
-	}
-
-	public static int Middle(this PageSet pages)
+	public static int MiddlePage(this PageSet pages)
 	{
 		List<int> pageSet = [.. pages];
 		return pageSet[pageSet.Count / 2];
 	}
 
-	public static bool IndexFound(int ix) => ix is not NOT_FOUND;
-}
-
-internal sealed partial class Day05Types
-{
-	public sealed record Rule(int PageBefore, int PageAfter) : IParsable<Rule>
+	public static PageSet FixPageOrdering(
+		this PageSet pageSet,
+		ILookup<int, int> mustAppearAfter,
+		ILookup<int, int> mustAppearBefore)
 	{
-		public static Rule Parse(string s, IFormatProvider? provider)
-		{
-			int[] tokens = [.. s.As<int>(separator: '|')];
-			return new(tokens[0], tokens[1]);
+		List<int> newPageSet = [];
+
+		foreach (int pageNo in pageSet) {
+			int ix = PositionToInsert(newPageSet, pageNo, mustAppearBefore, mustAppearAfter);
+			newPageSet.Insert(ix, pageNo);
 		}
 
-		public static Rule Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Rule result)
-			=> ISimpleParsable<Rule>.TryParse(s, provider, out result);
+		return newPageSet;
 	}
-}
 
-file static class Day05Constants
-{
-	public const int NOT_FOUND = -1;
+	private static int PositionToInsert(this List<int> newPageSet, int pageNo, ILookup<int, int> mustAppearBefore, ILookup<int, int> mustAppearAfter)
+	{
+		// list of positions of the pages that need to be before pageNo
+		List<int> ixBefore =
+			mustAppearBefore[pageNo]
+			.Select(p => newPageSet.IndexOf(p))
+			.Where(IndexFound)
+			.ToList() switch
+			{
+				[] => [0],
+				List<int> before => before
+			};
+
+		// list of positions of the pages that need to be after pageNo
+		List<int> ixAfter =
+			mustAppearAfter[pageNo]
+			.Select(p => newPageSet.IndexOf(p))
+			.Where(IndexFound)
+			.ToList() switch
+			{
+				[] => [newPageSet.Count],
+				List<int> after => after
+			};
+
+		// return the safe place in the list where we can position the page
+		return int.Max(ixBefore.Max(), ixAfter.Min());
+
+		static bool IndexFound(int ix) => ix is not -1;
+	}
 }
