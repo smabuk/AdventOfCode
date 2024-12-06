@@ -86,7 +86,7 @@ public static partial class Day05 {
 	private static List<Page> OrderedPages(this Update update) => [.. update.Pages.Order()];
 
 	private static bool ObeysTheRules(this Update update)
-		=> update.Pages[..^2].Zip(update.Pages[2..]).All(p => p.First < p.Second);
+		=> update.Pages[..^1].Zip(update.Pages[1..]).All(p => p.First < p.Second);
 
 	private static int MiddlePageNo(this Update update) => update.OrderedPages()[update.Pages.Count / 2].PageNo;
 	// ****************************************************************************
