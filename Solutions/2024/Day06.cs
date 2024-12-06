@@ -12,21 +12,26 @@ namespace AdventOfCode.Solutions._2024;
 public partial class Day06
 {
 	private static char[,] _map = default!;
+	private static Point _guardStart = Point.Zero;
 
-	public static void Init(string[] input) => _map = input.To2dArray();
+	public static void Init(string[] input)
+	{
+		_map = input.To2dArray();
+		_guardStart = _map.ForEachCell().Single(cell => cell.Value == GUARD).Index;
+	}
 
 	public static int Part1(string[] _) => _map.GuardPatrol().Visited.Count;
 
 	/// <summary>
 	///    The obstruction is always in the direction of movement so we only have to
-	///    place them in the locations that the guard will normally move to unimpeded
+	///    place them in the locations that the guard will normally move to
 	/// </summary>
 	public static int Part2(string[] _)
 		=> _map
 			.GuardPatrol()
 			.Visited
-			.Where(obstruction => _map.GuardPatrol(obstruction).StuckInALoop)
-			.Count();
+			.Where(pos => pos != _guardStart)
+			.Count(obstruction => _map.GuardPatrol(obstruction).StuckInALoop);
 
 	private static (bool StuckInALoop, HashSet<Point> Visited) GuardPatrol(this char[,] map, Point? obstruction = null)
 	{
@@ -36,7 +41,7 @@ public partial class Day06
 		Direction direction = Up;
 		Delta delta = UP;
 
-		Point current = map.ForEachCell().Single(cell => cell.Value == GUARD).Index;
+		Point current = _guardStart;
 
 		while (map.IsInBounds(current)) {
 			if (cache.Add((current, direction)) is false) {
