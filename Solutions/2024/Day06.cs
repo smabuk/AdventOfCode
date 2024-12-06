@@ -1,6 +1,6 @@
 ﻿using static AdventOfCode.Solutions._2024.Day06.Direction;
 
-using DirectionDelta = (int dX, int dY);
+using Delta = (int dX, int dY);
 
 namespace AdventOfCode.Solutions._2024;
 
@@ -11,51 +11,55 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Guard Gallivant")]
 public partial class Day06
 {
+	private static char[,] _map = default!;
 
-	public static int Part1(string[] input) => input.To2dArray().GuardPatrol().Visited;
+	public static void Init(string[] input) => _map = input.To2dArray();
 
-	public static int Part2(string[] input)
-	{
-		char[,] map = input.To2dArray();
-		return map
-			.ForEachCell()
-			.Where(m => m.Value is not OBSTRUCTION or GUARD)
-			.Where(obstruction => map.GuardPatrol(obstruction).StuckInALoop)
+	public static int Part1(string[] _) => _map.GuardPatrol().Visited.Count;
+
+	/// <summary>
+	///    The obstruction is always in the direction of movement so we only have to
+	///    place them in the locations that the guard will normally move to unimpeded
+	/// </summary>
+	public static int Part2(string[] _)
+		=> _map
+			.GuardPatrol()
+			.Visited
+			.Where(obstruction => _map.GuardPatrol(obstruction).StuckInALoop)
 			.Count();
-	}
 
-	private static (bool StuckInALoop, int Visited) GuardPatrol(this char[,] map, Point? obstruction = null)
+	private static (bool StuckInALoop, HashSet<Point> Visited) GuardPatrol(this char[,] map, Point? obstruction = null)
 	{
 		HashSet<(Point, Direction)> cache = [];
 		HashSet<Point> visited = [];
 
 		Direction direction = Up;
-		DirectionDelta directionDelta = UP;
+		Delta delta = UP;
 
 		Point current = map.ForEachCell().Single(cell => cell.Value == GUARD).Index;
 
-		while (map.TryGetValue(current, out char value)) {
+		while (map.IsInBounds(current)) {
 			if (cache.Add((current, direction)) is false) {
-				return (true, visited.Count);
+				return (true, visited);
 			}
 
 			_ = visited.Add(current);
 
-			while ((map.TryGetValue(current + directionDelta, out char nextValue) && nextValue is OBSTRUCTION) || obstruction == current + directionDelta) {
-				(direction, directionDelta) = direction switch
+			while ((map.TryGetValue(current + delta, out char nextValue) && nextValue is OBSTRUCTION) || obstruction == current + delta) {
+				(direction, delta) = direction switch
 				{
-					Up => (Right, RIGHT),
-					Right => (Down, DOWN),
-					Down => (Left, LEFT),
-					Left => (Up, UP),
-					_ => (direction, directionDelta)
+					Up    => (Right, RIGHT),
+					Right => (Down , DOWN),
+					Down  => (Left , LEFT),
+					Left  => (Up   , UP),
+					_ => (direction, delta)
 				};
 			}
 
-			current += directionDelta;
+			current += delta;
 		}
 
-		return (false, visited.Count);
+		return (false, visited);
 	}
 
 	public enum Direction
@@ -71,10 +75,9 @@ public static partial class Day06
 {
 	private const char GUARD       = '^';
 	private const char OBSTRUCTION = '#';
-	private const char SPACE       = '.';
 
-	public static readonly (int dX, int dY) UP = (0, -1);
-	public static readonly (int dX, int dY) DOWN = (0, 1);
-	public static readonly (int dX, int dY) LEFT = (-1, 0);
-	public static readonly (int dX, int dY) RIGHT = (1, 0);
+	public static readonly Delta UP    = ( 0, -1);
+	public static readonly Delta DOWN  = ( 0,  1);
+	public static readonly Delta LEFT  = (-1,  0);
+	public static readonly Delta RIGHT = ( 1,  0);
 }
