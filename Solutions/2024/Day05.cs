@@ -1,8 +1,4 @@
-﻿using static AdventOfCode.Solutions._2024.Day05Constants;
-using static AdventOfCode.Solutions._2024.Day05Types;
-using static AdventOfCode.Solutions._2024.Day05;
-
-using PageSet = System.Collections.Generic.IEnumerable<int>;
+﻿using PageSet = System.Collections.Generic.IEnumerable<int>;
 
 namespace AdventOfCode.Solutions._2024;
 
@@ -11,13 +7,7 @@ namespace AdventOfCode.Solutions._2024;
 /// https://adventofcode.com/2024/day/05
 /// </summary>
 [Description("Print Queue")]
-public sealed partial class Day05 {
-
-	[Init]
-	public static void    Init(string[] input, params object[]? args) => LoadRules(input, args.Method());
-	public static string Part1(string[] _    , params object[]? args) => Solution1(args.Method()).ToString();
-	public static string Part2(string[] _    , params object[]? args) => Solution2(args.Method()).ToString();
-
+public static partial class Day05 {
 
 	private static ILookup<int, int> _mustAppearAfter  = default!;
 	private static ILookup<int, int> _mustAppearBefore = default!;
@@ -28,8 +18,11 @@ public sealed partial class Day05 {
 	// Method "lookup"
 	private static List<PageSet> _pageSets = [];
 
-	public static void LoadRules(string[] input, string method)
+	
+	[Init] public static void LoadRules(string[] input, params object[]? args)
 	{
+		string method = args.Method();
+
 		HashSet<Rule> rules = [..
 			input
 				.TakeWhile(StringHelpers.HasNonWhiteSpaceContent)
@@ -38,7 +31,6 @@ public sealed partial class Day05 {
 			];
 
 		_mustAppearAfter  = rules.ToLookup(rule => rule.PageBefore, rule => rule.PageAfter);
-		_mustAppearBefore = rules.ToLookup(rule => rule.PageAfter , rule => rule.PageBefore);
 
 		if (method is SORT_METHOD) {
 			_updates = [..
@@ -49,6 +41,7 @@ public sealed partial class Day05 {
 		}
 
 		if (method is LOOKUP_METHOD) {
+			_mustAppearBefore = rules.ToLookup(rule => rule.PageAfter , rule => rule.PageBefore);
 			_pageSets = [..
 				input
 				.Skip(rules.Count + 1)
@@ -57,68 +50,75 @@ public sealed partial class Day05 {
 		}
 	}
 
-	private static int Solution1(string method)
-		=> method switch
+	[Part1] public static int Part1(string _, params object[]? args)
+		=> args.Method() switch
 		{
 			SORT_METHOD => _updates
-				.Where(Day05Extensions.ObeysTheRules)
-				.Sum(Day05Extensions.MiddlePageNo),
+				.Where(ObeysTheRules)
+				.Sum(MiddlePageNo),
 
 			LOOKUP_METHOD => _pageSets
 				.Where(pageSet => pageSet.ObeysTheRules(_mustAppearAfter))
-				.Sum(Day05Extensions.MiddlePage),
+				.Sum(Day05ExtensionsForLookupMethod.MiddlePage),
 
 			_ => throw new NotImplementedException()
 		};
 
-	private static int Solution2(string method)
-		=> method switch
+	[Part2] public static int Part2(string _, params object[]? args )
+		=> args.Method() switch
 		{
 			SORT_METHOD => _updates
-				.NotWhere(Day05Extensions.ObeysTheRules)
-				.Sum(Day05Extensions.MiddlePageNo),
+				.NotWhere(ObeysTheRules)
+				.Sum(MiddlePageNo),
 
 			LOOKUP_METHOD => _pageSets
 				.NotWhere(pageSet => pageSet.ObeysTheRules(_mustAppearAfter))
 				.Select(pageSet => pageSet.FixPageOrdering(_mustAppearAfter, _mustAppearBefore))
-				.Sum(Day05Extensions.MiddlePage),
+				.Sum(Day05ExtensionsForLookupMethod.MiddlePage),
 
 			_ => throw new NotImplementedException(),
 		};
 
+	private static string Method(this object[]? args) => GetArgument(args, 1, "sort").ToLower();
 
+	// ****************************************************************************
+	// "sort" version only requires these 3 extension methods
+	private static List<Page> OrderedPages(this Update update) => [.. update.Pages.Order()];
+
+	private static bool ObeysTheRules(this Update update)
+		=> update.Pages[..^2].Zip(update.Pages[2..]).All(p => p.First < p.Second);
+
+	private static int MiddlePageNo(this Update update) => update.OrderedPages()[update.Pages.Count / 2].PageNo;
+	// ****************************************************************************
+}
+
+public static partial class Day05
+{
+	private const int BEFORE = -1;
+	private const int AFTER  =  1;
+
+	private const string SORT_METHOD   = "sort";
+	private const string LOOKUP_METHOD = "lookup";
+
+	private record Rule(int PageBefore, int PageAfter);
+	private record Update(List<Page> Pages);
 	public record Page(int PageNo) : IComparable<Page>
 	{
+		public static bool operator <(Page page1, Page page2) => page1.CompareTo(page2) == BEFORE;
+		public static bool operator >(Page page1, Page page2) => page1.CompareTo(page2) == AFTER;
+
 		public int CompareTo(Page? other)
 		{
-			if (other is null) { return 0; }
+			if (other is null) { return AFTER; };
+			if (PageNo == other.PageNo) { return 0; };
 
-			if (_mustAppearAfter[PageNo].Contains(other.PageNo)) {
-				return BEFORE;
-			} else if (_mustAppearBefore[PageNo].Contains(other.PageNo)) {
-				return AFTER;
-			}
-
-			return 0;
+			return _mustAppearAfter[PageNo].Contains(other.PageNo) ? BEFORE : AFTER;
 		}
 	}
 }
 
-file static class Day05Extensions
+file static class Day05ExtensionsForLookupMethod
 {
-	// ****************************************************************************
-	// "sort" version only requires these 3 extension methods
-	public static List<Page> OrderedPages(this Update update) => [.. update.Pages.Order()];
-
-	public static bool ObeysTheRules(this Update update)
-		=> update.Pages.Zip(update.OrderedPages()).All(p => p.First == p.Second);
-
-	public static int MiddlePageNo(this Update update) => update.OrderedPages()[update.Pages.Count / 2].PageNo;
-	// ****************************************************************************
-
-
-	// ****************************************************************************
-	// "lookup" method requires the extension methods
 	public static bool ObeysTheRules(this PageSet pages, ILookup<int, int> mustAppearAfter)
 	{
 		List<int> pageSet = [.. pages];
@@ -184,23 +184,4 @@ file static class Day05Extensions
 
 		static bool IndexFound(int ix) => ix is not -1;
 	}
-	// ****************************************************************************
-
-	public static string Method(this object[]? args)
-	=> GetArgument(args, argumentNumber: 1, defaultResult: "sort").ToLowerInvariant();
-}
-
-internal static class Day05Types
-{
-	public record Rule(int PageBefore, int PageAfter);
-	public record Update(List<Page> Pages);
-}
-
-file static class Day05Constants
-{
-	public const int BEFORE = -1;
-	public const int AFTER  =  1;
-
-	public const string SORT_METHOD   = "sort";
-	public const string LOOKUP_METHOD = "lookup";
 }
