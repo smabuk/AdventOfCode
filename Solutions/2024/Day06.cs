@@ -17,7 +17,7 @@ public partial class Day06
 	public static void Init(string[] input)
 	{
 		_map = input.To2dArray();
-		_guardStart = new(_map.ForEachCell().Single(cell => cell.Value == GUARD).Index, Up, UP);
+		_guardStart = new(_map.ForEachCell().Single(cell => cell.Value == GUARD).Index, Up);
 	}
 
 	public static int Part1(string[] _) => _map.GuardPatrol(_guardStart).Visited.Count;
@@ -42,7 +42,7 @@ public partial class Day06
 	{
 		HashSet<Point> visited = [];
 
-		int count = 1;
+		int count = 0;
 		for (int i = 0; i < patrol.Count - 1; i++) {
 			Point obstruction = patrol[i].Position;
 			if (visited.Contains(obstruction)) {
@@ -66,7 +66,6 @@ public partial class Day06
 		List<Guard> fullRoute = [];
 
 		Direction direction = start.Direction;
-		Delta delta = start.Delta;
 		Point current = start.Position;
 
 		while (map.IsInBounds(current)) {
@@ -77,27 +76,43 @@ public partial class Day06
 			_ = visited.Add(current);
 
 			if (obstruction is null) {
-				fullRoute.Add(new Guard(current, direction, delta));
+				fullRoute.Add(new Guard(current, direction));
 			}
 
-			while ((map.TryGetValue(current + delta, out char nextValue) && nextValue is OBSTRUCTION) || obstruction == current + delta) {
-				(direction, delta) = direction switch
-				{
-					Up => (Right, RIGHT),
-					Right => (Down, DOWN),
-					Down => (Left, LEFT),
-					Left => (Up, UP),
-					_ => (direction, delta)
-				};
+			while ((map.TryGetValue(current + direction.Delta(), out char nextValue) && nextValue is OBSTRUCTION)
+				|| obstruction == current + direction.Delta()) {
+				direction = direction.TurnRight();
 			}
 
-			current += delta;
+			current += direction.Delta();
+		}
+
+		if (obstruction is null) {
+			fullRoute.Add(new Guard(current, direction));
 		}
 
 		return (false, visited, fullRoute);
 	}
 
-	private record Guard(Point Position, Direction Direction, Delta Delta);
+	private static Delta Delta(this Direction direction) => direction switch
+	{
+		Up    => UP,
+		Right => RIGHT,
+		Down  => DOWN,
+		Left  => LEFT,
+		_ => throw new NotImplementedException(),
+	};
+
+	private static Direction TurnRight(this Direction direction) => direction switch
+	{
+		Up => Right,
+		Right => Down,
+		Down => Left,
+		Left => Up,
+		_ => throw new NotImplementedException(),
+	};
+
+	private record Guard(Point Position, Direction Direction);
 
 	public enum Direction
 	{
