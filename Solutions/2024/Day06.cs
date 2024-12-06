@@ -12,51 +12,81 @@ namespace AdventOfCode.Solutions._2024;
 public partial class Day06
 {
 	private static char[,] _map = default!;
-	private static Point _guardStart = Point.Zero;
+	private static Guard _guardStart = default!;
 
 	public static void Init(string[] input)
 	{
 		_map = input.To2dArray();
-		_guardStart = _map.ForEachCell().Single(cell => cell.Value == GUARD).Index;
+		_guardStart = new(_map.ForEachCell().Single(cell => cell.Value == GUARD).Index, Up, UP);
 	}
 
-	public static int Part1(string[] _) => _map.GuardPatrol().Visited.Count;
+	public static int Part1(string[] _) => _map.GuardPatrol(_guardStart).Visited.Count;
+
+	public static int Part2(string[] _)
+	{
+		return
+			_map
+			.GuardPatrol(_guardStart)
+			.FullPath
+			.Where(pos => pos.Position != _guardStart.Position)
+			.ToList()
+			.CountLoops(_map);
+	}
 
 	/// <summary>
 	///    The obstruction is always in the direction of movement so we only have to
 	///    place them in the locations that the guard will normally move to
+	///    EUREKA MOMENT - Start the Guard from just before the obstacle!!!
 	/// </summary>
-	public static int Part2(string[] _)
-		=> _map
-			.GuardPatrol()
-			.Visited
-			.Where(pos => pos != _guardStart)
-			.Count(obstruction => _map.GuardPatrol(obstruction).StuckInALoop);
+	private static int CountLoops(this List<Guard> patrol, char[,] map)
+	{
+		HashSet<Point> visited = [];
 
-	private static (bool StuckInALoop, HashSet<Point> Visited) GuardPatrol(this char[,] map, Point? obstruction = null)
+		int count = 1;
+		for (int i = 0; i < patrol.Count - 1; i++) {
+			Point obstruction = patrol[i].Position;
+			if (visited.Contains(obstruction)) {
+				continue;
+			}
+
+			_ = visited.Add(obstruction);
+
+			if (map.GuardPatrol(patrol[int.Clamp(i - 1, 0, patrol.Count - 2)], obstruction).StuckInALoop) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	private static (bool StuckInALoop, HashSet<Point> Visited, List<Guard> FullPath) GuardPatrol(this char[,] map, Guard start, Point? obstruction = null)
 	{
 		HashSet<(Point, Direction)> cache = [];
 		HashSet<Point> visited = [];
+		List<Guard> fullRoute = [];
 
-		Direction direction = Up;
-		Delta delta = UP;
-
-		Point current = _guardStart;
+		Direction direction = start.Direction;
+		Delta delta = start.Delta;
+		Point current = start.Position;
 
 		while (map.IsInBounds(current)) {
 			if (cache.Add((current, direction)) is false) {
-				return (true, visited);
+				return (true, visited, fullRoute);
 			}
 
 			_ = visited.Add(current);
 
+			if (obstruction is null) {
+				fullRoute.Add(new Guard(current, direction, delta));
+			}
+
 			while ((map.TryGetValue(current + delta, out char nextValue) && nextValue is OBSTRUCTION) || obstruction == current + delta) {
 				(direction, delta) = direction switch
 				{
-					Up    => (Right, RIGHT),
-					Right => (Down , DOWN),
-					Down  => (Left , LEFT),
-					Left  => (Up   , UP),
+					Up => (Right, RIGHT),
+					Right => (Down, DOWN),
+					Down => (Left, LEFT),
+					Left => (Up, UP),
 					_ => (direction, delta)
 				};
 			}
@@ -64,8 +94,10 @@ public partial class Day06
 			current += delta;
 		}
 
-		return (false, visited);
+		return (false, visited, fullRoute);
 	}
+
+	private record Guard(Point Position, Direction Direction, Delta Delta);
 
 	public enum Direction
 	{
