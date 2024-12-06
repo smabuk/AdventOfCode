@@ -1,5 +1,4 @@
-﻿using static Smab.Helpers.ArrayHelpers;
-using static AdventOfCode.Solutions._2024.Day06.Direction;
+﻿using static AdventOfCode.Solutions._2024.Day06.Direction;
 
 using DirectionDelta = (int dX, int dY);
 
@@ -10,30 +9,45 @@ namespace AdventOfCode.Solutions._2024;
 /// https://adventofcode.com/2024/day/06
 /// </summary>
 [Description("Guard Gallivant")]
-public partial class Day06 {
+public partial class Day06
+{
 
-	[Part1]
-	public static int Part1(string[] input, params object[]? args)
+	public static int Part1(string[] input) => input.To2dArray().GuardPatrol().Visited;
+
+	public static int Part2(string[] input)
 	{
 		char[,] map = input.To2dArray();
+		return map
+			.ForEachCell()
+			.Where(m => m.Value is not OBSTRUCTION or GUARD)
+			.Where(obstruction => map.GuardPatrol(obstruction).StuckInALoop)
+			.Count();
+	}
 
+	private static (bool StuckInALoop, int Visited) GuardPatrol(this char[,] map, Point? obstruction = null)
+	{
+		HashSet<(Point, Direction)> cache = [];
 		HashSet<Point> visited = [];
-		Direction direction = Direction.Up;
+
+		Direction direction = Up;
 		DirectionDelta directionDelta = UP;
+
 		Point current = map.ForEachCell().Single(cell => cell.Value == GUARD).Index;
 
 		while (map.TryGetValue(current, out char value)) {
-			visited.Add(current);
+			if (cache.Add((current, direction)) is false) {
+				return (true, visited.Count);
+			}
 
-			int count = 0;
-			while (map.TryGetValue(current + directionDelta, out char nextValue) && nextValue is OBSTRUCTION)
-			{
+			_ = visited.Add(current);
+
+			while ((map.TryGetValue(current + directionDelta, out char nextValue) && nextValue is OBSTRUCTION) || obstruction == current + directionDelta) {
 				(direction, directionDelta) = direction switch
 				{
-					Up    => (Right, RIGHT),
+					Up => (Right, RIGHT),
 					Right => (Down, DOWN),
-					Down  => (Left, LEFT),
-					Left  => (Up, UP),
+					Down => (Left, LEFT),
+					Left => (Up, UP),
 					_ => (direction, directionDelta)
 				};
 			}
@@ -41,10 +55,8 @@ public partial class Day06 {
 			current += directionDelta;
 		}
 
-		return visited.Count();
+		return (false, visited.Count);
 	}
-
-	[Part2] public static string Part2(string _, params object[]? args ) => NO_SOLUTION_WRITTEN_MESSAGE;
 
 	public enum Direction
 	{
@@ -60,4 +72,9 @@ public static partial class Day06
 	private const char GUARD       = '^';
 	private const char OBSTRUCTION = '#';
 	private const char SPACE       = '.';
+
+	public static readonly (int dX, int dY) UP = (0, -1);
+	public static readonly (int dX, int dY) DOWN = (0, 1);
+	public static readonly (int dX, int dY) LEFT = (-1, 0);
+	public static readonly (int dX, int dY) RIGHT = (1, 0);
 }
