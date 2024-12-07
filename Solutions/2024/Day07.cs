@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿using static AdventOfCode.Solutions._2024.Day07;
+
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 07: Bridge Repair
@@ -12,22 +14,96 @@ public static partial class Day07 {
 	[Init]
 	public static void LoadEquations(string[] input) => _equations = [.. input.As<Equation>()];
 
-	public static long Part1(string[] _)
-		=> _equations
-			.Where(eq => eq.CouldPossiblyBeTrue(2))
-			.Sum(e => e.Result);
-
-	public static long Part2(string[] _)
-		=> _equations
-			.Where(eq => eq.CouldPossiblyBeTrue(3))
-			.Sum(e => e.Result);
-
-	private static bool CouldPossiblyBeTrue(this Equation equation, int operatorCount)
+	public static long Part1(string[] _, params object[]? args)
 	{
+		string method = args.Method();
+
+		return method switch
+		{
+			"recursive" => _equations
+				.Where(eq => eq.CouldPossiblyBeTrueRecursive(2))
+				.Sum(e => e.Result),
+			"force" => _equations
+				.Where(eq => eq.CouldPossiblyBeTrueSlow(2))
+				.Sum(e => e.Result),
+			_ => throw new NotImplementedException(),
+		};
+	}
+
+	public static long Part2(string[] _, params object[]? args)
+	{
+		string method = args.Method();
+
+		return method switch
+		{
+			"recursive" => _equations
+				.Where(eq => eq.CouldPossiblyBeTrueRecursive(3))
+				.Sum(e => e.Result),
+			"force" => _equations
+				.Where(eq => eq.CouldPossiblyBeTrueSlow(3))
+				.Sum(e => e.Result),
+			_ => throw new NotImplementedException(),
+		};
+	}
+
+	private static bool CouldPossiblyBeTrueRecursive(this Equation equation, int operatorCount)
+	{
+		for (int operators = 0; operators < operatorCount; operators++) {
+			long result = operators switch
+			{
+				ADD => equation.Values[0] + equation.Values[1],
+				MUL => equation.Values[0] * equation.Values[1],
+				DOT => $"{equation.Values[0]}{equation.Values[1]}".As<long>(),
+				_ => throw new NotImplementedException(),
+			};
+
+			if (equation.Values.Count == 2) {
+				if (result == equation.Result) {
+					return true;
+				}
+			} else {
+				bool isValid = (equation with { Values = [result, .. equation.Values[2..]] }).CouldPossiblyBeTrueRecursive(operatorCount);
+				if (isValid) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private static string Method(this object[]? args) => GetArgument(args, 1, "recursive").ToLower();
+
+	internal const int ADD = 0;
+	internal const int MUL = 1;
+	internal const int DOT = 2;
+
+	public sealed record Equation(long Result, List<long> Values) : IParsable<Equation>
+	{
+		public static Equation Parse(string s, IFormatProvider? provider)
+		{
+			string[] tokens = s.TrimmedSplit(':');
+			return new(tokens[0].As<long>(), [.. tokens[1].As<long>(' ')]);
+		}
+
+		public static Equation Parse(string s) => Parse(s, null);
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Equation result)
+			=> ISimpleParsable<Equation>.TryParse(s, provider, out result);
+	}
+}
+
+file static class Day07SlowExtensions
+{
+	public static bool CouldPossiblyBeTrueSlow(this Equation equation, int operatorCount)
+	{
+		const char ADD = '0';
+		const char MUL = '1';
+		const char DOT = '2';
+
 		int iterations = (int)Math.Pow(operatorCount, equation.Values.Count - 1);
 		int noOfOperators = operatorCount;
 
-		for (int i = 0; i < iterations ; i++) {
+		for (int i = 0; i < iterations; i++) {
 			string operators =
 				i.ToBaseString(noOfOperators).PadLeft(equation.Values.Count - 1, '0');
 
@@ -56,7 +132,7 @@ public static partial class Day07 {
 		return false;
 	}
 
-	private static string ToBaseString(this int number, int baseNumber)
+	public static string ToBaseString(this int number, int baseNumber)
 	{
 		if (number == 0) { return "0"; }
 
@@ -72,22 +148,5 @@ public static partial class Day07 {
 		}
 
 		return result;
-	}
-
-	private const char ADD = '0';
-	private const char MUL = '1';
-	private const char DOT = '2';
-
-	public sealed record Equation(long Result, List<int> Values) : IParsable<Equation>
-	{
-		public static Equation Parse(string s, IFormatProvider? provider)
-		{
-			string[] tokens = s.TrimmedSplit(':');
-			return new(tokens[0].As<long>(), [.. tokens[1].As<int>(' ')]);
-		}
-
-		public static Equation Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Equation result)
-			=> ISimpleParsable<Equation>.TryParse(s, provider, out result);
 	}
 }
