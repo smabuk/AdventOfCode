@@ -129,30 +129,48 @@ file static class Day07SlowExtensions
 		int iterations = (int)Math.Pow(operatorCount, equation.Values.Count - 1);
 		int noOfOperators = operatorCount;
 
-		for (int i = 0; i < iterations; i++) {
-			string operators =
-				i.ToBaseString(noOfOperators).PadLeft(equation.Values.Count - 1, '0');
+		CancellationTokenSource cts = new();
+		ParallelOptions options = new()
+		{
+			CancellationToken = cts.Token,
+			MaxDegreeOfParallelism = Environment.ProcessorCount
+		};
 
-			long result = equation.Values[0];
+		try {
+			_ = Parallel.For(0, iterations, options, i =>
+			{
+				string operators =
+					i.ToBaseString(noOfOperators).PadLeft(equation.Values.Count - 1, '0');
 
-			for (int ix = 0; ix < equation.Values.Count - 1; ix++) {
-				result = operators[ix] switch
-				{
-					ADD => result + equation.Values[ix + 1],
-					MUL => result * equation.Values[ix + 1],
-					DOT => $"{result}{equation.Values[ix + 1]}".As<long>(),
-					_ => throw new NotImplementedException(),
-				};
+				long result = equation.Values[0];
 
-				if (result > equation.Result) {
-					break;
+				for (int ix = 0; ix < equation.Values.Count - 1; ix++) {
+					result = operators[ix] switch
+					{
+						ADD => result + equation.Values[ix + 1],
+						MUL => result * equation.Values[ix + 1],
+						DOT => $"{result}{equation.Values[ix + 1]}".As<long>(),
+						_ => throw new NotImplementedException(),
+					};
+
+					if (result > equation.Result) {
+						break;
+					}
 				}
-			}
 
-			if (result == equation.Result) {
-				return true;
-			}
+				if (result == equation.Result) {
+					cts.Cancel();
+				}
 
+
+			});
+		}
+
+		catch (OperationCanceledException) {
+			return true;
+		}
+		finally {
+			cts.Dispose();
 		}
 
 		return false;
