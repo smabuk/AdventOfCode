@@ -28,4 +28,15 @@ public class Tests_07_Bridge_Repair
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 11387)]
+	[InlineData("156: 15 6", 156)]
+	[InlineData("7290: 6 8 6 15", 7290)]
+	[InlineData("192: 17 8 14", 192)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

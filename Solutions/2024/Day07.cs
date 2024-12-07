@@ -1,6 +1,4 @@
-﻿using static AdventOfCode.Solutions._2024.Day07Constants;
-using static AdventOfCode.Solutions._2024.Day07Types;
-namespace AdventOfCode.Solutions._2024;
+﻿namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 07: Bridge Repair
@@ -9,60 +7,76 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Bridge Repair")]
 public static partial class Day07 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
-
 	private static List<Equation> _equations = [];
 
 	[Init]
 	public static void LoadEquations(string[] input) => _equations = [.. input.As<Equation>()];
 
-	private static long Solution1(string[] _)
-	{
-		var result = _equations
-			.Where(CouldPossibleBeTrue)
+	public static long Part1(string[] _)
+		=> _equations
+			.Where(eq => eq.CouldPossiblyBeTrue(2))
 			.Sum(e => e.Result);
-		return result;
-	}
 
-	private static string Solution2(string[] _) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2(string[] _)
+		=> _equations
+			.Where(eq => eq.CouldPossiblyBeTrue(3))
+			.Sum(e => e.Result);
 
-	private static bool CouldPossibleBeTrue(this Equation equation)
+	private static bool CouldPossiblyBeTrue(this Equation equation, int operatorCount)
 	{
-		int iterations = (int)Math.Pow(2, equation.Values.Count - 1);
+		int iterations = (int)Math.Pow(operatorCount, equation.Values.Count - 1);
+		int noOfOperators = operatorCount;
+
 		for (int i = 0; i < iterations ; i++) {
-			string operators = Convert.ToString(i, 2).PadLeft(equation.Values.Count - 1, ZERO).Replace(ZERO, ADD).Replace(ONE, MUL);
+			string operators =
+				i.ToBaseString(noOfOperators).PadLeft(equation.Values.Count - 1, '0');
+
 			long result = equation.Values[0];
 
-			for (int ix = 0; ix < operators.Length; ix++) {
+			for (int ix = 0; ix < equation.Values.Count - 1; ix++) {
 				result = operators[ix] switch
 				{
 					ADD => result + equation.Values[ix + 1],
 					MUL => result * equation.Values[ix + 1],
+					DOT => $"{result}{equation.Values[ix + 1]}".As<long>(),
 					_ => throw new NotImplementedException(),
 				};
+
+				if (result > equation.Result) {
+					break;
+				}
 			}
 
 			if (result == equation.Result) {
 				return true;
 			}
+
 		}
 
 		return false;
 	}
 
-	private const char ADD = '+';
-	private const char MUL = '*';
-	
-	private const char ZERO = '0';
-	private const char ONE = '1';
+	private static string ToBaseString(this int number, int baseNumber)
+	{
+		if (number == 0) { return "0"; }
 
+		if (baseNumber == 2) {
+			return Convert.ToString(number, 2);
+		}
 
+		string result = "";
+		while (number > 0) {
+			int remainder = number % baseNumber;
+			result = remainder + result;
+			number /= baseNumber;
+		}
 
-}
+		return result;
+	}
 
-internal sealed partial class Day07Types
-{
+	private const char ADD = '0';
+	private const char MUL = '1';
+	private const char DOT = '2';
 
 	public sealed record Equation(long Result, List<int> Values) : IParsable<Equation>
 	{
@@ -76,11 +90,4 @@ internal sealed partial class Day07Types
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Equation result)
 			=> ISimpleParsable<Equation>.TryParse(s, provider, out result);
 	}
-
-	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
-	public static partial Regex InputRegEx();
-}
-
-file static class Day07Constants
-{
 }
