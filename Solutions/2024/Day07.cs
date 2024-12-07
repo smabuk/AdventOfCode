@@ -1,5 +1,7 @@
 ﻿using static AdventOfCode.Solutions._2024.Day07;
 
+using Op = System.Func<AdventOfCode.Solutions._2024.Day07.Equation, long>;
+
 namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
@@ -10,9 +12,18 @@ namespace AdventOfCode.Solutions._2024;
 public static partial class Day07 {
 
 	private static List<Equation> _equations = [];
+	private static HashSet<Equation> _part1Equations = [];
 
 	[Init]
-	public static void LoadEquations(string[] input) => _equations = [.. input.As<Equation>()];
+	public static void LoadEquations(string[] input, params object[]? args)
+	{
+		string method = args.Method();
+		_equations = [.. input.As<Equation>()];
+
+		if (method == "onepass") {
+			_part1Equations = [.. _equations.Where(eq => eq.CouldBeTrue([Multiply, Add]))];
+		}
+	}
 
 	public static long Part1(string[] _, params object[]? args)
 	{
@@ -20,8 +31,9 @@ public static partial class Day07 {
 
 		return method switch
 		{
+			"onepass" => _part1Equations.Sum(e => e.Result),
 			"recursive" => _equations
-				.Where(eq => eq.CouldPossiblyBeTrueRecursive(2))
+				.Where(eq => eq.CouldBeTrue([Multiply, Add]))
 				.Sum(e => e.Result),
 			"force" => _equations
 				.Where(eq => eq.CouldPossiblyBeTrueSlow(2))
@@ -36,8 +48,13 @@ public static partial class Day07 {
 
 		return method switch
 		{
+			"onepass" =>
+				((IEnumerable<Equation>)[.. _equations.Except(_part1Equations)
+					.Where(eq => eq.CouldBeTrue([Multiply, Add, FastConcatenate]))
+					, .. _part1Equations])
+				.Sum(e => e.Result),
 			"recursive" => _equations
-				.Where(eq => eq.CouldPossiblyBeTrueRecursive(3))
+				.Where(eq => eq.CouldBeTrue([Multiply, Add, FastConcatenate]))
 				.Sum(e => e.Result),
 			"force" => _equations
 				.Where(eq => eq.CouldPossiblyBeTrueSlow(3))
@@ -46,24 +63,15 @@ public static partial class Day07 {
 		};
 	}
 
-	private static bool CouldPossiblyBeTrueRecursive(this Equation equation, int operatorCount)
+	private static bool CouldBeTrue(this Equation equation, List<Op> operations)
 	{
-		for (int operators = 0; operators < operatorCount; operators++) {
-			long result = operators switch
-			{
-				ADD => equation.Values[0] + equation.Values[1],
-				MUL => equation.Values[0] * equation.Values[1],
-				DOT => $"{equation.Values[0]}{equation.Values[1]}".As<long>(),
-				_ => throw new NotImplementedException(),
-			};
+		foreach (Op operation in operations) {
+			long result = equation.PerformOperation(operation);
 
-			if (equation.Values.Count == 2) {
-				if (result == equation.Result) {
-					return true;
-				}
+			if (equation.LastPair()) {
+				if (result == equation.Result) { return true; }
 			} else {
-				bool isValid = (equation with { Values = [result, .. equation.Values[2..]] }).CouldPossiblyBeTrueRecursive(operatorCount);
-				if (isValid) {
+				if (equation.MergeValues(result).CouldBeTrue(operations)) {
 					return true;
 				}
 			}
@@ -72,11 +80,29 @@ public static partial class Day07 {
 		return false;
 	}
 
-	private static string Method(this object[]? args) => GetArgument(args, 1, "recursive").ToLower();
 
-	internal const int ADD = 0;
-	internal const int MUL = 1;
-	internal const int DOT = 2;
+
+	private static Equation MergeValues(this Equation equation, long result)
+		=> equation with { Values = [result, .. equation.Values[2..]] };
+	private static long PerformOperation(this Equation equation, Op operation) => operation(equation);
+	private static bool LastPair(this Equation equation) => equation.Values.Count == 2;
+	private static long Add(this Equation equation) => equation.Values[0] + equation.Values[1];
+	private static long Multiply(this Equation equation) => equation.Values[0] * equation.Values[1];
+	//private static long Concatenate(this Equation equation) => $"{equation.Values[0]}{equation.Values[1]}".As<long>();
+	private static long FastConcatenate(this Equation equation) => equation.Values[0].ShiftLeftAndAdd(equation.Values[1]);
+
+	public static long ShiftLeftAndAdd(this long number, long otherNumber)
+	{
+		return otherNumber switch
+		{
+			<    10 => number * 10L,
+			<   100 => number * 100L,
+			< 1_000 => number * 1_000L,
+			_ => throw new NotImplementedException(),
+		} + otherNumber;
+	}
+
+	private static string Method(this object[]? args) => GetArgument(args, 1, "onepass").ToLower();
 
 	public sealed record Equation(long Result, List<long> Values) : IParsable<Equation>
 	{
