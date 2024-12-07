@@ -1,36 +1,21 @@
-﻿using static AdventOfCode.Solutions._2024.DayXXConstants;
-using static AdventOfCode.Solutions._2024.DayXXTypes;
-namespace AdventOfCode.Solutions._2024;
+﻿namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day XX: Title
 /// https://adventofcode.com/2024/day/XX
 /// </summary>
 [Description("")]
-public sealed partial class DayXX {
-
-	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadInstructions(input);
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+public partial class DayXX {
 
 	private static IEnumerable<Instruction> _instructions = [];
+	
+	[Init]
+	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+	public static string Part1(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static string Part2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
 
-	private static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
 
-	private static string Solution1(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
-
-	private static string Solution2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
-}
-
-file static class DayXXExtensions
-{
-}
-
-internal sealed partial class DayXXTypes
-{
-
-	public sealed record Instruction(string Name, int Value) : IParsable<Instruction>
+	private sealed record Instruction(string Name, int Value) : IParsable<Instruction>
 	{
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
@@ -47,9 +32,5 @@ internal sealed partial class DayXXTypes
 	}
 
 	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
-	public static partial Regex InputRegEx();
-}
-
-file static class DayXXConstants
-{
+	private static partial Regex InputRegEx();
 }

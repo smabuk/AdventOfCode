@@ -9,7 +9,7 @@ namespace AdventOfCode.Solutions._2024;
 /// https://adventofcode.com/2024/day/06
 /// </summary>
 [Description("Guard Gallivant")]
-public partial class Day06
+public static partial class Day06
 {
 	private static char[,] _map = default!;
 	private static Guard _guardStart = default!;
