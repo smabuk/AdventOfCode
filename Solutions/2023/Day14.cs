@@ -31,14 +31,6 @@ public sealed partial class Day14 {
 			.Spin(1_000_000_000)
 			.CalculateLoad();
 	}
-
-	public enum Direction
-	{
-		North,
-		West,
-		South,
-		East
-	}
 }
 
 public static class Day14Helpers
@@ -48,8 +40,7 @@ public static class Day14Helpers
 		Dictionary<string, long> state = [];
 
 		Dish spunDish = (Dish)dish.Clone();
-		
-		long firstSeen = 0;
+
 		long interval = 0;
 
 		for (long i = 0; i < noOfCycles; i++) {
@@ -60,13 +51,15 @@ public static class Day14Helpers
 				.Tilt(Direction.East);
 			if (interval == 0) {
 				string currentState = spunDish.ToState();
-				if (state.TryGetValue(currentState, out firstSeen)) {
+				if (state.TryGetValue(currentState, out long firstSeen)) {
 					interval = i - firstSeen;
 					i += ((noOfCycles / interval) - (i / interval) - 1) * interval;
 				}
+
 				state[currentState] = i;
 			}
 		}
+
 		return spunDish;
 	}
 
@@ -100,6 +93,7 @@ public static class Day14Helpers
 				while (tiltedDish.IsInBounds(lookAtX, lookatY) && tiltedDish[lookAtX, lookatY] == EMPTY) {
 					(lookAtX, lookatY) = (lookAtX + dX, lookatY + dY);
 				}
+
 				tiltedDish[lookAtX - dX, lookatY -dY] = current;
 				tiltedDish[x, y] = EMPTY;
 			}

@@ -14,14 +14,14 @@ public sealed partial class Day11 {
 	public static string Part1(string[] _) => Solution1().ToString();
 	public static string Part2(string[] _) => Solution2().ToString();
 
-	private static List<HexCoordinate> _hexCoordinates = [];
+	private static List<Day11Types.HexCoordinate> _hexCoordinates = [];
 
 	private static void LoadAndTravel(string[] input) => 
 		_hexCoordinates = [
 			.. input[0]
 				.ToUpperInvariant()
 				.TrimmedSplit(COMMA)
-				.Select(Enum.Parse<Direction>)
+				.Select(Enum.Parse<Day11Types.HexDirection>)
 				.Travel()
 			];
 
@@ -31,11 +31,11 @@ public sealed partial class Day11 {
 
 file static class Day11Extensions
 {
-	public static IEnumerable<HexCoordinate> Travel(this IEnumerable<Direction> directions)
+	public static IEnumerable<Day11Types.HexCoordinate> Travel(this IEnumerable<Day11Types.HexDirection> directions)
 	{
-		HexCoordinate current = new(0, 0, 0);
+		Day11Types.HexCoordinate current = new(0, 0, 0);
 
-		foreach (Direction direction in directions) {
+		foreach (Day11Types.HexDirection direction in directions) {
 			yield return current = current.Step(direction);
 		}
 	} 
@@ -43,7 +43,7 @@ file static class Day11Extensions
 
 internal sealed partial class Day11Types
 {
-	public enum Direction
+	public enum HexDirection
 	{
 		None = 0,
 		NW,
@@ -77,18 +77,18 @@ internal sealed partial class Day11Types
 		/// </summary>
 		public int Distance => (int.Abs(X) + int.Abs(Y) + int.Abs(Z)) / 2;
 
-		public HexCoordinate Step(Direction direction)
+		public HexCoordinate Step(HexDirection direction)
 		{
 			return direction switch
 			{
-				Direction.N  => this with { X = X + 0, Y = Y + 1, Z = Z - 1 },
-				Direction.S  => this with { X = X + 0, Y = Y - 1, Z = Z + 1 },
+				HexDirection.N  => this with { X = X + 0, Y = Y + 1, Z = Z - 1 },
+				HexDirection.S  => this with { X = X + 0, Y = Y - 1, Z = Z + 1 },
 
-				Direction.NE => this with { X = X + 1, Y = Y + 0, Z = Z - 1 },
-				Direction.SW => this with { X = X - 1, Y = Y + 0, Z = Z + 1 },
+				HexDirection.NE => this with { X = X + 1, Y = Y + 0, Z = Z - 1 },
+				HexDirection.SW => this with { X = X - 1, Y = Y + 0, Z = Z + 1 },
 
-				Direction.NW => this with { X = X - 1, Y = Y + 1, Z = Z + 0 },
-				Direction.SE => this with { X = X + 1, Y = Y - 1, Z = Z + 0 },
+				HexDirection.NW => this with { X = X - 1, Y = Y + 1, Z = Z + 0 },
+				HexDirection.SE => this with { X = X + 1, Y = Y - 1, Z = Z + 0 },
 
 				_ => throw new NotImplementedException(),
 			};

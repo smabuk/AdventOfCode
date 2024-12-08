@@ -58,6 +58,7 @@ public sealed partial class Day13 {
 					if (part == 1) {
 						return cart.Position;
 					}
+
 					for (int i = 0; i < orderedCarts.Count; i++) {
 						if (orderedCarts[i].Position == cart.Position && orderedCarts[i].IsCrashed is false) {
 							orderedCarts[i].IsCrashed = true;
@@ -65,6 +66,7 @@ public sealed partial class Day13 {
 					}
 				}
 			}
+
 			carts = orderedCarts.Where(c => c.IsCrashed is false).ToList();
 			ticks++;
 		} while (carts.Count > 1);
@@ -110,12 +112,13 @@ public sealed partial class Day13 {
 			if (IsCrashed) {
 				return this;
 			}
+
 			Point position = Facing switch
 			{
-				Direction.Left  => Position.Left(),
-				Direction.Right => Position.Right(),
-				Direction.Up    => Position.Up(),
-				Direction.Down  => Position.Down(),
+				Direction.Left  => Position.MoveLeft(),
+				Direction.Right => Position.MoveRight(),
+				Direction.Up    => Position.MoveUp(),
+				Direction.Down  => Position.MoveDown(),
 				_ => throw new NotImplementedException(),
 			};
 

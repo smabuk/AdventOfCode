@@ -69,10 +69,10 @@ file static class Day01Extensions
 			Facing = newFacing,
 			Position = newFacing switch
 			{
-				(Direction.West) => me.Position.West(instruction.Value),
-				(Direction.East) => me.Position.East(instruction.Value),
-				(Direction.North) => me.Position.North(instruction.Value),
-				(Direction.South) => me.Position.South(instruction.Value),
+				(Direction.West) => me.Position.MoveWest(instruction.Value),
+				(Direction.East) => me.Position.MoveEast(instruction.Value),
+				(Direction.North) => me.Position.MoveNorth(instruction.Value),
+				(Direction.South) => me.Position.MoveSouth(instruction.Value),
 
 				_ => throw new NotImplementedException(),
 			},
@@ -93,17 +93,6 @@ file sealed partial class Day01Types
 	}
 
 	public record Person(Direction Facing, Point Position);
-
-	public enum Direction
-	{
-		West,
-		East,
-		North,
-		South,
-
-		L,
-		R,
-	}
 }
 
 file static class Day01Constants

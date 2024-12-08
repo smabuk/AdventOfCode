@@ -11,8 +11,8 @@ namespace AdventOfCode.Solutions._2023;
 [Description("The Floor Will Be Lava")]
 public sealed partial class Day16 {
 
-	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution2(input).ToString();
+	public static string Part1(string[] input) => Solution1(input).ToString();
+	public static string Part2(string[] input) => Solution2(input).ToString();
 
 	public const char SPLITTER_H = '-';
 	public const char SPLITTER_V = '|';
@@ -100,10 +100,10 @@ public sealed partial class Day16 {
 			foreach (Direction newDirection in newDirections) {
 				Point newPosition = newDirection switch
 				{
-					Left  => beam.Position.Left(),
-					Right => beam.Position.Right(),
-					Up    => beam.Position.Up(),
-					Down  => beam.Position.Down(),
+					Left  => beam.Position.MoveLeft(),
+					Right => beam.Position.MoveRight(),
+					Up    => beam.Position.MoveUp(),
+					Down  => beam.Position.MoveDown(),
 					_ => throw new ArgumentOutOfRangeException(nameof(newDirection)),
 				};
 
@@ -117,18 +117,19 @@ public sealed partial class Day16 {
 		return [.. visited.Select(b => b.Position)];
 	}
 
-	private static IEnumerable<string> DisplayContraption(Contraption contraption)
+	private static string[] DisplayContraption(Contraption contraption)
 	{
 		string[] output = [..contraption.PrintAsStringArray()];
 		return output;
 	}
 
-	private static IEnumerable<string> DisplayEnergised(Contraption contraption, IEnumerable<Point> energised)
+	private static string[] DisplayEnergised(Contraption contraption, IEnumerable<Point> energised)
 	{
 		Contraption energisedContraption = ArrayHelpers.Create2dArray(contraption.ColsCount(), contraption.RowsCount(), '.');
 		foreach (Point point in energised) {
 			energisedContraption[point.X, point.Y] = ENERGISED;
 		}
+
 		string[] output = [.. energisedContraption.PrintAsStringArray()];
 		return output;
 	}

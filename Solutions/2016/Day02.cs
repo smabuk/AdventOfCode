@@ -54,13 +54,6 @@ file static class Day02Extensions
 
 file class Day02Types
 {
-	public enum Direction
-	{
-		U,
-		D,
-		L,
-		R,
-	}
 }
 
 file static class Day02Constants

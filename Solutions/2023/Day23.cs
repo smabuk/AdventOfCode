@@ -7,12 +7,12 @@ namespace AdventOfCode.Solutions._2023;
 /// https://adventofcode.com/2023/day/23
 /// </summary>
 [Description("A Long Indexes")]
-public sealed partial class Day23 {
+public static partial class Day23 {
 
 	[Init]
-	public static   void  Init(string[] input, params object[]? args) => LoadMap(input);
-	public static string Part1(string[] input, params object[]? args) => Solution(1).ToString();
-	public static string Part2(string[] input, params object[]? args) => Solution(2).ToString();
+	public static   void  Init(string[] input) => LoadMap(input);
+	public static string Part1(string[] _) => Solution(1).ToString();
+	public static string Part2(string[] _) => Solution(2).ToString();
 
 	public const char PATH        = '.';
 	public const char FOREST      = '#';
@@ -22,9 +22,9 @@ public sealed partial class Day23 {
 	public const char SLOPE_DOWN  = 'v';
 	public static readonly char[] SLOPES = [SLOPE_RIGHT, SLOPE_LEFT, SLOPE_UP, SLOPE_DOWN];
 
-	public static char[,] _map = default!;
-	public static Point _start;
-	public static Point _end;
+	private static char[,] _map = default!;
+	private static Point _start;
+	private static Point _end;
 
 	private static void LoadMap(string[] input) {
 		_map   = input.To2dArray();
@@ -37,8 +37,8 @@ public sealed partial class Day23 {
 		return
 			_map
 			.IdentifyJunctions([_start, _end])
-			.BuildGraph(part)
-			.FindMaxSteps_DepthFirstSearch(_start, []);
+			.BuildGraph(_map, part)
+			.FindMaxSteps_DepthFirstSearch(_start, _end, []);
 	}
 
 }
@@ -65,7 +65,7 @@ file static class Day23Helpers
 		return points;
 	}
 
-	public static Dictionary<Point, Dictionary<Point, int>> BuildGraph(this List<Point> points, int part = 1)
+	public static Dictionary<Point, Dictionary<Point, int>> BuildGraph(this List<Point> points, char[,] map, int part = 1)
 	{
 		Dictionary<Point, Dictionary<Point, int>> graph = points.ToDictionary(pt => pt, pt => new Dictionary<Point, int>());
 
@@ -84,7 +84,7 @@ file static class Day23Helpers
 					continue;
 				}
 
-				foreach (Point neighbour in _map.GetNeighbours(point, part)) {
+				foreach (Point neighbour in map.GetNeighbours(point, part)) {
 					if (seen.DoesNotContain(neighbour)) {
 						stack.Push((neighbour, steps + 1));
 						_ = seen.Add(neighbour);
@@ -96,9 +96,9 @@ file static class Day23Helpers
 		return graph;
 	}
 
-	public static int FindMaxSteps_DepthFirstSearch(this Dictionary<Point, Dictionary<Point, int>> graph, Point point, HashSet<Point> visited)
+	public static int FindMaxSteps_DepthFirstSearch(this Dictionary<Point, Dictionary<Point, int>> graph, Point point, Point end, HashSet<Point> visited)
 	{
-		if (point == _end) {
+		if (point == end) {
 			return 0;
 		}
 
@@ -107,7 +107,7 @@ file static class Day23Helpers
 		_ = visited.Add(point);
 		foreach (KeyValuePair<Point, int> next in graph[point]) {
 			if (visited.DoesNotContain(next.Key)) {
-				maxSteps = Math.Max(maxSteps, FindMaxSteps_DepthFirstSearch(graph, next.Key, visited) + graph[point][next.Key]);
+				maxSteps = Math.Max(maxSteps, FindMaxSteps_DepthFirstSearch(graph, next.Key, end, visited) + graph[point][next.Key]);
 			}
 		}
 		_ = visited.Remove(point);
@@ -122,10 +122,10 @@ file static class Day23Helpers
 		if (part == 1 && currentValue.IsIn(SLOPES)) {
 			yield return currentValue switch
 			{
-				SLOPE_RIGHT => current.Right(),
-				SLOPE_LEFT  => current.Left(),
-				SLOPE_UP    => current.Up(),
-				SLOPE_DOWN  => current.Down(),
+				SLOPE_RIGHT => current.MoveRight(),
+				SLOPE_LEFT  => current.MoveLeft(),
+				SLOPE_UP    => current.MoveUp(),
+				SLOPE_DOWN  => current.MoveDown(),
 				_ => throw new NotImplementedException(),
 			};
 			yield break;

@@ -7,7 +7,7 @@
 [Description("Pipe Maze")]
 public sealed partial class Day10 {
 
-	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+	public static string Part1(string[] input, Action<string[], bool>? visualise = null)
 		=> Solution1(input, visualise).ToString();
 	public static string Part2(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
 	{
@@ -95,11 +95,9 @@ public sealed partial class Day10 {
 			Dictionary<int, (int Min, int Max)> minMaxPerRow = [];
 			for (int y = 0; y < pipe_maze.RowsCount(); y++) {
 				List<Point> pipes = [.. loopRoute.Where(pipe => pipe.Y == y)];
-				if (pipes.Count == 0) {
-					minMaxPerRow[y] = (int.MaxValue, int.MinValue);
-				} else {
-					minMaxPerRow[y] = pipes.MinMax();
-				}
+				minMaxPerRow[y] = pipes.Count == 0
+					? ((int Min, int Max))(int.MaxValue, int.MinValue)
+					: pipes.MinMax();
 			}
 
 			return mazeWithoutLoop
@@ -133,6 +131,7 @@ public sealed partial class Day10 {
 				startingDirection = Direction.Left;
 				break;
 			}
+
 			if (cell.Value is STRAIGHT_LEFT_RIGHT or BEND_BOTTOM_RIGHT or BEND_TOP_RIGHT && startingPosition.X < cell.X) {
 				startingDirection = Direction.Right;
 				break;
@@ -156,10 +155,10 @@ public sealed partial class Day10 {
 		{
 			Point newPosition = Facing switch
 			{
-				Direction.Left  => Position.Left(),
-				Direction.Right => Position.Right(),
-				Direction.Up    => Position.Up(),
-				Direction.Down  => Position.Down(),
+				Direction.Left  => Position.MoveLeft(),
+				Direction.Right => Position.MoveRight(),
+				Direction.Up    => Position.MoveUp(),
+				Direction.Down  => Position.MoveDown(),
 				_ => throw new NotImplementedException(),
 			};
 
@@ -208,6 +207,7 @@ file static class Day10Helpers
 				newMaze[(cell.X * 3) + 1 + dx, (cell.Y * 3) + 1 + dy] = newPipeValue[dx, dy];
 			}}
 		}
+
 		return newMaze;
 	}
 
@@ -218,6 +218,7 @@ file static class Day10Helpers
 		for (int x = 0; x < newMaze.ColsMax(); x++) {
 			newMaze[x, y] = pipe_maze[(x * 3) + 2, (y * 3) + 2];
 		}}
+
 		return newMaze;
 	}
 
@@ -242,6 +243,7 @@ file static class Day10Helpers
 			if (cellTypesToFill.DoesNotContain(pipe_maze[point.X, point.Y])) {
 				continue;
 			}
+
 			pipe_maze[point.X, point.Y] = fillValue;
 			foreach (Cell<char> adjacent in pipe_maze.GetAdjacentCells(point)) {
 				queue.Enqueue(adjacent.Index);
@@ -271,8 +273,10 @@ file static class Day10Helpers
 					result = !result;
 				}
 			}
+
 			j = i;
 		}
+
 		return result;
 	}
 

@@ -1,7 +1,8 @@
 ﻿using static AdventOfCode.Solutions._2017.Day22Constants;
 using static AdventOfCode.Solutions._2017.Day22Types;
-using static AdventOfCode.Solutions._2017.Day22Types.Direction;
 using static AdventOfCode.Solutions._2017.Day22Types.State;
+
+using static Smab.Helpers.Direction;
 
 namespace AdventOfCode.Solutions._2017;
 
@@ -77,10 +78,10 @@ file static class Day22Extensions
 		{
 			Position = carrier.Direction switch
 			{
-				Up    => carrier.Position.Up() ,
-				Right => carrier.Position.Right() ,
-				Down  => carrier.Position.Down() ,
-				Left  => carrier.Position.Left() ,
+				Up    => carrier.Position.MoveUp() ,
+				Right => carrier.Position.MoveRight() ,
+				Down  => carrier.Position.MoveDown() ,
+				Left  => carrier.Position.MoveLeft() ,
 				_ => throw new NotImplementedException(),
 			}
 		};
@@ -179,13 +180,6 @@ file static class Day22Extensions
 
 internal sealed partial class Day22Types
 {
-	public enum Direction
-	{
-		Up,
-		Right,
-		Down,
-		Left,
-	}
 
 	public enum State
 	{

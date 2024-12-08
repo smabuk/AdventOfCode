@@ -2,7 +2,7 @@
 using static AdventOfCode.Solutions._2017.Day19Constants;
 using static AdventOfCode.Solutions._2017.Day19Types;
 
-using Direction = Smab.Helpers.Point;
+using Delta = (int dX, int dY);
 
 namespace AdventOfCode.Solutions._2017;
 
@@ -37,7 +37,7 @@ file static class Day19Extensions
 	{
 		int steps = 1;
 		string path = "";
-		Direction direction = new(DOWN);
+		Delta direction = Direction.Down.Delta();
 		Point current = diagram.ForEachCell().Single(cell => cell.Y == 0 && cell.Value == VERTICAL).Index + direction;
 
 		while (diagram.TryGetValue(current, out char value) && value != SPACE) {
@@ -49,14 +49,14 @@ file static class Day19Extensions
 
 			direction = value switch
 			{
-				JOIN when direction.X is 0
-					=> diagram.TryGetValue(current.Left(), out value) && value is not (VERTICAL or SPACE)
-						? new(LEFT)
-						: new(RIGHT),
-				JOIN when direction.Y is 0
-					=> diagram.TryGetValue(current.Up(), out value) && value is not (HORIZONTAL or SPACE)
-						? new(UP)
-						: new(DOWN),
+				JOIN when direction.dX is 0
+					=> diagram.TryGetValue(current.MoveLeft(), out value) && value is not (VERTICAL or SPACE)
+						? Direction.Left.Delta()
+						: Direction.Right.Delta(),
+				JOIN when direction.dY is 0
+					=> diagram.TryGetValue(current.MoveUp(), out value) && value is not (HORIZONTAL or SPACE)
+						? Direction.Up.Delta()
+						: Direction.Down.Delta(),
 				_ => direction,
 			};
 
