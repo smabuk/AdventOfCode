@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace AdventOfCode.Solutions._2024;
+﻿namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 08: Resonant Collinearity
@@ -13,29 +11,41 @@ public static partial class Day08 {
 	private static ILookup<char, Point> _antennae = default!;
 
 	[Init]
-	public static void LoadMap(string[] input)
+	public static void LoadMap(string[] input, Action<string[], bool>? visualise = null)
 	{
 		_map = input.To2dArray();
 		_antennae = _map
 			.ForEachCell()
 			.Where(c => char.IsAsciiLetterOrDigit(c))
 			.ToLookup(a => a.Value, a => a.Index);
+		_map.VisualiseMap([], "Initial", visualise);
 	}
 
 	public static int Part1(string[] _, Action<string[], bool>? visualise = null)
 	{
-		List<Point> antinodes = [.._antennae
-			.Select(a => _antennae[a.Key])
-			.Select(locations => locations.Antinodes())
-			.SelectMany(antinodes => antinodes)
-			.Distinct()
-			.Where(antinode => _map.IsInBounds(antinode))];
-
+		List<Point> antinodes = _antennae.GetAntinodes(Antinodes);
 		_map.VisualiseMap(antinodes, "Final", visualise);
+
 		return antinodes.Count;
 	}
 
-	public static string Part2(string[] _) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static int Part2(string[] _, Action<string[], bool>? visualise = null)
+	{
+		List<Point> antinodes = _antennae.GetAntinodes(a => a.ResidentHarmonicAntinodes(_map));
+		_map.VisualiseMap(antinodes, "Final", visualise);
+
+		return antinodes.Count;
+	}
+
+	private static List<Point> GetAntinodes(this ILookup<char, Point> antennae, Func<IEnumerable<Point>, IEnumerable<Point>> antinodesFunc)
+	{
+		return [..antennae
+			.Select(a => antennae[a.Key])
+			.Select(antinodesFunc)
+			.SelectMany(antinodes => antinodes)
+			.Distinct()
+			.Where(antinode => _map.IsInBounds(antinode))];
+	}
 
 	private static IEnumerable<Point> Antinodes(this IEnumerable<Point> locations)
 	{
@@ -44,6 +54,25 @@ public static partial class Day08 {
 			Point a2 = item.Last();
 			yield return a1 - a2 + a1;
 			yield return a2 - a1 + a2;
+		}
+	}
+
+	private static IEnumerable<Point> ResidentHarmonicAntinodes(this IEnumerable<Point> locations, char[,] map)
+	{
+		foreach (IEnumerable<Point> item in locations.Combinations(2)) {
+			Point a1 = item.First();
+			Point a2 = item.Last();
+			int i = 0;
+			while (map.IsInBounds(((a1 - a2) * i) + a1)) {
+				yield return ((a1 - a2) * i) + a1;
+				i++;
+			}
+
+			i = 0;
+			while (map.IsInBounds(((a2 - a1) * i) + a2)) {
+				yield return ((a2 - a1) * i) + a2;
+				i++;
+			}
 		}
 	}
 
@@ -62,6 +91,5 @@ public static partial class Day08 {
 		}
 	}
 
-	private const char EMPTY    = '.';
 	private const char ANTINODE = '#';
 }

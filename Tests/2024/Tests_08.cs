@@ -27,6 +27,14 @@ public class Tests_08_Resonant_Collinearity(ITestOutputHelper testOutputHelper)
 		actual.ShouldBe(expected);
 	}
 
+	[Theory]
+	[InlineData(TEST_DATA, 34)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+	}
+
 
 	private void Callback(string[] lines, bool _)
 	{
