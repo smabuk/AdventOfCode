@@ -4,8 +4,7 @@ Console.ResetColor();
 
 (DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload) = ParseCommandLine(args);
 
-System.Diagnostics.Stopwatch totalTimer = new();
-totalTimer.Start();
+long totalTime = Stopwatch.GetTimestamp();
 
 if (date.Month == 12 && date.Day <= 25) {
 	await GetInputDataAndSolve(date.Year, date.Day, null, null, showVisuals, isDebug, isDownload, solutionArgs);
@@ -20,8 +19,7 @@ if (date.Month == 12 && date.Day <= 25) {
 	}
 }
 
-totalTimer.Stop();
-Console.Write($" Total Elapsed time: {totalTimer.Elapsed}");
+Console.Write($" Total Elapsed time: {Stopwatch.GetElapsedTime(totalTime)}");
 
 static async Task GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
 {
@@ -31,11 +29,9 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
-	System.Diagnostics.Stopwatch timer = new();
 	Console.Write($"{year} {day,2} {title,-38}");
 	if (input is not null) {
 		ConsoleColor answerColour;
-		timer.Start();
 		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
 		IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
 		foreach (SolutionPhaseResult result in solveResults) {
