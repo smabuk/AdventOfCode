@@ -25,7 +25,7 @@ public static partial class Day08 {
 	public static int Part1(string[] _, Action<string[], bool>? visualise = null)
 	{
 		List<Point> antinodes = _antennae.GetAntinodes(a => a.Antinodes(_map, start: 1));
-		_map.VisualiseMap(antinodes, "Final", visualise);
+		_map.VisualiseMap(antinodes, "Final Part1", visualise);
 
 		return antinodes.Count;
 	}
@@ -33,7 +33,7 @@ public static partial class Day08 {
 	public static int Part2(string[] _, Action<string[], bool>? visualise = null)
 	{
 		List<Point> antinodes = _antennae.GetAntinodes(a => a.Antinodes(_map, start: 0));
-		_map.VisualiseMap(antinodes, "Final", visualise);
+		_map.VisualiseMap(antinodes, "Final Part2", visualise);
 
 		return antinodes.Count;
 	}

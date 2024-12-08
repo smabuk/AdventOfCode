@@ -1,10 +1,11 @@
 ﻿internal partial class Program
 {
 
-	public static (DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload) ParseCommandLine(string[] args)
+	public static (DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload, TimeSpan visualsTime) ParseCommandLine(string[] args)
 	{
 		DateOnly date = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 		bool showVisuals = false;
+		TimeSpan visualsTime = new(0, 0, 0, 0, 300);
 		bool isDebug = false;
 		bool isDownload = false;
 		object[]? solutionArgs = [];
@@ -22,6 +23,10 @@
 					solutionArgs[^1] = args[i] == "true";
 				} else if (arg is "/v" or "/visual" or "-v" or "--visual") {
 					showVisuals = true;
+				} else if (arg.StartsWith("/v:") || arg.StartsWith("/visual:") || arg.StartsWith("-v:") || arg.StartsWith("--visual:")) {
+					showVisuals = true;
+					string token = arg[(arg.IndexOf(':') + 1)..];
+					visualsTime = TimeSpan.Parse(token);
 				} else if (arg is "/download" or "--download") {
 					isDownload = true;
 				} else if (arg is "/d" or "/debug" or "-d" or "--debug") {
@@ -42,7 +47,7 @@
 				date = new(year, 1, 1);
 			}
 		}
-		return (date, solutionArgs, showVisuals, isDebug, isDownload);
+		return (date, solutionArgs, showVisuals, isDebug, isDownload, visualsTime);
 	}
 
 }

@@ -1,27 +1,31 @@
-﻿Console.OutputEncoding = System.Text.Encoding.UTF8;
+﻿Lock consolelock = new();
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 Console.ResetColor();
 
-(DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload) = ParseCommandLine(args);
+(DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload, TimeSpan visualsTime) = ParseCommandLine(args);
 
 long totalTime = Stopwatch.GetTimestamp();
 
 if (date.Month == 12 && date.Day <= 25) {
-	await GetInputDataAndSolve(date.Year, date.Day, null, null, showVisuals, isDebug, isDownload, solutionArgs);
+	await GetInputDataAndSolve(date.Year, date.Day, consolelock, null, null, showVisuals, isDebug, isDownload, solutionArgs);
 } else {
 	DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 	//Console.WriteLine($"Year dd Description                              Init        Part 1                       Part 2                ");
 	//Console.WriteLine($"---- -- -------------------------------------  ------  ---------------------------  ----------------------------");
 	for (int day = 1; day <= 25; day++) {
 		if (dateNow >= new DateOnly(date.Year, 12, day)) {
-			await GetInputDataAndSolve(date.Year, day);
+			await GetInputDataAndSolve(date.Year, day, consolelock);
 		}
 	}
 }
 
 Console.Write($" Total Elapsed time: {Stopwatch.GetElapsedTime(totalTime)}");
+if (showVisuals) {
+	await Task.Delay(visualsTime);
+}
 
-static async Task GetInputDataAndSolve(int year, int day, string? title = null, string[]? input = null, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
+static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, string? title = null, string[]? input = null, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
 {
 	input = await GetInputData(year, day, isDownload);
 
@@ -29,58 +33,65 @@ static async Task GetInputDataAndSolve(int year, int day, string? title = null, 
 		title = GetProblemDescription(year, day) ?? $"";
 	}
 
-	Console.Write($"{year} {day,2} {title,-38}");
-	if (input is not null) {
-		ConsoleColor answerColour;
-		Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>(VisualiseOutput) : null;
-		IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
-		foreach (SolutionPhaseResult result in solveResults) {
-			if (result.Phase == PHASE_INIT) {
-				OutputTimings(result.Elapsed);
-			} else if (result.Phase == PHASE_PART1) {
-				answerColour = ConsoleColor.Green;
-				OutputTimings(result.Elapsed);
-				Console.ForegroundColor = answerColour;
-				Console.Write($" Pt1:");
-				if (result.Answer.StartsWith('*')) {
+	lock (consolelock) {
+		Console.Write($"{year} {day,2} {title,-38}");
+		if (input is not null) {
+			ConsoleColor answerColour;
+			Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>((s, b) =>
+			{
+				lock (consolelock) {
+					VisualiseOutput(s, b);
+				}
+			}) : null;
+			IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
+			foreach (SolutionPhaseResult result in solveResults) {
+				if (result.Phase == PHASE_INIT) {
+					OutputTimings(result.Elapsed);
+				} else if (result.Phase == PHASE_PART1) {
+					answerColour = ConsoleColor.Green;
+					OutputTimings(result.Elapsed);
+					Console.ForegroundColor = answerColour;
+					Console.Write($" Pt1:");
+					if (result.Answer.StartsWith('*')) {
+						Console.ForegroundColor = ConsoleColor.Red;
+					};
+					Console.Write($" {result.Answer,-16}");
+				} else if (result.Phase == PHASE_PART2) {
+					answerColour = ConsoleColor.Yellow;
+					OutputTimings(result.Elapsed);
+					Console.ForegroundColor = answerColour;
+					Console.Write($" Pt2:");
+					if (result.Answer.StartsWith('*')) {
+						Console.ForegroundColor = ConsoleColor.Red;
+					};
+					Console.Write($" {result.Answer,-16}");
+				} else if (result.Phase == EXCEPTION_PART1) {
+					answerColour = ConsoleColor.Green;
+					OutputTimings(result.Elapsed);
+					Console.ForegroundColor = answerColour;
+					Console.Write($" Pt1:");
 					Console.ForegroundColor = ConsoleColor.Red;
-				};
-				Console.Write($" {result.Answer,-16}");
-			} else if (result.Phase == PHASE_PART2) {
-				answerColour = ConsoleColor.Yellow;
-				OutputTimings(result.Elapsed);
-				Console.ForegroundColor = answerColour;
-				Console.Write($" Pt2:");
-				if (result.Answer.StartsWith('*')) {
+					Console.Write($" {EXCEPTION_MESSAGE,-16}");
+				} else if (result.Phase == EXCEPTION_PART2) {
+					answerColour = ConsoleColor.Yellow;
+					OutputTimings(result.Elapsed);
+					Console.ForegroundColor = answerColour;
+					Console.Write($" Pt2:");
 					Console.ForegroundColor = ConsoleColor.Red;
+					Console.Write($" {EXCEPTION_MESSAGE,-16}");
 				};
-				Console.Write($" {result.Answer,-16}");
-			} else if (result.Phase == EXCEPTION_PART1) {
-				answerColour = ConsoleColor.Green;
-				OutputTimings(result.Elapsed);
-				Console.ForegroundColor = answerColour;
-				Console.Write($" Pt1:");
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.Write($" {EXCEPTION_MESSAGE,-16}");
-			} else if (result.Phase == EXCEPTION_PART2) {
-				answerColour = ConsoleColor.Yellow;
-				OutputTimings(result.Elapsed);
-				Console.ForegroundColor = answerColour;
-				Console.Write($" Pt2:");
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.Write($" {EXCEPTION_MESSAGE,-16}");
+				Console.ResetColor();
 			};
+
 			Console.ResetColor();
-		};
+			Console.WriteLine();
 
-		Console.ResetColor();
-		Console.WriteLine();
-
-		if (isDebug) {
-			OutputExceptions(solveResults);
+			if (isDebug) {
+				OutputExceptions(solveResults);
+			}
+		} else {
+			Console.WriteLine($"     ** NO INPUT DATA **");
 		}
-	} else {
-		Console.WriteLine($"     ** NO INPUT DATA **");
 	}
 
 	static void VisualiseOutput(string[] lines, bool clearScreen = false)
