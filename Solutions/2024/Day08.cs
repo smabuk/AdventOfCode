@@ -16,14 +16,15 @@ public static partial class Day08 {
 		_map = input.To2dArray();
 		_antennae = _map
 			.ForEachCell()
-			.Where(c => char.IsAsciiLetterOrDigit(c))
-			.ToLookup(a => a.Value, a => a.Index);
+			.Where(cell => char.IsAsciiLetterOrDigit(cell))
+			.ToLookup(cell => cell.Value, a => a.Index);
+
 		_map.VisualiseMap([], "Initial", visualise);
 	}
 
 	public static int Part1(string[] _, Action<string[], bool>? visualise = null)
 	{
-		List<Point> antinodes = _antennae.GetAntinodes(Antinodes);
+		List<Point> antinodes = _antennae.GetAntinodes(a => a.Antinodes(_map, start: 1));
 		_map.VisualiseMap(antinodes, "Final", visualise);
 
 		return antinodes.Count;
@@ -31,7 +32,7 @@ public static partial class Day08 {
 
 	public static int Part2(string[] _, Action<string[], bool>? visualise = null)
 	{
-		List<Point> antinodes = _antennae.GetAntinodes(a => a.ResidentHarmonicAntinodes(_map));
+		List<Point> antinodes = _antennae.GetAntinodes(a => a.Antinodes(_map, start: 0));
 		_map.VisualiseMap(antinodes, "Final", visualise);
 
 		return antinodes.Count;
@@ -39,57 +40,57 @@ public static partial class Day08 {
 
 	private static List<Point> GetAntinodes(this ILookup<char, Point> antennae, Func<IEnumerable<Point>, IEnumerable<Point>> antinodesFunc)
 	{
-		return [..antennae
+		return [..
+			antennae
 			.Select(a => antennae[a.Key])
 			.Select(antinodesFunc)
 			.SelectMany(antinodes => antinodes)
 			.Distinct()
-			.Where(antinode => _map.IsInBounds(antinode))];
+			];
 	}
 
-	private static IEnumerable<Point> Antinodes(this IEnumerable<Point> locations)
+	private static IEnumerable<Point> Antinodes(this IEnumerable<Point> locations, char[,] map, int start)
 	{
-		foreach (IEnumerable<Point> item in locations.Combinations(2)) {
-			Point a1 = item.First();
-			Point a2 = item.Last();
-			yield return a1 - a2 + a1;
-			yield return a2 - a1 + a2;
-		}
-	}
+		foreach (Point[] pair in locations.Permute(2)) {
+			for (int n = start; ; n++) {
+				Point antinode = AntinodeN(pair[0], pair[1], n);
+				if (map.IsInBounds(antinode)) {
+					yield return antinode;
+				} else {
+					break;
+				}
 
-	private static IEnumerable<Point> ResidentHarmonicAntinodes(this IEnumerable<Point> locations, char[,] map)
-	{
-		foreach (IEnumerable<Point> item in locations.Combinations(2)) {
-			Point a1 = item.First();
-			Point a2 = item.Last();
-			int i = 0;
-			while (map.IsInBounds(((a1 - a2) * i) + a1)) {
-				yield return ((a1 - a2) * i) + a1;
-				i++;
-			}
-
-			i = 0;
-			while (map.IsInBounds(((a2 - a1) * i) + a2)) {
-				yield return ((a2 - a1) * i) + a2;
-				i++;
+				if (start == 1) { // Part 1
+					break;
+				}
 			}
 		}
 	}
 
+	private static Point AntinodeN(Point ant1, Point ant2, int n = 1) => ((ant1 - ant2) * n) + ant1;
+
+	// Not needed for AoC because of the way the input has been designed
+	//private static Point AntinodeGcdN(Point ant1, Point ant2, int n = 1)
+	//{
+	//	Point gcd = new(
+	//		0.GreatestCommonDivisor(ant1.X - ant2.X),
+	//		0.GreatestCommonDivisor(ant1.Y - ant2.Y));
+	//	return (gcd * n) + ant1;
+	//}
 
 	public static void VisualiseMap(this char[, ] map, IEnumerable<Point> antinodes, string title, Action<string[], bool>? visualise)
 	{
-		char[,] copy = (char[,])map.Clone();
+		const char ANTINODE = '#';
+		
+		char[,] vMap = (char[,])map.Clone();
 
 		foreach (Point antinode in antinodes) {
-			copy[antinode.X, antinode.Y] = ANTINODE;
+			vMap[antinode.X, antinode.Y] = ANTINODE;
 		}
 
 		if (visualise is not null) {
-			string[] output = ["", title, .. copy.PrintAsStringArray(0)];
+			string[] output = ["", title, .. vMap.AsStrings()];
 			_ = Task.Run(() => visualise?.Invoke(output, false));
 		}
 	}
-
-	private const char ANTINODE = '#';
 }
