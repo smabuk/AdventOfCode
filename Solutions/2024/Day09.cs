@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿using System.Runtime.InteropServices;
+
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 09: Disk Fragmenter
@@ -12,7 +14,7 @@ public static partial class Day09 {
 		return input[0]
 			.AsDigits<int>()
 			.CreateDiskMap()
-			.CompactDisk()
+			.Compact()
 			.FileChecksum();
 	}
 
@@ -34,82 +36,97 @@ public static partial class Day09 {
 			.SelectMany((sizes, index) =>
 				sizes.Length == 2
 				? (List<int>)[..Enumerable.Repeat(index, sizes[0]), .. Enumerable.Repeat(EMPTY, sizes[1])]
-				: (List<int>)[..Enumerable.Repeat(index, sizes[0])])
+				: [..Enumerable.Repeat(index, sizes[0])])
 			];
 	}
 
 	private static List<Block> CreateDiskMapAsBlocks(this IEnumerable<int> diskMapAsInts)
 	{
-		return [.. diskMapAsInts
+		return [..
+			diskMapAsInts
 			.Chunk(2)
 			.SelectMany((sizes, index) =>
 				sizes.Length == 2
 				? (List<Block>)[new FileBlock(index, sizes[0]), new EmptyBlock(sizes[1])]
-				: (List<Block>)[new FileBlock(index, sizes[0])])
+				: [new FileBlock(index, sizes[0])])
 			.Where(block => block.BlockSize != 0)
 			];
 	}
 
-	private static List<int> CompactDisk(this List<int> map)
+	private static List<int> Compact(this List<int> disk)
 	{
-		List<int> diskMap = [.. map];
+		List<int> diskMap = [.. disk];
+		Span<int> diskSpan = CollectionsMarshal.AsSpan(diskMap);
 
-		for (int ptr = diskMap.Count - 1; ptr > 0; ptr--) {
-			if (diskMap[ptr] is not EMPTY) {
-				int emptyPtr = diskMap.IndexOf(EMPTY);
+		int emptyPtr = 0;
+		for (int ptr = diskSpan.Length - 1; ptr > 0; ptr--) {
+			if (diskSpan[ptr] is not EMPTY) {
+				emptyPtr += diskSpan[emptyPtr..].IndexOf(EMPTY);
 				if (emptyPtr >= ptr) {
 					break;
 				}
-				diskMap[emptyPtr] = diskMap[ptr];
-				diskMap[ptr] = EMPTY;
+				diskSpan[emptyPtr] = diskSpan[ptr];
+				diskSpan[ptr] = EMPTY;
 			}
 		}
 
-		return diskMap;
+		return [.. diskSpan];
 	}
 
 	// I don't like this code
 	private static List<Block> Defragment(this List<Block> map) 
 	{
 		List<Block> diskMap = [.. map];
-
 		int maxBlockNo = diskMap[^1].Id;
+
 		for (int blockNo = maxBlockNo; blockNo > 0; blockNo--) {
-			
-			int blockPtr = diskMap.FindIndex(block => block.Id == blockNo);
-			Block fileBlock = diskMap[blockPtr];
+			int filePtr = diskMap.FindLastIndex(block => block.Id == blockNo);
+			Block fileBlock = diskMap[filePtr];
 			int firstFreeSpace = diskMap.FindIndex(block => block is EmptyBlock && block.BlockSize >= fileBlock.BlockSize);
 			
-			if (blockPtr > firstFreeSpace && firstFreeSpace > 0) {
-				if (diskMap[blockPtr - 1] is EmptyBlock || (blockPtr + 1 < diskMap.Count && diskMap[blockPtr + 1] is EmptyBlock) ) {
-					int freeSpace = fileBlock.BlockSize;
-					diskMap.RemoveAt(blockPtr);
-
-					// Combine contiguous empty spaces into 1 block
-					if (blockPtr < diskMap.Count && diskMap[blockPtr] is EmptyBlock) {
-						freeSpace += diskMap[blockPtr].BlockSize;
-
-						if (diskMap[blockPtr - 1] is EmptyBlock) {
-							diskMap.RemoveAt(blockPtr);
-						}
-					}
-
-					if (diskMap[blockPtr - 1] is EmptyBlock) {
-						diskMap[blockPtr - 1] = new EmptyBlock(diskMap[blockPtr - 1].BlockSize + freeSpace);
-					} else {
-						diskMap[blockPtr] = new EmptyBlock(freeSpace);
-					}
-					// End combine
-				} else {
-					diskMap[blockPtr] = new EmptyBlock(fileBlock.BlockSize);
-				}
-
-				diskMap[firstFreeSpace] = new EmptyBlock(diskMap[firstFreeSpace].BlockSize - fileBlock.BlockSize);
-				diskMap.Insert(firstFreeSpace, fileBlock);
+			if (filePtr > firstFreeSpace && firstFreeSpace != NOT_FOUND) {
+				MoveToFreeSpace(diskMap, fileBlock, filePtr, firstFreeSpace);
 			}
 		}
 
 		return diskMap;
+
+		// Local functions
+
+		static void MoveToFreeSpace(List<Block> diskMap, Block fileBlock, int filePtr, int firstFreeSpace)
+		{
+			if (diskMap[filePtr - 1] is EmptyBlock || (filePtr + 1 < diskMap.Count && diskMap[filePtr + 1] is EmptyBlock)) {
+				// Found empty space before or after the file block
+				diskMap.RemoveAt(filePtr);
+				CombineFreeSpace(diskMap, filePtr, fileBlock.BlockSize);
+			} else {
+				// otherwise we can just replace the file block with empty space
+				diskMap[filePtr] = new EmptyBlock(fileBlock.BlockSize);
+			}
+
+			diskMap[firstFreeSpace] = new EmptyBlock(diskMap[firstFreeSpace].BlockSize - fileBlock.BlockSize);
+			diskMap.Insert(firstFreeSpace, fileBlock);
+		}
+
+		static void CombineFreeSpace(List<Block> diskMap, int blockPtr, int freeSpace)
+		{
+			// Combine contiguous empty spaces into 1 block
+			if (blockPtr < diskMap.Count && diskMap[blockPtr] is EmptyBlock) {
+				freeSpace += diskMap[blockPtr].BlockSize;
+
+				if (diskMap[blockPtr - 1] is EmptyBlock) {
+					diskMap.RemoveAt(blockPtr);
+				}
+			}
+
+			if (diskMap[blockPtr - 1] is EmptyBlock) {
+				diskMap[blockPtr - 1] = new EmptyBlock(diskMap[blockPtr - 1].BlockSize + freeSpace);
+			} else {
+				diskMap[blockPtr] = new EmptyBlock(freeSpace);
+			}
+
+			return;
+		}
 	}
 
 	private static long FileChecksum(this List<int> diskMap)
@@ -128,7 +145,7 @@ public static partial class Day09 {
 			.Sum(block
 				=> Enumerable
 					.Range(0, block.BlockSize)
-					.Sum(i => (block.Id < 0 ? 0 : block.Id) * idx++));
+					.Sum(i => (block is EmptyBlock ? 0 : block.Id) * idx++));
 	}
 
 	private abstract record Block(int Id, int BlockSize);
@@ -136,4 +153,5 @@ public static partial class Day09 {
 	private record EmptyBlock(int BlockSize) : Block(EMPTY, BlockSize);
 
 	private const int  EMPTY      = int.MinValue;
+	private const int  NOT_FOUND  = -1;
 }
