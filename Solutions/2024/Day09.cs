@@ -18,8 +18,7 @@ public static partial class Day09 {
 
 	public static long Part2(string[] input)
 	{
-		return
-			input[0]
+		return input[0]
 			.AsDigits<int>()
 			.CreateDiskMapAsBlocks()
 			.Defragment()
@@ -29,30 +28,14 @@ public static partial class Day09 {
 
 	private static List<int> CreateDiskMap(this IEnumerable<int> diskMapAsInts)
 	{
-		List<int> diskMap = [.. Enumerable.Repeat(EMPTY, diskMapAsInts.Sum())];
-
-		int diskMapPtr = 0;
-		int blockNo = 0;
-		bool fileOrFreeSpace = FILE;
-
-		foreach (int blockSize in diskMapAsInts) {
-			if (fileOrFreeSpace is FILE) {
-				for (int i = 0; i < blockSize; i++) {
-					diskMap[diskMapPtr++] = blockNo;
-				}
-
-				blockNo++;
-				fileOrFreeSpace = FREE_SPACE;
-			} else {
-				for (int i = 0; i < blockSize; i++) {
-					diskMap[diskMapPtr++] = EMPTY;
-				}
-
-				fileOrFreeSpace = FILE;
-			}
-		}
-
-		return diskMap;
+		 return [..
+			 diskMapAsInts
+			.Chunk(2)
+			.SelectMany((sizes, index) =>
+				sizes.Length == 2
+				? (List<int>)[..Enumerable.Repeat(index, sizes[0]), .. Enumerable.Repeat(EMPTY, sizes[1])]
+				: (List<int>)[..Enumerable.Repeat(index, sizes[0])])
+			];
 	}
 
 	private static List<Block> CreateDiskMapAsBlocks(this IEnumerable<int> diskMapAsInts)
@@ -63,6 +46,7 @@ public static partial class Day09 {
 				sizes.Length == 2
 				? (List<Block>)[new FileBlock(index, sizes[0]), new EmptyBlock(sizes[1])]
 				: (List<Block>)[new FileBlock(index, sizes[0])])
+			.Where(block => block.BlockSize != 0)
 			];
 	}
 
@@ -97,24 +81,30 @@ public static partial class Day09 {
 			int firstFreeSpace = diskMap.FindIndex(block => block is EmptyBlock && block.BlockSize >= fileBlock.BlockSize);
 			
 			if (blockPtr > firstFreeSpace && firstFreeSpace > 0) {
-				int ptrToPreceding = blockPtr - 1;
-				if (diskMap[ptrToPreceding] is EmptyBlock) {
+				if (diskMap[blockPtr - 1] is EmptyBlock || (blockPtr + 1 < diskMap.Count && diskMap[blockPtr + 1] is EmptyBlock) ) {
+					int freeSpace = fileBlock.BlockSize;
 					diskMap.RemoveAt(blockPtr);
-					diskMap[ptrToPreceding] = diskMap[ptrToPreceding] with { BlockSize = diskMap[ptrToPreceding].BlockSize + fileBlock.BlockSize };
+
 					// Combine contiguous empty spaces into 1 block
-					ptrToPreceding--;
-					if (diskMap[ptrToPreceding] is EmptyBlock) {
-						for (int i = ptrToPreceding; diskMap[i] is EmptyBlock; i--) {
-							diskMap[i] = diskMap[i] with { BlockSize = diskMap[i].BlockSize + diskMap[i + 1].BlockSize };
-							diskMap.RemoveAt(i + 1);
+					if (blockPtr < diskMap.Count && diskMap[blockPtr] is EmptyBlock) {
+						freeSpace += diskMap[blockPtr].BlockSize;
+
+						if (diskMap[blockPtr - 1] is EmptyBlock) {
+							diskMap.RemoveAt(blockPtr);
 						}
 					}
+
+					if (diskMap[blockPtr - 1] is EmptyBlock) {
+						diskMap[blockPtr - 1] = new EmptyBlock(diskMap[blockPtr - 1].BlockSize + freeSpace);
+					} else {
+						diskMap[blockPtr] = new EmptyBlock(freeSpace);
+					}
+					// End combine
 				} else {
 					diskMap[blockPtr] = new EmptyBlock(fileBlock.BlockSize);
 				}
 
-				Block freeSpaceBlock = diskMap[firstFreeSpace];
-				diskMap[firstFreeSpace] = freeSpaceBlock with { BlockSize = freeSpaceBlock.BlockSize - fileBlock.BlockSize };
+				diskMap[firstFreeSpace] = new EmptyBlock(diskMap[firstFreeSpace].BlockSize - fileBlock.BlockSize);
 				diskMap.Insert(firstFreeSpace, fileBlock);
 			}
 		}
@@ -132,24 +122,18 @@ public static partial class Day09 {
 
 	private static long FileChecksum(this List<Block> diskMap)
 	{
-		long checkSum = 0;
-		int idx = 0;
-		for (int i = 0; i < diskMap.Count; i++) {
-			if (diskMap[i] is FileBlock fileBlock) {
-				checkSum += Enumerable.Range(0, fileBlock.BlockSize).Sum(i => (long)fileBlock.Id * (long)idx++);
-			} else {
-				idx += diskMap[i].BlockSize;
-			}
-		}
-
-		return checkSum;
+		// I hate myself for this code
+		long idx = 0;
+		return diskMap
+			.Sum(block
+				=> Enumerable
+					.Range(0, block.BlockSize)
+					.Sum(i => (block.Id < 0 ? 0 : block.Id) * idx++));
 	}
 
 	private abstract record Block(int Id, int BlockSize);
 	private record FileBlock(int Id, int BlockSize) : Block(Id, BlockSize);
 	private record EmptyBlock(int BlockSize) : Block(EMPTY, BlockSize);
 
-	private const bool FILE       = true;
-	private const bool FREE_SPACE = false;
 	private const int  EMPTY      = int.MinValue;
 }
