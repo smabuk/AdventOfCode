@@ -17,6 +17,15 @@ public class Tests_09_Disk_Fragmenter(ITestOutputHelper testOutputHelper)
 		await Task.Delay(500);
 	}
 
+	[Theory]
+	[InlineData(TEST_DATA, 2858)]
+	public async Task Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+		await Task.Delay(500);
+	}
+
 
 	private void Callback(string[] lines, bool _)
 	{
