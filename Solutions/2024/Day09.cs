@@ -18,16 +18,6 @@ public static partial class Day09 {
 			.FileChecksum();
 	}
 
-	public static long Part2(string[] input)
-	{
-		return input[0]
-			.AsDigits<int>()
-			.CreateDiskMapAsBlocks()
-			.Defragment()
-			.FileChecksum();
-	}
-
-
 	private static List<int> CreateDiskMap(this IEnumerable<int> diskMapAsInts)
 	{
 		 return [..
@@ -37,19 +27,6 @@ public static partial class Day09 {
 				sizes.Length == 2
 				? (List<int>)[..Enumerable.Repeat(index, sizes[0]), .. Enumerable.Repeat(EMPTY, sizes[1])]
 				: [..Enumerable.Repeat(index, sizes[0])])
-			];
-	}
-
-	private static List<Block> CreateDiskMapAsBlocks(this IEnumerable<int> diskMapAsInts)
-	{
-		return [..
-			diskMapAsInts
-			.Chunk(2)
-			.SelectMany((sizes, index) =>
-				sizes.Length == 2
-				? (List<Block>)[new FileBlock(index, sizes[0]), new EmptyBlock(sizes[1])]
-				: [new FileBlock(index, sizes[0])])
-			.Where(block => block.BlockSize != 0)
 			];
 	}
 
@@ -73,8 +50,41 @@ public static partial class Day09 {
 		return [.. diskSpan];
 	}
 
+	private static long FileChecksum(this List<int> diskMap)
+	{
+		return diskMap
+			.TakeWhile(id => id is not EMPTY)
+			.Index()
+			.Sum(block => (long)block.Index * (long)block.Item);
+	}
+
+
+
+
+	public static long Part2(string[] input)
+	{
+		return input[0]
+			.AsDigits<int>()
+			.CreateDiskMapAsBlocks()
+			.Defragment()
+			.FileChecksum();
+	}
+
+	private static List<Block> CreateDiskMapAsBlocks(this IEnumerable<int> diskMapAsInts)
+	{
+		return [..
+			diskMapAsInts
+			.Chunk(2)
+			.SelectMany((sizes, index) =>
+				sizes.Length == 2
+				? (List<Block>)[new FileBlock(index, sizes[0]), new EmptyBlock(sizes[1])]
+				: [new FileBlock(index, sizes[0])])
+			.Where(block => block.BlockSize != 0)
+			];
+	}
+
 	// I don't like this code
-	private static List<Block> Defragment(this List<Block> map) 
+	private static List<Block> Defragment(this List<Block> map)
 	{
 		List<Block> diskMap = [.. map];
 		int maxBlockNo = diskMap[^1].Id;
@@ -83,7 +93,7 @@ public static partial class Day09 {
 			int filePtr = diskMap.FindLastIndex(block => block.Id == blockNo);
 			Block fileBlock = diskMap[filePtr];
 			int firstFreeSpace = diskMap.FindIndex(block => block is EmptyBlock && block.BlockSize >= fileBlock.BlockSize);
-			
+
 			if (filePtr > firstFreeSpace && firstFreeSpace != NOT_FOUND) {
 				MoveToFreeSpace(diskMap, fileBlock, filePtr, firstFreeSpace);
 			}
@@ -127,14 +137,6 @@ public static partial class Day09 {
 
 			return;
 		}
-	}
-
-	private static long FileChecksum(this List<int> diskMap)
-	{
-		return diskMap
-			.TakeWhile(id => id is not EMPTY)
-			.Index()
-			.Sum(block => (long)block.Index * (long)block.Item);
 	}
 
 	private static long FileChecksum(this List<Block> diskMap)
