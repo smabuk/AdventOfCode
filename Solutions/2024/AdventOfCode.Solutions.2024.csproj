@@ -2,8 +2,15 @@
 
 	<PropertyGroup>
 		<RootNamespace>AdventOfCode.Solutions._2024</RootNamespace>
-		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 		<PublishAot>True</PublishAot>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
 	</PropertyGroup>
 
 	<ItemGroup>
