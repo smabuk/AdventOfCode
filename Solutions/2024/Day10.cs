@@ -7,70 +7,56 @@
 [Description("Hoof It")]
 public static partial class Day10 {
 
-	private static int[,] _lavaMap = default!;
+	private static List<Trail> _allRoutes = [];
 
 	[Init]
-	public static void LoadLavaMap(string[] input)
+	public static void FindAllTheTrails(string[] input)
 	{
-		char[,] lavaMapTemp = input.Select(i => i).To2dArray();
-		_lavaMap = new int[lavaMapTemp.ColsCount(), lavaMapTemp.RowsCount()];
+		int[,] lavaMap = input.Select(i => i.AsHeights()).ToList().To2dArray();
 
-		foreach (Cell<char> cell in lavaMapTemp.ForEachCell()) {
-			if (char.IsAsciiDigit(cell)) {
-				_lavaMap[cell.Col, cell.Row] = cell.Value.ToString().As<int>();
-			} else {
-				_lavaMap[cell.Col, cell.Row] = int.MinValue;
-			}
-		}
-
+		_allRoutes = [..
+			lavaMap
+				.ForEachCell()
+				.Where(location => location.Value is 0)
+				.SelectMany(th => lavaMap
+					.HikeToSummit(new(0, 0, th.Index, th.Index, [th.Index])))
+				];
 	}
 
 	public static int Part1(string[] _)
 	{
-		var result = _lavaMap.
-				ForEachCell()
-				.Where(location => location.Value is 0)
-				.SelectMany(th => _lavaMap
-					.HikeToSummit(new(0, 0, th.Index, th.Index, [th.Index]), Directions.AllDirections))
-				.ToList()
-				.Where(trail => trail.End == SUMMIT)
+		return _allRoutes
 				.Select(trail => (trail.StartPoint, trail.EndPoint))
 				.Distinct()
-				.Count()
-				;
-
-		return result;
+				.Count();
 	}
 
-	private static List<Trail> HikeToSummit(this int[,] map, Trail trail, IEnumerable<Direction> allDirections)
-	{
-		List<Trail> trails = [];
+	public static int Part2(string[] _) => _allRoutes.Count;
 
-		foreach (Direction direction in allDirections) {
+	private static IEnumerable<Trail> HikeToSummit(this int[,] map, Trail trail)
+	{
+		foreach (Direction direction in Directions.AllDirections) {
 			Point nextPoint = trail.EndPoint + direction.Delta();
 			if (map.TryGetValue(nextPoint, out int height)) {
 				if (height == trail.End + 1) {
-					Trail nextTrail = trail with { EndPoint = nextPoint, End = height };
+					Trail nextTrail = trail with { EndPoint = nextPoint, End = height, Route = [..trail.Route, nextPoint] };
 					if (height is SUMMIT) {
-						trails.Add(nextTrail);
+						yield return nextTrail;
 						continue;
-					} else {
-						List<Trail> newTrails = [.. map.HikeToSummit(nextTrail, allDirections)];
-						foreach (Trail newTrail in newTrails) {
-							if (newTrail.End is SUMMIT) {
-								trails.Add( newTrail);
-							}
+					}
+
+					List<Trail> newTrails = [.. map.HikeToSummit(nextTrail)];
+					foreach (Trail newTrail in newTrails) {
+						if (newTrail.End is SUMMIT) {
+							yield return newTrail;
 						}
 					}
 				}
 			}
 		}
-
-		return trails;
-
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	private static List<int> AsHeights(this string s) => [..s.Select(x => char.IsAsciiDigit(x) ? int.Parse($"{x}", null) : int.MinValue)];
 
 	public record Trail(int Start, int End, Point StartPoint, Point EndPoint, List<Point> Route);
 
