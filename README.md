@@ -1,10 +1,10 @@
 # AdventOfCode
 My solutions and a Blazor front end for Advent of Code at https://adventofcode.com/
 
-![Deployment of Blazor app to smabAdventOfCode](https://github.com/smabuk/AdventOfCode/workflows/Deploy%20ASP.NET%20Core%20Web%20Application%20to%20smabAdventOfCode/badge.svg)
+[![Build and deploy ASP.Net Core app to an Azure Web App](https://github.com/smabuk/AdventOfCode/actions/workflows/smabAdventOfCode.yml/badge.svg)](https://github.com/smabuk/AdventOfCode/actions/workflows/smabAdventOfCode.yml)
 
 ## Blazor front-end
-Currently hosted at https:/smabadventofcode.azurewebsites.com and links to my progress, but if you host it yourself
+Currently hosted at https://smabadventofcode.azurewebsites.com and links to my progress, but if you host it yourself
 you can see your own data by change the appsettings.json file and providing your own session cookie.
 
 ## Solving
