@@ -17,14 +17,21 @@ public static partial class Day11 {
 
 	public static long Part1(string[] _, params object[]? args)
 	{
-		LinkedList<long> stones = new(_initialStones);
-
-		for (int i = 0; i < args.NoOfBlinksPart1(); i++) {
-			stones = stones.Blink();
-		}
-
-		return stones.Count;
+		return args.Method() switch
+		{
+			"blink" => Enumerable
+					.Repeat(0, args.NoOfBlinksPart1())
+					.Aggregate(new LinkedList<long>(_initialStones), (stones, _) => stones.Blink())
+					.Count,
+			"count" => _initialStones.Sum(stone => stone.CountStones([], args.NoOfBlinksPart1())),
+			_ => throw new NotImplementedException(),
+		};
 	}
+
+	public static long Part2(string[] _, params object[]? args)
+		=> _initialStones
+			.Sum(stone => stone.CountStones([], args.NoOfBlinksPart2()));
+
 
 	private static LinkedList<long> Blink(this LinkedList<long> stones)
 	{
@@ -48,24 +55,16 @@ public static partial class Day11 {
 
 	private static bool TrySplit(this long value, out (long Left, long Right) leftAndRight)
 	{
-		string valueString = value.ToString();
-		if (valueString.Length.IsOdd()) {
+		int length = value.Length();
+		if (length.IsOdd()) {
 			leftAndRight = (0, 0);
 			return false;
 		}
 
-		int length = valueString.Length / 2;
-		leftAndRight = (long.Parse(valueString[..length]), long.Parse(valueString[length..]));
+		long divisor = (int)Math.Pow(10, length / 2);
+		leftAndRight = (value / divisor, value % divisor);
 
 		return true;
-	}
-
-
-	public static long Part2(string[] _, params object[]? args)
-	{
-		Dictionary<(long, long), long> cache = [];
-
-		return _initialStones.Sum(stone => stone.CountStones(cache, args.NoOfBlinksPart2()));
 	}
 
 	private static long CountStones(this long stone, Dictionary<(long, long), long> cache, int blinksRemaining)
@@ -94,6 +93,18 @@ public static partial class Day11 {
 		return count;
 	}
 
-	private static int NoOfBlinksPart1(this object[]? args) => GetArgument(args, 1, 25);
+
+
+	private static string Method(this object[]? args) => GetArgument(args, 1, "count");
+
+	private static int NoOfBlinksPart1(this object[]? args)
+	{
+		return args?.Length switch
+		{
+			>= 1 when args[0] is string => GetArgument(args, 2, 25),
+			_ => GetArgument(args, 1, 25)
+		};
+	}
+
 	private static int NoOfBlinksPart2(this object[]? args) => GetArgument(args, 1, 75);
 }

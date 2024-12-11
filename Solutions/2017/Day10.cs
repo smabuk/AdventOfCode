@@ -37,7 +37,7 @@ public sealed partial class Day10 {
 
 		List<int> sequenceOfLengths = input.Length == 0
 			? [.. LIST_APPEND]
-			: [.. input[0]?.Select(c => (byte)c), .. LIST_APPEND];
+			: [.. input[0]?.Select(c => (byte)c) ?? [], .. LIST_APPEND];
 		List<byte> currentList = [.. Enumerable.Range(0, LIST_SIZE).Select(i => (byte)i)];
 
 		int skipSize = 0;
