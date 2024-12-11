@@ -19,18 +19,71 @@ public static partial class Day11 {
 	{
 		return args.Method() switch
 		{
+			"count" => _initialStones.Sum(stone => stone.CountStones(args.NoOfBlinksPart1(), [], [])),
 			"blink" => Enumerable
 					.Repeat(0, args.NoOfBlinksPart1())
 					.Aggregate(new LinkedList<long>(_initialStones), (stones, _) => stones.Blink())
 					.Count,
-			"count" => _initialStones.Sum(stone => stone.CountStones([], args.NoOfBlinksPart1())),
 			_ => throw new NotImplementedException(),
 		};
 	}
 
 	public static long Part2(string[] _, params object[]? args)
 		=> _initialStones
-			.Sum(stone => stone.CountStones([], args.NoOfBlinksPart2()));
+			.Sum(stone => stone.CountStones(args.NoOfBlinksPart2(), [], []));
+
+
+	private static long CountStones(this long stone, int blinksRemaining, Dictionary<CacheState, long> cache, Dictionary<long, int> evenOrOddNumber)
+	{
+		if (blinksRemaining == 0) {
+			return 1;
+		}
+
+		CacheState cacheState = new(stone, blinksRemaining);
+		if (cache.TryGetValue(cacheState, out long cacheValue) ) {
+			return cacheValue;
+		}
+
+		long count = 0;
+		if (!evenOrOddNumber.TryGetValue(stone, out int length)) {
+			length = stone.Length();
+			evenOrOddNumber[stone] = length;
+		}
+
+		if (stone == 0) {
+			count = CountStones(1, blinksRemaining - 1, cache, evenOrOddNumber);
+		} else if (length.IsEven()) {
+			(long left, long right) = stone.Split(length);
+			count += CountStones(left, blinksRemaining - 1, cache, evenOrOddNumber);
+			count += CountStones(right, blinksRemaining - 1, cache, evenOrOddNumber);
+		} else {
+			count += CountStones(stone * 2024, blinksRemaining - 1, cache, evenOrOddNumber);
+		}
+
+		cache.Add(cacheState, count);
+
+		return count;
+	}
+
+	private static (long Left, long Right) Split(this long value, int length)
+	{
+		// Maximum 19 digits in a long
+		long divisor = length switch
+		{
+			2 => 10L,
+			4 => 100L,
+			6 => 1000L,
+			8 => 10000L,
+			10 => 100000L,
+			12 => 1000000L,
+			14 => 10000000L,
+			16 => 100000000L,
+			18 => 1000000000L,
+			_ => throw new NotImplementedException(),
+		};
+
+		return (value / divisor, value % divisor);
+	}
 
 
 	private static LinkedList<long> Blink(this LinkedList<long> stones)
@@ -47,6 +100,7 @@ public static partial class Day11 {
 			} else {
 				current.Value *= 2024;
 			}
+
 			current = current.Next;
 		}
 
@@ -66,14 +120,14 @@ public static partial class Day11 {
 		// Maximum 19 digits in a long
 		long divisor = length switch
 		{
-			 2 =>         10L,
-			 4 =>        100L,
-			 6 =>       1000L,
-			 8 =>      10000L,
-			10 =>     100000L,
-			12 =>    1000000L,
-			14 =>   10000000L,
-			16 =>  100000000L,
+			2 => 10L,
+			4 => 100L,
+			6 => 1000L,
+			8 => 10000L,
+			10 => 100000L,
+			12 => 1000000L,
+			14 => 10000000L,
+			16 => 100000000L,
 			18 => 1000000000L,
 			_ => throw new NotImplementedException(),
 		};
@@ -81,34 +135,6 @@ public static partial class Day11 {
 		leftAndRight = (value / divisor, value % divisor);
 
 		return true;
-	}
-
-	private static long CountStones(this long stone, Dictionary<CacheState, long> cache, int blinksRemaining)
-	{
-		if (blinksRemaining == 0) {
-			return 1;
-		}
-
-		CacheState cacheState = new(stone, blinksRemaining);
-		if (cache.TryGetValue(cacheState, out long cacheValue) ) {
-			return cacheValue;
-		}
-
-		long count = 0;
-
-		if (stone == 0) {
-			count = CountStones(1, cache, blinksRemaining - 1);
-		} else if (stone.TrySplit(out (long Left, long Right) values)) {
-			count += CountStones(values.Left, cache,  blinksRemaining - 1);
-			count += CountStones(values.Right, cache, blinksRemaining - 1);
-		} else {
-			count += CountStones(stone * 2024, cache, blinksRemaining - 1);
-		}
-
-		cache.Add(cacheState, count);
-
-		return count;
-
 	}
 
 	private record struct CacheState(long Stone, int BlinksRemaining);
