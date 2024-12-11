@@ -18,4 +18,12 @@ public class Tests_11_Plutonian_Pebbles
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, noOfBlinks), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData("0", 15, 55312)]
+	public void Part2(string input, int noOfBlinks, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, noOfBlinks), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
