@@ -9,47 +9,38 @@ public static partial class Day11 {
 
 	public static long Part1(string[] input, params object[]? args)
 	{
-		int noOfBlinks = args.NoOfBlinks();
+		int noOfBlinks = args.NoOfBlinksPart1();
 		List<long> initialStones = [ .. input[0].AsNumbers<long>(' ')];
 
-		LinkedList<long> stones = [];
-
-		_ = stones.AddFirst(initialStones[0]);
-		for (int i = 1; i < initialStones.Count; i++) {
-			_ = stones.AddLast(initialStones[i]);
-		}
+		LinkedList<long> stones = new(initialStones);
 
 		for (int i = 0; i < noOfBlinks; i++) {
 			stones = stones.Blink();
 		}
 
-
 		return stones.Count;
 	}
 
-	public static int Part2(string[] input, params object[]? args)
+	public static long Part2(string[] input, params object[]? args)
 	{
-		int noOfBlinks = 80;
+		int noOfBlinks = args.NoOfBlinksPart2();
 		List<long> initialStones = [.. input[0].AsNumbers<long>(' ')];
-		long otherCount = 0;
-		initialStones = [0];
-		LinkedList<long> stones = [];
 
-		_ = stones.AddFirst(initialStones[0]);
-		for (int i = 1; i < initialStones.Count; i++) {
-			if (initialStones[i] == 0) {
-				otherCount = initialStones[i];
-			}
-			_ = stones.AddLast(initialStones[i]);
+		//LinkedList<long> stones =new(initialStones);
+
+		//for (int i = 0; i < noOfBlinks; i++) {
+		//	//(stones, otherCount) = stones.Blink(otherCount);
+		//	//Console.WriteLine($"No of stones: {i, 2} => {stones.Count}");
+		//}
+		Dictionary<(long, long), long> cache = [];
+
+		long count = 0;
+
+		foreach (long stone in initialStones) {
+			count += stone.CountStones(cache, noOfBlinks);
 		}
 
-		for (int i = 0; i < noOfBlinks; i++) {
-			//(stones, otherCount) = stones.Blink(otherCount);
-			Console.WriteLine($"No of stones: {i, 2} => {stones.Count}");
-		}
-
-
-		return stones.Count;
+		return count;
 	}
 
 	private static LinkedList<long> Blink(this LinkedList<long> stones)
@@ -75,29 +66,30 @@ public static partial class Day11 {
 		return newStones;
 	}
 
-	private static (LinkedList<long>, long Count) CountStones(this LinkedList<long> stones, int blinks)
+	private static long CountStones(this long stone, Dictionary<(long, long), long> cache, int blinks)
 	{
-		Dictionary<long, long> cache = [];
-		long otherCount = blinks;
-		LinkedList<long> newStones = new(stones);
-		LinkedListNode<long>? current = newStones.First;
-
-		while (current is not null) {
-			if (current.Value == 0) {
-				current.Value = 1;
-				newStones.Remove(current);
-
-			} else if (current.Value.TrySplit(out (long Left, long Right) values)) {
-				//(long left, long right) = current.Value.Split();
-				_ = newStones.AddBefore(current, values.Left);
-				current.Value = values.Right;
-			} else {
-				current.Value *= 2024;
-			}
-			current = current.Next;
+		if (blinks == 0) {
+			return 1;
 		}
 
-		return (newStones, otherCount);
+		if (cache.TryGetValue((stone, blinks), out long cacheValue) ) {
+			return cacheValue;
+		}
+
+		long count = 0;
+
+		if (stone == 0) {
+			count = CountStones(1, cache, blinks - 1);
+		} else if (stone.TrySplit(out (long Left, long Right) values)) {
+			count += CountStones(values.Left, cache,  blinks - 1);
+			count += CountStones(values.Right, cache, blinks - 1);
+		} else {
+			count += CountStones(stone * 2024, cache, blinks - 1);
+		}
+
+		cache.Add((stone, blinks), count);
+
+		return count;
 	}
 
 	private static bool TrySplit(this long value, [NotNull] out (long Left, long Right) leftAndRight)
@@ -114,8 +106,6 @@ public static partial class Day11 {
 
 
 
-	private static int NoOfBlinks(this object[]? args) => GetArgument(args, 1, 25);
-
-	private static int[] ZeroEffect = [1, 2, 4, 3, 4, 8, 7, 12, 14, 13, 16, 16, 25, 35, 51, 66, 112, 111, 110, 116, 163, 168, 172, 174, 191, 190, 190, 198, 197, 224, 224, 233, 251, 274, 292, 362, 361, 360, 366, 413, 418, 422, 424, 441, 440, 440, 448, 447, 474, 474, 483, 501, 524, 542, 612, 611, 610, 616, 663, 668, 672, 674, 691, 690, 690, 698, 697, 724, 724, 733, 751, 774, 792, 862, 861, 860, 866, 913, 918];
-
+	private static int NoOfBlinksPart1(this object[]? args) => GetArgument(args, 1, 25);
+	private static int NoOfBlinksPart2(this object[]? args) => GetArgument(args, 1, 75);
 }
