@@ -77,6 +77,18 @@ public class Tests_12_Garden_Groups
 		MIIISIJEEE
 		MMMISSJEEE
 		""", 1206)]
+	[InlineData("""
+		BBBBGGGBBBB
+		DDLLGLLBBBB
+		DLSLLLLLBBB
+		DLLLLLLLLLB
+		BLLLLLLLLLB
+		LLLLLLLLLLB
+		ULLLLFFLLBB
+		UUFLFFFSLSS
+		FFFFFFFSLPS
+		FFFQFFFSSSS
+		""", 2250)]
 	public void Part2(string input, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out int actual);

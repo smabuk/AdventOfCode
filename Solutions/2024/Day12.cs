@@ -114,17 +114,24 @@ public static partial class Day12 {
 			};
 
 			bool keepGoing = true;
+			bool keepGoingPlus = true;
+			bool keepGoingMinus = true;
 			int step = 1;
 			while (keepGoing) {
+				(int dX, int dY) delta = (check.Delta().dX * step, check.Delta().dY * step);
 				keepGoing = false;
-				(int dX, int dY) delta = (check.Delta().dX * step, (check.Delta().dY * step));
-				if (edges.Contains((edge + delta, direction))) {
+				if (keepGoingPlus && edges.Contains((edge + delta, direction))) {
 					_ = edges.Remove((edge + delta, direction));
 					keepGoing = true;
+				} else {
+					keepGoingPlus = false;
 				}
-				if (edges.Contains((edge - delta, direction))) {
+
+				if (keepGoingMinus && edges.Contains((edge - delta, direction))) {
 					_ = edges.Remove((edge - delta, direction));
 					keepGoing = true;
+				} else {
+					keepGoingMinus = false;
 				}
 
 				step++;
@@ -141,5 +148,4 @@ public static partial class Day12 {
 
 
 	private record Region(char Type, List<Point> Plots);
-
 }
