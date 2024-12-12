@@ -9,58 +9,49 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Garden Groups")]
 public sealed partial class Day12 {
 
-	private static char[,]      _farm    = default!;
 	private static List<Region> _regions = [];
 
 	[Init]
-	public static void LoadFarm(string[] input)
-	{
-		_farm    = input.To2dArray();
-		_regions = [.. _farm.FindRegions()];
-	}
+	public static void LoadFarm(string[] input) => _regions = [.. input.To2dArray().FindRegions()];
 
-	public static int Part1(string[] _) => _regions.Sum(region => region.Price(_farm));
-	public static int Part2(string[] _) => _regions.Sum(region => region.BulkDiscountPrice(_farm));
+	public static int Part1(string[] _) => _regions.Sum(region => region.Price());
+	public static int Part2(string[] _) => _regions.Sum(region => region.BulkDiscountPrice());
 
 
-	internal record Region(char PlantType, List<Point> Plots);
+	internal record Region(char PlantType, List<Point> Plots, List<Edge> Perimeter);
 	internal record Edge(Point Plot, Direction Direction);
 }
 
 file static partial class Day12Extensions
 {
-	public static int Price(this Region r, char[,] farm) => r.Area() * r.Perimeter(farm);
-	public static int BulkDiscountPrice(this Region r, char[,] farm) => r.Area() * r.SidesCount(farm);
+	public static int Price(this Region r) => r.Area() * r.PerimeterSize();
+	public static int BulkDiscountPrice(this Region r) => r.Area() * r.Perimeter.SidesCount();
 
 	private static int Area(this Region r) => r.Plots.Count;
-	private static int Perimeter(this Region region, char[,] farm)
+	private static int PerimeterSize(this Region region) => region.Perimeter.Count;
+
+	private static IEnumerable<Edge> FindPlotEdges(this List<Point> plots)
 	{
-		int perimeterCount = 0;
-		foreach (Point plot in region.Plots) {
-			List<Cell<char>> adjacentPlots = [.. farm.GetAdjacentCells(plot)];
+		HashSet<Point> plotSet = [.. plots];
 
-			perimeterCount += 4 - adjacentPlots.Count;
-
-			foreach (Cell<char> adjacentPlot in adjacentPlots) {
-				if (adjacentPlot.Value != region.PlantType) {
-					perimeterCount++;
-				}
-			}
-		}
-
-		return perimeterCount;
+		return plots
+			.SelectMany(plot =>
+				Directions.AllDirections
+					.Select(direction => (Direction: direction, Next: plot + direction.Delta()))
+					.Where(x => plotSet.DoesNotContain(x.Next))
+					.Select(x => new Edge(x.Next, x.Direction)));
 	}
 
-	private static int SidesCount(this Region region, char[,] farm)
+	private static int SidesCount(this IEnumerable<Edge> edges)
 	{
-		HashSet<Edge> edges = [.. region.FindEdges(farm)];
+		HashSet<Edge> edgeSet = [.. edges];
 
 		int sidesCount = 0;
-		while (edges.Count > 0) {
+		while (edgeSet.Count > 0) {
 			sidesCount++;
 
-			Edge edge = edges.First();
-			_ = edges.Remove(edge);
+			Edge edge = edgeSet.First();
+			_ = edgeSet.Remove(edge);
 
 			Direction checkDirection = edge.Direction switch
 			{
@@ -69,44 +60,20 @@ file static partial class Day12Extensions
 				_ => throw new NotImplementedException(),
 			};
 
-			// Look both ways along the side
+			// Look both ways along the when extending the side
 			Point[] deltas =[new Point(checkDirection.Delta()), new Point(checkDirection.Delta()) * -1];
 
 			foreach (Point delta in deltas) {
 				bool keepGoing = true;
 				int n = 1;
 				while (keepGoing) {
-					keepGoing = false;
-
-					Edge nextEdge = edge with { Plot = edge.Plot + (delta * n) };
-					if (edges.Contains(nextEdge)) {
-						_ = edges.Remove(nextEdge);
-						keepGoing = true;
-					}
-
+					keepGoing = edgeSet.Remove(edge with { Plot = edge.Plot + (delta * n) });
 					n++;
 				}
 			}
 		}
 
 		return sidesCount;
-	}
-
-	/// <summary>
-	/// Returns the outside edges of each individual plot
-	/// </summary>
-	/// <param name="region"></param>
-	/// <param name="farm"></param>
-	/// <returns></returns>
-	private static IEnumerable<Edge> FindEdges(this Region region, char[,] farm)
-	{
-		return region.Plots
-			.SelectMany(plot =>
-				Directions.AllDirections
-					.Select(direction => ( Direction: direction, Next:plot + direction.Delta() ))
-					.Where(x => farm.TryGetValue(x.Next.X, x.Next.Y, out char value) is false || value != region.PlantType)
-					.Select(x => new Edge( x.Next, x.Direction )));
-
 	}
 
 	public static IEnumerable<Region> FindRegions(this char[,] farm)
@@ -139,6 +106,6 @@ file static partial class Day12Extensions
 			}
 		}
 
-		return new(initialPlot.Value, plots);
+		return new(initialPlot.Value, plots, [.. plots.FindPlotEdges()]);
 	}
 }
