@@ -30,18 +30,6 @@ file static partial class Day12Extensions
 	private static int Area(this Region r) => r.Plots.Count;
 	private static int PerimeterSize(this Region region) => region.Perimeter.Count;
 
-	private static IEnumerable<Edge> FindPlotEdges(this List<Point> plots)
-	{
-		HashSet<Point> plotSet = [.. plots];
-
-		return plots
-			.SelectMany(plot =>
-				Directions.AllDirections
-					.Select(direction => (Direction: direction, Next: plot + direction.Delta()))
-					.Where(x => plotSet.DoesNotContain(x.Next))
-					.Select(x => new Edge(x.Next, x.Direction)));
-	}
-
 	private static int SidesCount(this IEnumerable<Edge> edges)
 	{
 		HashSet<Edge> edgeSet = [.. edges];
@@ -71,7 +59,7 @@ file static partial class Day12Extensions
 		return sidesCount;
 	}
 
-	public static IEnumerable<Region> FindRegions(this char[,] farm)
+	internal static IEnumerable<Region> FindRegions(this char[,] farm)
 	{
 		HashSet<Point> visited = [];
 
@@ -101,6 +89,18 @@ file static partial class Day12Extensions
 			}
 		}
 
-		return new(initialPlot.Value, plots, [.. plots.FindPlotEdges()]);
+		return new Region(PlantType: initialPlot.Value, Plots: plots, Perimeter: [.. plots.FindPlotEdges()]);
+	}
+
+	private static IEnumerable<Edge> FindPlotEdges(this List<Point> plots)
+	{
+		HashSet<Point> plotSet = [.. plots];
+
+		return plots
+			.SelectMany(plot =>
+				Directions.NSEW
+					.Select(direction => (Direction: direction, Next: plot + direction.Delta()))
+					.Where(x => plotSet.DoesNotContain(x.Next))
+					.Select(x => new Edge(Plot: x.Next, Direction: x.Direction)));
 	}
 }
