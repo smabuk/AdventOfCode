@@ -61,7 +61,7 @@ file static partial class Day12Extensions
 			};
 
 			// Look both ways along the when extending the side
-			Point[] deltas =[new Point(checkDirection.Delta()), new Point(checkDirection.Delta()) * -1];
+			Point[] deltas =[new Point(checkDirection.Delta()), new Point(checkDirection.Reverse().Delta())];
 
 			foreach (Point delta in deltas) {
 				bool keepGoing = true;
