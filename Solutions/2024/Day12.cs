@@ -12,7 +12,7 @@ public sealed partial class Day12 {
 	private static List<Region> _regions = [];
 
 	[Init]
-	public static void LoadFarm(string[] input) => _regions = [.. input.To2dArray().FindRegions()];
+	public static void LoadRegions(string[] input) => _regions = [.. input.To2dArray().FindRegions()];
 
 	public static int Part1(string[] _) => _regions.Sum(region => region.Price());
 	public static int Part2(string[] _) => _regions.Sum(region => region.BulkDiscountPrice());
@@ -53,22 +53,17 @@ file static partial class Day12Extensions
 			Edge edge = edgeSet.First();
 			_ = edgeSet.Remove(edge);
 
-			Direction checkDirection = edge.Direction switch
-			{
-				Direction.North or Direction.South => Direction.East,
-				Direction.East  or Direction.West  => Direction.South,
-				_ => throw new NotImplementedException(),
-			};
+			Direction iterationDirection = edge.Direction.IsVertical()
+				? Direction.East
+				: Direction.South;
 
-			// Look both ways along the when extending the side
-			Point[] deltas =[new Point(checkDirection.Delta()), new Point(checkDirection.Reverse().Delta())];
+			// Look both ways along the edge when extending the side
+			Point[] deltas =[new Point(iterationDirection.Delta()), new Point(iterationDirection.Reverse().Delta())];
 
 			foreach (Point delta in deltas) {
 				bool keepGoing = true;
-				int n = 1;
-				while (keepGoing) {
+				for (int n = 1; keepGoing; n++) {
 					keepGoing = edgeSet.Remove(edge with { Plot = edge.Plot + (delta * n) });
-					n++;
 				}
 			}
 		}
