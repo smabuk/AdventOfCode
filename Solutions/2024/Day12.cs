@@ -1,5 +1,4 @@
-﻿
-namespace AdventOfCode.Solutions._2024;
+﻿namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 12: Garden Groups
@@ -21,7 +20,13 @@ public static partial class Day12 {
 			.Sum(region => region.RegionPrice(_farm));
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static int Part2(string[] input, params object[]? args)
+	{
+		return
+			_farm
+			.FindRegions()
+			.Sum(region => region.RegionBulkDiscountPrice(_farm));
+	}
 
 	private static IEnumerable<Region> FindRegions(this char[,] farm)
 	{
@@ -67,7 +72,7 @@ public static partial class Day12 {
 			List<Cell<char>> adjacents = [.. farm.GetAdjacentCells(plot)];
 			perimeter += 4 - adjacents.Count;
 			foreach (Cell<char> adjacentPlot in adjacents) {
-				if (adjacentPlot.Value != region.RegionType) {
+				if (adjacentPlot.Value != region.Type) {
 					perimeter++;
 				}
 			}
@@ -76,10 +81,65 @@ public static partial class Day12 {
 		return perimeter;
 	}
 
-	private static int RegionPrice(this Region region, char[,] farm) => region.RegionArea() * region.RegionPerimeter(farm);
-	private static int RegionArea(this Region region) => region.Plots.Count;
+	private static int RegionSidesCount(this Region region, char[,] farm)
+	{
+		HashSet<(Point, Direction)> edges = [];
+		foreach (Point plot in region.Plots) {
+			List<Cell<char>> adjacents = [.. farm.GetAdjacentCells(plot)];
+			foreach (Direction direction in Directions.AllDirections) {
+				Point next = plot + direction.Delta();
+				if (farm.TryGetValue(next.X, next.Y, out char value)) {
+					if (value != region.Type) {
+						_ = edges.Add((next, direction));
+					}
+				} else {
+					_ = edges.Add((next, direction));
+				}
+			}
+		}
+
+		int sides = 0;
+
+		while (edges.Count > 0) {
+			sides++;
+			(Point edge, Direction direction) = edges.First();
+			_ = edges.Remove((edge, direction));
+
+			Direction check = direction switch {
+				Direction.North => Direction.East,
+				Direction.South => Direction.West,
+				Direction.East => Direction.South,
+				Direction.West => Direction.North,
+				_ => throw new NotImplementedException(),
+			};
+
+			bool keepGoing = true;
+			int step = 1;
+			while (keepGoing) {
+				keepGoing = false;
+				(int dX, int dY) delta = (check.Delta().dX * step, (check.Delta().dY * step));
+				if (edges.Contains((edge + delta, direction))) {
+					_ = edges.Remove((edge + delta, direction));
+					keepGoing = true;
+				}
+				if (edges.Contains((edge - delta, direction))) {
+					_ = edges.Remove((edge - delta, direction));
+					keepGoing = true;
+				}
+
+				step++;
+			}
+
+		}
+
+		return sides;
+	}
+
+	private static int RegionBulkDiscountPrice(this Region r, char[,] farm) => r.RegionArea() * r.RegionSidesCount(farm);
+	private static int RegionPrice(this Region r, char[,] farm) => r.RegionArea() * r.RegionPerimeter(farm);
+	private static int RegionArea(this Region r) => r.Plots.Count;
 
 
-	private record Region(char RegionType, List<Point> Plots);
+	private record Region(char Type, List<Point> Plots);
 
 }
