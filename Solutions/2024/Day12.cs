@@ -100,30 +100,23 @@ file static partial class Day12Extensions
 	/// <returns></returns>
 	private static IEnumerable<Edge> FindEdges(this Region region, char[,] farm)
 	{
-		foreach (Point plot in region.Plots) {
-			List<Cell<char>> adjacents = [.. farm.GetAdjacentCells(plot)];
-			foreach (Direction direction in Directions.AllDirections) {
-				Point next = plot + direction.Delta();
-				if (farm.TryGetValue(next.X, next.Y, out char value)) {
-					if (value != region.PlantType) {
-						yield return new(next, direction);
-					}
-				} else {
-					yield return new(next, direction);
-				}
-			}
-		}
+		return region.Plots
+			.SelectMany(plot =>
+				Directions.AllDirections
+					.Select(direction => ( Direction: direction, Next:plot + direction.Delta() ))
+					.Where(x => farm.TryGetValue(x.Next.X, x.Next.Y, out char value) is false || value != region.PlantType)
+					.Select(x => new Edge( x.Next, x.Direction )));
+
 	}
 
 	public static IEnumerable<Region> FindRegions(this char[,] farm)
 	{
 		HashSet<Point> visited = [];
 
-		foreach (Cell<char> plot in farm.ForEachCell()) {
-			if (visited.DoesNotContain(plot)) {
-				yield return farm.FindRegion(plot, visited);
-			}
-		}
+		return farm
+			.ForEachCell()
+			.Where(plot => visited.DoesNotContain(plot))
+			.Select(plot => farm.FindRegion(plot, visited));
 	}
 
 	private static Region FindRegion(this char[,] farm, Cell<char> initialPlot, HashSet<Point> visited)

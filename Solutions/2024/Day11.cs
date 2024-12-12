@@ -12,7 +12,7 @@ public static partial class Day11 {
 	
 	[Init]
 	public static void InitialStones(string[] input)
-		=> _initialStones = [ .. input[0].AsNumbers<long>(separator: ' ')];
+		=> _initialStones = [.. input[0].AsNumbers<long>()];
 
 
 	public static long Part1(string[] _, params object[]? args)
