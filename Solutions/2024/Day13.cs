@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿using BigLocation = (long X, long Y);
+
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 13: Claw Contraption
@@ -52,13 +54,63 @@ public static partial class Day13 {
 		return false;
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2(string[] _, params object[] args)
+	{
+		const long BIG_OFFSET = 10_000_000_000_000;
+
+		long lowestCost = 0;
+
+		foreach (ClawMachine clawMachine in _ClawMachines) {
+			ClawMachine bigClawMachine = clawMachine with
+				{ PrizeLocation = new(clawMachine.PrizeLocation.X + BIG_OFFSET, clawMachine.PrizeLocation.Y + BIG_OFFSET)};
+			if (args.Testing()) { bigClawMachine = clawMachine with { }; }
+
+			if (bigClawMachine.TryCheapestCostBig(out long cost)) {
+				lowestCost += cost;
+			}
+		}
+
+		return lowestCost;
+	}
+
+	internal static bool TryCheapestCostBig(this ClawMachine clawmachine, out long cost)
+	{
+		const int buttonACost = 3;
+
+		long ax = clawmachine.A.DX;
+		long bx = clawmachine.B.DX;
+		long px = clawmachine.PrizeLocation.X;
+
+		long ay = clawmachine.A.DY;
+		long by = clawmachine.B.DY;
+		long py = clawmachine.PrizeLocation.Y;
+
+		long axby = ax * by;
+		long pxby = px * by;
+
+		long aybx = ay * bx;
+		long pybx = py * bx;
+
+		long X = axby - aybx;
+		long P = pxby - pybx;
 
 
+		if (P % X == 0) {
+			long a = P / X;
+			if ((px - (ax * a)) % bx == 0) {
+				long b = (px - (ax * a)) / bx;
+				cost = (a * buttonACost) + b;
+				return true;
+			}
+		}
+
+		cost = 0;
+		return false;
+	}
 
 	public sealed record Button(string Name, int DX, int DY);
 
-	public sealed record ClawMachine(Button A, Button B, Point PrizeLocation)
+	public sealed record ClawMachine(Button A, Button B, BigLocation PrizeLocation)
 	{
 		public static ClawMachine Parse(IEnumerable<string> s)
 		{
@@ -76,4 +128,7 @@ public static partial class Day13 {
 			return new(A, B, prizeLocation);
 		}
 	}
+
+	private static bool Testing(this object[]? args) => GetArgument(args, 1, false);
+
 }
