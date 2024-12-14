@@ -22,10 +22,11 @@ public class Tests_14_Restroom_Redoubt(ITestOutputHelper testOutputHelper)
 	[InlineData("""
 		p=2,4 v=2,-3
 		""", 11, 7, 0)]
-	public void Part1(string input, int width, int height, int expected)
+	public async Task Part1(string input, int width, int height, int expected)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback), width, height), out int actual);
 		actual.ShouldBe(expected);
+		await Task.Delay(200); // Allow time to visualise
 	}
 
 

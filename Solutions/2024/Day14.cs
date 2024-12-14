@@ -20,35 +20,33 @@ public static partial class Day14 {
 		int width  = args.TilesWide();
 		int height = args.TilesTall();
 
-		List<Robot> robots = [.. _robots];
+		List<Robot> robots;
 
-		robots.VisualiseMap(width, height, "Initial state:", visualise);
+		_robots.VisualiseMap(width, height, "Initial state:", visualise);
 
-		for (int noOfSeconds = 1; noOfSeconds <= NO_OF_SECONDS; noOfSeconds++) {
-			robots = [.. robots.Select(r => r.MoveNext(width, height))];
-			if (noOfSeconds < 6 && height < 50) {
+		if (height < 50) { // Tests visualisation
+			robots = [.. _robots];
+			for (int noOfSeconds = 1; noOfSeconds < 6; noOfSeconds++) {
+				robots = [.. robots.Select(r => r.MoveNext(width, height))];
 				robots.VisualiseMap(width, height, $"After {noOfSeconds} seconds:", visualise);
 			}
 		}
+
+		robots = [.. _robots.Select(r => r.MoveNext(width, height, NO_OF_SECONDS))];
 
 		robots.VisualiseMap(width, height, "Final state:", visualise);
 
 		return robots.SafetyFactor(width, height);
 	}
 
-	private static Robot MoveNext(this Robot robot, int width, int height)
+	private static Robot MoveNext(this Robot robot, int width, int height, int noOfSeconds = 1)
 	{
-		(int x, int y) = (robot.Position + robot.Velocity);
+		(int x, int y) = (robot.Position + (robot.Velocity * noOfSeconds));
 
-		//if (x >= width ) { x %= width;  }
-		//if (y >= height) { y %= height; }
-		//if (x < 0)       { x = width  + x; }
-		//if (y < 0)       { y = height + y; }
+		if (x < 0) { x = width  + (x % width ); }
+		if (y < 0) { y = height + (y % height); }
 
-		x = x < 0 ? width  + x : x % width; 
-		y = y < 0 ? height + y : y % height; 
-
-		return robot with { Position = new(x, y) };
+		return robot with { Position = new(x % width, y % height) };
 	}
 
 	public static int SafetyFactor(this IEnumerable<Robot> robots, int width, int height)
@@ -70,28 +68,30 @@ public static partial class Day14 {
 		int width  = args.TilesWide();
 		int height = args.TilesTall();
 
-		List<Robot> robots = [.. _robots];
+		// Doubt any input data will coalesce into a christmas tree in less than 5000 iterations
+		int noOfSeconds = 5000;
 
-		int noOfSeconds = 0;
-		for (noOfSeconds = 0; !robots.IsChristmasTree(width, height); noOfSeconds++) {
-			robots = [.. robots.Select(r => r.MoveNext(width, height))];
+		while (noOfSeconds++ < 50_000
+				&& !_robots
+					.Select(r => r.MoveNext(width, height, noOfSeconds))
+					.IsChristmasTree()) {
 		}
 
-		robots.VisualiseMap(width, height, "Christmas Tree:", visualise);
+		_robots
+			.Select(r => r.MoveNext(width, height, noOfSeconds))
+			.VisualiseMap(width, height, "Christmas Tree:", visualise);
 
 		return noOfSeconds;
 	}
 
-	public static bool IsChristmasTree(this IEnumerable<Robot> robots, int width, int _)
+	public static bool IsChristmasTree(this IEnumerable<Robot> robots)
 	{
 		const int THRESHOLD = 10;
 
-		int midX = width / 2;
-
 		int count = 0;
-		int prevX = 0;
+		Point prev = Point.Zero;
 		foreach (Robot robot in robots.OrderBy(robots => robots.Position)) {
-			count = (robot.Position.X == prevX + 1)
+			count = (robot.Position.Y == prev.Y && robot.Position.X == prev.X + 1)
 				? count + 1
 				: 0;
 
@@ -99,7 +99,7 @@ public static partial class Day14 {
 				return true;
 			}
 
-			prevX = robot.Position.X;
+			prev = robot.Position;
 		}
 
 		return false;
@@ -107,16 +107,18 @@ public static partial class Day14 {
 
 	public static void VisualiseMap(this IEnumerable<Robot> robots, int width, int height, string title, Action<string[], bool>? visualise)
 	{
+		if (visualise is null) {
+			return;
+		}
+
 		int[,] map = new int[width, height];
 
 		foreach (Robot robot in robots) {
 			map[robot.Position.X, robot.Position.Y] += 1;
 		}
 
-		if (visualise is not null) {
-			string[] output = ["", title, .. map.AsStrings().Select(s => s.Replace('0', '.'))];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
-		}
+		string[] output = ["", title, .. map.AsStrings().Select(s => s.Replace('0', '.'))];
+		_ = Task.Run(() => visualise?.Invoke(output, false));
 	}
 
 	private static int TilesWide(this object[]? args) => GetArgument(args, 1, 101);
