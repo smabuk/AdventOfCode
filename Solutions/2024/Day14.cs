@@ -84,18 +84,19 @@ public static partial class Day14 {
 
 	public static bool IsChristmasTree(this IEnumerable<Robot> robots, int width, int _)
 	{
+		const int THRESHOLD = 10;
+
 		int midX = width / 2;
 
 		int count = 0;
 		int prevX = 0;
-		foreach (Robot robot in robots.OrderBy(robots => robots.Position.Y).ThenBy(robots => robots.Position.X)) {
-			if (robot.Position.X == prevX + 1 ) {
-				count++;
-				if (count > 10) {
-					return true;
-				}
-			} else {
-				count = 0;
+		foreach (Robot robot in robots.OrderBy(robots => robots.Position)) {
+			count = (robot.Position.X == prevX + 1)
+				? count + 1
+				: 0;
+
+			if (count > THRESHOLD) {
+				return true;
 			}
 
 			prevX = robot.Position.X;
