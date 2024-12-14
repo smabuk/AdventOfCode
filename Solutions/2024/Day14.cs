@@ -68,18 +68,21 @@ public static partial class Day14 {
 		int width  = args.TilesWide();
 		int height = args.TilesTall();
 
-		// Doubt any input data will coalesce into a christmas tree in less than 5000 iterations
-		int noOfSeconds = 5000;
+		int noOfSeconds = 101;
 
 		while (noOfSeconds++ < 50_000
 				&& !_robots
 					.Select(r => r.MoveNext(width, height, noOfSeconds))
 					.IsChristmasTree()) {
+
+			_robots
+				.Select(r => r.MoveNext(width, height, noOfSeconds))
+				.VisualiseMap(width, height, $"Looking for Christmas Tree: {noOfSeconds} seconds", visualise, true);
 		}
 
 		_robots
 			.Select(r => r.MoveNext(width, height, noOfSeconds))
-			.VisualiseMap(width, height, "Christmas Tree:", visualise);
+			.VisualiseMap(width, height, $"Christmas Tree at:  {noOfSeconds} seconds", visualise);
 
 		return noOfSeconds;
 	}
@@ -105,7 +108,7 @@ public static partial class Day14 {
 		return false;
 	}
 
-	public static void VisualiseMap(this IEnumerable<Robot> robots, int width, int height, string title, Action<string[], bool>? visualise)
+	public static void VisualiseMap(this IEnumerable<Robot> robots, int width, int height, string title, Action<string[], bool>? visualise, bool clearScreen = false)
 	{
 		if (visualise is null) {
 			return;
@@ -118,7 +121,7 @@ public static partial class Day14 {
 		}
 
 		string[] output = ["", title, .. map.AsStrings().Select(s => s.Replace('0', '.'))];
-		_ = Task.Run(() => visualise?.Invoke(output, false));
+		visualise?.Invoke(output, clearScreen);
 	}
 
 	private static int TilesWide(this object[]? args) => GetArgument(args, 1, 101);

@@ -102,9 +102,10 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 
 		if (clearScreen) {
 			Console.Clear();
+			//Console.SetCursorPosition(0, 0);
 		}
 
-		Console.WriteLine(string.Join(Environment.NewLine, lines));
+		Console.Write(string.Join(Environment.NewLine, lines));
 	}
 
 
