@@ -3,64 +3,69 @@
 @inject AocHttpClient aocClient
 @inject GithubHttpClient githubClient
 @inject AocJsInterop aocJS
+@inject IHostEnvironment env
 <article class="day-desc">
-    <EditForm Model="@inputModel" OnSubmit="@UseInputData">
-        <h2>
-            --- Input --- <span>
-                <button class="btn btn-primary"
-						disabled="@IsGetDisabled"
-						title="Retrieves the logged in user's data from the Advent of Code web site https://adventofcode.com and then solves for it."
-						@onclick="() => LoadInputDataFromAoc()">AoC</button>
-                <button class="btn btn-primary"
-						disabled="@IsGitHubGetDisabled"
-						title="Select one of the known GitHub users from the drop-down and then press the button to retrieve their data from GitHub (if available) and then solves for it"
-						@onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">
-					@(GitHubUserSelect) GitHub
-				</button>
-            </span>
-            <button type="button"
-					class="btn btn-primary"
-					disabled="@IsCopyDisabled"
-					title="Copy the contents of the input box to the clipboard."
-					@onclick="CopyTextToClipboard">
+	<EditForm Model="@inputModel" OnSubmit="@UseInputData">
+		<h2>
+			--- Input --- <span>
+				<button class="btn btn-primary"
+				disabled="@IsGetDisabled"
+				title="Retrieves the logged in user's data from the Advent of Code web site https://adventofcode.com and then solves for it."
+				@onclick="() => LoadInputDataFromAoc()">AoC</button>
+				@if (env.IsDevelopment()) {
+					<button class="btn btn-primary ms-3"
+					disabled="@IsGitHubGetDisabled"
+					title="Select one of the known GitHub users from the drop-down and then press the button to retrieve their data from GitHub (if available) and then solves for it"
+					@onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">
+						@(GitHubUserSelect) GitHub
+					</button>
+				} 
+			</span>
+			<button type="button"
+			class="btn btn-primary"
+			disabled="@IsCopyDisabled"
+			title="Copy the contents of the input box to the clipboard."
+			@onclick="CopyTextToClipboard">
 				Copy <i class="bi-clipboard" aria-hidden="true"></i>
 			</button>
-            <input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary"
-				   title="Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution (if I've written one!). (May crash with invalid data)"
+			<input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary"
+			title="Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution (if I've written one!). (May crash with invalid data)"
 			/>
-        </h2>
-        <h5>
-            <InputSelect @bind-Value="GitHubUserSelect"
-						 DisplayName="User"
-						 title="Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.">
-                <option value="">Select a user</option>
-                @foreach (string name in githubClient.KnownUsersInOrder) {
-                    <option value="@name">@name (@githubClient.UserLanguages(name))</option>
-                }
-            </InputSelect>
-            <a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
-        </h5>
-        <textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
-    </EditForm>
-    <div hidden @ref="_codeElement">@inputModel.InputData</div>
+		</h2>
+		@if (env.IsDevelopment()) {
+			<h5>
+				<InputSelect @bind-Value="GitHubUserSelect"
+				DisplayName="User"
+				title="Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.">
+					<option value="">Select a user</option>
+					@foreach (string name in githubClient.KnownUsersInOrder) {
+						<option value="@name">@name (@githubClient.UserLanguages(name))</option>
+					}
+				</InputSelect>
+				<a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
+			</h5>
+		}
+		<textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
+	</EditForm>
+	<div hidden @ref="_codeElement">@inputModel.InputData</div>
 </article>
 
 @code {
-    [Parameter]
-    public int Year { get; set; }
+	[Parameter]
+	public int Year { get; set; }
 
-    [Parameter]
-    public int Day { get; set; }
+	[Parameter]
+	public int Day { get; set; }
 
-    public string Input { get; set; } = "";
-    public string InputSource { get; set; } = "";
-    public string GitHubUserSelect { get; set; } = default!;
+	public string Input { get; set; } = "";
+	public string InputSource { get; set; } = "";
+	public string GitHubUserSelect { get; set; } = default!;
 
-    private bool IsGetDisabled => IsLoading;
-    private bool IsGitHubGetDisabled => IsLoading || string.IsNullOrWhiteSpace(GitHubUserSelect);
-    private bool IsCopyDisabled => string.IsNullOrEmpty(inputModel.InputData);
-    private bool IsUseDisabled => string.IsNullOrEmpty(inputModel.InputData);
-    private bool IsLoading = false;
+	private bool IsGetDisabled => IsLoading;
+	private bool IsGitHubGetDisabled => IsLoading || string.IsNullOrWhiteSpace(GitHubUserSelect);
+	private bool IsCopyDisabled => string.IsNullOrEmpty(inputModel.InputData);
+	private bool IsUseDisabled => string.IsNullOrEmpty(inputModel.InputData);
+	private bool IsLoading = false;
 
     class InputModel {
         public string InputData { get; set; } = "";
