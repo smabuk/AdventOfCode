@@ -106,6 +106,7 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 		}
 
 		Console.Write(string.Join(Environment.NewLine, lines));
+		//Task.Delay(1).Wait();
 	}
 
 

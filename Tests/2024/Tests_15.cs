@@ -48,7 +48,91 @@ public class Tests_15_Warehouse_Woes(ITestOutputHelper testOutputHelper)
 	}
 
 
+	[Theory]
+	[InlineData("""
+		#########
+		#..O..O@#
+		#########
 
+		<<<<<<<<
+		""", 206)]
+	[InlineData("""
+		#########
+		#@.O..O.#
+		#########
+
+		>>>>>>>>>>
+		""", 226)]
+	[InlineData("""
+		#########
+		#..O#.O@#
+		#########
+
+		<<<<<<<<
+		""", 216)]
+	[InlineData("""
+		#########
+		#..#....#
+		#.......#
+		#..OO...#
+		#.......#
+		#..@....#
+		#.......#
+		#########
+
+		^^^
+		""", 514)]
+	[InlineData("""
+		#######
+		#...#.#
+		#.....#
+		#..OO@#
+		#..O..#
+		#.....#
+		#######
+
+		<vv<<^^<<^^
+		""", 618)]
+	[InlineData("""
+		######
+		#....#
+		#.O..#
+		#.O@.#
+		#.O..#
+		#....#
+		######
+
+		<>vv<^
+		""", 611)]
+	[InlineData("""
+		##########
+		#..O..O.O#
+		#......O.#
+		#.OO..O.O#
+		#..O@..O.#
+		#O#..O...#
+		#O..O..O.#
+		#.OO.O.OO#
+		#....O...#
+		##########
+
+		<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
+		vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
+		><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
+		<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
+		^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
+		^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
+		>^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
+		<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
+		^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
+		v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
+		""", 9021)]
+	public async Task Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+		await Task.Delay(200); // Allow time to visualise
+	}
 
 	private void Callback(string[] lines, bool _)
 	{
