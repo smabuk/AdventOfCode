@@ -11,6 +11,7 @@ public static partial class Day16 {
 	private const char START = 'S';
 	private const char END = 'E';
 	private const char WALL = '#';
+	private const int TURN_COST = 1000;
 
 	private static char[,] _maze = default!;
 	private static Action<string[], bool>? _visualise = null;
@@ -29,9 +30,9 @@ public static partial class Day16 {
 		ReindeerPosition reindeerPosition = new(_maze.ForEachCell().Single(c => c.Value is START).Index, East);
 		Point end   = _maze.ForEachCell().Single(c => c.Value is END).Index;
 
-		(int lowestScore, List<Point> route) = _maze.FindShortestPath(reindeerPosition, end);
+		(int lowestScore, List<ReindeerPosition> route) = _maze.FindShortestPath(reindeerPosition, end);
 
-		_maze.VisualiseMaze($"Lowest Score {lowestScore}:", route);
+		_maze.VisualiseMaze($"Lowest Score {lowestScore}:", route[1..^1]);
 
 		return lowestScore;
 	}
@@ -41,59 +42,59 @@ public static partial class Day16 {
 		ReindeerPosition reindeerPosition = new(_maze.ForEachCell().Single(c => c.Value is START).Index, East);
 		Point end = _maze.ForEachCell().Single(c => c.Value is END).Index;
 
-		List<(int Score, List<Point> Route)> routes = [.. _maze.FindAllPaths(reindeerPosition, end)];
+		List<(int Score, List<ReindeerPosition> Route)> routes = [.. _maze.FindAllPaths(reindeerPosition, end)];
 		int lowestScore = routes.Min(route => route.Score);
 
-		List<Point> tiles = [..routes.Where(r => r.Score == lowestScore).SelectMany(p => p.Route).Distinct()];
-		_maze.VisualiseMaze($"Tiles:", tiles);
+		List<ReindeerPosition> tiles = [..routes.Where(r => r.Score == lowestScore).SelectMany(p => p.Route)];
+		_maze.VisualiseMaze($"Tiles:", tiles.Select(r => r with { Direction = None }));
 
-		return tiles.Count;
+		return tiles.Select(p => p.Position).Distinct().Count();
 	}
 
-	private static IEnumerable<(int, List<Point>)> FindAllPaths(this char[,] maze, ReindeerPosition start, Point end)
+	private static IEnumerable<(int, List<ReindeerPosition>)> FindAllPaths(this char[,] maze, ReindeerPosition start, Point end)
 	{
-		Queue<(int, List<Point>, Direction)> queue = new();
-		queue.Enqueue((0, new List<Point> { start.Position }, start.Direction));
-		HashSet<Point> visited = [];
+		Queue<(int, List<ReindeerPosition>, Direction)> queue = new();
+		queue.Enqueue((0, new List<ReindeerPosition> { start }, start.Direction));
+		HashSet<ReindeerPosition> visited = [];
 
 		while (queue.Count > 0) {
-			(int currentDist, List<Point> path, Direction prevDir) = queue.Dequeue();
-			Point position = path[^1];
+			(int currentDist, List<ReindeerPosition> path, Direction prevDir) = queue.Dequeue();
+			ReindeerPosition reindeerPosition = path[^1];
 
 
-			if (position == end) {
+			if (reindeerPosition.Position == end) {
 				yield return (currentDist, [.. path]);
 				continue;
 			}
 
-			_ = visited.Add(position);
+			_ = visited.Add(reindeerPosition);
 
 			foreach (Direction direction in Directions.NESW) {
-				Point newPosition = position + direction.Delta();
+				ReindeerPosition newPosition = reindeerPosition with { Position = reindeerPosition.Position + direction.Delta(), Direction = direction};
 
-				if (maze.TryGetValue(newPosition, out char value) && value is not WALL
-					&& !path.Contains(newPosition)
-					//&& !visited.Contains(newPosition)
+				if (maze[newPosition.Position.X, newPosition.Position.Y] is not WALL
+					//&& path.DoesNotContain(newPosition)
+					&& visited.DoesNotContain(newPosition)
 					)
 				{
-					int turnCost = prevDir != direction ? 1000 : 0;
+					int turnCost = (prevDir != direction) ? TURN_COST : 0;
 					int newDist = currentDist + 1 + turnCost;
-					List<Point> newPath = [.. path, newPosition];
+					List<ReindeerPosition> newPath = [.. path, newPosition];
 					queue.Enqueue((newDist, newPath, direction));
 				}
 			}
 		}
 	}
 
-	private static (int, List<Point>) FindShortestPath(this char[,] maze, ReindeerPosition start, Point end)
+	private static (int, List<ReindeerPosition>) FindShortestPath(this char[,] maze, ReindeerPosition start, Point end)
 	{
 		int noOfRows = maze.RowsCount();
 		int noOfCols = maze.ColsCount();
 
 		int[,] distances = new int[noOfCols, noOfRows];
-		Point[,] previous = new Point[noOfCols, noOfRows];
+		ReindeerPosition[,] previous = new ReindeerPosition[noOfCols, noOfRows];
 		distances.FillInPlace(int.MaxValue);
-		previous.FillInPlace(new Point(-1, -1));
+		previous.FillInPlace(new ReindeerPosition(new Point(-1, -1), None));
 
 		distances[start.Position.X, start.Position.Y] = 0;
 		PriorityQueue<(int, Point, Direction), int> pq = new();
@@ -103,8 +104,8 @@ public static partial class Day16 {
 			(int currentDist, Point position, Direction prevDir) = pq.Dequeue();
 
 			if (position ==end) {
-				List<Point> path = [];
-				for (Point at = end; at.X != -1 && at.Y != -1; at = previous[at.X, at.Y]) {
+				List<ReindeerPosition> path = [];
+				for (ReindeerPosition at = new(end, None); at.Position.X != -1 && at.Position.Y != -1; at = previous[at.Position.X, at.Position.Y]) {
 					path.Add(at);
 				}
 
@@ -116,11 +117,11 @@ public static partial class Day16 {
 				Point newPosition = position + direction.Delta();
 
 				if (maze.TryGetValue(newPosition, out char value) && value is not WALL) {
-					int turnCost = (prevDir != direction) ? 1000 : 0;
+					int turnCost = (prevDir != direction) ? TURN_COST : 0;
 					int newDist = currentDist + 1 + turnCost;
 					if (newDist < distances[newPosition.X, newPosition.Y]) {
 						distances[newPosition.X, newPosition.Y] = newDist;
-						previous[newPosition.X, newPosition.Y] = position;
+						previous[newPosition.X, newPosition.Y] = new (position, direction);
 						pq.Enqueue((newDist, newPosition, direction), newDist);
 					}
 				}
@@ -137,7 +138,7 @@ public static partial class Day16 {
 		public int Score => Position.Direction != PreviousDirection ? 1001 : 1;
 	}
 
-	private static void VisualiseMaze(this char[,] map, string title, IEnumerable<Point>? route = null, bool clearScreen = false)
+	private static void VisualiseMaze(this char[,] map, string title, IEnumerable<ReindeerPosition>? route = null, bool clearScreen = false)
 	{
 		if (_visualise is null) {
 			return;
@@ -145,11 +146,18 @@ public static partial class Day16 {
 
 		char[,] outputMap = (char[,])map.Clone();
 
-		foreach (Point point in route ?? []) {
-			outputMap[point.X, point.Y] = 'O';
+		foreach (ReindeerPosition reindeerPosition in route ?? []) {
+			outputMap[reindeerPosition.Position.X, reindeerPosition.Position.Y] = reindeerPosition.Direction switch
+			{
+				North => '^',
+				East  => '>',
+				West  => '<',
+				South => 'v',
+				_     => 'O',
+			};
 		}
 
-		string[] output = ["", title, .. outputMap.AsStrings()];
+		string[] output = ["", title, .. outputMap.AsStrings().Select(s => s.Replace('.', ' '))];
 		_visualise?.Invoke(output, clearScreen);
 	}
 }
