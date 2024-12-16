@@ -49,6 +49,51 @@ public class Tests_16_Reindeer_Maze(ITestOutputHelper testOutputHelper)
 	}
 
 
+	[Theory]
+	[InlineData("""
+		###############
+		#.......#....E#
+		#.#.###.#.###.#
+		#.....#.#...#.#
+		#.###.#####.#.#
+		#.#.#.......#.#
+		#.#.#####.###.#
+		#...........#.#
+		###.#.#####.#.#
+		#...#.....#.#.#
+		#.#.#.###.#.#.#
+		#.....#...#.#.#
+		#.###.#.#.#.#.#
+		#S..#.....#...#
+		###############
+		""", 45)]
+	[InlineData("""
+		#################
+		#...#...#...#..E#
+		#.#.#.#.#.#.#.#.#
+		#.#.#.#...#...#.#
+		#.#.#.#.###.#.#.#
+		#...#.#.#.....#.#
+		#.#.#.#.#.#####.#
+		#.#...#.#.#.....#
+		#.#.#####.#.###.#
+		#.#.#.......#...#
+		#.#.###.#####.###
+		#.#.#...#.....#.#
+		#.#.#.#####.###.#
+		#.#.#.........#.#
+		#.#.#.#########.#
+		#S#.............#
+		#################
+		""", 64)]
+	public async Task Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+		await Task.Delay(200); // Allow time to visualise
+	}
+
+
 
 	private void Callback(string[] lines, bool _)
 	{
