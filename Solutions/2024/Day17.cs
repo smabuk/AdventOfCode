@@ -9,7 +9,7 @@ public static partial class Day17 {
 
 	private static List<Instruction> _instructions = [];
 	private static List<int> _program = [];
-	private static int[] _registers = [];
+	private static long[] _registers = [];
 	private static Action<string[], bool>? _visualise = null;
 
 	[Init]
@@ -19,14 +19,13 @@ public static partial class Day17 {
 
 		_program = [.. input[PROGRAM_LINE][9..].AsInts()];
 		_instructions = [.. input[PROGRAM_LINE][9..].AsInts().Chunk(2).Select(i => $"{i[0]} {i[1]}".As<Instruction>())];
-		//_operands = [.. input[PROGRAM_LINE][9..].AsInts().Chunk(2).Select(i => i[1])];
 
 		_visualise = visualise;
 	}
 
 	public static string Part1(string[] _)
 	{
-		int[] registers = [.. _registers];
+		long[] registers = [.. _registers];
 
 		string result = _instructions.ExecuteCodePart1(registers);
 
@@ -36,7 +35,7 @@ public static partial class Day17 {
 
 
 
-		static void VisualiseResult(int[] registers, string result)
+		static void VisualiseResult(long[] registers, string result)
 		{
 			Visualise([], ""); Visualise([], "");
 			registers.Visualise($"Result: {result}");
@@ -44,11 +43,7 @@ public static partial class Day17 {
 		}
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
-
-
-
-	public static string ExecuteCodePart1(this List<Instruction> instructions, int[] registers)
+	public static string ExecuteCodePart1(this List<Instruction> instructions, long[] registers)
 	{
 		List<int> outputValues = [];
 
@@ -59,16 +54,6 @@ public static partial class Day17 {
 			registers = instruction.Evaluate(registers);
 
 			switch (instruction) {
-				case AdvInstruction:
-					break;
-				case BdvInstruction:
-					break;
-				case BxlInstruction:
-					break;
-				case BstInstruction:
-					break;
-				case CdvInstruction:
-					break;
 				case OutInstruction:
 					int value = operand.Value(registers) % 8;
 					outputValues.Add(value);
@@ -78,7 +63,7 @@ public static partial class Day17 {
 					Visualise([], "");
 					break;
 				case JnzInstruction:
-					int regAValue = REG_A.GetReg(registers);
+					int regAValue = (int)REG_A.GetReg(registers);
 					registers.Visualise($"Jump  {operand.Number}: {regAValue} => {(regAValue != 0 ? instructions[operand.Number] : instPtr)}");
 
 					instPtr = regAValue != 0
@@ -93,14 +78,59 @@ public static partial class Day17 {
 		return string.Join(",", outputValues);
 	}
 
-	public static int GetReg(this string valueOrReg, int[] registers)
+
+	public static long Part2(string[] _)
+	{
+
+		long[] registers = [.. _registers];
+
+		List<Instruction> reversedInstructions = [.. _instructions];
+		reversedInstructions.Reverse();
+
+		long[] results = [.. _instructions
+			.ExecuteCodePart2(_program, registers)
+			//.Min()
+			//.FirstOrDefault(999)
+			, int.MaxValue
+			];
+
+		return results.Min();
+	}
+
+	public static IEnumerable<long> ExecuteCodePart2(this List<Instruction> instructions, List<int> values, long[] registers)
+	{
+
+		if (values.Count == 0) {
+			yield return 0;
+			yield break;
+		}
+
+		List<long> outputValues = [.. instructions.ExecuteCodePart2(values[1..], registers)];
+		foreach (long outputValue in outputValues) {
+			for (int aValue = 0; aValue < 8; aValue++) {
+				long[] localRegisters = [outputValue, 0, 0];
+				foreach (Instruction instruction in instructions) {
+					//Instruction newInstruction = instruction with { Operand = operand };
+					localRegisters = instruction.Devaluate(aValue, localRegisters);
+				}
+
+				
+				if (values[0] == REG_A.GetReg(localRegisters) % 8) {
+					yield return REG_A.GetReg(localRegisters);
+				}
+			}
+		}
+
+	}
+
+	public static long GetReg(this string valueOrReg, long[] registers)
 	{
 		return Char.IsLetter(valueOrReg[0])
 			? registers[valueOrReg.RegIndex()]
-			: valueOrReg.As<int>();
+			: valueOrReg.As<long>();
 	}
 
-	public static int[] SetReg(this int[] registers, string reg, int value)
+	public static long[] SetReg(this long[] registers, string reg, long value)
 	{
 		registers[reg.RegIndex()] = value;
 		return registers;
@@ -109,7 +139,7 @@ public static partial class Day17 {
 	public static int RegIndex(this string registerName) => registerName[0] - REG_OFFSET;
 
 
-	private static void Visualise(this int[] registers, string value)
+	private static void Visualise(this long[] registers, string value)
 	{
 		if (_visualise is null) {
 			return;
@@ -125,22 +155,23 @@ public static partial class Day17 {
 
 	public record ComboOperand(int Number)
 	{
-		public int Value(int[] registers) => Number switch
+		public int Value(long[] registers) => Number switch
 		{
 			0 => Number,
 			1 => Number,
 			2 => Number,
 			3 => Number,
-			4 => REG_A.GetReg(registers),
-			5 => REG_B.GetReg(registers),
-			6 => REG_C.GetReg(registers),
+			4 => (int)REG_A.GetReg(registers),
+			5 => (int)REG_B.GetReg(registers),
+			6 => (int)REG_C.GetReg(registers),
 			_ => throw new NotImplementedException(),
 		};
 	}
 
 	public abstract record Instruction(ComboOperand Operand) : IParsable<Instruction>
 	{
-		public abstract int[] Evaluate(int[] registers);
+		public abstract long[] Devaluate(int aValue, long[] registers);
+		public abstract long[] Evaluate(long[] registers);
 
 		public int OpCode => this switch
 		{
@@ -181,10 +212,20 @@ public static partial class Day17 {
 			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
+
+
 	private record AdvInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers) {
-			int numerator = REG_A.GetReg(registers);
+		public override long[] Devaluate(int aValue, long[] registers)
+		{
+			long regAValue = REG_A.GetReg(registers);
+			int value = Operand.Value(registers);
+			registers = registers.SetReg(REG_A, (regAValue * (int)Math.Pow(2, value)) + aValue);
+			return registers;
+		}
+
+		public override long[] Evaluate(long[] registers) {
+			int numerator = (int)REG_A.GetReg(registers);
 			int value = Operand.Value(registers);
 			string debug = $"ADV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
 
@@ -197,9 +238,11 @@ public static partial class Day17 {
 
 	private record BdvInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers)
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+
+		public override long[] Evaluate(long[] registers)
 		{
-			int numerator = REG_A.GetReg(registers);
+			int numerator = (int)REG_A.GetReg(registers);
 			int value = Operand.Value(registers);
 			string debug = $"BDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
 
@@ -212,9 +255,11 @@ public static partial class Day17 {
 
 	private record CdvInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers)
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+
+		public override long[] Evaluate(long[] registers)
 		{
-			int numerator = REG_A.GetReg(registers);
+			int numerator = (int)REG_A.GetReg(registers);
 			int value = Operand.Value(registers);
 			string debug = $"CDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
 
@@ -227,9 +272,11 @@ public static partial class Day17 {
 
 	private record BxlInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers)
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+
+		public override long[] Evaluate(long[] registers)
 		{
-			int regBValue = REG_B.GetReg(registers);
+			int regBValue =	(int)REG_B.GetReg(registers);
 			string debug = $"BXL  {Operand.Number}: {regBValue} XOR {Operand.Number}";
 			registers = registers.SetReg(REG_B, regBValue ^ Operand.Number);
 
@@ -240,7 +287,9 @@ public static partial class Day17 {
 
 	private record BstInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers)
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+
+		public override long[] Evaluate(long[] registers)
 		{
 			int operandValue = Operand.Value(registers);
 			string debug = $"BST  {Operand.Number}: {operandValue} % 8";
@@ -254,7 +303,9 @@ public static partial class Day17 {
 
 	private record BxcInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers)
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+
+		public override long[] Evaluate(long[] registers)
 		{
 			string debug = $"BXC   : {REG_B.GetReg(registers)} XOR {REG_C.GetReg(registers)}";
 
@@ -267,12 +318,14 @@ public static partial class Day17 {
 
 	private record JnzInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers) => registers;
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+		public override long[] Evaluate(long[] registers) => registers;
 	}
 
 	private record OutInstruction(ComboOperand Operand) : Instruction(Operand)
 	{
-		public override int[] Evaluate(int[] registers) => registers;
+		public override long[] Devaluate(int aValue, long[] registers) => registers;
+		public override long[] Evaluate(long[] registers) => registers;
 	}
 
 	private const int REG_OFFSET = 'A';

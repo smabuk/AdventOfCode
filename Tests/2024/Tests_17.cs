@@ -53,6 +53,21 @@ public class Tests_17_Chronospatial_Computer(ITestOutputHelper testOutputHelper)
 		actual.ShouldBe(expected);
 	}
 
+	[Theory]
+	[InlineData("""
+		Register A: 2024
+		Register B: 0
+		Register C: 0
+
+		Program: 0,3,5,4,3,0
+		""", 117440)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+
 	private void Callback(string[] lines, bool _)
 	{
 		if (lines is null or []) {
