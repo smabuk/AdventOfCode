@@ -34,6 +34,23 @@ public static partial class Day18 {
 		return shortestPath.Count - 1; // shortestPath includes start
 	}
 
+	public static string Part2(string[] _, params object[]? args)
+	{
+		int gridSize  = args.GridSize();
+		int noOfBytes = args.Bytes();
+
+		Point start = Point.Zero;
+		Point end   = new(gridSize - 1, gridSize - 1);
+		
+		List<Point> shortestPath = [Point.Zero];
+		while (shortestPath is not []) {
+			shortestPath = FindShortestPath(start, end, _bytes.Take(++noOfBytes), gridSize);
+		}
+
+		noOfBytes--;
+		return $"{_bytes[noOfBytes].X},{_bytes[noOfBytes].Y}";
+	}
+
 	public static List<Point> FindShortestPath(Point start, Point goal, IEnumerable<Point> obstacles, int gridSize)
 	{
 		PriorityQueue<Point, int> priorityQueue = new();
@@ -89,31 +106,26 @@ public static partial class Day18 {
 		return totalPath;
 	}
 
-
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	private static int GridSize(this object[]? args) => GetArgument(args, 1, 71);
+	private static int Bytes(this object[]? args)    => GetArgument(args, 2, 1024);
 
 	private static void VisualiseRam(this IEnumerable<Point> bytes, string title, int gridSize, IEnumerable<Point> route, bool clearScreen = false)
 	{
+		const char EMPTY = '.';
+		const char BYTE  = '#';
+		const char PATH  = 'O';
+
 		if (_visualise is null) {
 			return;
 		}
 
 		char[,] outputRamMap = new char[gridSize, gridSize];
-		outputRamMap.FillInPlace('.');
+		outputRamMap.FillInPlace(EMPTY);
 
-		foreach (Point position in bytes ?? []) {
-			outputRamMap[position.X, position.Y] = '#';
-		}
+		foreach (Point p in bytes ?? []) { outputRamMap[p.X, p.Y] = BYTE; }
+		foreach (Point p in route ?? []) { outputRamMap[p.X, p.Y] = PATH; }
 
-		foreach (Point position in route ?? []) {
-			outputRamMap[position.X, position.Y] = 'O';
-		}
-
-		string[] output = ["", title, .. outputRamMap.AsStrings()/*.Select(s => s.Replace('.', ' '))*/];
+		string[] output = ["", title, .. outputRamMap.AsStrings()];
 		_visualise?.Invoke(output, clearScreen);
 	}
-
-	private static int GridSize(this object[]? args) => GetArgument(args, 1, 71);
-	private static int Bytes(this object[]? args) => GetArgument(args, 2, 1024);
-
 }
