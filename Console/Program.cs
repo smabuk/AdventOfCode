@@ -55,7 +55,7 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 					if (result.Answer.StartsWith('*')) {
 						Console.ForegroundColor = ConsoleColor.Red;
 					};
-					Console.Write($" {result.Answer,-16}");
+					Console.Write($" {result.Answer,-17}");
 				} else if (result.Phase == PHASE_PART2) {
 					answerColour = ConsoleColor.Yellow;
 					OutputTimings(result.Elapsed);
@@ -64,7 +64,7 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 					if (result.Answer.StartsWith('*')) {
 						Console.ForegroundColor = ConsoleColor.Red;
 					};
-					Console.Write($" {result.Answer,-16}");
+					Console.Write($" {result.Answer,-17}");
 				} else if (result.Phase == EXCEPTION_PART1) {
 					answerColour = ConsoleColor.Green;
 					OutputTimings(result.Elapsed);
