@@ -37,8 +37,12 @@ public static partial class Day16 {
 		return lowestScore;
 	}
 
-	public static int Part2(string[] _)
+	public static string Part2(string[] _)
 	{
+		if (_maze.ColsCount() > 20) {
+			return NO_SOLUTION_MESSAGE;
+		}
+
 		ReindeerPosition reindeerPosition = new(_maze.ForEachCell().Single(c => c.Value is START).Index, East);
 		Point end = _maze.ForEachCell().Single(c => c.Value is END).Index;
 
@@ -48,7 +52,7 @@ public static partial class Day16 {
 		List<ReindeerPosition> tiles = [..routes.Where(r => r.Score == lowestScore).SelectMany(p => p.Route)];
 		_maze.VisualiseMaze($"Tiles:", tiles.Select(r => r with { Direction = None }));
 
-		return tiles.Select(p => p.Position).Distinct().Count();
+		return tiles.Select(p => p.Position).Distinct().Count().ToString();
 	}
 
 	private static IEnumerable<(int, List<ReindeerPosition>)> FindAllPaths(this char[,] maze, ReindeerPosition start, Point end)
@@ -70,7 +74,7 @@ public static partial class Day16 {
 			_ = visited.Add(reindeerPosition);
 
 			foreach (Direction direction in Directions.NESW) {
-				ReindeerPosition newPosition = reindeerPosition with { Position = reindeerPosition.Position + direction.Delta(), Direction = direction};
+				ReindeerPosition newPosition = reindeerPosition with { Position = reindeerPosition.Position.Translate(direction), Direction = direction};
 
 				if (maze[newPosition.Position.X, newPosition.Position.Y] is not WALL
 					//&& path.DoesNotContain(newPosition)
@@ -114,7 +118,7 @@ public static partial class Day16 {
 			}
 
 			foreach (Direction direction in Directions.NESW) {
-				Point newPosition = position + direction.Delta();
+				Point newPosition = position.Translate(direction);
 
 				if (maze.TryGetValue(newPosition, out char value) && value is not WALL) {
 					int turnCost = (prevDir != direction) ? TURN_COST : 0;

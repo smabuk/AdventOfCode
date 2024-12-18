@@ -48,7 +48,7 @@ public static partial class Day15 {
 
 	private static bool TryMovePart1(this Thing thing, Direction direction, char[,] map, out Thing newThing)
 	{
-		newThing = thing with { Location = thing.Location + direction.Delta() };
+		newThing = thing with { Location = thing.Location.Translate(direction) };
 		char value = newThing.GetTheValue(map);
 
 		if (value is BOX) {
@@ -90,7 +90,7 @@ public static partial class Day15 {
 
 	private static bool TryMoveRobot(this Robot robot, Direction direction, char[,] map, out Thing newRobot)
 	{
-		newRobot = robot with { Location = robot.Location + direction.Delta() };
+		newRobot = robot with { Location = robot.Location.Translate(direction) };
 
 		char value = newRobot.GetTheValue(map);
 
@@ -115,7 +115,7 @@ public static partial class Day15 {
 
 	private static bool TryMoveBox(this WideBox box, Direction direction, char[,] map)
 	{
-		WideBox newBox = box with { Location = box.Location + direction.Delta() };
+		WideBox newBox = box with { Location = box.Location.Translate(direction) };
 
 		return direction switch
 		{
@@ -174,7 +174,7 @@ public static partial class Day15 {
 				};
 
 				foreach (WideBox boxToMove in boxes) {
-					newBox = box with { Location = boxToMove.Location + direction.Delta() };
+					newBox = box with { Location = boxToMove.Location.Translate(direction) };
 					map.UpdateMap(boxToMove, EMPTY, EMPTY);
 					map.UpdateMap(newBox, BOX_LEFT, BOX_RIGHT);
 				}
@@ -184,7 +184,7 @@ public static partial class Day15 {
 		}
 
 		if (value1 is EMPTY && value2 is EMPTY) {
-			newBox = box with { Location = box.Location + direction.Delta() };
+			newBox = box with { Location = box.Location.Translate(direction) };
 			map.UpdateMap(box, EMPTY, EMPTY);
 			map.UpdateMap(newBox, BOX_LEFT, BOX_RIGHT);
 			return true;
@@ -199,7 +199,7 @@ public static partial class Day15 {
 			return (true, []);
 		}
 
-		WideBox newBox = box with { Location = box.Location + direction.Delta() };
+		WideBox newBox = box with { Location = box.Location.Translate(direction) };
 		char value1 = newBox.L.GetTheValue(map);
 		char value2 = newBox.R.GetTheValue(map);
 

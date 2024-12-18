@@ -99,7 +99,7 @@ file static partial class Day12Extensions
 		return plots
 			.SelectMany(plot =>
 				Directions.NSEW
-					.Select(direction => (Direction: direction, Next: plot + direction.Delta()))
+					.Select(direction => (Direction: direction, Next: plot.Translate(direction)))
 					.Where(x => plotSet.DoesNotContain(x.Next))
 					.Select(x => new Edge(Plot: x.Next, Direction: x.Direction)));
 	}

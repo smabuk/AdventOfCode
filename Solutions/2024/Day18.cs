@@ -68,7 +68,7 @@ public static partial class Day18 {
 			}
 
 			foreach (Direction direction in Directions.NSEW) {
-				Point adjacent = current + direction.Delta();
+				Point adjacent = current.Translate(direction);
 
 				if (adjacent.IsOutOfBounds(size) || corruptions.Contains(adjacent)) {
 					continue;
