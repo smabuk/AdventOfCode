@@ -19,47 +19,45 @@ public static partial class Day18 {
 
 	public static int Part1(string[] _, params object[]? args)
 	{
-		int gridSize  = args.GridSize();
-		int noOfBytes = args.Bytes();
+		int size  = args.MemorySpaceSize();
+		int noOfBytes = args.NoOfBytes();
 
 		Point start = Point.Zero;
-		Point end   = new(gridSize - 1, gridSize - 1);
+		Point end   = new(size - 1, size - 1);
 
-		_bytes.Take(noOfBytes).VisualiseRam("Initial state:", gridSize, []);
+		_bytes.Take(noOfBytes).VisualiseRam("Initial state:", size, []);
 
-		List<Point> shortestPath = FindShortestPath(start, end, _bytes.Take(noOfBytes), gridSize);
+		List<Point> shortestPath = FindShortestPath(start, end, _bytes.Take(noOfBytes), size);
 
-		_bytes.Take(noOfBytes).VisualiseRam("Final:", gridSize, shortestPath);
+		_bytes.Take(noOfBytes).VisualiseRam("Final:", size, shortestPath);
 
 		return shortestPath.Count - 1; // shortestPath includes start
 	}
 
 	public static string Part2(string[] _, params object[]? args)
 	{
-		int gridSize  = args.GridSize();
-		int noOfBytes = args.Bytes();
+		int size  = args.MemorySpaceSize();
+		int noOfBytes = _bytes.Count;
 
 		Point start = Point.Zero;
-		Point end   = new(gridSize - 1, gridSize - 1);
+		Point end   = new(size - 1, size - 1);
 		
-		List<Point> shortestPath = [Point.Zero];
-		while (shortestPath is not []) {
-			shortestPath = FindShortestPath(start, end, _bytes.Take(++noOfBytes), gridSize);
+		List<Point> shortestPath = [];
+		while (shortestPath is []) {
+			shortestPath = FindShortestPath(start, end, _bytes.Take(--noOfBytes), size);
 		}
 
-		noOfBytes--;
 		return $"{_bytes[noOfBytes].X},{_bytes[noOfBytes].Y}";
 	}
 
-	public static List<Point> FindShortestPath(Point start, Point goal, IEnumerable<Point> obstacles, int gridSize)
+	public static List<Point> FindShortestPath(Point start, Point goal, IEnumerable<Point> bytes, int size)
 	{
+		Dictionary<Point, int>    cost          = new() { [start] = 0 };
+		Dictionary<Point, int>    distances     = new() { [start] = start.ManhattanDistance(goal) };
+		Dictionary<Point, Point>  previous      = [];
+		HashSet<Point>            corruptions   = [.. bytes];
+
 		PriorityQueue<Point, int> priorityQueue = new();
-		Dictionary<Point, int> cost = new() { [start] = 0 };
-		Dictionary<Point, int> distances = new() { [start] = start.ManhattanDistance(goal) };
-		Dictionary<Point, Point> previous = [];
-
-		HashSet<Point> obstaclesSet = [.. obstacles];
-
 		priorityQueue.Enqueue(start, distances[start]);
 
 		while (priorityQueue.Count > 0) {
@@ -72,20 +70,16 @@ public static partial class Day18 {
 			foreach (Direction direction in Directions.NSEW) {
 				Point adjacent = current + direction.Delta();
 
-				// Ignore invalid neighbours
-				if (adjacent.X < 0 || adjacent.Y < 0 || adjacent.X >= gridSize || adjacent.Y >= gridSize
-					|| obstaclesSet.Contains(adjacent)) {
+				if (adjacent.IsOutOfBounds(size) || corruptions.Contains(adjacent)) {
 					continue;
 				}
 
 				int tentativeCost = cost[current] + 1;
 
 				if (tentativeCost < cost.GetValueOrDefault(adjacent, int.MaxValue)) {
-					previous[adjacent]  = current;
-					cost[adjacent]      = tentativeCost;
+					previous[adjacent] = current;
+					cost[adjacent] = tentativeCost;
 					distances[adjacent] = tentativeCost + adjacent.ManhattanDistance(goal);
-
-					// Add to priority queue with updated distance score
 					priorityQueue.Enqueue(adjacent, distances[adjacent]);
 				}
 			}
@@ -94,20 +88,24 @@ public static partial class Day18 {
 		return []; // No path found
 	}
 
-	private static List<Point> ReconstructPath(Dictionary<Point, Point> cameFrom, Point current)
-	{
-		List<Point> totalPath = [current];
+	private static bool IsOutOfBounds(this Point adjacent, int gridSize)
+		=> adjacent.X < 0 || adjacent.X >= gridSize
+		|| adjacent.Y < 0 || adjacent.Y >= gridSize;
 
-		while (cameFrom.ContainsKey(current)) {
-			current = cameFrom[current];
-			totalPath.Insert(0, current);
+	private static List<Point> ReconstructPath(Dictionary<Point, Point> previous, Point current)
+	{
+		List<Point> fullPath = [current];
+
+		while (previous.ContainsKey(current)) {
+			current = previous[current];
+			fullPath = [current, .. fullPath];
 		}
 
-		return totalPath;
+		return fullPath;
 	}
 
-	private static int GridSize(this object[]? args) => GetArgument(args, 1, 71);
-	private static int Bytes(this object[]? args)    => GetArgument(args, 2, 1024);
+	private static int MemorySpaceSize(this object[]? args) => GetArgument(args, 1, 71);
+	private static int NoOfBytes(this object[]? args)       => GetArgument(args, 2, 1024);
 
 	private static void VisualiseRam(this IEnumerable<Point> bytes, string title, int gridSize, IEnumerable<Point> route, bool clearScreen = false)
 	{
