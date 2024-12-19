@@ -19,8 +19,8 @@ public static partial class Day19 {
 
 	public static int Part1(string[] _)
 		=> _desiredDesigns
-		.Where(design => design.IsPossible(_towelPatterns))
-		.Count();
+			.Where(design => design.IsPossible(_towelPatterns))
+			.Count();
 
 	public static long Part2(string[] _)
 		=> _desiredDesigns
@@ -29,17 +29,10 @@ public static partial class Day19 {
 
 	public static bool IsPossible(this string design, List<string> patterns)
 	{
-		if (design is "") {
-			return true;
-		}
-
-		foreach (string pattern in patterns.Where(design.StartsWith)) {
-			if (design[pattern.Length..].IsPossible(patterns)) {
-				return true;
-			}
-		}
-
-		return false;
+		return design is "" ||
+			patterns
+			.Where(design.StartsWith)
+			.Any(pattern => design[pattern.Length..].IsPossible(patterns));
 	}
 
 	public static IEnumerable<long> AllPossible(this string design, List<string> patterns, Dictionary<(string, string), long> cache)
@@ -55,8 +48,7 @@ public static partial class Day19 {
 				continue;
 			}
 
-			List<long> count = [.. design[pattern.Length..].AllPossible(patterns, cache)];
-			long sum = count.Sum();
+			long sum = design[pattern.Length..].AllPossible(patterns, cache).Sum();
 			cache.Add((design, pattern), sum);
 			yield return sum;
 		}
