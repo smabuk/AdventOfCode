@@ -22,6 +22,11 @@ public static partial class Day19 {
 		.Where(design => design.IsPossible(_towelPatterns))
 		.Count();
 
+	public static long Part2(string[] _)
+		=> _desiredDesigns
+			.Select(design => design.AllPossible(_towelPatterns, []).Sum())
+			.Sum();
+
 	public static bool IsPossible(this string design, List<string> patterns)
 	{
 		if (design is "") {
@@ -37,5 +42,23 @@ public static partial class Day19 {
 		return false;
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static IEnumerable<long> AllPossible(this string design, List<string> patterns, Dictionary<(string, string), long> cache)
+	{
+		if (design is "") {
+			yield return 1;
+			yield break;
+		}
+
+		foreach (string pattern in patterns.Where(design.StartsWith)) {
+			if (cache.TryGetValue((design, pattern), out long cacheCount)) {
+				yield return cacheCount;
+				continue;
+			}
+
+			List<long> count = [.. design[pattern.Length..].AllPossible(patterns, cache)];
+			long sum = count.Sum();
+			cache.Add((design, pattern), sum);
+			yield return sum;
+		}
+	}
 }
