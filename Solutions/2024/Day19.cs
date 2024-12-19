@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace AdventOfCode.Solutions._2024;
 
@@ -26,11 +27,12 @@ public static partial class Day19 {
 
 	public static long Part2(string[] _)
 	{
-		ConcurrentBag<long> sumOfPossiblePatterns = [];
-		ParallelLoopResult result = 
-			Parallel.ForEach(_desiredDesigns,
-				design => sumOfPossiblePatterns.Add( design.AllPossible(_towelPatterns, []).Sum()));
-		return sumOfPossiblePatterns.Sum();
+		Dictionary<string, long> cache = [];
+		cache.Add("", 1);
+
+		return _desiredDesigns
+			.Select(design => design.AsSpan().AllPossible([.._towelPatterns], cache))
+			.Sum();
 	}
 
 	public static bool IsPossible(this string design, List<string> patterns)
@@ -41,22 +43,22 @@ public static partial class Day19 {
 			.Any(pattern => design[pattern.Length..].IsPossible(patterns));
 	}
 
-	public static IEnumerable<long> AllPossible(this string design, List<string> patterns, Dictionary<(string, string), long> cache)
+	public static long AllPossible(this ReadOnlySpan<char> design, ReadOnlySpan<string> patterns, Dictionary<string, long> cache)
 	{
-		if (design is "") {
-			yield return 1;
-			yield break;
+		if (cache.TryGetValue(design.ToString(), out long cacheCount)) {
+			return cacheCount;
 		}
 
-		foreach (string pattern in patterns.Where(pattern => design.StartsWith(pattern, StringComparison.Ordinal))) {
-			if (cache.TryGetValue((design, pattern), out long cacheCount)) {
-				yield return cacheCount;
+		long sum = 0;
+		foreach (string pattern in patterns) {
+			ReadOnlySpan<char> patternSpan = pattern.AsSpan();
+			if (!design.StartsWith(patternSpan, StringComparison.Ordinal)) {
 				continue;
 			}
-
-			long sum = design[pattern.Length..].AllPossible(patterns, cache).Sum();
-			cache.Add((design, pattern), sum);
-			yield return sum;
+			sum += design[pattern.Length..].AllPossible(patterns, cache);
 		}
+
+		cache.Add(design.ToString(), sum);
+		return sum;
 	}
 }
