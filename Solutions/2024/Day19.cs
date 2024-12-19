@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿using System.Collections.Concurrent;
+
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 19: Linen Layout
@@ -23,15 +25,19 @@ public static partial class Day19 {
 			.Count();
 
 	public static long Part2(string[] _)
-		=> _desiredDesigns
-			.Select(design => design.AllPossible(_towelPatterns, []).Sum())
-			.Sum();
+	{
+		ConcurrentBag<long> sumOfPossiblePatterns = [];
+		ParallelLoopResult result = 
+			Parallel.ForEach(_desiredDesigns,
+				design => sumOfPossiblePatterns.Add( design.AllPossible(_towelPatterns, []).Sum()));
+		return sumOfPossiblePatterns.Sum();
+	}
 
 	public static bool IsPossible(this string design, List<string> patterns)
 	{
 		return design is "" ||
 			patterns
-			.Where(design.StartsWith)
+			.Where(pattern => design.StartsWith(pattern, StringComparison.Ordinal))
 			.Any(pattern => design[pattern.Length..].IsPossible(patterns));
 	}
 
@@ -42,7 +48,7 @@ public static partial class Day19 {
 			yield break;
 		}
 
-		foreach (string pattern in patterns.Where(design.StartsWith)) {
+		foreach (string pattern in patterns.Where(pattern => design.StartsWith(pattern, StringComparison.Ordinal))) {
 			if (cache.TryGetValue((design, pattern), out long cacheCount)) {
 				yield return cacheCount;
 				continue;
