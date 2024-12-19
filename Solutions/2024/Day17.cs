@@ -27,14 +27,14 @@ public static partial class Day17 {
 	{
 		long[] registers = [.. _registers];
 
-		string result = _instructions.ExecuteCodePart1(registers);
+		string result = _instructions.ExecuteCode(registers);
 
 		VisualiseResult(registers, result);
 
 		return result;
 	}
 
-	public static string ExecuteCodePart1(this List<Instruction> instructions, long[] registers)
+	public static string ExecuteCode(this List<Instruction> instructions, long[] registers)
 	{
 		List<long> outputValues = [];
 
@@ -42,7 +42,7 @@ public static partial class Day17 {
 			Instruction instruction = instructions[instPtr];
 			ComboOperand operand = instruction.Operand;
 
-			registers = instruction.Evaluate(registers);
+			registers = instruction.Eval(registers);
 
 			switch (instruction) {
 				case OutInstruction:
@@ -74,23 +74,23 @@ public static partial class Day17 {
 	{
 
 		long[] registers = [.. _registers];
-		long[] results = [.. _instructions.ExecuteCodePart2(_program, registers)];
+		long[] results = [.. _instructions.FindProgram(_program, registers)];
 
 		return results.Min();
 	}
 
-	public static IEnumerable<long> ExecuteCodePart2(this List<Instruction> instructions, List<int> values, long[] registers)
+	public static IEnumerable<long> FindProgram(this List<Instruction> instructions, List<int> values, long[] registers)
 	{
 		if (values.Count == 0) {
 			yield return 0;
 			yield break;
 		}
 
-		List<long> outputValues = [.. instructions.ExecuteCodePart2(values[1..], registers)];
+		List<long> outputValues = [.. instructions.FindProgram(values[1..], registers)];
 		foreach (long outputValue in outputValues) {
 			for (int aValue = 0; aValue < 8; aValue++) {
 				long[] localRegisters = [(outputValue * 8) + aValue, 0, 0];
-				string result = instructions.ExecuteCodePart1(localRegisters);
+				string result = instructions.ExecuteCode(localRegisters);
 				
 				if (result == string.Join(",", values)) {
 					yield return (outputValue * 8) + aValue;
@@ -149,11 +149,88 @@ public static partial class Day17 {
 			_ => throw new NotImplementedException(),
 		};
 	}
+	private static long[] Eval(this Instruction instruction, long[] registers) => instruction.Map(
+		adv => adv.EvalAdv(registers),
+		bdv => bdv.EvalBdv(registers),
+		cdv => cdv.EvalCdv(registers),
+		bst => bst.EvalBst(registers),
+		bxc => bxc.EvalBxc(registers),
+		bxl => bxl.EvalBxl(registers),
+		jnz => registers,
+		oUt => registers
+		);
+
+	private static long[] EvalAdv(this AdvInstruction adv, long[] registers)
+	{
+		long numerator = REG_A.GetReg(registers);
+		long value = adv.Operand.Value(registers);
+		string debug = $"ADV  {value}: {numerator} / {(long)Math.Pow(2, value)}";
+
+		registers = registers.SetReg(REG_A, numerator / (long)Math.Pow(2, value));
+
+		registers.Visualise($"{debug} = {REG_A.GetReg(registers)}");
+		return registers;
+	}
+
+	private static long[] EvalBdv(this BdvInstruction bdv, long[] registers)
+	{
+		long numerator = REG_A.GetReg(registers);
+		long value = bdv.Operand.Value(registers);
+		string debug = $"BDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
+
+		registers = registers.SetReg(REG_B, numerator / (int)Math.Pow(2, value));
+
+		registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
+		return registers;
+	}
+
+	private static long[] EvalCdv(this CdvInstruction cdv, long[] registers)
+	{
+		long numerator = REG_A.GetReg(registers);
+		long value = cdv.Operand.Value(registers);
+		string debug = $"CDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
+
+		registers = registers.SetReg(REG_C, numerator / (int)Math.Pow(2, value));
+
+		registers.Visualise($"{debug} = {REG_C.GetReg(registers)}");
+		return registers;
+	}
+
+	private static long[] EvalBxl(this BxlInstruction bxl, long[] registers)
+	{
+		long regBValue = REG_B.GetReg(registers);
+		string debug = $"BXL  {bxl.Operand.Number}: {regBValue} XOR {bxl.Operand.Number}";
+		registers = registers.SetReg(REG_B, regBValue ^ bxl.Operand.Number);
+
+		registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
+		return registers;
+	}
+
+	private static long[] EvalBst(this BstInstruction bst, long[] registers)
+	{
+		long operandValue = bst.Operand.Value(registers);
+		string debug = $"BST  {bst.Operand.Number}: {operandValue} % 8";
+
+		registers = registers.SetReg(REG_B, operandValue % 8);
+
+		registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
+		return registers;
+	}
+
+	private static long[] EvalBxc(this BxcInstruction bxc, long[] registers)
+	{
+		string debug = $"BXC   : {REG_B.GetReg(registers)} XOR {REG_C.GetReg(registers)}";
+
+		registers = registers.SetReg(REG_B, REG_B.GetReg(registers) ^ REG_C.GetReg(registers));
+
+		registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
+		return registers;
+	}
+
+
 
 	public abstract record Instruction(ComboOperand Operand) : IParsable<Instruction>
 	{
-		public abstract long[] Evaluate(long[] registers);
-
 		public static Instruction Parse(string s, IFormatProvider? provider)
 		{
 			string[] tokens = s.TrimmedSplit(PARSE_SEP);
@@ -178,101 +255,37 @@ public static partial class Day17 {
 			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
+	private record AdvInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record BdvInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record CdvInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record BxlInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record BstInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record BxcInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record JnzInstruction(ComboOperand Operand) : Instruction(Operand);
+	private record OutInstruction(ComboOperand Operand) : Instruction(Operand);
 
-
-	private record AdvInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers) {
-			long numerator = REG_A.GetReg(registers);
-			long value = Operand.Value(registers);
-			string debug = $"ADV  {value}: {numerator} / {(long)Math.Pow(2, value)}";
-
-			registers = registers.SetReg(REG_A, numerator / (long)Math.Pow(2, value));
-
-			registers.Visualise($"{debug} = {REG_A.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record BdvInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers)
+	private static T Map<T>(this Instruction instruction,
+		Func<AdvInstruction, T> mapAdvInstruction,
+		Func<BdvInstruction, T> mapBdvInstruction,
+		Func<CdvInstruction, T> mapCdvInstruction,
+		Func<BstInstruction, T> mapBstInstruction,
+		Func<BxcInstruction, T> mapBxcInstruction,
+		Func<BxlInstruction, T> mapBxlInstruction,
+		Func<JnzInstruction, T> mapJnzInstruction,
+		Func<OutInstruction, T> mapOutInstruction
+		) => instruction switch
 		{
-			long numerator = REG_A.GetReg(registers);
-			long value = Operand.Value(registers);
-			string debug = $"BDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
-
-			registers = registers.SetReg(REG_B, numerator / (int)Math.Pow(2, value));
-
-			registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record CdvInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers)
-		{
-			long numerator = REG_A.GetReg(registers);
-			long value = Operand.Value(registers);
-			string debug = $"CDV  {value}: {numerator} / {(int)Math.Pow(2, value)}";
-
-			registers = registers.SetReg(REG_C, numerator / (int)Math.Pow(2, value));
-
-			registers.Visualise($"{debug} = {REG_C.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record BxlInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers)
-		{
-			long regBValue = REG_B.GetReg(registers);
-			string debug = $"BXL  {Operand.Number}: {regBValue} XOR {Operand.Number}";
-			registers = registers.SetReg(REG_B, regBValue ^ Operand.Number);
-
-			registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record BstInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers)
-		{
-			long operandValue = Operand.Value(registers);
-			string debug = $"BST  {Operand.Number}: {operandValue} % 8";
-
-			registers = registers.SetReg(REG_B, operandValue % 8);
-
-			registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record BxcInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers)
-		{
-			string debug = $"BXC   : {REG_B.GetReg(registers)} XOR {REG_C.GetReg(registers)}";
-
-			registers = registers.SetReg(REG_B, REG_B.GetReg(registers) ^ REG_C.GetReg(registers));
-
-			registers.Visualise($"{debug} = {REG_B.GetReg(registers)}");
-			return registers;
-		}
-	}
-
-	private record JnzInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers) => registers;
-	}
-
-	private record OutInstruction(ComboOperand Operand) : Instruction(Operand)
-	{
-		public override long[] Evaluate(long[] registers) => registers;
-	}
+			AdvInstruction advInstruction => mapAdvInstruction(advInstruction),
+			BdvInstruction bdvInstruction => mapBdvInstruction(bdvInstruction),
+			CdvInstruction cdvInstruction => mapCdvInstruction(cdvInstruction),
+			BstInstruction bstInstruction => mapBstInstruction(bstInstruction),
+			BxcInstruction bxcInstruction => mapBxcInstruction(bxcInstruction),
+			BxlInstruction bxlInstruction => mapBxlInstruction(bxlInstruction),
+			JnzInstruction jnzInstruction => mapJnzInstruction(jnzInstruction),
+			OutInstruction outInstruction => mapOutInstruction(outInstruction),
+			_ => throw new InvalidOperationException("Unsupported Instruction type."),
+		};
+		
 
 	private const char PARSE_SEP = ' ';
 	private const int REG_OFFSET = 'A';
