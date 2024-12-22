@@ -65,9 +65,29 @@ public static partial class Day20 {
 			.Sum(ps => ps.Value);
 	}
 
-	public static string Part2(string[] input, params object[]? args)
+	public static string Part2(string[] _, params object[]? args)
 	{
 		return NO_SOLUTION_WRITTEN_MESSAGE;
+		//int psTarget = args.PsTarget();
+		//string cheatGrid = args.CheatGridForTests();
+		//List<Cheat> cheats = [];
+
+		//if (cheatGrid is not "") {
+		//	char[,] track = cheatGrid.ReplaceLineEndings().Replace(Environment.NewLine, "").To2dArray(_raceTrack.ColsCount(), _raceTrack.RowsCount());
+		//	Point move1 = track.ForEachCell().Single(cell => cell.Value == MOVE1);
+		//	Point move2 = track.ForEachCell().Single(cell => cell.Value == MOVE2);
+		//	cheats.Add(new(Point.Zero, move1, move2));
+		//} else {
+		//	cheats = [.. _raceRoute.FindCheatsPart2(_raceTrack, _codePath)];
+		//}
+
+		//return cheats
+		//	.Select(cheat => cheat.FindTimeSaving(_raceTrack, _codePath, _raceRoute))
+		//	.CountBy(ps => ps)
+		//	.Where(ps => ps.Key >= psTarget)
+		//	.Sum(ps => ps.Value)
+		//	.ToString()
+		//	;
 	}
 
 	private static List<Point> CalculateRacePath(this char[,] track, Point start, Point end)
@@ -94,6 +114,19 @@ public static partial class Day20 {
 			}
 		}
 		}
+		}
+	}
+
+	private static IEnumerable<Cheat> FindCheatsPart2(this List<Point> route, char[,] track, Dictionary<Point, int> codePath)
+	{
+		foreach ((int routeIndex, Point point) in route.Index()) {
+			foreach (Cell<char> possibleMove1 in track.GetAdjacentCells(point).Where(c => c.Value is WALL)) {
+				foreach (Cell<char> possibleMove2 in track.GetAdjacentCells(possibleMove1).Where(c => c.Value is TRACK or END && c.Index != point)) {
+					if (track.GetAdjacentCells(possibleMove2).Any(cell => routeIndex > codePath.GetValueOrDefault(cell.Index, -1))) {
+						yield return new(point, possibleMove1, possibleMove2);
+					}
+				}
+			}
 		}
 	}
 

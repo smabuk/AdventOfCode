@@ -11,15 +11,15 @@ public class Tests_21_Keypad_Conundrum(ITestOutputHelper testOutputHelper)
 		179A
 		456A
 		379A
-		""", 3, 126384)]
-	[InlineData("""029A""", 3,  1_972)]
-	[InlineData("""980A""", 3, 58_800)]
-	[InlineData("""179A""", 3, 12_172)]
-	[InlineData("""456A""", 3, 29_184)]
-	[InlineData("""379A""", 3, 24_256)]
-	public void Part1(string input, int noOfRobots, int expected)
+		""", 126384)]
+	[InlineData("""029A""",  1_972)]
+	[InlineData("""980A""", 58_800)]
+	[InlineData("""179A""", 12_172)]
+	[InlineData("""456A""", 29_184)]
+	[InlineData("""379A""", 24_256)]
+	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback), noOfRobots), out int actual);
+		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
 	}
 
