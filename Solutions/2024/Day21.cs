@@ -43,6 +43,12 @@ public static partial class Day21 {
 			;
 
 		_lookup = result0.Concat(result1).ToDictionary(bp => bp.Pair, bp => bp);
+		ButtonPairLookup test = new(
+				new('<', 'A'),
+				new(0, 1),
+				new(2, 0),
+				new Point(0, 1).ManhattanDistance(new(2, 0))
+				);
 	}
 
 	public static long Part1(string[] codes, params object[]? args)
@@ -52,32 +58,77 @@ public static partial class Day21 {
 
 		foreach (var code in codes) {
 			List<string> sequences = [code];
+			List<string> alternateSequences = [code];
 			for (int ri = 0; ri < noOfRobots; ri++) {
-				List<string> listOfSequences = [];
-				List<List<string>> newListOfSequences = [];
-				for (int si = 0; si < sequences.Count; si++) {
-					string seq = sequences[si];
-					string sequence = $"{'A'}{seq}";
+				List<string> listOfSequences = sequences.GetNewSequences();
+				int min = listOfSequences.Select(s => s.Length).Min();
+				sequences = [.. listOfSequences.Where(s => s.Length == min)];
 
-					newListOfSequences = [..
+				List<string> alternateListOfSequences = alternateSequences.GetAlternateNewSequences();
+				int minAlt = alternateListOfSequences.Select(s => s.Length).Min();
+				alternateSequences = [.. alternateListOfSequences.Where(s => s.Length == minAlt)];
+
+				//if (min != minAlt) { min = min; };
+			}
+
+
+			//            3                          7          9                 A
+			//        ^   A       ^^        <<       A     >>   A        vvv      A
+			//    <   A > A   <   AA  v <   AA >> ^  A  v  AA ^ A  v <   AAA >  ^ A
+			// v<<A>>^AvA^Av<<A>>^AAv<A<A>>^AAvAA^<A>Av<A>^AA<A>Av<A<A>>^AAAvA^<A>A
+
+			// Could be:
+			// v<<A^>>AvA^Av<A<AA^>>AA<Av>A^AAvA^Av<A^>AA<A>Av<A<A^>>AAA<Av>A^A
+
+			//Console.WriteLine();
+			//Console.WriteLine($"No of sequences for {code}: {sequences.Count}");
+			complexity += sequences[0].Complexity(code);
+			//complexity += alternateSequences[0].Complexity(code);
+		}
+
+		return complexity;
+	}
+
+	private static List<string> GetNewSequences(this List<string> sequences)
+	{
+		List<string> listOfSequences = [];
+		List<List<string>> newListOfSequences = [];
+		for (int si = 0; si < sequences.Count; si++) {
+			string seq = sequences[si];
+			string sequence = $"{'A'}{seq}";
+
+			newListOfSequences = [..
 						sequence
 						.Zip(sequence[1..])
 						.Select(p => new ButtonPair(p.First, p.Second))
 						.Select(bp => _lookup.GetValueOrDefault(bp)?.Sequences ?? ["A"])
-						];
+				];
 
-					listOfSequences.AddRange(newListOfSequences.GenerateCombinations());
-				}
-				int min = listOfSequences.Select(s => s.Length).Min();
-				sequences = [.. listOfSequences.Where(s => s.Length == min)];
-			}
-
-			Console.WriteLine();
-			Console.WriteLine($"No of sequences for {code}: {sequences.Count}");
-			complexity += sequences[0].Complexity(code);
+			listOfSequences.AddRange(newListOfSequences.GenerateCombinations());
 		}
 
-		return complexity;
+		return listOfSequences;
+	}
+
+	private static List<string> GetAlternateNewSequences(this List<string> sequences)
+	{
+		List<string> listOfSequences = [];
+		List<List<string>> newListOfSequences = [];
+		for (int si = 0; si < sequences.Count; si++) {
+			string seq = sequences[si];
+			string sequence = $"{'A'}{seq}";
+
+			newListOfSequences = [..
+						sequence
+						.Zip(sequence[1..])
+						.Select(p => new ButtonPair(p.First, p.Second))
+						.Select(bp => _lookup.GetValueOrDefault(bp)?.SequencesSingle ?? ["A"])
+				];
+
+			listOfSequences.AddRange(newListOfSequences.GenerateCombinations());
+		}
+
+		return listOfSequences;
 	}
 
 	private static int Complexity(this string sequence, string code)
@@ -106,16 +157,43 @@ public static partial class Day21 {
 
 	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
 
-	private record ButtonPair(char Start, char End);
+	private record ButtonPair(char Start, char End)
+	{
+		public bool IsKeypad0 => $"{Start}{End}".Intersect("0123456789").Any();
+		public bool IsKeypad1 => $"{Start}{End}".Intersect("<^v>").Any();
+	}
+
 	private record ButtonPairLookup(ButtonPair Pair, Point StartPoint, Point EndPoint, int Distance)
 	{
-		public List<string> Sequences = [.. GetSequences(Pair, StartPoint, EndPoint)];
+		//public string Sequence => Sequences[0];
+		public List<string> Sequences = [.. GetSequences(Pair, StartPoint, EndPoint, Distance)];
+		public List<string> SequencesSingle = [.. GetAlternateSequences(Pair, StartPoint, EndPoint, Distance)];
 
-		private static List<string> GetSequences(ButtonPair pair, Point startPoint, Point endPoint)
+		private static IEnumerable<string> GetAlternateSequences(ButtonPair pair, Point startPoint, Point endPoint, int distance)
 		{
-			List<string> sequences = $"{pair.Start}{pair.End}".Union("0123456789").Any()
-				? [.. _keypad0.FindAllShortestPaths(startPoint, endPoint)]
-				: [.. _keypad1.FindAllShortestPaths(startPoint, endPoint)];
+			Point delta = endPoint - startPoint;
+			char[] result = pair.IsKeypad0
+				? [
+					..delta.X > 0 ? Enumerable.Repeat('>', delta.X) : [],
+					..delta.Y < 0 ? Enumerable.Repeat('^', -delta.Y) : [],
+					..delta.Y > 0 ? Enumerable.Repeat('v', delta.Y) : [],
+					..delta.X < 0 ? Enumerable.Repeat('<', -delta.X) : [],
+					'A']
+				: [
+					..delta.X > 0 ? Enumerable.Repeat('>', delta.X) : [],
+					..delta.Y < 0 ? Enumerable.Repeat('^', -delta.Y) : [],
+					..delta.Y > 0 ? Enumerable.Repeat('v', delta.Y) : [],
+					..delta.X < 0 ? Enumerable.Repeat('<', -delta.X) : [],
+					'A'];
+
+			yield return new string(result);
+		}
+
+		private static List<string> GetSequences(ButtonPair pair, Point startPoint, Point endPoint, int distance)
+		{
+			List<string> sequences = pair.IsKeypad0
+				? [.. _keypad0.FindAllShortestPaths(startPoint, endPoint, distance)]
+				: [.. _keypad1.FindAllShortestPaths(startPoint, endPoint, distance)];
 			int min = sequences.Select(s => s.Length).Min();
 
 			return [.. sequences.Where(s => s.Length == min)];
@@ -123,7 +201,7 @@ public static partial class Day21 {
 	}
 
 
-	static IEnumerable<string> FindAllShortestPaths(this char[,] keypad, Point start, Point end)
+	static IEnumerable<string> FindAllShortestPaths(this char[,] keypad, Point start, Point end, int distance)
 	{
 		Queue<(Point, List<char>)> queue =[];
 		queue.Enqueue((start, []));
@@ -134,11 +212,15 @@ public static partial class Day21 {
 			visited[current.X, current.Y] = true;
 
 			if (current == end) {
-				yield return $"{string.Join("", path)}A";
+				yield return new string([.. path, 'A']);
 				continue;
 			}
 
-			foreach (var dir in Directions.UDLR) {
+			foreach (Direction dir in Directions.UDLR) {
+				if (distance < path.Count) {
+					continue;
+				}
+
 				Point newPoint = current.Translate(dir);
 
 				if (keypad.IsInBounds(newPoint) && !visited[newPoint.X, newPoint.Y] && keypad[newPoint.X, newPoint.Y] != EMPTY) {
