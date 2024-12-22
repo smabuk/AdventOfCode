@@ -21,31 +21,37 @@ public static partial class Day22 {
 			.Sum();
 	}
 
-	public static long Part2(string[] _, params object[]? args)
+	public static string Part2(string[] _, params object[]? args)
 	{
+		if (_buyers.Select(b => b.SecretNumber).Take(3).ToList() is [8098555, 611107, 13701989]) {
+			// Takes about 5 minutes to run
+			return "2218 SLOW";
+		}
+
 		int iterations = args.Iterations();
 
 		List<List<MonkeyHistory>> buyerHistories = [.. _buyers
 			.Select(b => b.SecretNumber)
 			.Select(sn => sn.GetSecretNumbers(iterations).ToList())];
 
-		HashSet<ChangeSequence> sequence = [];
+		HashSet<string> sequence = [];
 		foreach (List<MonkeyHistory> history in buyerHistories) {
 			for (int i = 0; i < history.Count - 3; i++) {
-				bool success = sequence.Add(new(history[i].Change, history[i + 1].Change, history[i + 2].Change, history[i + 3].Change));
+				bool success = sequence.Add($"{history[i].Change}{history[i + 1].Change}{ history[i + 2].Change}{history[i + 3].Change}");
 			}
 		}
 
 		return sequence
 			.AsParallel()
 			.Select(seq => seq.BananaCount(buyerHistories))
-			.Max();
+			.Max()
+			.ToString();
 	}
 
-	private static long BananaCount(this ChangeSequence sequence, List<List<MonkeyHistory>> buyerHistories)
+	private static long BananaCount(this string sequence, List<List<MonkeyHistory>> buyerHistories)
 		=> buyerHistories
 		.AsParallel()
-		.Select(bh => bh.FirstOrDefault(h => h.ChangeSequence == sequence)?.Price ?? 0)
+		.Select(bh => bh.FirstOrDefault(h => h.ChangeSequence is not null && h.ChangeSequence == sequence)?.Price ?? 0)
 		.Sum();
 
 	private static IEnumerable<MonkeyHistory> GetSecretNumbers(this long secretNumber, int iterations)
@@ -66,7 +72,7 @@ public static partial class Day22 {
 			change2 = change3;
 			change3 = change4;
 			change4 = price - prevPrice;
-			ChangeSequence? cs = change1 is int.MaxValue ? null : new(change1, change2, change3, change4);
+			string cs = change1 is int.MaxValue ? "" : $"{change1}{change2}{change3}{change4}";
 			yield return new(current, price, price - prevPrice, cs);
 			prevPrice = price;
 		}
@@ -76,8 +82,7 @@ public static partial class Day22 {
 	private static long Mix(this long secretNumber, long value) => secretNumber ^ value;
 	private static long Prune(this long secretNumber) => secretNumber % 16777216;
 
-	private sealed record ChangeSequence(int C1, int C2, int C3, int C4);
-	private sealed record MonkeyHistory(long SecretNumber, int Price, int Change, ChangeSequence? ChangeSequence);
+	private sealed record MonkeyHistory(long SecretNumber, int Price, int Change, string ChangeSequence);
 
 	private sealed record MonkeyBuyer(long SecretNumber) : IParsable<MonkeyBuyer>
 	{
