@@ -9,6 +9,8 @@ namespace AdventOfCode.Solutions._2024;
 [Description("Keypad Conundrum")]
 public static partial class Day21 {
 
+	private const int ROBOTS_PART1 =  3;
+	private const int ROBOTS_PART2 = 26;
 	private const char EMPTY = '.';
 	private static readonly char[,] _keypad0 = """789456123.0A""".ToCharArray().To2dArray(3);
 	private static readonly char[,] _keypad1 = """.^A<v>""".ToCharArray().To2dArray(3);
@@ -25,8 +27,8 @@ public static partial class Day21 {
 				new(pair[0].Value, pair[1].Value),
 				pair[0].Index,
 				pair[1].Index,
-				pair[0].Index.ManhattanDistance(pair[1])
-				))
+				new ButtonPair(pair[0].Value, pair[1].Value).GetSequence(pair[0].Index, pair[1].Index))
+				)
 			;
 		IEnumerable<ButtonPairLookup> result1 = _keypad1
 			.ForEachCell()
@@ -36,64 +38,37 @@ public static partial class Day21 {
 				new(pair[0].Value, pair[1].Value),
 				pair[0].Index,
 				pair[1].Index,
-				pair[0].Index.ManhattanDistance(pair[1])
-				))
+				new ButtonPair(pair[0].Value, pair[1].Value).GetSequence(pair[0].Index, pair[1].Index))
+				)
 			;
 
 		_lookup = result0.Concat(result1).ToDictionary(bp => bp.Pair, bp => bp);
-		foreach (KeyValuePair<ButtonPair, ButtonPairLookup> item in _lookup) {
-			_lookup[item.Key] = item.Value with { SingleSequence = item.Value.Sequences.MinScore(_lookup) };
-		}
 	}
 
 	public static long Part1(string[] codes)
 	{
-		int noOfRobots = 3;
-
 		return codes.Sum(code =>
 		{
 			char[] sequence = code.ToCharArray();
-			sequence = Enumerable.Range(0, noOfRobots).Aggregate(sequence, (seq, _) => seq.GetNewSequences());
+			sequence = Enumerable.Range(0, ROBOTS_PART1).Aggregate(sequence, (seq, _) => seq.GetNewSequences());
 			return sequence.Complexity(code);
 		});
 	}
 
-	public static string Part2(string[] codes, params object[]? args)
+	public static string Part2(string[] codes)
 	{
-		int noOfRobots = 26;
+		int noOfRobots = ROBOTS_PART2;
 		noOfRobots = 3;
 
-		return "* WIP " + codes.Sum(code =>
+		long test = codes.Sum(code =>
 		{
-			char[] sequence = code.ToCharArray();
+			char[] sequence = ['a', .. code.ToCharArray()];
 			sequence = Enumerable.Range(0, noOfRobots).Aggregate(sequence, (seq, _) => seq.GetNewSequences());
 			//Console.WriteLine($"{code} {noOfRobots} {sequence.Length,10} = {sequence.Complexity(code),14}"); 
 			return sequence.Complexity(code);
-		})
-		.ToString();
-	}
+		});
 
-
-	private static string MinScore(this List<string> sequences, Dictionary<ButtonPair, ButtonPairLookup> lookup)
-	{
-		int minIndex = int.MaxValue;
-		int minScore = int.MaxValue;
-		for (int i = 0; i < sequences.Count; i++) {
-			string seq = sequences[i];
-			int score = 0;
-			char prev = seq[0];
-			foreach (char end in seq[1..]) {
-				score += prev == end ? 0 : lookup[new(prev, end)].Distance;
-				prev = end;
-			}
-
-			if (score < minScore) {
-				minScore = score;
-				minIndex = i;
-			}
-		}
-
-		return sequences[minIndex];
+		return "* WIP " + test.ToString();
 	}
 
 	private static char[] GetNewSequences(this char[] sequence)
@@ -111,32 +86,17 @@ public static partial class Day21 {
 	private static long Complexity(this char[] sequence, string code)
 		=> sequence.Length * code[..^1].As<long>();
 
-	private record ButtonPair(char Start, char End)
+
+	private static string GetSequence(this ButtonPair pair, Point startPoint, Point endPoint)
 	{
-		public bool IsKeypad0 => $"{Start}{End}".Intersect("0123456789").Any();
-		public bool IsKeypad1 => $"{Start}{End}".Intersect("<^v>").Any();
-	}
-
-	private record ButtonPairLookup(ButtonPair Pair, Point StartPoint, Point EndPoint, int Distance)
-	{
-		public string SingleSequence = "";
-
-		public List<string> Sequences = [.. GetSequences(Pair, StartPoint, EndPoint, Distance)];
-
-		private static List<string> GetSequences(ButtonPair pair, Point startPoint, Point endPoint, int distance)
-		{
-			List<string> sequences = pair.IsKeypad0
-				? [.. _keypad0.FindAllShortestPaths(startPoint, endPoint, distance)]
-				: [.. _keypad1.FindAllShortestPaths(startPoint, endPoint, distance)];
-			int min = sequences.Select(s => s.Length).Min();
-
-			return [.. sequences.Where(s => s.Length == min)];
-		}
+		int distance = startPoint.ManhattanDistance(endPoint);
+		char[,] keypad = pair.IsKeypad0 ? _keypad0 : _keypad1;
+		return keypad.FindAllShortestPaths(startPoint, endPoint, distance).ToList().MinScoreSequence(_keypad1);
 	}
 
 	static IEnumerable<string> FindAllShortestPaths(this char[,] keypad, Point start, Point end, int distance)
 	{
-		Queue<(Point, List<char>)> queue =[];
+		Queue<(Point, List<char>)> queue = [];
 		queue.Enqueue((start, []));
 		bool[,] visited = new bool[keypad.ColsCount(), keypad.RowsCount()];
 
@@ -171,4 +131,38 @@ public static partial class Day21 {
 			}
 		}
 	}
+
+	private static string MinScoreSequence(this List<string> sequences, char[,] keypad)
+	{
+		int minIndex = int.MaxValue;
+		int minScore = int.MaxValue;
+		for (int i = 0; i < sequences.Count; i++) {
+			string seq = sequences[i];
+			int score = 0;
+			char prev = seq[0];
+			foreach (char end in seq[1..]) {
+				if (prev != end) {
+					Point prevIndex = keypad.ForEachCell().Single(cell => cell.Value == prev).Index;
+					Point endIndex  = keypad.ForEachCell().Single(cell => cell.Value == end).Index;
+					score += prevIndex.ManhattanDistance(endIndex);
+				}
+				prev = end;
+			}
+
+			if (score < minScore) {
+				minScore = score;
+				minIndex = i;
+			}
+		}
+
+		return sequences[minIndex];
+	}
+
+	private record ButtonPair(char Start, char End)
+	{
+		public bool IsKeypad0 => $"{Start}{End}".Intersect("0123456789").Any();
+		public bool IsKeypad1 => $"{Start}{End}".Intersect("<^v>").Any();
+	}
+
+	private record ButtonPairLookup(ButtonPair Pair, Point StartPoint, Point EndPoint, string SingleSequence);
 }
