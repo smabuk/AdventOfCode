@@ -17,21 +17,58 @@ public static partial class Day22 {
 		int iterations = args.Iterations();
 		return _buyers
 			.Select(b => b.SecretNumber)
-			.Select(sn => sn.GetSecretNumbers(iterations).Last())
+			.Select(sn => sn.GetSecretNumbers(iterations).Last().SecretNumber)
 			.Sum();
 	}
 
-	public static string Part2(string[] input, params object[]? args) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2(string[] _, params object[]? args)
+	{
+		int iterations = args.Iterations();
 
+		List<List<MonkeyHistory>> buyerHistories = [.. _buyers
+			.Select(b => b.SecretNumber)
+			.Select(sn => sn.GetSecretNumbers(iterations).ToList())];
 
-	private static IEnumerable<long> GetSecretNumbers(this long secretNumber, int iterations)
+		HashSet<ChangeSequence> sequence = [];
+		foreach (List<MonkeyHistory> history in buyerHistories) {
+			for (int i = 0; i < history.Count - 3; i++) {
+				bool success = sequence.Add(new(history[i].Change, history[i + 1].Change, history[i + 2].Change, history[i + 3].Change));
+			}
+		}
+
+		return sequence
+			.AsParallel()
+			.Select(seq => seq.BananaCount(buyerHistories))
+			.Max();
+	}
+
+	private static long BananaCount(this ChangeSequence sequence, List<List<MonkeyHistory>> buyerHistories)
+		=> buyerHistories
+		.AsParallel()
+		.Select(bh => bh.FirstOrDefault(h => h.ChangeSequence == sequence)?.Price ?? 0)
+		.Sum();
+
+	private static IEnumerable<MonkeyHistory> GetSecretNumbers(this long secretNumber, int iterations)
 	{
 		long current = secretNumber;
+		int prevPrice = (int)(secretNumber % 10);
+		int change1;
+		int change2 = int.MaxValue;
+		int change3 = int.MaxValue;
+		int change4 = int.MaxValue;
 		for (int i = 0; i < iterations; i++) {
 			current = current.Mix(current * 64).Prune();
 			current = (current / 32).Mix(current).Prune();
 			current = (current * 2048).Mix(current).Prune();
-			yield return current;
+
+			int price = (int)(current % 10);
+			change1 = change2;
+			change2 = change3;
+			change3 = change4;
+			change4 = price - prevPrice;
+			ChangeSequence? cs = change1 is int.MaxValue ? null : new(change1, change2, change3, change4);
+			yield return new(current, price, price - prevPrice, cs);
+			prevPrice = price;
 		}
 
 	}
@@ -39,8 +76,10 @@ public static partial class Day22 {
 	private static long Mix(this long secretNumber, long value) => secretNumber ^ value;
 	private static long Prune(this long secretNumber) => secretNumber % 16777216;
 
+	private sealed record ChangeSequence(int C1, int C2, int C3, int C4);
+	private sealed record MonkeyHistory(long SecretNumber, int Price, int Change, ChangeSequence? ChangeSequence);
 
-	public sealed record MonkeyBuyer(long SecretNumber) : IParsable<MonkeyBuyer>
+	private sealed record MonkeyBuyer(long SecretNumber) : IParsable<MonkeyBuyer>
 	{
 		public static MonkeyBuyer Parse(string s, IFormatProvider? provider) => new(long.Parse(s));
 		public static MonkeyBuyer Parse(string s) => Parse(s, null);

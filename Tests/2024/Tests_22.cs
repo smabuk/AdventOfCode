@@ -25,6 +25,25 @@ public class Tests_22_Monkey_Market(ITestOutputHelper testOutputHelper)
 	}
 
 
+	[Theory]
+	[InlineData("""
+		1
+		2
+		3
+		2024
+		""", 2000, 23)]
+	//[InlineData(   "1", 2000, 8685429)]
+	//[InlineData(  "10", 2000, 4700978)]
+	//[InlineData( "100", 2000, 15273692)]
+	//[InlineData("2024", 2000, 8667524)]
+	[InlineData("123", 10, 6)]
+	public void Part2(string input, int iterations, long expected)
+	{
+		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback), iterations), out long actual);
+		actual.ShouldBe(expected);
+	}
+
+
 
 	private void Callback(string[] lines, bool _)
 	{
