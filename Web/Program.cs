@@ -26,7 +26,7 @@ builder.Services.AddHttpClient<GithubHttpClient>();
 builder.Services.AddOutputCache();
 
 // Add response compression for static assets
-builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
+//builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 
 builder.Services.AddScoped<FileSystemInputData>();
 builder.Services.AddScoped<SessionState>();
@@ -43,7 +43,7 @@ if (!app.Environment.IsDevelopment()) {
 	_ = app.UseHsts();
 }
 
-app.UseResponseCompression();
+//app.UseResponseCompression();
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
