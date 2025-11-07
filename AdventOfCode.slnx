@@ -1,0 +1,51 @@
+<Solution>
+  <Folder Name="/Console/">
+    <Project Path="Console/AdventOfCode.Console.csproj" />
+  </Folder>
+  <Folder Name="/Current/">
+    <Project Path="Solutions/2024/AdventOfCode.Solutions.2024.csproj" />
+    <Project Path="Tests/2024/AdventOfCode.Tests.2024.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="SharedUI/AdventOfCode.SharedUI.csproj" />
+    <Project Path="Solutions/Core/AdventOfCode.Solutions.Core.csproj" />
+    <Project Path="Solutions/Router/AdventOfCode.Solutions.Router.csproj" />
+  </Folder>
+  <Folder Name="/Solutions/">
+    <Project Path="Solutions/2015/AdventOfCode.Solutions.2015.csproj" />
+    <Project Path="Solutions/2016/AdventOfCode.Solutions.2016.csproj" />
+    <Project Path="Solutions/2017/AdventOfCode.Solutions.2017.csproj" />
+    <Project Path="Solutions/2018/AdventOfCode.Solutions.2018.csproj" />
+    <Project Path="Solutions/2019/AdventOfCode.Solutions.2019.csproj" />
+    <Project Path="Solutions/2020/AdventOfCode.Solutions.2020.csproj" />
+    <Project Path="Solutions/2021/AdventOfCode.Solutions.2021.csproj" />
+    <Project Path="Solutions/2022/AdventOfCode.Solutions.2022.csproj" />
+    <Project Path="Solutions/2023/AdventOfCode.Solutions.2023.csproj" />
+  </Folder>
+  <Folder Name="/Templates/">
+    <Project Path="Templates/Smab.AdventOfCode.Templates.csproj" />
+  </Folder>
+  <Folder Name="/Testing/">
+    <Project Path="Tests/2015/AdventOfCode.Tests.2015.csproj" />
+    <Project Path="Tests/2016/AdventOfCode.Tests.2016.csproj" />
+    <Project Path="Tests/2017/AdventOfCode.Tests.2017.csproj" />
+    <Project Path="Tests/2018/AdventOfCode.Tests.2018.csproj" />
+    <Project Path="Tests/2019/AdventOfCode.Tests.2019.csproj" />
+    <Project Path="Tests/2020/AdventOfCode.Tests.2020.csproj" />
+    <Project Path="Tests/2021/AdventOfCode.Tests.2021.csproj" />
+    <Project Path="Tests/2022/AdventOfCode.Tests.2022.csproj" />
+    <Project Path="Tests/2023/AdventOfCode.Tests.2023.csproj" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="Web/AdventOfCode.Web.csproj" />
+  </Folder>
+  <Folder Name="/_Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/smabAdventOfCode.yml" />
+    <File Path=".gitignore" />
+    <File Path="Data/yyyy_dd._username.txt" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>
