@@ -77,8 +77,8 @@ public static partial class Day21 {
 
 		return [..
 			seq
-			.Zip(seq[1..])
-			.Select(p => new ButtonPair(p.First, p.Second))
+			.Zip(seq[1..],
+			(button1, button2) => new ButtonPair(button1, button2))
 			.Select(bp => _lookup.GetValueOrDefault(bp)?.SingleSequence.ToCharArray() ?? ['A']).SelectMany(s => s)
 			];
 	}
