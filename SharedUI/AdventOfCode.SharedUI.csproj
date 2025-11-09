@@ -7,7 +7,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
-		
+
 		<PackageReference Include="AngleSharp" />
 	</ItemGroup>
 

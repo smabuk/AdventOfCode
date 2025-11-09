@@ -3,7 +3,7 @@
 	<ItemGroup>
 		<PackageReference Include="Smab.Helpers" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
 		<Using Include="AdventOfCode.Solutions.Core" />

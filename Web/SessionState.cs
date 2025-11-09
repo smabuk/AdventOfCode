@@ -17,7 +17,8 @@ public class SessionState
 	public event Action? OnSummaryChange;
 	private void NotifySummaryChanged() => OnSummaryChange?.Invoke();
 	public Dictionary<int, AocSummary> Summaries { get; set; } = [];
-	public void SetSummary(int year, AocSummary value) {
+	public void SetSummary(int year, AocSummary value)
+	{
 		if (!Summaries.TryAdd(year, value)) {
 			Summaries[year] = value;
 		}
@@ -30,7 +31,8 @@ public class SessionState
 	public bool DoesNOfStarsExist(int year) => NoOfStars.ContainsKey(year);
 	public int GetNoOfStars(int year) => NoOfStars.TryGetValue(year, out int value) ? value : 0;
 	//public int GetNoOfStars(int year, int day) => NoOfStars.TryGetValue(year, out int value) ? value : 0;
-	public void SetNoOfStars(int year, int value) {
+	public void SetNoOfStars(int year, int value)
+	{
 		if (!NoOfStars.TryAdd(year, value)) {
 			NoOfStars[year] = value;
 		}
@@ -39,8 +41,9 @@ public class SessionState
 	}
 
 	public bool DoesProblemDescriptionExist(int year, int day, int problemNo) => ProblemDescriptions.ContainsKey(new(year, day, problemNo));
-	public string GetProblemDescription(int year, int day, int problemNo) => ProblemDescriptions.ContainsKey(new (year, day, problemNo)) ? ProblemDescriptions[new(year, day, problemNo)] : "";
-	public void SetProblemDescription(int year, int day, int problemNo, string value) {
+	public string GetProblemDescription(int year, int day, int problemNo) => ProblemDescriptions.ContainsKey(new(year, day, problemNo)) ? ProblemDescriptions[new(year, day, problemNo)] : "";
+	public void SetProblemDescription(int year, int day, int problemNo, string value)
+	{
 		Tuple<int, int, int> key = new(year, day, problemNo);
 		if (!ProblemDescriptions.TryAdd(key, value)) {
 			ProblemDescriptions[key] = value;
@@ -52,9 +55,10 @@ public class SessionState
 	public event Action? OnProblemInputChange;
 	private void NotifyProblemInputChanged() => OnProblemInputChange?.Invoke();
 	public bool DoesProblemInputExist(int year, int day) => ProblemInputs.ContainsKey(new(year, day));
-	public (string InputData, string Source) GetProblemInputAsString(int year, int day) => ProblemInputs.ContainsKey(new (year, day)) ? ProblemInputs[new(year, day)] : ("", "");
+	public (string InputData, string Source) GetProblemInputAsString(int year, int day) => ProblemInputs.ContainsKey(new(year, day)) ? ProblemInputs[new(year, day)] : ("", "");
 	public string[]? GetProblemInputAsArray(int year, int day) => ProblemInputs.ContainsKey(new(year, day)) ? ProblemRawInputs[new(year, day)] : null;
-	public void SetProblemInput(int year, int day, string value, string? source = "") {
+	public void SetProblemInput(int year, int day, string value, string? source = "")
+	{
 		if (string.IsNullOrWhiteSpace(value)) {
 			return;
 		}
