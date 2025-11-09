@@ -5,15 +5,17 @@ Console.ResetColor();
 
 (DateOnly date, object[]? solutionArgs, bool showVisuals, bool isDebug, bool isDownload, TimeSpan visualsTime) = ParseCommandLine(args);
 
+int noOfDays = date.Year >= 2025 ? 12 : 25;
+
 long totalTime = Stopwatch.GetTimestamp();
 
-if (date.Month == 12 && date.Day <= 25) {
+if (date.Month == 12 && date.Day <= noOfDays) {
 	await GetInputDataAndSolve(date.Year, date.Day, consolelock, null, null, showVisuals, isDebug, isDownload, solutionArgs);
 } else {
 	DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 	//Console.WriteLine($"Year dd Description                              Init        Part 1                       Part 2                ");
 	//Console.WriteLine($"---- -- -------------------------------------  ------  ---------------------------  ----------------------------");
-	for (int day = 1; day <= 25; day++) {
+	for (int day = 1; day <= noOfDays; day++) {
 		if (dateNow >= new DateOnly(date.Year, 12, day)) {
 			await GetInputDataAndSolve(date.Year, day, consolelock);
 		}
@@ -54,7 +56,8 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 					Console.Write($" Pt1:");
 					if (result.Answer.StartsWith('*')) {
 						Console.ForegroundColor = ConsoleColor.Red;
-					};
+					}
+
 					Console.Write($" {result.Answer,-17}");
 				} else if (result.Phase == PHASE_PART2) {
 					answerColour = ConsoleColor.Yellow;
@@ -63,7 +66,8 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 					Console.Write($" Pt2:");
 					if (result.Answer.StartsWith('*')) {
 						Console.ForegroundColor = ConsoleColor.Red;
-					};
+					}
+
 					Console.Write($" {result.Answer,-17}");
 				} else if (result.Phase == EXCEPTION_PART1) {
 					answerColour = ConsoleColor.Green;
@@ -79,9 +83,10 @@ static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, stri
 					Console.Write($" Pt2:");
 					Console.ForegroundColor = ConsoleColor.Red;
 					Console.Write($" {EXCEPTION_MESSAGE,-16}");
-				};
+				}
+
 				Console.ResetColor();
-			};
+			}
 
 			Console.ResetColor();
 			Console.WriteLine();

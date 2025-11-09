@@ -3,8 +3,8 @@
     <Project Path="Console/AdventOfCode.Console.csproj" />
   </Folder>
   <Folder Name="/Current/">
-    <Project Path="Solutions/2024/AdventOfCode.Solutions.2024.csproj" />
-    <Project Path="Tests/2024/AdventOfCode.Tests.2024.csproj" />
+    <Project Path="Solutions/2025/AdventOfCode.Solutions.2025.csproj" />
+    <Project Path="Tests/2025/AdventOfCode.Tests.2025.csproj" />
   </Folder>
   <Folder Name="/Shared/">
     <Project Path="SharedUI/AdventOfCode.SharedUI.csproj" />
@@ -21,6 +21,7 @@
     <Project Path="Solutions/2021/AdventOfCode.Solutions.2021.csproj" />
     <Project Path="Solutions/2022/AdventOfCode.Solutions.2022.csproj" />
     <Project Path="Solutions/2023/AdventOfCode.Solutions.2023.csproj" />
+    <Project Path="Solutions/2024/AdventOfCode.Solutions.2024.csproj" />
   </Folder>
   <Folder Name="/Templates/">
     <Project Path="Templates/Smab.AdventOfCode.Templates.csproj" />
@@ -35,6 +36,7 @@
     <Project Path="Tests/2021/AdventOfCode.Tests.2021.csproj" />
     <Project Path="Tests/2022/AdventOfCode.Tests.2022.csproj" />
     <Project Path="Tests/2023/AdventOfCode.Tests.2023.csproj" />
+    <Project Path="Tests/2024/AdventOfCode.Tests.2024.csproj" />
   </Folder>
   <Folder Name="/Web/">
     <Project Path="Web/AdventOfCode.Web.csproj" />

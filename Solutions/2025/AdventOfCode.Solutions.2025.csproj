@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>AdventOfCode.Solutions._2025</RootNamespace>
+		<PublishAot>True</PublishAot>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Smab.Helpers" />
+		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
+		<Using Include="AdventOfCode.Solutions.Core" />
+		<Using Static="true" Include="AdventOfCode.Solutions.Core.GlobalConstants" />
+	</ItemGroup>
+
+</Project>

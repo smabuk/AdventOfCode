@@ -24,7 +24,7 @@ public sealed partial class Day02 {
 		_games = parsingType switch
 		{
 			"split" => input.As<Game>(),
-			"regex" => input.As<Game>(provider: ParsingMethod.Regex),
+			"regex" => input.As<Game>(defaultIfInvalid: default!, provider: ParsingMethod.Regex),
 			_ => throw new ArgumentOutOfRangeException(nameof(args), $"That method of parsing [{parsingType}] is not supported."),
 		};
 	}
@@ -68,7 +68,7 @@ public sealed partial class Day02 {
 			IEnumerable<CubesSet> cubesSets = SetsRegex()
 				.Matches(match.Groups["sets"].Value)
 				.Select(m => m.Value)
-				.As<CubesSet>(provider: ParsingMethod.Regex);
+				.As<CubesSet>(defaultIfInvalid: default!, provider: ParsingMethod.Regex);
 
 			return new(id, [.. cubesSets]);
 		}

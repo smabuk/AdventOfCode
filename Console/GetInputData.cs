@@ -2,7 +2,8 @@
 
 using Microsoft.Extensions.Caching.Memory;
 
-internal partial class Program {
+internal partial class Program
+{
 	static async Task<string[]?> GetInputData(int year, int day, bool isDownload)
 	{
 		string[]? input = null;
@@ -48,7 +49,7 @@ internal partial class Program {
 				input = data.ReplaceLineEndings().Split(Environment.NewLine);
 				//Console.WriteLine(data);
 			}
-			
+
 		}
 
 		return input;

@@ -21,6 +21,7 @@
 		<ProjectReference Include="..\..\Solutions\2022\AdventOfCode.Solutions.2022.csproj" />
 		<ProjectReference Include="..\..\Solutions\2023\AdventOfCode.Solutions.2023.csproj" />
 		<ProjectReference Include="..\..\Solutions\2024\AdventOfCode.Solutions.2024.csproj" />
+		<ProjectReference Include="..\..\Solutions\2025\AdventOfCode.Solutions.2025.csproj" />
 	</ItemGroup>
 
 </Project>
