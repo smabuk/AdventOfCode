@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:9181",
+      "applicationUrl": "http://adventofcode.dev.localhost:9181",
       "sslPort": 44376
     }
   },
@@ -19,7 +19,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7184",
+      "applicationUrl": "https://adventofcode.dev.localhost:7184",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
