@@ -58,6 +58,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 	}
 
 	public Task<AocSummary?> GetSummaryInfo(int year) {
+		int noOfYears = year >= 2025 ? 12 : 25;
 
 		return MemoryCache.GetOrCreateAsync(year, async e => {
 			_ = e.SetOptions(new MemoryCacheEntryOptions {
@@ -65,7 +66,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 					TimeSpan.FromSeconds(30)
 			});
 
-			var response = await _httpClient.GetAsync($"{year}");
+			HttpResponseMessage response = await _httpClient.GetAsync($"{year}");
 
 			if (response.IsSuccessStatusCode == false) {
 				return null;
@@ -88,7 +89,7 @@ public class AocHttpClient : IAocHttpClient, IInputDataService {
 			_ = int.TryParse(page[start..(start + end)], out int noOfStars);
 			summary.NoOfStars = noOfStars;
 
-			for (int day = 1; day <= 25; day++) {
+			for (int day = 1; day <= noOfYears; day++) {
 				end = 0;
 				noOfStars = 0;
 				start = page.IndexOf($"a aria-label=\"Day {day}, ") + 21;

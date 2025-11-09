@@ -55,6 +55,6 @@ app.UseOutputCache();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
-	.AddAdditionalAssemblies(typeof(AdventOfCode.SharedUI.Component1).Assembly);
+	.AddAdditionalAssemblies(typeof(AdventOfCode.SharedUI._Imports).Assembly);
 
 app.Run();
