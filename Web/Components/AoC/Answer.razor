@@ -87,12 +87,12 @@
 					Year,
 					Day,
 					ProblemNo,
-					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
+					Session.HasProblemInput(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
 					_visualiser.VisualiseOutput
 					);
 			} else {
 				PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-					Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
+					Session.HasProblemInput(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
 			}
         } catch (Exception ex) {
             PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";

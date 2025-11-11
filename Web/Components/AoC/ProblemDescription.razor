@@ -25,7 +25,7 @@
 
 	protected async override Task OnParametersSetAsync()
 	{
-		if (isLoaded && Session.ProblemDescriptions.ContainsKey(new(Year, Day, ProblemNo))) {
+		if (isLoaded && Session.HasProblemDescription(Year, Day, ProblemNo)) {
 			Article = Session.GetProblemDescription(Year, Day, ProblemNo);
 		} else {
 			Article = await aocClient.GetProblemDescription(Year, Day, ProblemNo);

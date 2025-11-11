@@ -3,22 +3,21 @@
 <h4>@UserName <span>@(isLoaded ? $"{NoOfStars}⭐" : "")</span></h4>
 
 @code {
-    [Parameter]
-    public int Year { get; set; }
+	[Parameter]
+	public int Year { get; set; }
 
-    public int Day { get; set; } = 1;
-    public int NoOfStars { get; set; }
-    public string UserName { get; set; } = "";
- 
-    private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
+	public int Day { get; set; } = 1;
+	public int NoOfStars { get; set; }
+	public string UserName { get; set; } = "";
 
-    protected async override Task OnParametersSetAsync() {
-		for (int year = 2015; year < DateTime.UtcNow.Year + (DateTime.UtcNow.Month == 12 ? 1 : 0); year++)
-		{
-			if (!Session.IsSummaryLoaded(year)) {
+	private bool isLoaded => string.IsNullOrEmpty(UserName) == false;
+
+	protected async override Task OnParametersSetAsync()
+	{
+		for (int year = 2015; year < DateTime.UtcNow.Year + (DateTime.UtcNow.Month == 12 ? 1 : 0); year++) {
+			if (!Session.HasSummary(year)) {
 				AocSummary? summary = await aocClient.GetSummaryInfo(year);
-				if (summary is not null)
-				{
+				if (summary is not null) {
 					UserName = summary.UserName;
 					Session.UserName = summary.UserName;
 					Session.SetNoOfStars(year, summary.NoOfStars);
@@ -27,22 +26,22 @@
 			}
 		}
 
-        if (Session.IsSummaryLoaded(Year)) {
-            UserName = Session.UserName;
-            NoOfStars = Session.GetNoOfStars(Year);
-        } else {
-            if (Year >= 2015) {
+		if (Session.HasSummary(Year)) {
+			UserName = Session.UserName;
+			NoOfStars = Session.GetNoOfStars(Year);
+		} else {
+			if (Year >= 2015) {
 				AocSummary? summary = await aocClient.GetSummaryInfo(Year);
-                if (summary is not null) {
-                    UserName = summary.UserName;
-                    NoOfStars = summary.NoOfStars;
-                    Session.UserName = summary.UserName;
-                    Session.SetNoOfStars(Year, summary.NoOfStars);
-                    Session.SetSummary(Year, summary);
-                    StateHasChanged();
-                }
-            }
-        }
-    }
+				if (summary is not null) {
+					UserName = summary.UserName;
+					NoOfStars = summary.NoOfStars;
+					Session.UserName = summary.UserName;
+					Session.SetNoOfStars(Year, summary.NoOfStars);
+					Session.SetSummary(Year, summary);
+					StateHasChanged();
+				}
+			}
+		}
+	}
 
 }

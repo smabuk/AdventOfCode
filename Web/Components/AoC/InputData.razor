@@ -77,7 +77,7 @@
     protected override void OnParametersSet() {
         inputModel.InputData = "";
         InputSource = "";
-        if (Session.DoesProblemInputExist(Year, Day)) {
+        if (Session.HasProblemInput(Year, Day)) {
             (Input, InputSource) = Session.GetProblemInputAsString(Year, Day);
             inputModel.InputData = Input;
         }
