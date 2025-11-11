@@ -1,28 +1,29 @@
-﻿@implements IDisposable
+﻿@using Microsoft.Extensions.Options
+@implements IDisposable
 @attribute [ExcludeFromInteractiveRouting]
 @inject SessionState Session
 @inject AocJsInterop aocJS
 @inject IOptions<AocSettings> aocSettings
-@using Microsoft.Extensions.Options
 
 <p class="answer">
 	@ChildContent
-	<pre><code><span>Your puzzle answer is </span></code><code @ref="_codeElement">@PuzzleAnswer</code></pre>
+	<pre><code><span>Your puzzle answer is </span></code><code @ref="_codeElement">@PuzzleAnswerDisplay</code></pre>
 	<span>
 		<button type="button"
-		class="btn btn-primary"
-		disabled="@(PuzzleAnswer.StartsWith("*") && PuzzleAnswer.EndsWith("*"))"
-		title="Copy the answer to the clipboard."
-		@onclick="CopyTextToClipboard">
+				class="btn btn-primary"
+				disabled="@(PuzzleAnswerDisplay.StartsWith("*") && PuzzleAnswerDisplay.EndsWith("*"))"
+				title="Copy the answer to the clipboard."
+				@onclick="CopyTextToClipboard">
 			Copy <i class="bi-clipboard" aria-hidden="true"></i>
 		</button>
 	</span>
 	<span>
 		<a class="btn btn-primary"
-		href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")"
-		title="Open a new page and navigate to the AdventOfCode site to enter the answer."
-		target="_blank">
-			Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i></a>
+		   href="@($"{aocSettings.Value.Site}{Year}/day/{Day}")"
+		   title="Open a new page and navigate to the AdventOfCode site to enter the answer."
+		   target="_blank">
+			Jump <i class="bi-box-arrow-up-right" aria-hidden="true"></i>
+		</a>
 	</span>
 </p>
 <div>
@@ -37,50 +38,57 @@
 	[Parameter] public int ProblemNo { get; set; }
 	[Parameter] public RenderFragment? ChildContent { get; set; }
 
-	public string PuzzleAnswer { get; set; } = "";
+	[PersistentState(AllowUpdates = true)]
+	public string? PuzzleAnswer { get; set; }
+
+	string PuzzleAnswerDisplay => PuzzleAnswer is null ? "" : PuzzleAnswer;
 
 	Visualiser _visualiser = null!;
 	private ElementReference _codeElement;
 
+	private string? _lastCalculatedInput;
+	private int _lastYear;
+	private int _lastDay;
+	private int _lastProblemNo;
 
-	protected override void OnInitialized() {
+
+	protected override void OnInitialized()
+	{
 		Session.OnProblemInputChange -= DataHasChanged;
 		Session.OnProblemInputChange += DataHasChanged;
-		PuzzleAnswer = "";
 	}
 
-	protected override void OnParametersSet() {
-		PuzzleAnswer = "";
-		// DataHasChanged();
-    }
+	protected override void OnParametersSet()
+	{
+		// Check if Year, Day, or ProblemNo have actually changed
+		if (_lastYear != Year || _lastDay != Day || _lastProblemNo != ProblemNo) {
+			_lastYear = Year;
+			_lastDay = Day;
+			_lastProblemNo = ProblemNo;
 
-  //   protected override void OnAfterRender(bool firstRender)
-  //   {
-		// try {
-		// 	if (_visualiser is not null && _visualiser.HasVisualiser) {
-		// 	PuzzleAnswer = SolutionRouter.SolveProblem(
-		// 		Year,
-		// 		Day,
-		// 		ProblemNo,
-		// 		Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null,
-		// 		_visualiser.VisualiseOutput
-		// 		);
-		// 	}
-		// 	else if (string.IsNullOrEmpty(PuzzleAnswer))
-		// 	{
-		// 		PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
-		// 			Session.DoesProblemInputExist(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
-		// 	}
-		// }
-		// catch (Exception ex) {
-		// 	PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
-		// }
-		// base.OnAfterRender(firstRender);
-  //   }
+			// Parameters changed - reset everything
+			PuzzleAnswer = null;
+			_lastCalculatedInput = null;
+		}
+	}
 
-    protected void DataHasChanged() {
-        PuzzleAnswer = SOLVING;
+	protected void DataHasChanged()
+	{
+		// Get current input hash to detect if it's actually new data
+		string? currentInput = Session.HasProblemInput(Year, Day)
+			? string.Join("", Session.GetProblemInputAsArray(Year, Day) ?? [])
+			: null;
+
+		// Skip if we already calculated for this exact input
+		if (currentInput == _lastCalculatedInput && PuzzleAnswer is not null and not SOLVING) {
+			return;
+		}
+
+		_lastCalculatedInput = currentInput;
+
+		PuzzleAnswer = SOLVING;
 		StateHasChanged();
+
 		try {
 			if (_visualiser is not null && _visualiser.HasVisualiser) {
 				PuzzleAnswer = SolutionRouter.SolveProblem(
@@ -94,21 +102,25 @@
 				PuzzleAnswer = SolutionRouter.SolveProblem(Year, Day, ProblemNo,
 					Session.HasProblemInput(Year, Day) ? Session.GetProblemInputAsArray(Year, Day) : null);
 			}
-        } catch (Exception ex) {
-            PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
-        }
-        if (PuzzleAnswer.IndexOf(Environment.NewLine) > 16)
-        {
-            PuzzleAnswer = Environment.NewLine + PuzzleAnswer;
-        }
-        StateHasChanged();
-    }
+		}
+		catch (Exception ex) {
+			PuzzleAnswer = "** EXCEPTION **" + Environment.NewLine + ex?.Message ?? "Exception";
+		}
 
-    private async Task CopyTextToClipboard() {
-        await aocJS.CopyToClipboard(_codeElement);
-    }
+		if (PuzzleAnswer.IndexOf(Environment.NewLine) > 16) {
+			PuzzleAnswer = Environment.NewLine + PuzzleAnswer;
+		}
 
-    public void Dispose() {
-        Session.OnProblemInputChange -= DataHasChanged;
-    }
+		StateHasChanged();
+	}
+
+	private async Task CopyTextToClipboard()
+	{
+		await aocJS.CopyToClipboard(_codeElement);
+	}
+
+	public void Dispose()
+	{
+		Session.OnProblemInputChange -= DataHasChanged;
+	}
 }

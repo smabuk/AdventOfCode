@@ -9,40 +9,41 @@
 		<h2>
 			--- Input --- <span>
 				<button class="btn btn-primary"
-				disabled="@IsGetDisabled"
-				title="Retrieves the logged in user's data from the Advent of Code web site https://adventofcode.com and then solves for it."
-				@onclick="() => LoadInputDataFromAoc()">AoC</button>
+						disabled="@IsGetDisabled"
+						title="Retrieves the logged in user's data from the Advent of Code web site https://adventofcode.com and then solves for it."
+						@onclick="() => LoadInputDataFromAoc()">
+					AoC
+				</button>
 				@if (env.IsDevelopment()) {
 					<button class="btn btn-primary ms-3"
-					disabled="@IsGitHubGetDisabled"
-					title="Select one of the known GitHub users from the drop-down and then press the button to retrieve their data from GitHub (if available) and then solves for it"
-					@onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">
+							disabled="@IsGitHubGetDisabled"
+							title="Select one of the known GitHub users from the drop-down and then press the button to retrieve their data from GitHub (if available) and then solves for it"
+							@onclick="@(() => LoadInputDataFromGithub(GitHubUserSelect))">
 						@(GitHubUserSelect) GitHub
 					</button>
-				} 
+				}
 			</span>
 			<button type="button"
-			class="btn btn-primary"
-			disabled="@IsCopyDisabled"
-			title="Copy the contents of the input box to the clipboard."
-			@onclick="CopyTextToClipboard">
+					class="btn btn-primary"
+					disabled="@IsCopyDisabled"
+					title="Copy the contents of the input box to the clipboard."
+					@onclick="CopyTextToClipboard">
 				Copy <i class="bi-clipboard" aria-hidden="true"></i>
 			</button>
 			<input type="submit" disabled="@IsUseDisabled" value="Use" class="btn btn-primary"
-			title="Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution (if I've written one!). (May crash with invalid data)"
-			/>
+				   title="Tries to solve for whatever is in the Input Area, so anyone can paste in their own data and get a solution (if I've written one!). (May crash with invalid data)" />
 		</h2>
 		@if (env.IsDevelopment()) {
 			<h5>
 				<InputSelect @bind-Value="GitHubUserSelect"
-				DisplayName="User"
-				title="Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.">
+							 DisplayName="User"
+							 title="Selecting a user will show a link to that users solution and change the GitHub button to point to their input data.">
 					<option value="">Select a user</option>
 					@foreach (string name in githubClient.KnownUsersInOrder) {
 						<option value="@name">@name (@githubClient.UserLanguages(name))</option>
 					}
 				</InputSelect>
-				<a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "": $"data loaded from {InputSource}")
+				<a href="@githubClient.GetSolutionHref(Year, Day, GitHubUserSelect)" target="_blank" hidden="@(string.IsNullOrWhiteSpace(GitHubUserSelect))">solution</a> @(string.IsNullOrWhiteSpace(InputSource) ? "" : $"data loaded from {InputSource}")
 			</h5>
 		}
 		<textarea @bind="inputModel.InputData" @bind:event="oninput" rows="20" cols="80"></textarea>
@@ -67,77 +68,82 @@
 	private bool IsUseDisabled => string.IsNullOrEmpty(inputModel.InputData);
 	private bool IsLoading = false;
 
-    class InputModel {
-        public string InputData { get; set; } = "";
-    }
-    InputModel inputModel = new();
+	class InputModel
+	{
+		public string InputData { get; set; } = "";
+	}
+	InputModel inputModel = new();
 
-    private ElementReference _codeElement;
+	private ElementReference _codeElement;
 
-    protected override void OnParametersSet() {
-        inputModel.InputData = "";
-        InputSource = "";
-        if (Session.HasProblemInput(Year, Day)) {
-            (Input, InputSource) = Session.GetProblemInputAsString(Year, Day);
-            inputModel.InputData = Input;
-        }
-    }
+	protected override void OnParametersSet()
+	{
+		inputModel.InputData = "";
+		InputSource = "";
+		if (Session.HasProblemInput(Year, Day)) {
+			(Input, InputSource) = Session.GetProblemInputAsString(Year, Day);
+			inputModel.InputData = Input;
+		}
+	}
 
-    async void LoadInputDataFromAoc() {
-        IsLoading = true;
-        inputModel.InputData = await fileClient.GetInputData(Year, Day);
-        if (string.IsNullOrEmpty(inputModel.InputData)) {
-            inputModel.InputData = await aocClient.GetInputData(Year, Day, null);
-            if (string.IsNullOrEmpty(inputModel.InputData)) {
-                InputSource = "AoC FAILED";
-            } else {
-                _ = await fileClient.SaveInputData(inputModel.InputData, Year, Day);
-                InputSource = "AoC";
-            }
-        } else {
-            InputSource = "file cache";
-        }
-        Input = inputModel.InputData;
-        StateHasChanged();
-        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
-        IsLoading = false;
-        StateHasChanged();
+	async void LoadInputDataFromAoc()
+	{
+		IsLoading = true;
+		inputModel.InputData = await fileClient.GetInputData(Year, Day);
+		if (string.IsNullOrEmpty(inputModel.InputData)) {
+			inputModel.InputData = await aocClient.GetInputData(Year, Day, null);
+			if (string.IsNullOrEmpty(inputModel.InputData)) {
+				InputSource = "AoC FAILED";
+			} else {
+				_ = await fileClient.SaveInputData(inputModel.InputData, Year, Day);
+				InputSource = "AoC";
+			}
+		} else {
+			InputSource = "file cache";
+		}
+		Input = inputModel.InputData;
+		StateHasChanged();
+		Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
+		IsLoading = false;
+		StateHasChanged();
 
-    }
+	}
 
-    async void LoadInputDataFromGithub(string userName) {
-        IsLoading = true;
-        inputModel.InputData = await fileClient.GetInputData(Year, Day, userName);
-        if (string.IsNullOrEmpty(inputModel.InputData)) {
-            inputModel.InputData = await githubClient.GetInputData(Year, Day, userName);
-            if (string.IsNullOrEmpty(inputModel.InputData)) {
-                InputSource = $"github {userName} FAILED";
-            } else {
-                InputSource = $"github {userName}";
-                _ = await fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
-            }
-        } else {
-            InputSource = $"file cache {userName}";
-        }
-        Input = inputModel.InputData;
-        IsLoading = false;
-        StateHasChanged();
-        Session.SetProblemInput(Year, Day, inputModel.InputData);
+	async void LoadInputDataFromGithub(string userName)
+	{
+		IsLoading = true;
+		inputModel.InputData = await fileClient.GetInputData(Year, Day, userName);
+		if (string.IsNullOrEmpty(inputModel.InputData)) {
+			inputModel.InputData = await githubClient.GetInputData(Year, Day, userName);
+			if (string.IsNullOrEmpty(inputModel.InputData)) {
+				InputSource = $"github {userName} FAILED";
+			} else {
+				InputSource = $"github {userName}";
+				_ = await fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+			}
+		} else {
+			InputSource = $"file cache {userName}";
+		}
+		Input = inputModel.InputData;
+		IsLoading = false;
+		StateHasChanged();
+		Session.SetProblemInput(Year, Day, inputModel.InputData);
 
-    }
+	}
 
-    void UseInputData() {
-        Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
-        StateHasChanged();
-    }
+	void UseInputData()
+	{
+		Session.SetProblemInput(Year, Day, inputModel.InputData, InputSource);
+		StateHasChanged();
+	}
 
-    //void SaveInputData(string? userName = null) {
-    //    Session.SetProblemInput(Year, Day, inputModel.InputData);
-    //    _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
-    //}
+	//void SaveInputData(string? userName = null) {
+	//    Session.SetProblemInput(Year, Day, inputModel.InputData);
+	//    _ = fileClient.SaveInputData(inputModel.InputData, Year, Day, userName);
+	//}
 
-    private async Task CopyTextToClipboard() {
-        await aocJS.CopyToClipboard(_codeElement);
-    }
-
+	private async Task CopyTextToClipboard()
+	{
+		await aocJS.CopyToClipboard(_codeElement);
+	}
 }
