@@ -6,13 +6,14 @@ static public partial class SolutionRouter {
 		input = (input as string[]).StripTrailingBlankLineOrDefault();
 		ParameterInfo[] parameters = method.GetParameters();
 		int noOfParameters = parameters.Length;
-		string parameterType = parameters[0].ParameterType.Name;
+		string parameterType = noOfParameters == 0 ? "NONE" : parameters[0].ParameterType.Name;
 		object inputObject = parameterType switch {
 			"String[]" => input,
 			"String" => string.Join(Environment.NewLine, (string[])input),
+			"NONE" => "",
 			_ => throw new NotImplementedException(),
 		};
-		
+
 		string answer;
 		bool hasVisualiser = parameters.Where(p => p.Name == "visualise").Any();
 		bool useVisualiser = visualise is not null;
@@ -21,7 +22,7 @@ static public partial class SolutionRouter {
 		try {
 			answer = (noOfParameters, hasVisualiser, useVisualiser) switch
 			{
-				(0, _, _)           => NO_PARAMETERS_MESSAGE,
+				(0, _, _)           => method.Invoke(0, [])?.ToString() ?? "",
 				(1, false, _)       => method.Invoke(0, [inputObject])?.ToString() ?? "",
 				( > 1, false, _)    => method.Invoke(0, [inputObject, args!])?.ToString() ?? "",
 				(2, true, false)    => method.Invoke(0, [inputObject, null!])?.ToString() ?? "",

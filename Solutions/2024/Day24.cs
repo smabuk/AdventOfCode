@@ -1,5 +1,4 @@
-﻿
-namespace AdventOfCode.Solutions._2024;
+﻿namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
 /// Day 24: Crossed Wires
@@ -19,7 +18,7 @@ public partial class Day24
 		_gates = [.. input.Skip(_wires.Count + 1).As<Gate>()];
 	}
 
-	public static long Part1(string[] input)
+	public static long Part1()
 	{
 		Dictionary<string, Wire> wireValues = _wires.ToDictionary(w => w.Id, w => w);
 
@@ -32,7 +31,7 @@ public partial class Day24
 		return zBinary.FromBinaryAs<long>();
 	}
 
-	public static string Part2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
 
 	static Wire? ResolveWire(string wireId, Dictionary<string, Wire> wireValues)
