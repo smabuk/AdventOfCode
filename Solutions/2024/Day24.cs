@@ -1,7 +1,8 @@
-﻿namespace AdventOfCode.Solutions._2024;
+﻿
+namespace AdventOfCode.Solutions._2024;
 
 /// <summary>
-/// Day XX: Title
+/// Day 24: Crossed Wires
 /// https://adventofcode.com/2024/day/244
 /// </summary>
 [Description("Crossed Wires")]
@@ -14,40 +15,8 @@ public partial class Day24
 	[Init]
 	public static void LoadMonitoringDevice(string[] input)
 	{
-		_wires = [.. input
-			.TakeWhile(line => line.HasNonWhiteSpaceContent())
-			.Select(line =>
-			{
-				string[] parts = line.Split(": ");
-				return new Wire(parts[0], parts[1] == "1" ? true : parts[1] == "0" ? false : null);
-			})];
-
-		_gates = [.. input
-			.SkipWhile(line => line.HasNonWhiteSpaceContent())
-			.Skip(1)
-			.TakeWhile(line => line.HasNonWhiteSpaceContent())
-			.Select<string, Gate>(line =>
-			{
-				string[] parts = line.Split(" -> ");
-				string[] exprParts = parts[0].Split(' ');
-				return exprParts[1] switch
-				{
-					"AND" => new AndGate(
-						[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
-						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
-						parts[1]),
-					"OR" => new OrGate(
-						[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
-						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
-						parts[1]),
-					"XOR" => new XorGate(
-						[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
-						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
-						parts[1]),
-					_ => throw new InvalidOperationException("Unknown gate type.")
-				};
-			})];
-
+		_wires = [.. input.TakeWhile(line => line.HasNonWhiteSpaceContent()).As<Wire>()];
+		_gates = [.. input.Skip(_wires.Count + 1).As<Gate>()];
 	}
 
 	public static long Part1(string[] input)
@@ -86,32 +55,61 @@ public partial class Day24
 		return gate.OutputWire;
 	}
 
-	private record Wire(string Id, bool? Value);
-
-	private abstract record Gate(List<Wire> Wires, string OutputWireId)
+	private record Wire(string Id, bool? Value) : IParsable<Wire>
 	{
+		public static Wire Parse(string s, IFormatProvider? provider)
+		{
+			string[] parts = s.Split(": ");
+			return new Wire(parts[0], parts[1] == "1" ? true : parts[1] == "0" ? false : null);
+		}
+
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Wire result) => ISimpleParsable<Wire>.TryParse(s, provider, out result);
+	}
+
+	private abstract record Gate(List<Wire> Wires, string OutputWireId) : IParsable<Gate>
+	{
+		public bool HasWireValues => Wires.All(wire => wire.Value.HasValue);
 		public Wire OutputWire => new(OutputWireId, Evaluate());
+
 		public abstract bool? Evaluate();
+
+		public static Gate Parse(string s, IFormatProvider? provider)
+		{
+			string[] parts = s.Split(" -> ");
+			string[] exprParts = parts[0].Split(' ');
+			return exprParts[1] switch
+			{
+				"AND" => new AndGate(
+					[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
+						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
+					parts[1]),
+				"OR" => new OrGate(
+					[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
+						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
+					parts[1]),
+				"XOR" => new XorGate(
+					[new Wire(exprParts[0], _wires.FirstOrDefault(w => w.Id == exprParts[0])?.Value),
+						 new Wire(exprParts[2], _wires.FirstOrDefault(w => w.Id == exprParts[2])?.Value)],
+					parts[1]),
+				_ => throw new InvalidOperationException("Unknown gate type.")
+			};
+		}
+
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Gate result) => ISimpleParsable<Gate>.TryParse(s, provider, out result);
 	}
 
 	private record AndGate(List<Wire> Wires, string OutputWireId) : Gate(Wires, OutputWireId)
 	{
-		public override bool? Evaluate() => Wires[0].Value.HasValue && Wires[1].Value.HasValue
-			? Wires[0].Value!.Value && Wires[1].Value!.Value
-			: null;
+		public override bool? Evaluate() => HasWireValues ? Wires[0].Value!.Value && Wires[1].Value!.Value : null;
 	}
 
 	private record OrGate(List<Wire> Wires, string OutputWireId) : Gate(Wires, OutputWireId)
 	{
-		public override bool? Evaluate() => Wires[0].Value.HasValue && Wires[1].Value.HasValue
-			? Wires[0].Value!.Value || Wires[1].Value!.Value
-			: null;
+		public override bool? Evaluate() => HasWireValues ? Wires[0].Value!.Value || Wires[1].Value!.Value : null;
 	}
 
 	private record XorGate(List<Wire> Wires, string OutputWireId) : Gate(Wires, OutputWireId)
 	{
-		public override bool? Evaluate() => Wires[0].Value.HasValue && Wires[1].Value.HasValue
-			? Wires[0].Value!.Value ^ Wires[1].Value!.Value
-			: null;
+		public override bool? Evaluate() => HasWireValues ? Wires[0].Value!.Value ^ Wires[1].Value!.Value : null;
 	}
 }
