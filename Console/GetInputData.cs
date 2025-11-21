@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 internal partial class Program
 {
-	static async Task<string[]?> GetInputData(int year, int day, bool isDownload)
+	public static async Task<string[]?> GetInputData(int year, int day, bool isDownload)
 	{
 		string[]? input = null;
 
