@@ -94,7 +94,7 @@
 
 		lock (consolelock)
 		{
-			Console.Write($"{year} {day,2} {title,-38}");
+			Console.Write($"{year} {day,2} {title,-40}");
 			if (input is not null)
 			{
 				ConsoleColor answerColour;
