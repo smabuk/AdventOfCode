@@ -8,11 +8,11 @@
 public partial class DayXX {
 
 	private static IEnumerable<Instruction> _instructions = [];
-	
+
 	[Init]
 	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
-	public static string Part1(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
-	public static string Part2(string[] input) => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static string Part1() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
 
 	private sealed record Instruction(string Name, int Value) : IParsable<Instruction>
