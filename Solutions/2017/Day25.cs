@@ -10,7 +10,7 @@ namespace AdventOfCode.Solutions._2017;
 public sealed partial class Day25 {
 
 	public static string Part1(string[] input) => Solution1(input).ToString();
-	public static string Part2(string[] _) => "⭐CONGRATULATIONS⭐";
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	private static int Solution1(string[] input) {
 		string currentStateName = $"{input[0][^2]}";

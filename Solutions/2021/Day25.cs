@@ -8,7 +8,8 @@
 public class Day25 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	const char FLOOR = '.';
 	const char CUCUMBER_RIGHT = '>';
@@ -29,7 +30,7 @@ public class Day25 {
 		bool noMovement;
 		do {
 			noMovement = true;
-			
+
 			Array.Fill(herdCucumberRight, FLOOR);
 			Array.Fill(herdCucumberDown, FLOOR);
 
@@ -85,9 +86,5 @@ public class Day25 {
 		} while (noMovement is false);
 
 		return steps;
-	}
-
-	private static string Solution2(string[] _) {
-		return "** CONGRATULATIONS **";
 	}
 }

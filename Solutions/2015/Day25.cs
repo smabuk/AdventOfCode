@@ -8,7 +8,8 @@
 public sealed partial class Day25 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => Solution2(input).ToString();
+
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	record Position(int Row, int Column);
 
@@ -27,10 +28,6 @@ public sealed partial class Day25 {
 
 		return 0;
 
-	}
-
-	private static string Solution2(string[] input) {
-		return "** CONGRATULATIONS **";
 	}
 
 	private static Position ParseLine(string input) {

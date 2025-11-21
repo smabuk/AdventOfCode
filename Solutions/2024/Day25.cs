@@ -31,7 +31,7 @@ public partial class Day25 {
 			.Count();
 	}
 
-	public static string Part2() => "⭐CONGRATULATIONS⭐";
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 
 	private abstract record Schematic(int[] Heights) : IParsable<Schematic>

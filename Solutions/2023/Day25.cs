@@ -8,17 +8,16 @@
 public sealed partial class Day25
 {
 	public static string Part1(string[] input, params object[]? args) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? args) => "⭐CONGRATULATIONS⭐";
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	private static string Solution1(string[] input)
 	{
 		Apparatus apparatus = string.Join(Environment.NewLine, input).As<Apparatus>();
-		
+
 		int group1Size = 0;
 		int group2Size = 0;
 
 		string output = apparatus.ToDot();
-		
 		if (input.Length == 13) {
 			// Test Input
 			apparatus.RemoveEdge(["hfx", "pzl"]);

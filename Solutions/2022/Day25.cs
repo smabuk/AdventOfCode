@@ -8,7 +8,7 @@
 public sealed partial class Day25 {
 
 	public static string Part1(string[] input, params object[]? _) => Solution1(input).ToString();
-	public static string Part2(string[] input, params object[]? _) => "⭐CONGRATULATIONS⭐";
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	private static string Solution1(string[] input) {
 		SnafuNumber sum = input.Select(i => (long)(SnafuNumber)i).Sum();
@@ -53,7 +53,7 @@ public sealed partial class Day25 {
 
 		public static implicit operator SnafuNumber(  long value) => new(value);
 		public static implicit operator SnafuNumber(string input) => Parse(input);
-		
+
 		public static implicit operator   long(SnafuNumber snafu) => snafu.Value;
 		public static implicit operator string(SnafuNumber snafu) => snafu.ToString();
 
