@@ -1,4 +1,6 @@
-﻿internal sealed class SolveCommand : AsyncCommand<SolveSettings>
+﻿using Smab.Helpers;
+
+internal sealed class SolveCommand : AsyncCommand<SolveSettings>
 {
 	private readonly Lock _consoleLock = new();
 
@@ -18,7 +20,7 @@
 		long totalTime = Stopwatch.GetTimestamp();
 
 		if (date.Month == 12 && date.Day <= noOfDays) {
-			await GetInputDataAndSolve(date.Year, date.Day, _consoleLock, null, null, showVisuals, isDebug, isDownload, solutionArgs);
+			await GetInputDataAndSolve(date.Year, date.Day, _consoleLock, showVisuals, isDebug, isDownload, solutionArgs);
 		} else {
 			DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 			for (int day = 1; day <= noOfDays; day++) {
@@ -28,7 +30,7 @@
 			}
 		}
 
-		AnsiConsole.MarkupLine($" Total Elapsed time: [fuchsia]{Stopwatch.GetElapsedTime(totalTime)}[/]");
+		AnsiConsole.MarkupLine($" Total Elapsed time: [bold fuchsia]{Stopwatch.GetElapsedTime(totalTime)}[/]");
 		if (showVisuals) {
 			await Task.Delay(visualsTime, cancellationToken);
 		}
@@ -66,13 +68,10 @@
 		return [.. solutionArgs];
 	}
 
-	private static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, string? title = null, string[]? input = null, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
+	private static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
 	{
-		input = await Program.GetInputData(year, day, isDownload);
-
-		if (string.IsNullOrWhiteSpace(title)) {
-			title = GetProblemDescription(year, day) ?? $"";
-		}
+		string[]? input = await Program.GetInputData(year, day, isDownload);
+		string title = GetProblemDescription(year, day) ?? $"";
 
 		lock (consolelock) {
 			AnsiConsole.Markup($"{year} {day,2} [bold]{title,-40}[/]");
@@ -83,30 +82,33 @@
 						VisualiseOutput(s, b);
 					}
 				}) : null;
+
 				IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
 				foreach (SolutionPhaseResult result in solveResults) {
-					OutputTimings(result.Elapsed);
+					DisplayOutputTimings(result.Elapsed);
 
-					if (result.Phase == PHASE_PART1) {
-						string answerColour = result.Answer.StartsWith('*') ? "[red]" : "[lime]";
-						AnsiConsole.Markup($"[green] Pt1:[/] {answerColour} {result.Answer,-17}[/]");
-					} else if (result.Phase == PHASE_PART2) {
-						string answerColour = result.Answer.StartsWith('*') ? "[red]" : "[yellow1]";
-						AnsiConsole.Markup($"[yellow] Pt2:[/] {answerColour} {result.Answer,-17}[/]");
-					} else if (result.Phase == EXCEPTION_PART1) {
-						AnsiConsole.Markup($"[green] Pt1:[/][red] {EXCEPTION_MESSAGE,-16}[/]");
-					} else if (result.Phase == EXCEPTION_PART2) {
-						AnsiConsole.Markup($"[yellow] Pt2:[/][red] {EXCEPTION_MESSAGE,-16}[/]");
+					const int answerLength = 17;
+					string? answerMarkup = result.Phase switch
+					{
+						PHASE_PART1 => $"[green] Pt1:[/] {(result.Answer.StartsWith('*') ? "[red]" : "[lime]")} {result.Answer,-answerLength}[/]",
+						PHASE_PART2 => $"[yellow] Pt2:[/] {(result.Answer.StartsWith('*') ? "[red]" : "[yellow1]")} {result.Answer,-answerLength}[/]",
+						EXCEPTION_PART1 => $"[green] Pt1:[/] [red] {EXCEPTION_MESSAGE,-answerLength}[/]",
+						EXCEPTION_PART2 => $"[yellow] Pt2:[/] [red] {EXCEPTION_MESSAGE,-answerLength}[/]",
+						_ => null,
+					};
+
+					if (answerMarkup is not null) {
+						AnsiConsole.Markup(answerMarkup);
 					}
 				}
 
 				AnsiConsole.WriteLine();
 
 				if (isDebug) {
-					OutputExceptions(solveResults);
+					DisplayOutputExceptions(solveResults);
 				}
 			} else {
-				AnsiConsole.WriteLine($"     ** NO INPUT DATA **");
+				AnsiConsole.MarkupLine($"     [dim red]** NO INPUT DATA **[/]");
 			}
 		}
 	}
@@ -124,7 +126,7 @@
 		AnsiConsole.Write(string.Join(Environment.NewLine, lines));
 	}
 
-	private static void OutputExceptions(IEnumerable<SolutionPhaseResult> solveResults)
+	private static void DisplayOutputExceptions(IEnumerable<SolutionPhaseResult> solveResults)
 	{
 		foreach (SolutionPhaseResult result in solveResults.Where(r => r.Exception is not null)) {
 			AnsiConsole.WriteLine();
@@ -134,7 +136,7 @@
 		}
 	}
 
-	private static void OutputTimings(TimeSpan elapsed)
+	private static void DisplayOutputTimings(TimeSpan elapsed)
 	{
 		string output = elapsed switch
 		{
