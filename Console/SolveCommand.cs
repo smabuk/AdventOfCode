@@ -1,6 +1,4 @@
-﻿using Smab.Helpers;
-
-internal sealed class SolveCommand : AsyncCommand<SolveSettings>
+﻿internal sealed class SolveCommand : AsyncCommand<SolveSettings>
 {
 	private readonly Lock _consoleLock = new();
 
