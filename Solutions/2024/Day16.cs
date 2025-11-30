@@ -40,54 +40,102 @@ public static partial class Day16
 
 	public static int Part2()
 	{
-
 		ReindeerPosition reindeerPosition = new(_maze.ForEachCell().Single(c => c.Value is START).Index, East);
 		Point end = _maze.ForEachCell().Single(c => c.Value is END).Index;
 
-		List<List<ReindeerPosition>> routes = [.. _maze.FindOptimalPaths(reindeerPosition, end).Select(r => r.Route)];
-
-		List<ReindeerPosition> tiles = [.. routes.SelectMany(p => p)];
-		_maze.VisualiseMaze($"Tiles:", tiles.Select(r => r with { Direction = None }));
-
-		return tiles.Select(p => p.Position).Distinct().Count();
+		HashSet<Point> tiles = _maze.FindTilesOnOptimalPaths(reindeerPosition, end);
+		_maze.VisualiseMaze($"Tiles: {tiles.Count}", tiles.Select(p => new ReindeerPosition(p, None)));
+		return tiles.Count;
 	}
 
-	private static IEnumerable<(int LowestScore, List<ReindeerPosition> Route)> FindOptimalPaths(this char[,] maze, ReindeerPosition start, Point end)
+	private static HashSet<Point> FindTilesOnOptimalPaths(this char[,] maze, ReindeerPosition start, Point end)
 	{
-		PriorityQueue<(int, List<ReindeerPosition>, Direction), int> queue = new();
-		queue.Enqueue((0, new List<ReindeerPosition> { start }, start.Direction), 0);
-		Dictionary<ReindeerPosition, int> lowestCost = new() { [start] = 0 };
-		int? bestScore = null;
+		// Dijkstra: find shortest distance to all reachable states
+		Dictionary<ReindeerPosition, int> distances = new() { [start] = 0 };
+		PriorityQueue<(ReindeerPosition State, int Cost), int> pq = new();
+		pq.Enqueue((start, 0), 0);
+
+		while (pq.Count > 0) {
+			(ReindeerPosition current, int cost) = pq.Dequeue();
+			if (cost > distances[current]) {
+				continue;
+			}
+
+			// Action 1: Move forward in current direction
+			Point newPos = current.Position.Translate(current.Direction);
+			if (maze.IsInBounds(newPos) && maze[newPos.X, newPos.Y] is not WALL) {
+				ReindeerPosition newState = new(newPos, current.Direction);
+				int newCost = cost + 1;
+				if (newCost < distances.GetValueOrDefault(newState, int.MaxValue)) {
+					distances[newState] = newCost;
+					pq.Enqueue((newState, newCost), newCost);
+				}
+			}
+
+			// Action 2: Turn to face a different direction without moving
+			foreach (Direction newDir in Directions.NESW) {
+				if (newDir == current.Direction) {
+					continue;
+				}
+
+				ReindeerPosition newState = new(current.Position, newDir);
+				int newCost = cost + TURN_COST;
+				if (newCost < distances.GetValueOrDefault(newState, int.MaxValue)) {
+					distances[newState] = newCost;
+					pq.Enqueue((newState, newCost), newCost);
+				}
+			}
+		}
+
+		// Find minimum cost to reach end (any direction)
+		int minCost = Directions.NESW
+			.Select(dir => distances.GetValueOrDefault(new ReindeerPosition(end, dir), int.MaxValue))
+			.Min();
+		if (minCost is int.MaxValue) {
+			return [];
+		}
+
+		// BFS work backwards from the end states to collect all of the tiles on optimal paths
+		HashSet<ReindeerPosition> endStates = [.. Directions.NESW
+			.Select(dir => new ReindeerPosition(end, dir))
+			.Where(state => distances.GetValueOrDefault(state, int.MaxValue) == minCost)];
+
+		Queue<ReindeerPosition> queue = new(endStates);
+		HashSet<ReindeerPosition> visited = [.. endStates];
+		HashSet<Point> tiles = [.. endStates.Select(s => s.Position)];
 
 		while (queue.Count > 0) {
-			(int currentDist, List<ReindeerPosition> path, Direction prevDir) = queue.Dequeue();
-			ReindeerPosition reindeerPosition = path[^1];
+			ReindeerPosition current = queue.Dequeue();
+			int currentCost = distances[current];
 
-			if (bestScore.HasValue && currentDist > bestScore.Value) {
-				continue;
+			// Case 1: Moved here - check if we came from one step back in our current direction
+			Point prevPos = current.Position.Translate(current.Direction.Reverse());
+			if (maze.IsInBounds(prevPos) && maze[prevPos.X, prevPos.Y] is not WALL) {
+				ReindeerPosition prevState = new(prevPos, current.Direction);
+				if (distances.TryGetValue(prevState, out int prevCost) && prevCost + 1 == currentCost) {
+					_ = tiles.Add(prevPos);
+					if (visited.Add(prevState)) {
+						queue.Enqueue(prevState);
+					}
+				}
 			}
 
-			if (reindeerPosition.Position == end) {
-				bestScore = currentDist;
-				yield return (currentDist, [.. path]);
-				continue;
-			}
+			// Case 2: Turned here - check if we turned from another direction at the same position
+			foreach (Direction otherDir in Directions.NESW) {
+				if (otherDir == current.Direction) {
+					continue;
+				}
 
-			foreach (Direction direction in Directions.NESW) {
-				ReindeerPosition newPosition = reindeerPosition with { Position = reindeerPosition.Position.Translate(direction), Direction = direction };
-
-				if (maze[newPosition.Position.X, newPosition.Position.Y] is not WALL) {
-					int turnCost = (prevDir != direction) ? TURN_COST : 0;
-					int newDist = currentDist + 1 + turnCost;
-
-					if (!lowestCost.TryGetValue(newPosition, out int previousCost) || newDist <= previousCost) {
-						lowestCost[newPosition] = newDist;
-						List<ReindeerPosition> newPath = [.. path, newPosition];
-						queue.Enqueue((newDist, newPath, direction), newDist);
+				ReindeerPosition prevState = new(current.Position, otherDir);
+				if (distances.TryGetValue(prevState, out int prevCost) && prevCost + TURN_COST == currentCost) {
+					if (visited.Add(prevState)) {
+						queue.Enqueue(prevState);
 					}
 				}
 			}
 		}
+
+		return tiles;
 	}
 
 	private static (int LowestScore, List<ReindeerPosition> Route) FindShortestPath(this char[,] maze, ReindeerPosition start, Point end)
@@ -154,10 +202,10 @@ public static partial class Day16
 			outputMap[reindeerPosition.Position.X, reindeerPosition.Position.Y] = reindeerPosition.Direction switch
 			{
 				North => '^',
-				East => '>',
-				West => '<',
+				East  => '>',
+				West  => '<',
 				South => 'v',
-				_ => 'O',
+				_     => 'O',
 			};
 		}
 
