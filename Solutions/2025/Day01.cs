@@ -11,21 +11,30 @@ public partial class Day01
 	private const int NUMBERS_ON_DIAL = 100;
 	private const int START_POSITION = 50;
 
+	private static Action<string[], bool>? _visualise = null;
 	private static IEnumerable<Instruction> _instructions = [];
 
 	[Init]
-	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+	public static void LoadInstructions(string[] input, Action<string[], bool>? visualise = null)
+	{
+		_visualise = visualise;
+		_instructions = [.. input.As<Instruction>()];
+	}
 
 	public static int Part1()
 	{
 		int currentPosition = START_POSITION;
 		int count = 0;
 
+		_visualise?.Invoke([$"The dial starts by pointing at {currentPosition}."], false);
+
 		foreach (Instruction instruction in _instructions) {
 			currentPosition += instruction;
 			if (currentPosition is 0) {
 				count++;
 			}
+
+			_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {currentPosition,2}."], false);
 		}
 
 		return count;
@@ -36,13 +45,15 @@ public partial class Day01
 		int currentPosition = START_POSITION;
 		int count = 0;
 
+		_visualise?.Invoke([$"The dial starts by pointing at {currentPosition}."], false);
+
 		foreach (Instruction instruction in _instructions) {
 			// Full rotations
-			count += instruction.Distance / NUMBERS_ON_DIAL;
+			int rotations = instruction.Distance / NUMBERS_ON_DIAL;
 
 			// Partial rotation
 			int partialDistance = instruction.Delta % NUMBERS_ON_DIAL;
-			count += partialDistance switch
+			rotations += partialDistance switch
 			{
 				0 => 0,
 				_ when currentPosition + partialDistance >= NUMBERS_ON_DIAL => 1,
@@ -51,6 +62,13 @@ public partial class Day01
 			};
 
 			currentPosition += instruction;
+			count += rotations;
+
+			if (rotations is 0) {
+				_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {currentPosition,2}."], false);
+			} else {
+				_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {currentPosition,2}; during this rotation, it points at 0  {rotations,3} time(s)."], false);
+			}
 		}
 
 		return count;
@@ -59,6 +77,7 @@ public partial class Day01
 	private sealed record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
 	{
 		public int Delta => Direction is RotationDirection.Left ? -Distance : Distance;
+		public override string ToString() => $"{Direction}{Distance}";
 
 		public static int operator +(int currentPosition, Instruction instruction)
 			=> (((currentPosition + instruction.Delta) % NUMBERS_ON_DIAL) + NUMBERS_ON_DIAL) % NUMBERS_ON_DIAL;

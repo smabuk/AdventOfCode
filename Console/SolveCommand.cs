@@ -130,9 +130,9 @@
 		}
 
 		if (lines[0].Contains("markup", StringComparison.OrdinalIgnoreCase)) {
-			AnsiConsole.Markup(string.Join(Environment.NewLine, lines[1..]));
+			AnsiConsole.MarkupLine(string.Join(Environment.NewLine, lines[1..]));
 		} else {
-			AnsiConsole.Write(string.Join(Environment.NewLine, lines));
+			AnsiConsole.WriteLine(string.Join(Environment.NewLine, lines));
 		}
 	}
 
