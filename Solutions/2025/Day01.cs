@@ -8,7 +8,9 @@
 public partial class Day01
 {
 
-	const int NUMBERS_ON_DIAL = 100;
+	private const int NUMBERS_ON_DIAL = 100;
+	private const int START_POSITION = 50;
+
 	private static IEnumerable<Instruction> _instructions = [];
 
 	[Init]
@@ -16,52 +18,39 @@ public partial class Day01
 
 	public static int Part1()
 	{
-		int current = 50;
-		List<int> numbers = [];
+		int currentPosition = START_POSITION;
+		int count = 0;
 
 		foreach (Instruction instruction in _instructions) {
-			current += instruction.Direction == RotationDirection.Left
-				? -instruction.Distance
-				: instruction.Distance;
-			current = ((current % NUMBERS_ON_DIAL) + NUMBERS_ON_DIAL) % NUMBERS_ON_DIAL;
-			numbers.Add(current);
+			currentPosition += instruction;
+			if (currentPosition is 0) {
+				count++;
+			}
 		}
 
-		return numbers.Count(num => num is 0);
+		return count;
 	}
 
 	public static int Part2()
 	{
-		int currentPosition = 50;
+		int currentPosition = START_POSITION;
 		int count = 0;
 
 		foreach (Instruction instruction in _instructions) {
-			int delta = instruction.Direction == RotationDirection.Left
-				? -instruction.Distance
-				: instruction.Distance;
+			// Full rotations
+			count += instruction.Distance / NUMBERS_ON_DIAL;
 
-			int distance = int.Abs(delta);
-			int newPosition = (((currentPosition + delta) % NUMBERS_ON_DIAL) + NUMBERS_ON_DIAL) % NUMBERS_ON_DIAL;
+			// Partial rotation
+			int partialDistance = instruction.Delta % NUMBERS_ON_DIAL;
+			count += partialDistance switch
+			{
+				0 => 0,
+				_ when currentPosition + partialDistance >= NUMBERS_ON_DIAL => 1,
+				_ when currentPosition is not 0 && currentPosition + partialDistance <= 0 => 1,
+				_ => 0,
+			};
 
-			count += distance / NUMBERS_ON_DIAL;
-
-			// Check if we cross 0 in the partial rotation
-			int partialDistance = distance % NUMBERS_ON_DIAL;
-			if (partialDistance > 0) {
-				if (delta > 0) {
-					// Moving right: cross 0 if we wrap around OR end at 0
-					if (currentPosition + partialDistance >= NUMBERS_ON_DIAL) {
-						count++;
-					}
-				} else {
-					// Moving left: cross 0 if we wrap around (but not if starting at 0)
-					if (currentPosition > 0 && currentPosition - partialDistance <= 0) {
-						count++;
-					}
-				}
-			}
-
-			currentPosition = newPosition;
+			currentPosition += instruction;
 		}
 
 		return count;
@@ -69,8 +58,13 @@ public partial class Day01
 
 	private sealed record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
 	{
+		public int Delta => Direction is RotationDirection.Left ? -Distance : Distance;
+
+		public static int operator +(int currentPosition, Instruction instruction)
+			=> (((currentPosition + instruction.Delta) % NUMBERS_ON_DIAL) + NUMBERS_ON_DIAL) % NUMBERS_ON_DIAL;
+
 		public static Instruction Parse(string s, IFormatProvider? provider)
-			=> new(Enum.Parse<RotationDirection>($"{s[0]}"), int.Parse($"{s[1..]}"));
+			=> new(s[0].ToString().AsEnum<RotationDirection>(), s[1..].As<int>());
 
 		public static Instruction Parse(string s) => Parse(s, null);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
