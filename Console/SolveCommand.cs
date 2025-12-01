@@ -8,6 +8,7 @@
 		AnsiConsole.Reset();
 
 		DateOnly date = GetDate(settings);
+		int? phase = settings.Phase;
 		bool showVisuals = settings.Visual;
 		bool isDebug = settings.Debug;
 		bool isDownload = settings.Download;
@@ -18,12 +19,12 @@
 		long totalTime = Stopwatch.GetTimestamp();
 
 		if (date.Month == 12 && date.Day <= noOfDays) {
-			await GetInputDataAndSolve(date.Year, date.Day, _consoleLock, showVisuals, isDebug, isDownload, solutionArgs);
+			await GetInputDataAndSolve(date.Year, date.Day, phase, _consoleLock, showVisuals, isDebug, isDownload, solutionArgs);
 		} else {
 			DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 			for (int day = 1; day <= noOfDays; day++) {
 				if (dateNow >= new DateOnly(date.Year, 12, day)) {
-					await GetInputDataAndSolve(date.Year, day, _consoleLock);
+					await GetInputDataAndSolve(date.Year, day, phase, _consoleLock);
 				}
 			}
 		}
@@ -66,13 +67,14 @@
 		return [.. solutionArgs];
 	}
 
-	private static async Task GetInputDataAndSolve(int year, int day, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
+	private static async Task GetInputDataAndSolve(int year, int day, int? phase, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
 	{
 		string[]? input = await Program.GetInputData(year, day, isDownload);
 		string title = GetProblemDescription(year, day) ?? $"";
 
 		lock (consolelock) {
 			AnsiConsole.Markup($"{year} {day,2} [bold]{title,-40}[/]");
+
 			if (input is not null) {
 				Action<string[], bool>? visualiser = showVisuals ? new Action<string[], bool>((s, b) =>
 				{
@@ -81,8 +83,14 @@
 					}
 				}) : null;
 
-				IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, visualiser, args);
+
+				IEnumerable<SolutionPhaseResult> solveResults = SolveDay(year, day, input, phase, visualiser, args);
+
 				foreach (SolutionPhaseResult result in solveResults) {
+					if (showVisuals) {
+						AnsiConsole.WriteLine();
+					}
+
 					DisplayOutputTimings(result.Elapsed);
 
 					const int answerLength = 17;

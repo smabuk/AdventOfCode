@@ -10,6 +10,10 @@ internal sealed class SolveSettings : CommandSettings
 	[Description("The puzzle day to solve (e.g. 5). If not specified, solves all days for the year.")]
 	public int? Day { get; init; }
 
+	[CommandOption("-p|--phase|--part")]
+	[Description("The puzzle phase to solve.")]
+	public int? Phase { get; init; }
+
 	[CommandOption("-d|--debug")]
 	[Description("Show debug information (e.g. details of exceptions).")]
 	[DefaultValue(false)]
