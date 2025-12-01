@@ -1,36 +1,54 @@
 ﻿namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
-/// Day 01: Title
+/// Day 01: Secret Entrance
 /// https://adventofcode.com/2025/day/01
 /// </summary>
-[Description("")]
-public partial class Day01 {
+[Description("Secret Entrance")]
+public partial class Day01
+{
 
 	private static IEnumerable<Instruction> _instructions = [];
 
 	[Init]
 	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
-	public static string Part1() => NO_SOLUTION_WRITTEN_MESSAGE;
+
+	public static int Part1()
+	{
+		const int NUMBERS_ON_DIAL = 100;
+		int current = 50;
+		List<int> numbers = [];
+
+		foreach (Instruction instruction in _instructions) {
+			current += instruction.Direction == RotationDirection.Left
+				? -instruction.Distance
+				: instruction.Distance;
+			current = ((current % NUMBERS_ON_DIAL) + NUMBERS_ON_DIAL) % NUMBERS_ON_DIAL;
+			numbers.Add(current);
+		}
+
+		return numbers.Count(num => num is 0);
+	}
+
 	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
 
-	private sealed record Instruction(string Name, int Value) : IParsable<Instruction>
+	private sealed record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
 	{
 		public static Instruction Parse(string s, IFormatProvider? provider)
-		{
-			//MatchCollection match = InputRegEx().Matches(input);
-			Match match = InputRegEx().Match(s);
-			return match.Success
-				? new(match.Groups["opts"].Value, match.As<int>("number"))
-				: null!;
-		}
+			=> new(Enum.Parse<RotationDirection>($"{s[0]}"), int.Parse($"{s[1..]}"));
 
 		public static Instruction Parse(string s) => Parse(s, null);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
 			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
-	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
-	private static partial Regex InputRegEx();
+	private enum RotationDirection
+	{
+		L,
+		R,
+
+		Left = L,
+		Right = R,
+	}
 }
