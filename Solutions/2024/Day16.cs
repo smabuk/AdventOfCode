@@ -196,20 +196,36 @@ public static partial class Day16
 			return;
 		}
 
+		bool isTestOutput = IsTestOutput();
+
 		char[,] outputMap = (char[,])map.Clone();
 
 		foreach (ReindeerPosition reindeerPosition in route ?? []) {
 			outputMap[reindeerPosition.Position.X, reindeerPosition.Position.Y] = reindeerPosition.Direction switch
 			{
 				North => '^',
-				East  => '>',
-				West  => '<',
+				East => '>',
+				West => '<',
 				South => 'v',
-				_     => 'O',
+				_ => 'O',
 			};
 		}
 
-		string[] output = ["", title, .. outputMap.AsStrings().Select(s => s.Replace('.', ' '))];
+		string[] outputMapAsString = isTestOutput
+			? [.. outputMap.AsStrings().Select(s => s.Replace('.', ' '))]
+			: [.. outputMap.AsStrings().Select(s => s.Replace('.', ' ')
+													.Replace("^", "[lime]^[/]")
+													.Replace(">", "[lime]>[/]")
+													.Replace("<", "[lime]<[/]")
+													.Replace("v", "[lime]v[/]")
+													.Replace("O", "[lime]O[/]")
+			)];
+
+		string[] output = isTestOutput
+			? ["", title, .. outputMapAsString]
+			: ["markup", "", title, .. outputMapAsString];
 		_visualise?.Invoke(output, clearScreen);
+
+		static bool IsTestOutput() => _visualise?.Method.DeclaringType?.FullName?.Contains(".Tests.") ?? false;
 	}
 }

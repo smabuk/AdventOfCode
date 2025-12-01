@@ -121,7 +121,11 @@
 			AnsiConsole.Clear();
 		}
 
-		AnsiConsole.Write(string.Join(Environment.NewLine, lines));
+		if (lines[0].Contains("markup", StringComparison.OrdinalIgnoreCase)) {
+			AnsiConsole.Markup(string.Join(Environment.NewLine, lines[1..]));
+		} else {
+			AnsiConsole.Write(string.Join(Environment.NewLine, lines));
+		}
 	}
 
 	private static void DisplayOutputExceptions(IEnumerable<SolutionPhaseResult> solveResults)
