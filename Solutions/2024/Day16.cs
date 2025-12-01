@@ -196,7 +196,7 @@ public static partial class Day16
 			return;
 		}
 
-		bool isTestOutput = IsTestOutput();
+		bool isTestOutput = _visualise.IsTestOutput();
 
 		char[,] outputMap = (char[,])map.Clone();
 
@@ -225,7 +225,5 @@ public static partial class Day16
 			? ["", title, .. outputMapAsString]
 			: ["markup", "", title, .. outputMapAsString];
 		_visualise?.Invoke(output, clearScreen);
-
-		static bool IsTestOutput() => _visualise?.Method.DeclaringType?.FullName?.Contains(".Tests.") ?? false;
 	}
 }
