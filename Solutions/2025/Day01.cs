@@ -69,7 +69,7 @@ public partial class Day01
 		public override string ToString() => $"{Direction}{Distance}";
 
 		public static Instruction Parse(string s, IFormatProvider? provider)
-			=> new(s[0].ToString().AsEnum<RotationDirection>(), s[1..].As<int>());
+			=> new(s[0].AsEnum<RotationDirection>(), s[1..].As<int>());
 
 		public static Instruction Parse(string s) => Parse(s, null);
 		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
@@ -95,6 +95,7 @@ public partial class Day01
 				_ when CurrentPosition is not 0 && CurrentPosition + partialDistance <= 0 => 1,
 				_ => 0,
 			};
+
 			return rotations;
 		}
 	}
