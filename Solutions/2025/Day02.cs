@@ -44,19 +44,12 @@ public partial class Day02 {
 		return Enumerable.Range(1, length / 2)
 			.Where(patternLength => length % patternLength == 0)
 			// Quick first-digit check: extract first digit of productId and first digit at pattern position
-			.Where(patternLength => {
-				int firstDigitPosition = length - 1;
-				int patternDigitPosition = length - patternLength - 1;
-				long firstDigit = productId / Pow10[firstDigitPosition] % 10;
-				long patternDigit = productId / Pow10[patternDigitPosition] % 10;
-				return firstDigit == patternDigit;
-			})
+			.Where(patternLength => productId / Pow10[length - 1] % 10 == productId / Pow10[length - patternLength - 1] % 10)
 			.Any(patternLength => {
-				int repetitions = length / patternLength;
 				long divisor = Pow10[patternLength];
 				long firstPattern = productId / Pow10[length - patternLength];
 
-				return Enumerable.Range(1, repetitions - 1)
+				return Enumerable.Range(1, (length / patternLength) - 1)
 					.All(rep => {
 						int position = length - ((rep + 1) * patternLength);
 						long currentPattern = productId / Pow10[position] % divisor;
