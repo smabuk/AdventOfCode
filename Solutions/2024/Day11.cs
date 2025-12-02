@@ -9,7 +9,7 @@ public static partial class Day11 {
 
 	private static List<long> _initialStones = [];
 
-	
+
 	[Init]
 	public static void InitialStones(string[] input)
 		=> _initialStones = [.. input[0].AsNumbers<long>()];
@@ -46,7 +46,7 @@ public static partial class Day11 {
 
 		long count = 0;
 		if (!evenOrOddNumber.TryGetValue(stone, out int length)) {
-			length = stone.Length();
+			length = stone.Length;
 			evenOrOddNumber[stone] = length;
 		}
 
@@ -109,7 +109,7 @@ public static partial class Day11 {
 
 	private static bool TrySplit(this long value, out (long Left, long Right) leftAndRight)
 	{
-		int length = value.Length();
+		int length = value.Length;
 		if (length.IsOdd()) {
 			leftAndRight = (0, 0);
 			return false;
