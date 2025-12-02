@@ -10,30 +10,29 @@ public partial class Day02 {
 	private static List<LongRange> _ranges = [];
 
 	[Init]
-	public static void LoadInstructions(string[] input)
-	{
-		_ranges = [.. input[0].TrimmedSplit(',').Select(s => ParseToLongRange(s))];
-	}
+	public static void LoadInstructions(string[] input) => _ranges = [
+		.. input[0]
+		.TrimmedSplit(',')
+		.Select(s => ParseToLongRange(s))
+		];
 
 	public static long Part1()
 	{
-		long sum = 0;
-
-		foreach (LongRange productIdRange in _ranges) {
-			for (long l = productIdRange.Start; l <= productIdRange.End; l++) {
-				if (IsInvalidProductId(l.ToString())) {
-					sum += l;
-				}
-			}
-		}
-
-		return sum;
+		return _ranges
+			.SelectMany(range => Enumerable.Sequence(range.Start, range.End, 1))
+			.Where(productId => IsInvalidProductIdForPart1(productId.ToString()))
+			.Sum();
 	}
 
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2()
+	{
+		return _ranges
+			.SelectMany(range => Enumerable.Sequence(range.Start, range.End, 1))
+			.Where(productId => IsInvalidProductIdForPart2(productId.ToString()))
+			.Sum();
+	}
 
-
-	private static bool IsInvalidProductId(string productId)
+	private static bool IsInvalidProductIdForPart1(string productId)
 	{
 		int length = productId.Length;
 
@@ -50,6 +49,30 @@ public partial class Day02 {
 		}
 
 		return true;
+	}
+
+	private static bool IsInvalidProductIdForPart2(string productId)
+	{
+		int length = productId.Length;
+
+		for (int multiple = 1; multiple <= length / 2; multiple++) {
+
+			if (length % multiple != 0) {
+				continue;
+			}
+
+			if (productId[0] != productId[multiple]) {
+				continue;
+			}
+
+			List<string> chunks = [.. productId.Chunk(multiple).Select(chunk => new string(chunk))];
+			if (chunks.All(chunk => chunk == chunks[0])) {
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 
 

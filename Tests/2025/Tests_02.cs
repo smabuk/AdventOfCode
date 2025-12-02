@@ -14,6 +14,14 @@ public class Tests_02_Gift_Shop(ITestOutputHelper testOutputHelper)
 		actual.ShouldBe(expected);
 	}
 
+	[Theory]
+	[InlineData(TEST_DATA, 4174379265)]
+	public void Part2(string input, long expected)
+	{
+		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out long actual);
+		actual.ShouldBe(expected);
+	}
+
 	private void Callback(string[] lines, bool _)
 	{
 		if (lines is null or []) {
