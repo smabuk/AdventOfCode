@@ -8,6 +8,13 @@
 public partial class Day02 {
 
 	private static List<LongRange> _ranges = [];
+	private static readonly Dictionary<int, int[]> _divisors = Enumerable.Range(1, 10)
+		.ToDictionary(
+			length => length,
+			length => Enumerable.Range(1, length / 2)
+				.Where(patternLength => length % patternLength == 0)
+				.ToArray()
+		);
 
 	[Init]
 	public static void LoadInstructions(string[] input)
@@ -41,8 +48,7 @@ public partial class Day02 {
 	{
 		int length = QuickLength(productId);
 
-		return Enumerable.Range(1, length / 2)
-			.Where(patternLength => length % patternLength == 0)
+		return _divisors[length]
 			// Quick first-digit check: extract first digit of productId and first digit at pattern position
 			.Where(patternLength => productId / Pow10[length - 1] % 10 == productId / Pow10[length - patternLength - 1] % 10)
 			.Any(patternLength => {
