@@ -91,7 +91,9 @@
 						AnsiConsole.WriteLine();
 					}
 
-					DisplayOutputTimings(result.Elapsed);
+					if (result.Phase is not PHASE_VISUALISER) {
+						DisplayOutputTimings(result.Elapsed);
+					}
 
 					const int answerLength = 17;
 					string? answerMarkup = result.Phase switch
