@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2025;
+﻿using static AdventOfCode.Solutions._2025.Day03;
+
+namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
 /// Day 03: Lobby
@@ -12,27 +14,44 @@ public partial class Day03 {
 	[Init]
 	public static void LoadBatteryBanks(string[] input) => _batteryBanks = [.. input.As<Bank>()];
 
-	public static long Part1() => _batteryBanks.Sum(bank => bank.Joltage(2));
-	public static long Part2() => _batteryBanks.Sum(bank => bank.Joltage(12));
+	public static  int Part1() => _batteryBanks.Sum(bank => bank.Joltage2);
+	public static long Part2() => _batteryBanks.Sum(bank => bank.Joltage12);
 
+	internal record Battery(int Joltage);
 
-	private sealed record Bank(List<Battery> Batteries) : IParsable<Bank>
+	internal sealed record Bank(List<Battery> Batteries) : IParsable<Bank>
 	{
-		public long Joltage(int noOfBatteries)
+		public static Bank Parse(string s, IFormatProvider? provider)
+			=> new([.. s.AsDigits<int>().Select(dig => new Battery(dig))]);
+
+		public static Bank Parse(string s) => Parse(s, null);
+		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Bank result)
+			=> ISimpleParsable<Bank>.TryParse(s, provider, out result);
+	}
+}
+
+file static partial class Day03Extensions
+{
+	extension (Bank bank)
+	{
+		public  int Joltage2  => (int)bank.Joltage(2);
+		public long Joltage12 => bank.Joltage(12);
+
+		private long Joltage(int noOfBatteries)
 		{
 			List<int> selectedIndices = [];
 			int batteriesNeeded = noOfBatteries;
 			int startIndex = 0;
 
 			while (batteriesNeeded > 0) {
-				int lookAheadWindow = Batteries.Count - startIndex - batteriesNeeded + 1;
+				int lookAheadWindow = bank.Batteries.Count - startIndex - batteriesNeeded + 1;
 
 				int maxJoltage = int.MinValue;
 				int maxIndex = startIndex;
 
 				for (int i = startIndex; i < startIndex + lookAheadWindow; i++) {
-					if (Batteries[i].Joltage > maxJoltage) {
-						maxJoltage = Batteries[i].Joltage;
+					if (bank.Batteries[i].Joltage > maxJoltage) {
+						maxJoltage = bank.Batteries[i].Joltage;
 						maxIndex = i;
 					}
 				}
@@ -44,19 +63,10 @@ public partial class Day03 {
 
 			long joltage = 0;
 			foreach (int index in selectedIndices) {
-				joltage = (joltage * 10) + Batteries[index].Joltage;
+				joltage = (joltage * 10) + bank.Batteries[index].Joltage;
 			}
 
 			return joltage;
 		}
-
-		public static Bank Parse(string s, IFormatProvider? provider)
-			=> new([.. s.AsDigits<int>().Select(dig => new Battery(dig))]);
-
-		public static Bank Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Bank result)
-			=> ISimpleParsable<Bank>.TryParse(s, provider, out result);
 	}
-
-	private record Battery(int Joltage);
 }
