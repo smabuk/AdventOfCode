@@ -8,6 +8,7 @@ public static class GlobalConstants
 
 	public const string EXCEPTION = "Exception";
 	public const string PHASE_SOLUTION = "Solution";
+	public const string PHASE_VISUALISER = "Visualiser";
 	public const string PHASE_INIT = "Init";
 	public const string PHASE_PART = "Part";
 	public const string PHASE_PART0 = "Part0";

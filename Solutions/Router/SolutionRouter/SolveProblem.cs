@@ -13,6 +13,7 @@ static public partial class SolutionRouter
 
 		MethodInfo[] methods = dayTypeInfo.GetMethods();
 
+		_ = InvokePhase(PHASE_VISUALISER, input, args, methods, visualise);
 		_ = InvokePhase(PHASE_INIT, input, args, methods, visualise);
 		return InvokePhase($"{PHASE_PART}{problemNo}", input, args, methods, visualise).Answer;
 	}

@@ -7,19 +7,16 @@
 [Description("Secret Entrance")]
 public partial class Day01
 {
-
 	private const int NUMBERS_ON_DIAL = 100;
 	private const int START_POSITION = 50;
 
+	[Visualiser]
+	public static void InitVisualiser(Action<string[], bool>? visualise) => _visualise = visualise;
 	private static Action<string[], bool>? _visualise = null;
-	private static IEnumerable<Instruction> _instructions = [];
 
 	[Init]
-	public static void LoadInstructions(string[] input, Action<string[], bool>? visualise = null)
-	{
-		_visualise = visualise;
-		_instructions = [.. input.As<Instruction>()];
-	}
+	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+	private static IEnumerable<Instruction> _instructions = [];
 
 	public static int Part1()
 	{

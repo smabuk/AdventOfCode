@@ -17,9 +17,9 @@ static public partial class SolutionRouter
 
 		string[] phases = problemNo switch
 		{
-			1 => [PHASE_INIT, PHASE_PART1],
-			2 => [PHASE_INIT, PHASE_PART2],
-			_ => [PHASE_INIT, PHASE_PART1, PHASE_PART2],
+			1 => [PHASE_VISUALISER, PHASE_INIT, PHASE_PART1],
+			2 => [PHASE_VISUALISER, PHASE_INIT, PHASE_PART2],
+			_ => [PHASE_VISUALISER, PHASE_INIT, PHASE_PART1, PHASE_PART2],
 		};
 
 		foreach (string phase in phases) {

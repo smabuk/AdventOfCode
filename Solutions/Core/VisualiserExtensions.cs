@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Solutions.Core;
 
-public static class VisualizerExtensions
+public static class VisualiserExtensions
 {
 	extension(Action<string[], bool>? action)
 	{
