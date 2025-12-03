@@ -4,15 +4,12 @@
 /// Day 01: Secret Entrance
 /// https://adventofcode.com/2025/day/01
 /// </summary>
+[GenerateVisualiser]
 [Description("Secret Entrance")]
 public partial class Day01
 {
 	private const int NUMBERS_ON_DIAL = 100;
 	private const int START_POSITION = 50;
-
-	[Visualiser]
-	public static void InitVisualiser(Action<string[], bool>? visualise) => _visualise = visualise;
-	private static Action<string[], bool>? _visualise = null;
 
 	[Init]
 	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
@@ -23,7 +20,7 @@ public partial class Day01
 		Dial dial = new(START_POSITION, NUMBERS_ON_DIAL);
 		int count = 0;
 
-		_visualise?.Invoke([$"The dial starts by pointing at {dial.CurrentPosition}."], false);
+		VisualiseString($"The dial starts by pointing at {dial.CurrentPosition}.");
 
 		foreach (Instruction instruction in _instructions) {
 			dial = dial.Rotate(instruction);
@@ -31,7 +28,7 @@ public partial class Day01
 				count++;
 			}
 
-			_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}."], false);
+			VisualiseString($"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}.");
 		}
 
 		return count;
@@ -42,7 +39,7 @@ public partial class Day01
 		Dial dial = new(START_POSITION, NUMBERS_ON_DIAL);
 		int count = 0;
 
-		_visualise?.Invoke([$"The dial starts by pointing at {dial.CurrentPosition}."], false);
+		VisualiseString($"The dial starts by pointing at {dial.CurrentPosition}.");
 
 		foreach (Instruction instruction in _instructions) {
 			int rotations = dial.CountZeros(instruction);
@@ -51,9 +48,9 @@ public partial class Day01
 			dial = dial.Rotate(instruction);
 
 			if (rotations is 0) {
-				_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}."], false);
+				VisualiseString($"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}.");
 			} else {
-				_visualise?.Invoke([$"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}; during this rotation, it points at 0  {rotations,3} time(s)."], false);
+				VisualiseString($"The dial is rotated {instruction,-4} to point at {dial.CurrentPosition,2}; during this rotation, it points at 0  {rotations,3} time(s).");
 			}
 		}
 
