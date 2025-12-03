@@ -63,8 +63,8 @@ public partial class Day01
 		return count;
 	}
 
-	[GenerateParsable]
-	private sealed partial record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
+	[GenerateIParsable]
+	private sealed partial record Instruction(RotationDirection Direction, int Distance)
 	{
 		public int Delta => Direction is RotationDirection.Left ? -Distance : Distance;
 		public override string ToString() => $"{Direction}{Distance}";
