@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode.Tests.Year2025;
 
-public class Tests_01_Secret_Entrance(ITestOutputHelper testOutputHelper)
+[SupportTestOutput]
+public partial class Tests_01_Secret_Entrance
 {
 	const int DAY = 01;
 
@@ -21,7 +22,7 @@ public class Tests_01_Secret_Entrance(ITestOutputHelper testOutputHelper)
 	[InlineData(TEST_DATA, 3)]
 	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 
@@ -30,17 +31,7 @@ public class Tests_01_Secret_Entrance(ITestOutputHelper testOutputHelper)
 	[InlineData("R1000", 10)]
 	public void Part2(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		actual.ShouldBe(expected);
 	}
-
-	private void Callback(string[] lines, bool _)
-	{
-		if (lines is null or []) {
-			return;
-		}
-
-		testOutputHelper.WriteLine(string.Join(Environment.NewLine, lines));
-	}
-
 }
