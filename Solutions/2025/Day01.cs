@@ -67,10 +67,10 @@ public partial class Day01
 	private sealed partial record Instruction(RotationDirection Direction, int Distance)
 	{
 		public int Delta => Direction is RotationDirection.Left ? -Distance : Distance;
+
 		public override string ToString() => $"{Direction}{Distance}";
 
-		public static Instruction Parse(string s, IFormatProvider? provider)
-			=> new(s[0].AsEnum<RotationDirection>(), s[1..].As<int>());
+		public static Instruction Parse(string s) => new(s[0].AsEnum<RotationDirection>(), s[1..].As<int>());
 	}
 
 	private sealed record Dial(int CurrentPosition, int NumbersOnDial)
