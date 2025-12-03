@@ -48,6 +48,6 @@ public partial class Day03 {
 			return joltage;
 		}
 
-		public static Bank Parse(string s, IFormatProvider? provider) => new([.. s.AsDigits<int>().Select(digit => new Battery(digit))]);
+		public static Bank Parse(string s) => new([.. s.AsDigits<int>().Select(digit => new Battery(digit))]);
 	}
 }

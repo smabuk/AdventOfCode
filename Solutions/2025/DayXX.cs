@@ -14,10 +14,10 @@ public partial class DayXX {
 	public static string Part1() => NO_SOLUTION_WRITTEN_MESSAGE;
 	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
-
-	private sealed record Instruction(string Name, int Value) : IParsable<Instruction>
+	[GenerateIParsable]
+	private sealed partial record Instruction(string Name, int Value)
 	{
-		public static Instruction Parse(string s, IFormatProvider? provider)
+		public static Instruction Parse(string s)
 		{
 			//MatchCollection match = InputRegEx().Matches(input);
 			Match match = InputRegEx().Match(s);
@@ -25,10 +25,6 @@ public partial class DayXX {
 				? new(match.Groups["opts"].Value, match.As<int>("number"))
 				: null!;
 		}
-
-		public static Instruction Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
-			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
 	[GeneratedRegex("""(?<opts>opt1|opt2|opt3) (?<number>[\+\-]?\d+)""")]
