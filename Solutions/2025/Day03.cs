@@ -19,14 +19,11 @@ public partial class Day03 {
 
 	internal record Battery(int Joltage);
 
-	internal sealed record Bank(List<Battery> Batteries) : IParsable<Bank>
+	[GenerateParsable]
+	internal sealed partial record Bank(List<Battery> Batteries) : IParsable<Bank>
 	{
 		public static Bank Parse(string s, IFormatProvider? provider)
 			=> new([.. s.AsDigits<int>().Select(dig => new Battery(dig))]);
-
-		public static Bank Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Bank result)
-			=> ISimpleParsable<Bank>.TryParse(s, provider, out result);
 	}
 }
 

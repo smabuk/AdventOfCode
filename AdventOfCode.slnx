@@ -10,6 +10,7 @@
     <Project Path="SharedUI/AdventOfCode.SharedUI.csproj" />
     <Project Path="Solutions/Core/AdventOfCode.Solutions.Core.csproj" />
     <Project Path="Solutions/Router/AdventOfCode.Solutions.Router.csproj" />
+    <Project Path="Solutions/SourceGenerators/AdventOfCode.SourceGenerators.csproj" />
   </Folder>
   <Folder Name="/Solutions/">
     <Project Path="Solutions/2015/AdventOfCode.Solutions.2015.csproj" />

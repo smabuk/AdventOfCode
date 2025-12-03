@@ -63,17 +63,14 @@ public partial class Day01
 		return count;
 	}
 
-	private sealed record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
+	[GenerateParsable]
+	private sealed partial record Instruction(RotationDirection Direction, int Distance) : IParsable<Instruction>
 	{
 		public int Delta => Direction is RotationDirection.Left ? -Distance : Distance;
 		public override string ToString() => $"{Direction}{Distance}";
 
 		public static Instruction Parse(string s, IFormatProvider? provider)
 			=> new(s[0].AsEnum<RotationDirection>(), s[1..].As<int>());
-
-		public static Instruction Parse(string s) => Parse(s, null);
-		public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Instruction result)
-			=> ISimpleParsable<Instruction>.TryParse(s, provider, out result);
 	}
 
 	private sealed record Dial(int CurrentPosition, int NumbersOnDial)

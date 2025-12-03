@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
+		<ProjectReference Include="..\SourceGenerators\AdventOfCode.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<Using Include="AdventOfCode.Solutions.Core" />
 		<Using Static="true" Include="AdventOfCode.Solutions.Core.GlobalConstants" />
 	</ItemGroup>
