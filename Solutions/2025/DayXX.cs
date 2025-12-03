@@ -6,11 +6,14 @@
 /// </summary>
 [Description("")]
 public partial class DayXX {
-
-	private static IEnumerable<Instruction> _instructions = [];
+	[Visualiser]
+	public static void InitVisualiser(Action<string[], bool>? visualise) => _visualise = visualise;
+	private static Action<string[], bool>? _visualise = null;
 
 	[Init]
 	public static void LoadInstructions(string[] input) => _instructions = [.. input.As<Instruction>()];
+	private static IEnumerable<Instruction> _instructions = [];
+
 	public static string Part1() => NO_SOLUTION_WRITTEN_MESSAGE;
 	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
