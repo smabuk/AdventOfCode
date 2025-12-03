@@ -12,29 +12,42 @@ public partial class Day03 {
 	[Init]
 	public static void LoadBatteryBanks(string[] input) => _batteryBanks = [.. input.As<Bank>()];
 
-	public static int Part1() => _batteryBanks.Sum(bank => bank.Joltage);
-
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part1() => _batteryBanks.Sum(bank => bank.Joltage(2));
+	public static long Part2() => _batteryBanks.Sum(bank => bank.Joltage(12));
 
 
 	private sealed record Bank(List<Battery> Batteries) : IParsable<Bank>
 	{
-		public int Joltage {
-			get {
-				int highJoltage1 = Batteries.Take(Batteries.Count - 1).Max(b => b.Joltage);
-				int maxVoltage = int.MinValue;
-				for (int index = 0; index < Batteries.Count - 1; index++) {
-					if (Batteries[index].Joltage == highJoltage1) {
-						int highJoltage2 = Batteries.Skip(index + 1).Max(b => b.Joltage);
-						int voltage = (highJoltage1 * 10) + highJoltage2;
-						if (voltage > maxVoltage) {
-							maxVoltage = voltage;
-						}
+		public long Joltage(int noOfBatteries)
+		{
+			List<int> selectedIndices = [];
+			int batteriesNeeded = noOfBatteries;
+			int startIndex = 0;
+
+			while (batteriesNeeded > 0) {
+				int lookAheadWindow = Batteries.Count - startIndex - batteriesNeeded + 1;
+
+				int maxJoltage = int.MinValue;
+				int maxIndex = startIndex;
+
+				for (int i = startIndex; i < startIndex + lookAheadWindow; i++) {
+					if (Batteries[i].Joltage > maxJoltage) {
+						maxJoltage = Batteries[i].Joltage;
+						maxIndex = i;
 					}
 				}
 
-				return maxVoltage;
+				selectedIndices.Add(maxIndex);
+				startIndex = maxIndex + 1;
+				batteriesNeeded--;
 			}
+
+			long joltage = 0;
+			foreach (int index in selectedIndices) {
+				joltage = (joltage * 10) + Batteries[index].Joltage;
+			}
+
+			return joltage;
 		}
 
 		public static Bank Parse(string s, IFormatProvider? provider)
