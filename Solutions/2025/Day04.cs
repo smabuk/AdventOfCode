@@ -1,5 +1,4 @@
-﻿
-namespace AdventOfCode.Solutions._2025;
+﻿namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
 /// Day 04: Printing Department
@@ -28,18 +27,19 @@ public partial class Day04 {
 			.Where(position => position.Value is PAPER_ROLL &&
 					_diagram
 						.GetAdjacentCells(position, includeDiagonals: true)
-						.Count(cell => cell.Value is PAPER_ROLL) < 4)
+						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4)
 			.Count();
 
 	public static int Part2()
 	{
-		char[,] diagram = (char[,])_diagram.Clone();
+		char[,] diagram = _diagram.Copy();
+		char[,] newDiagram = diagram.Copy();
 
 		int count = 0;
 		int newCount = 0;
 
 		do {
-			char[,] newDiagram = (char[,])diagram.Clone();
+			newDiagram = diagram.Copy();
 			newCount = 0;
 
 			IEnumerable<Cell<char>> accesible = diagram
@@ -47,7 +47,7 @@ public partial class Day04 {
 				.Where(position => position.Value is PAPER_ROLL &&
 					diagram
 						.GetAdjacentCells(position, includeDiagonals: true)
-						.Count(cell => cell.Value is PAPER_ROLL) < 4);
+						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4);
 
 			foreach (Cell<char> roll in accesible) {
 				newDiagram[roll.X, roll.Y] = REMOVE;
@@ -57,11 +57,7 @@ public partial class Day04 {
 
 			VisualiseGrid(newDiagram, $"Remove {newCount} rolls of paper:");
 
-			foreach (Cell<char> cell in newDiagram.ForEachCell().Where(cell => cell.Value is REMOVE)) {
-				newDiagram[cell.X, cell.Y] = SPACE;
-			}
-
-			diagram = (char[,])newDiagram.Clone();
+			diagram = newDiagram.Replace(REMOVE, SPACE);
 		} while (newCount > 0);
 
 		return count;
