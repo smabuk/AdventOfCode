@@ -26,4 +26,13 @@ public partial class Tests_04_Printing_Department
 		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 43)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
 }

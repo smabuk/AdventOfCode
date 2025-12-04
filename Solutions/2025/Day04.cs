@@ -1,4 +1,5 @@
-﻿namespace AdventOfCode.Solutions._2025;
+﻿
+namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
 /// Day 04: Printing Department
@@ -12,22 +13,57 @@ public partial class Day04 {
 	public static void LoadDiagram(string[] input)
 	{
 		_diagram = input.To2dArray();
-		VisualiseGrid(_diagram, "Initial");
+		VisualiseGrid(_diagram, "Initial state:");
 	}
 
 	private static char[,] _diagram = default!;
 
 	const char PAPER_ROLL = '@';
+	const char SPACE      = '.';
+	const char REMOVE     = 'x';
 
 	public static int Part1()
 		=> _diagram
-		.ForEachCell()
-		.Where(position =>
-			position.Value is PAPER_ROLL &&
-			position.Index.AllAdjacent().Count(cell =>
-				_diagram.IsInBounds(cell) && _diagram[cell.X, cell.Y] is PAPER_ROLL) < 4)
-		.Count();
+			.ForEachCell()
+			.Where(position => position.Value is PAPER_ROLL &&
+					_diagram
+						.GetAdjacentCells(position, includeDiagonals: true)
+						.Count(cell => cell.Value is PAPER_ROLL) < 4)
+			.Count();
 
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static int Part2()
+	{
+		char[,] diagram = (char[,])_diagram.Clone();
 
+		int count = 0;
+		int newCount = 0;
+
+		do {
+			char[,] newDiagram = (char[,])diagram.Clone();
+			newCount = 0;
+
+			IEnumerable<Cell<char>> accesible = diagram
+				.ForEachCell()
+				.Where(position => position.Value is PAPER_ROLL &&
+					diagram
+						.GetAdjacentCells(position, includeDiagonals: true)
+						.Count(cell => cell.Value is PAPER_ROLL) < 4);
+
+			foreach (Cell<char> roll in accesible) {
+				newDiagram[roll.X, roll.Y] = REMOVE;
+				count++;
+				newCount++;
+			}
+
+			VisualiseGrid(newDiagram, $"Remove {newCount} rolls of paper:");
+
+			foreach (Cell<char> cell in newDiagram.ForEachCell().Where(cell => cell.Value is REMOVE)) {
+				newDiagram[cell.X, cell.Y] = SPACE;
+			}
+
+			diagram = (char[,])newDiagram.Clone();
+		} while (newCount > 0);
+
+		return count;
+	}
 }
