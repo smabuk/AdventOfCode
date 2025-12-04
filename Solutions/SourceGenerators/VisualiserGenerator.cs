@@ -142,8 +142,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 		string initVisualiserMethod = generateInitVisualiser
 			? """
 
-					[Visualiser]
-					public static void InitVisualiser(Action<string[], bool>? visualise) => _visualise = visualise;
+					public static void Visualiser(Action<string[], bool>? visualise) => _visualise = visualise;
 				"""
 			: "";
 
@@ -165,7 +164,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 						if (_visualise is not null)
 						{
 							string[] output = ["", title, .. grid.AsStrings()];
-							_ = Task.Run(() => _visualise?.Invoke(output, false));
+							_visualise?.Invoke(output, false);
 						}
 					}
 				"""
@@ -182,7 +181,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 						if (_visualise is not null)
 						{
 							string[] output = [stringToSend];
-							_ = Task.Run(() => _visualise?.Invoke(output, false));
+							_visualise?.Invoke(output, false);
 						}
 					}
 				"""
@@ -199,7 +198,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 						if (_visualise is not null)
 						{
 							string[] output = ["", title ?? "", .. strings];
-							_ = Task.Run(() => _visualise?.Invoke(output, false));
+							_visualise?.Invoke(output, false);
 						}
 					}
 				"""
