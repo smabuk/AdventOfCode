@@ -50,7 +50,7 @@ public partial class Day04 {
 						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4);
 
 			foreach (Cell<char> roll in accesible) {
-				newDiagram[roll.X, roll.Y] = REMOVE;
+				newDiagram.SetValue(REMOVE, roll.Index);
 				count++;
 				newCount++;
 			}
