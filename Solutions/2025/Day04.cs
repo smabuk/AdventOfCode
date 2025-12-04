@@ -55,7 +55,7 @@ public partial class Day04 {
 				newCount++;
 			}
 
-			VisualiseGrid(newDiagram, $"Remove {newCount} rolls of paper:");
+			VisualiseGrid(newDiagram, $"Remove {newCount} rolls of paper:", clearScreen: true);
 
 			diagram = newDiagram.Replace(REMOVE, SPACE);
 		} while (newCount > 0);

@@ -159,12 +159,12 @@ public class VisualiserGenerator : IIncrementalGenerator
 					/// <summary>
 					/// Visualises a 2D char grid with a title.
 					/// </summary>
-					protected static void VisualiseGrid(char[,] grid, string title)
+					protected static void VisualiseGrid(char[,] grid, string title, bool clearScreen = false)
 					{
 						if (_visualise is not null)
 						{
 							string[] output = ["", title, .. grid.AsStrings()];
-							_visualise?.Invoke(output, false);
+							_visualise?.Invoke(output, clearScreen);
 						}
 					}
 				"""
