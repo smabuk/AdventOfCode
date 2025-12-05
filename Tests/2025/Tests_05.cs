@@ -1,6 +1,7 @@
-﻿namespace AdventOfCode.Tests.Year2025;
+﻿using static AdventOfCode.Solutions.SolutionRouter;
 
-[SupportTestOutput]
+namespace AdventOfCode.Tests.Year2025;
+
 public partial class Tests_05_Cafeteria
 {
 	const int DAY = 05;

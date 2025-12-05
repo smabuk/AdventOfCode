@@ -7,58 +7,76 @@ namespace AdventOfCode.Solutions._2025;
 /// https://adventofcode.com/2025/day/05
 /// </summary>
 [Description("Cafeteria")]
-[GenerateVisualiser]
 public partial class Day05
 {
+	private static List<FreshRange> _freshIdRanges = [];
+	private static List<Ingredient> _ingredients = [];
 
 	[Init]
 	public static void LoadDatabase(string[] input)
 	{
 		_freshIdRanges = [.. input
 			.TakeWhile(i => i.HasNonWhiteSpaceContent())
-			.Select(i => i.TrimmedSplit('-'))
-			.Select(r => new LongRange(r[0].As<long>(), r[1].As<long>()))
+			.As<FreshRange>()
 			];
 
-		_ingredients = [.. input[(_freshIdRanges.Count + 1)..].As<Ingredient>()];
+		_ingredients = [.. input
+			.Skip(_freshIdRanges.Count + 1)
+			.As<Ingredient>()];
+
+		_freshIdRanges = _freshIdRanges.MergeOverlapping();
 	}
 
-	internal static List<LongRange> _freshIdRanges = [];
-	private static List<Ingredient> _ingredients = [];
+	public static  int Part1() => _ingredients.Count(IsFresh);
+	public static long Part2() => _freshIdRanges.Sum(Length);
 
-	public static  int Part1() => _ingredients.Count(ingredient => ingredient.IsFresh());
-	public static long Part2() => _freshIdRanges.MergeOverlapping().Sum(range => range.Length);
 
-	[GenerateIParsable]
-	internal sealed partial record Ingredient(long Id)
+	static bool IsFresh(Ingredient ingredient) => _freshIdRanges.Any(ingredient.IsInRange);
+	static long Length(FreshRange range) => range.Length;
+
+
+	[GenerateIParsable] internal sealed partial record FreshRange(long Start, long End)
+	{
+		public static FreshRange Parse(string s)
+		{
+			string[] parts = s.TrimmedSplit('-');
+			return new FreshRange(parts[0].As<long>(), parts[1].As<long>());
+		}
+	};
+
+	[GenerateIParsable] internal sealed partial record Ingredient(long Id)
 	{
 		public static Ingredient Parse(string s) => new(s.As<long>());
 	}
+
 }
 
 file static class Day05Helpers
 {
 	extension(Ingredient ingredient)
 	{
-		public bool IsFresh() => _freshIdRanges.Any(ingredient.IsInRange);
-
-		public bool IsInRange(LongRange range) => ingredient.Id >= range.Start && ingredient.Id <= range.End;
+		public bool IsInRange(FreshRange range) => ingredient.Id >= range.Start && ingredient.Id <= range.End;
 	}
 
-	extension(IEnumerable<LongRange> ranges)
+	extension(FreshRange range)
 	{
-		public List<LongRange> MergeOverlapping()
+		public long Length => range.End - range.Start + 1;
+	}
+
+	extension(IEnumerable<FreshRange> ranges)
+	{
+		public List<FreshRange> MergeOverlapping()
 		{
-			List<LongRange> mergedRanges = [];
-			foreach (LongRange range in ranges.OrderBy(r => r.Start)) {
+			List<FreshRange> mergedRanges = [];
+			foreach (FreshRange range in ranges.OrderBy(r => r.Start)) {
 				if (mergedRanges.Count == 0) {
 					mergedRanges.Add(range);
 					continue;
 				}
 
-				LongRange lastRange = mergedRanges[^1];
+				FreshRange lastRange = mergedRanges[^1];
 				if (range.Start <= lastRange.End + 1) {
-					mergedRanges[^1] = new LongRange(lastRange.Start, long.Max(lastRange.End, range.End));
+					mergedRanges[^1] = new FreshRange(lastRange.Start, long.Max(lastRange.End, range.End));
 				} else {
 					mergedRanges.Add(range);
 				}
