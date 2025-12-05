@@ -27,4 +27,12 @@ public partial class Tests_05_Cafeteria
 		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 14)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

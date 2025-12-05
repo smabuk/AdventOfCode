@@ -8,7 +8,8 @@ namespace AdventOfCode.Solutions._2025;
 /// </summary>
 [Description("Cafeteria")]
 [GenerateVisualiser]
-public partial class Day05 {
+public partial class Day05
+{
 
 	[Init]
 	public static void LoadDatabase(string[] input)
@@ -25,9 +26,8 @@ public partial class Day05 {
 	internal static List<LongRange> _freshIdRanges = [];
 	private static List<Ingredient> _ingredients = [];
 
-	public static int Part1() => _ingredients.Count(ingredient => ingredient.IsFresh());
-
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static  int Part1() => _ingredients.Count(ingredient => ingredient.IsFresh());
+	public static long Part2() => _freshIdRanges.MergeOverlapping().Sum(range => range.Length);
 
 	[GenerateIParsable]
 	internal sealed partial record Ingredient(long Id)
@@ -43,5 +43,28 @@ file static class Day05Helpers
 		public bool IsFresh() => _freshIdRanges.Any(ingredient.IsInRange);
 
 		public bool IsInRange(LongRange range) => ingredient.Id >= range.Start && ingredient.Id <= range.End;
+	}
+
+	extension(IEnumerable<LongRange> ranges)
+	{
+		public List<LongRange> MergeOverlapping()
+		{
+			List<LongRange> mergedRanges = [];
+			foreach (LongRange range in ranges.OrderBy(r => r.Start)) {
+				if (mergedRanges.Count == 0) {
+					mergedRanges.Add(range);
+					continue;
+				}
+
+				LongRange lastRange = mergedRanges[^1];
+				if (range.Start <= lastRange.End + 1) {
+					mergedRanges[^1] = new LongRange(lastRange.Start, long.Max(lastRange.End, range.End));
+				} else {
+					mergedRanges.Add(range);
+				}
+			}
+
+			return mergedRanges;
+		}
 	}
 }
