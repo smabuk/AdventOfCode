@@ -1,6 +1,6 @@
 ﻿@if (HasVisualiser) {
 	<h3>Visualiser</h3>
-	<div><p>@Output</p></div>
+	<div><p>@((MarkupString)Output)</p></div>
 }
 
 @code {
@@ -19,6 +19,7 @@
 	protected override Task OnParametersSetAsync()
 	{
 		HasVisualiser = SolutionRouter.HasVisualiser(Year, Day, ProblemNo);
+		Output = "";
 		return base.OnParametersSetAsync();
 	}
 
@@ -32,8 +33,10 @@
 			Output = "";
 		}
 
-		Output += string.Join(Environment.NewLine, lines);
-		Task.Delay(200);
+		Output += string.Join("<br>", lines);
+		Output += "<br>";
+		// Task.Delay(20);
+		StateHasChanged();
 	}
 
 

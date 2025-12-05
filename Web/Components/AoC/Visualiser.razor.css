@@ -1,0 +1,14 @@
+﻿p {
+	font-size: large;
+	color: #e83e8c;
+	line-height: 1;
+	height: 300px;
+	width: 100%;
+	overflow: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+	p {
+		color: #ffd800;
+	}
+}
