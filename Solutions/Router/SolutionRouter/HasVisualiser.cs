@@ -5,9 +5,8 @@ static public partial class SolutionRouter
 	{
 		_ = TryGetDayTypeInfo(year, day, out TypeInfo? dayTypeInfo);
 		return dayTypeInfo is not null &&
-			dayTypeInfo
-			.GetMethods()
-			.Where(m => m.Name == $"{PHASE_PART}{part}")
-			.SingleOrDefault(m => m.GetCustomAttributes().Any(attr => (attr.ToString() ?? "").EndsWith("HasVisualiserAttribute"))) is not null;
+			(dayTypeInfo.GetMethods().Any(m => m.Name == PHASE_VISUALISER)
+			|| dayTypeInfo.GetMethods().Where(m => m.Name == $"{PHASE_PART}{part}")
+				.SingleOrDefault(m => m.GetCustomAttributes().Any(attr => (attr.ToString() ?? "").EndsWith("VisualiserAttribute"))) is not null);
 	}
 }

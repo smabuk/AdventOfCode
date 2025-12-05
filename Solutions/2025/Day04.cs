@@ -11,11 +11,11 @@ public partial class Day04 {
 	[Init]
 	public static void LoadDiagram(string[] input)
 	{
-		_diagram = input.To2dArray();
+		_diagram = input.To2dGrid<char>();
 		VisualiseGrid(_diagram, "Initial state:");
 	}
 
-	private static char[,] _diagram = default!;
+	private static Grid<char> _diagram = default!;
 
 	const char PAPER_ROLL = '@';
 	const char SPACE      = '.';
@@ -32,8 +32,8 @@ public partial class Day04 {
 
 	public static int Part2()
 	{
-		char[,] diagram = _diagram.Copy();
-		char[,] newDiagram = diagram.Copy();
+		Grid<char> diagram = _diagram.Copy();
+		Grid<char> newDiagram = diagram.Copy();
 
 		int count = 0;
 		int newCount = 0;

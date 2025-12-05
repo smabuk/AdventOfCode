@@ -39,8 +39,8 @@ public partial class Day05
 	{
 		public static FreshRange Parse(string s)
 		{
-			string[] parts = s.TrimmedSplit('-');
-			return new FreshRange(parts[0].As<long>(), parts[1].As<long>());
+			long[] numbers = [.. s.AsNumbers<long>(separator: '-')];
+			return new FreshRange(numbers[0], numbers[1]);
 		}
 	};
 

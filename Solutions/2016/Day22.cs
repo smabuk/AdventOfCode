@@ -53,7 +53,6 @@ file static class Day22Extensions
 			&& nodes[A].Used <= nodes[B].Available;
 	}
 
-	[HasVisualiser]
 	public static void VisualiseGrid(this Node[,] grid, Point goal, string title, Action<string[], bool>? visualise)
 	{
 		const char GOAL = 'G';
@@ -67,7 +66,7 @@ file static class Day22Extensions
 			int veryLargeVeryFull = grid.ForEachCell().Max(cell => cell.Value.Size);
 			for (int y = 0; y < grid.RowsCount(); y++) {
 				string row = "";
-		
+
 				for (int x = 0; x < grid.ColsCount(); x++) {
 					Node node = grid[x, y];
 					char c = SMALL_ENOUGH_NODE;

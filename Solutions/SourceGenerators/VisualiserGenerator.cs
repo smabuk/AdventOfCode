@@ -141,7 +141,6 @@ public class VisualiserGenerator : IIncrementalGenerator
 	{
 		string initVisualiserMethod = generateInitVisualiser
 			? """
-
 					public static void Visualiser(Action<string[], bool>? visualise) => _visualise = visualise;
 				"""
 			: "";
@@ -155,6 +154,18 @@ public class VisualiserGenerator : IIncrementalGenerator
 
 		string visualiseGridMethod = generateVisualiseGrid
 			? """
+
+					/// <summary>
+					/// Visualises a 2D char grid with a title.
+					/// </summary>
+					protected static void VisualiseGrid(Grid<char> grid, string title, bool clearScreen = false)
+					{
+						if (_visualise is not null)
+						{
+							string[] output = ["", title, .. grid.AsStrings()];
+							_visualise?.Invoke(output, clearScreen);
+						}
+					}
 
 					/// <summary>
 					/// Visualises a 2D char grid with a title.

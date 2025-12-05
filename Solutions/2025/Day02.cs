@@ -23,8 +23,8 @@ public partial class Day02
 
 	private static LongRange ParseToRange(string s)
 	{
-		string[] parts = s.Split('-');
-		return new LongRange(parts[0].As<long>(), parts[1].As<long>());
+		long[] parts = [.. s.AsNumbers<long>('-')];
+		return new LongRange(parts[0], parts[1]);
 	}
 
 	public static long Part1()
