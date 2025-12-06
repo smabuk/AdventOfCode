@@ -3,8 +3,10 @@
 	color: #e83e8c;
 	line-height: 1;
 	height: 300px;
-	width: 100%;
+	width: 95%;
 	overflow: auto;
+	white-space: pre;
+	overflow-wrap: normal;
 }
 
 @media (prefers-color-scheme: dark) {

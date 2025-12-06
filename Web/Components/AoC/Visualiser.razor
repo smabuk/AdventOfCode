@@ -1,6 +1,6 @@
 ﻿@if (HasVisualiser) {
 	<h3>Visualiser</h3>
-	<div><p>@((MarkupString)Output)</p></div>
+	<div><p>@Output</p></div>
 }
 
 @code {
@@ -33,8 +33,8 @@
 			Output = "";
 		}
 
-		Output += string.Join("<br>", lines);
-		Output += "<br>";
+		Output += string.Join(Environment.NewLine, lines);
+		Output += Environment.NewLine;
 		// Task.Delay(20);
 		StateHasChanged();
 	}
