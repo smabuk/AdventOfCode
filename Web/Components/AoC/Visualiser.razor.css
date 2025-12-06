@@ -1,16 +1,30 @@
-﻿p {
-	font-size: large;
+﻿details,
+textarea
+{
 	color: #e83e8c;
-	line-height: 1;
-	height: 300px;
+
+	summary {
+		font-weight: bold;
+		font-size: larger;
+	}
+}
+
+textarea {
+	display: inline-block;
+	font-size: large;
+	line-height: 1.1;
+	height: 400px;
 	width: 95%;
-	overflow: auto;
+	overflow-x: auto;
 	white-space: pre;
 	overflow-wrap: normal;
+	background-color: var(--bg-color);
+	scrollbar-width: thin;
 }
 
 @media (prefers-color-scheme: dark) {
-	p {
+	details,
+	textarea {
 		color: #ffd800;
 	}
 }

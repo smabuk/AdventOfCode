@@ -62,7 +62,7 @@ public partial class Day06
 		};
 
 		public override string ToString()
-			=> $"{string.Join(Operator is Add ? " + " : " * ", Numbers)} = {Result}";
+			=> $"{string.Join(Operator is Add ? " + " : " * ", Numbers.Select(n => $"{n,4}")),-25} = {Result}";
 	}
 
 	public enum Operator

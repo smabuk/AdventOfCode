@@ -1,6 +1,8 @@
 ﻿@if (HasVisualiser) {
-	<h3>Visualiser</h3>
-	<div><p>@Output</p></div>
+	<details>
+		<summary>Visualiser</summary>
+		<div><textarea disabled>@Output</textarea></div>
+	</details>
 }
 
 @code {
