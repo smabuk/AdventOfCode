@@ -25,8 +25,8 @@ public partial class Day06
 			.To2dArray()
 			.Transpose()
 			.Rows()
-			.Index()
-			.Select(numbers => new Problem(_operators[numbers.Index], [.. numbers.Item]))
+			.Zip(_operators)
+			.Select(zip => new Problem(zip.Second, [.. zip.First]))
 			.Sum(problem =>
 			{
 				VisualiseString(problem.ToString());
@@ -38,16 +38,12 @@ public partial class Day06
 	{
 		VisualiseStrings([$"{_operators.Count} problems:", ""]);
 
-		char[,] homeworkAsChars = input[..^1].To2dArray();
-		List<int> problemStartIndexes = [.. homeworkAsChars.FindProblemStarts()];
-
-		return problemStartIndexes[..^1]
-			.Index()
-			.Select(indexedStarts => Enumerable
-				.Sequence(indexedStarts.Item, problemStartIndexes[indexedStarts.Index + 1] - 2, 1)
-				.Select(col => homeworkAsChars.ToCephalopodNumber(col)))
-			.Index()
-			.Select(indexedNumbers => new Problem(_operators[indexedNumbers.Index], [.. indexedNumbers.Item.Reverse()]))
+		return input[..^1]
+			.To2dArray()
+			.ColsAsStrings()
+			.ChunkByEmpty()
+			.Zip(_operators)
+			.Select(zip => new Problem(zip.Second, [.. zip.First.Select(n => (long)n).Reverse()]))
 			.Reverse()
 			.Sum(problem =>
 			{
@@ -66,7 +62,7 @@ public partial class Day06
 		};
 
 		public override string ToString()
-			=> $"{string.Join(Operator is Add ? " + ": " * ", Numbers)} = {Result}";
+			=> $"{string.Join(Operator is Add ? " + " : " * ", Numbers)} = {Result}";
 	}
 
 	public enum Operator
@@ -78,17 +74,26 @@ public partial class Day06
 
 file static class Day06Helpers
 {
-	const char EMPTY = ' ';
-
-	extension(char[,] homework)
+	extension(IEnumerable<string> numbers)
 	{
-		public int ToCephalopodNumber(int col) => string.Join("", homework.Col(col)).As<int>();
+		public IEnumerable<List<int>> ChunkByEmpty()
+		{
+			List<int> currentChunk = [];
 
-		public IEnumerable<int> FindProblemStarts() =>
-			[
-				0,
-				.. Enumerable.Range(1, homework.ColsCount()).Where(i => homework.Col(i - 1).All(x => x is EMPTY))
-				, homework.ColsCount() + 1
-			];
+			foreach (string number in numbers) {
+				if (number.IsWhiteSpace()) {
+					if (currentChunk.Count > 0) {
+						yield return currentChunk;
+						currentChunk = [];
+					}
+				} else {
+					currentChunk.Add(number.As<int>());
+				}
+			}
+
+			if (currentChunk.Count > 0) {
+				yield return currentChunk;
+			}
+		}
 	}
 }
