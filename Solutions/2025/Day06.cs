@@ -41,9 +41,9 @@ public partial class Day06
 		return input[..^1]
 			.To2dArray()
 			.ColsAsStrings()
-			.ChunkByEmpty()
+			.ChunkBy(string.IsNullOrWhiteSpace, long.Parse)
 			.Zip(_operators)
-			.Select(zip => new Problem(zip.Second, [.. zip.First.Select(n => (long)n).Reverse()]))
+			.Select(zip => new Problem(zip.Second, [.. zip.First.AsEnumerable().Reverse()]))
 			.Reverse()
 			.Sum(problem =>
 			{
@@ -74,20 +74,21 @@ public partial class Day06
 
 file static class Day06Helpers
 {
-	extension(IEnumerable<string> numbers)
+	// Wrote this and made it generic so it is now in Smab.Helpers v1.9.12
+	extension<TSource>(IEnumerable<TSource> items)
 	{
-		public IEnumerable<List<int>> ChunkByEmpty()
+		public IEnumerable<List<TOut>> ChunkBy<TOut>(Func<TSource, bool> predicate, Func<TSource, TOut> conversion)
 		{
-			List<int> currentChunk = [];
+			List<TOut> currentChunk = [];
 
-			foreach (string number in numbers) {
-				if (number.IsWhiteSpace()) {
+			foreach (TSource item in items) {
+				if (predicate(item)) {
 					if (currentChunk.Count > 0) {
 						yield return currentChunk;
 						currentChunk = [];
 					}
 				} else {
-					currentChunk.Add(number.As<int>());
+					currentChunk.Add(conversion(item));
 				}
 			}
 
