@@ -10,7 +10,7 @@ public class Tests_02_Gift_Shop
 	[InlineData(TEST_DATA, 1227775554)]
 	public void Part1(string input, long expected)
 	{
-		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out long actual);
+		_ = long.TryParse(SolveProblem(YEAR, DAY, PART1, input), out long actual);
 		actual.ShouldBe(expected);
 	}
 
@@ -18,7 +18,7 @@ public class Tests_02_Gift_Shop
 	[InlineData(TEST_DATA, 4174379265)]
 	public void Part2(string input, long expected)
 	{
-		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out long actual);
+		_ = long.TryParse(SolveProblem(YEAR, DAY, PART2, input), out long actual);
 		actual.ShouldBe(expected);
 	}
 }

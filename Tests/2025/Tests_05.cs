@@ -1,6 +1,4 @@
-﻿using static AdventOfCode.Solutions.SolutionRouter;
-
-namespace AdventOfCode.Tests.Year2025;
+﻿namespace AdventOfCode.Tests.Year2025;
 
 public partial class Tests_05_Cafeteria
 {

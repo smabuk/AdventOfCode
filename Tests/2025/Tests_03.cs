@@ -21,7 +21,7 @@ public class Tests_03_Lobby
 	[InlineData(TEST_DATA, 357)]
 	public void Part1(string input, int expected)
 	{
-		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 
@@ -33,7 +33,7 @@ public class Tests_03_Lobby
 	[InlineData(TEST_DATA, 3121910778619)]
 	public void Part2(string input, long expected)
 	{
-		_ = long.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input), out long actual);
+		_ = long.TryParse(SolveProblem(YEAR, DAY, PART2, input), out long actual);
 		actual.ShouldBe(expected);
 	}
 }
