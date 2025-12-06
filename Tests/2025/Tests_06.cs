@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2025;
 
+[SupportTestOutput]
 public partial class Tests_06_Trash_Compactor
 {
 	const int DAY = 06;

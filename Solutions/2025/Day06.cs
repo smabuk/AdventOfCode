@@ -7,18 +7,19 @@ namespace AdventOfCode.Solutions._2025;
 /// https://adventofcode.com/2025/day/06
 /// </summary>
 [Description("Trash Compactor")]
+[GenerateVisualiser]
 public partial class Day06
 {
-	private const string OP_ADD = "+";
-
 	[Init]
 	public static void LoadOperators(string[] input)
-		=> _operators = [.. input[^1].TrimmedSplit().Select(op => op is OP_ADD ? Add : Mul)];
+		=> _operators = [.. input[^1].TrimmedSplit().Select(op => op is "+" ? Add : Mul)];
 
 	private static List<Operator> _operators = [];
 
 	public static long Part1(string[] input)
 	{
+		VisualiseStrings([$"{_operators.Count} problems:", ""]);
+
 		return input[..^1]
 			.AsNumbers<int>()
 			.To2dArray()
@@ -26,11 +27,17 @@ public partial class Day06
 			.Rows()
 			.Index()
 			.Select(numbers => new Problem(_operators[numbers.Index], [.. numbers.Item]))
-			.Sum(problem => problem.Solve());
+			.Sum(problem =>
+			{
+				VisualiseString(problem.ToString());
+				return problem.Result;
+			});
 	}
 
 	public static long Part2(string[] input)
 	{
+		VisualiseStrings([$"{_operators.Count} problems:", ""]);
+
 		char[,] homeworkAsChars = input[..^1].To2dArray();
 		List<int> problemStartIndexes = [.. homeworkAsChars.FindProblemStarts()];
 
@@ -40,18 +47,26 @@ public partial class Day06
 				.Sequence(indexedStarts.Item, problemStartIndexes[indexedStarts.Index + 1] - 2, 1)
 				.Select(col => homeworkAsChars.ToCephalopodNumber(col)))
 			.Index()
-			.Select(indexedNumbers => new Problem(_operators[indexedNumbers.Index], [.. indexedNumbers.Item]))
-			.Sum(problem => problem.Solve());
+			.Select(indexedNumbers => new Problem(_operators[indexedNumbers.Index], [.. indexedNumbers.Item.Reverse()]))
+			.Reverse()
+			.Sum(problem =>
+			{
+				VisualiseString(problem.ToString());
+				return problem.Result;
+			});
 	}
 
 	private record Problem(Operator Operator, List<long> Numbers)
 	{
-		public long Solve() => Operator switch
+		public long Result = Operator switch
 		{
 			Add => Numbers.Sum(),
 			Mul => Numbers.Aggregate(1L, (total, number) => total * number),
 			_ => 0
 		};
+
+		public override string ToString()
+			=> $"{string.Join(Operator is Add ? " + ": " * ", Numbers)} = {Result}";
 	}
 
 	public enum Operator
