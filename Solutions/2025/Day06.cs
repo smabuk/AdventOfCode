@@ -19,7 +19,7 @@ public partial class Day06
 			.Sum(i => operators[i] switch
 			{
 				OP_ADD => homeworkAsNumbers.Col(i).Sum(),
-				OP_MUL => homeworkAsNumbers.Col(i).Aggregate(1L, (curr, val) => curr * val),
+				OP_MUL => homeworkAsNumbers.Col(i).Aggregate(1L, (total, number) => total * number),
 				_ => 0
 			});
 	}
@@ -29,43 +29,40 @@ public partial class Day06
 		char[,] homeworkAsChars = input[..^1].To2dArray();
 		string[] operators = [.. input[^1].TrimmedSplit()];
 
-		List<int> problemStarts = [.. homeworkAsChars.FindProblemStarts()];
+		List<int> problemStartIndexes = [.. homeworkAsChars.FindProblemStarts()];
 
-		return problemStarts
-			.Take(problemStarts.Count - 1)
-			.Select((problemStart, i)
-				=> Enumerable.Sequence(problemStart, problemStarts[i + 1] - 2, 1)
-					.Aggregate(operators[i] == OP_MUL ? 1L : 0, (curr, idx) =>
-					{
-						long cephalapod_number = string.Join("", homeworkAsChars.Col(idx)).As<long>();
-						return operators[i] switch
+		return problemStartIndexes[..^1]
+			.Index()
+			.Select(start
+				=> Enumerable.Sequence(start.Item, problemStartIndexes[start.Index + 1] - 2, 1)
+					.Aggregate(operators[start.Index] is OP_MUL ? 1L : 0, (total, idx) =>
+						operators[start.Index] switch
 						{
-							OP_ADD => curr + cephalapod_number,
-							OP_MUL => curr * cephalapod_number,
+							OP_ADD => total + homeworkAsChars.Col(idx).ToCephalopodNumber(),
+							OP_MUL => total * homeworkAsChars.Col(idx).ToCephalopodNumber(),
 							_ => 0
-						};
-					}))
+						}
+					))
 			.Sum();
 	}
 }
 
 file static class Day06Helpers
 {
+	const char EMPTY = ' ';
+
+	extension(IEnumerable<char> chars)
+	{
+		public long ToCephalopodNumber() => string.Join("", chars).As<long>();
+	}
+
 	extension(char[,] homework)
 	{
-		public IEnumerable<int> FindProblemStarts()
-		{
-			const char EMPTY = ' ';
-			yield return 0;
-
-			int i = 0;
-			for (i = 0; i < homework.ColsCount(); i++) {
-				if (homework.Col(i).All(x => x is EMPTY)) {
-					yield return (i + 1);
-				}
-			}
-
-			yield return (i + 1);
-		}
+		public IEnumerable<int> FindProblemStarts() =>
+			[
+				0,
+				.. Enumerable.Range(1, homework.ColsCount()).Where(i => homework.Col(i - 1).All(x => x is EMPTY))
+				, homework.ColsCount() + 1
+			];
 	}
 }
