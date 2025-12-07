@@ -1,5 +1,5 @@
 ﻿details,
-textarea
+.visualiser-output
 {
 	color: #e83e8c;
 
@@ -9,7 +9,7 @@ textarea
 	}
 }
 
-textarea {
+.visualiser-output {
 	display: inline-block;
 	font-size: large;
 	line-height: 1.1;
@@ -20,11 +20,12 @@ textarea {
 	overflow-wrap: normal;
 	background-color: var(--bg-color);
 	scrollbar-width: thin;
+	border: 1px solid var(--text-color);
 }
 
 @media (prefers-color-scheme: dark) {
 	details,
-	textarea {
+	.visualiser-output {
 		color: #ffd800;
 	}
 }

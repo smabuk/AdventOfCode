@@ -1,7 +1,7 @@
 ﻿@if (HasVisualiser) {
 	<details>
 		<summary>Visualiser</summary>
-		<div><textarea disabled>@Output</textarea></div>
+		<div class="visualiser-output">@((MarkupString)Output)</div>
 	</details>
 }
 
@@ -35,8 +35,16 @@
 			Output = "";
 		}
 
-		Output += string.Join(Environment.NewLine, lines);
+		if (lines[0] is "markup") {
+			Output += string.Join(Environment.NewLine, lines[1..]);
+			Output = System.Text.RegularExpressions.Regex.Replace(Output, @"\[([^\]]+)\]([^\[]*)\[/\]", "<span style='color: $1;'>$2</span>");
+		} else {
+			Output += string.Join(Environment.NewLine, lines);
+
+		}
+
 		Output += Environment.NewLine;
+
 		// Task.Delay(20);
 		StateHasChanged();
 	}

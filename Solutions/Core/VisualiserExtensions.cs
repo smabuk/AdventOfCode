@@ -8,7 +8,7 @@ public static class VisualiserExtensions
 		/// Determines whether the current action supports markup in its output.
 		/// </summary>
 		/// <returns>true if the action is capable of producing markup output; otherwise, false.</returns>
-		public bool IsCapableOfMarkup() => action.IsConsoleOutput();
+		public bool IsCapableOfMarkup() => action.IsConsoleOutput() || action.IsWebOutput();
 
 		/// <summary>
 		/// Determines whether the current output is directed to the console.
