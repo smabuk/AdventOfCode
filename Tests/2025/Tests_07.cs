@@ -29,8 +29,15 @@ public partial class Tests_07_Laboratories
 	[InlineData(TEST_DATA, 21)]
 	public void Part1(string input, int expected)
 	{
-		input = input.Replace('.', ' ');
 		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
+		actual.ShouldBe(expected);
+	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 40)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
 		actual.ShouldBe(expected);
 	}
 }
