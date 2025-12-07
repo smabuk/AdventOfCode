@@ -261,6 +261,33 @@ public class VisualiserGenerator : IIncrementalGenerator
 							_visualise?.Invoke(output, false);
 						}
 					}
+
+					/// <summary>
+					/// Visualises a collection of strings with a title.
+					/// </summary>
+					protected static void VisualiseStringWithMarkup(string stringToSend, params IEnumerable<(string Item, string Replacement)> replacements)
+					{
+						if (_visualise is not null)
+						{
+							replacements = _visualise.IsCapableOfMarkup()
+								? [.. replacements.Select(m => (m.Replacement is ['[', .. , ']'] ? ($"{m.Item}", $"{m.Replacement}{m.Item}[/]") : m))]
+								: [.. replacements.Where(m => m.Replacement is not ['[', .., ']'])];
+
+							string processedString = stringToSend;
+							foreach ((string item, string replacement) in replacements)
+							{
+								processedString = processedString.Replace(item, replacement);
+							}
+
+							if (_visualise.IsCapableOfMarkup())
+							{
+								_visualise?.Invoke(["markup", processedString], false);
+							} else {
+								processedString = System.Text.RegularExpressions.Regex.Replace(processedString, @"\[[^\]]+\]([^\[]*)\[/\]", "$1");
+								_visualise?.Invoke([processedString], false);
+							}
+						}
+					}
 				"""
 			: "";
 
