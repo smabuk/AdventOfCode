@@ -96,7 +96,7 @@ public static partial class Day20 {
 		List<Point> codePath = [start];
 		Point current = _start;
 		while (current != end) {
-			current = track.GetAdjacentCells(current).Single(cell => cell.Value is TRACK or END && visited.DoesNotContain(cell.Index));
+			current = track.GetAdjacentsAsCells(current).Single(cell => cell.Value is TRACK or END && visited.DoesNotContain(cell.Index));
 			_ = visited.Add(current);
 			codePath.Add(current);
 		}
@@ -107,9 +107,9 @@ public static partial class Day20 {
 	private static IEnumerable<Cheat> FindCheats(this List<Point> route, char[,] track, Dictionary<Point, int> codePath)
 	{
 		foreach ((int routeIndex, Point startCheat) in route.Index()) {
-		foreach (Cell<char> possibleMove1 in track.GetAdjacentCells(startCheat)        .Where(c => c.Value is WALL)) {
-		foreach (Cell<char> possibleMove2 in track.GetAdjacentCells(possibleMove1).Where(c => c.Value is TRACK or END && c.Index != startCheat)) {
-			if (track.GetAdjacentCells(possibleMove2).Any(cell => routeIndex > codePath.GetValueOrDefault(cell.Index, -1))) {
+		foreach (Cell<char> possibleMove1 in track.GetAdjacentsAsCells(startCheat)        .Where(c => c.Value is WALL)) {
+		foreach (Cell<char> possibleMove2 in track.GetAdjacentsAsCells(possibleMove1).Where(c => c.Value is TRACK or END && c.Index != startCheat)) {
+			if (track.GetAdjacentsAsCells(possibleMove2).Any(cell => routeIndex > codePath.GetValueOrDefault(cell.Index, -1))) {
 				yield return new(startCheat, possibleMove1, possibleMove2);
 			}
 		}
@@ -120,9 +120,9 @@ public static partial class Day20 {
 	private static IEnumerable<Cheat> FindCheatsPart2(this List<Point> route, char[,] track, Dictionary<Point, int> codePath)
 	{
 		foreach ((int routeIndex, Point point) in route.Index()) {
-			foreach (Cell<char> possibleMove1 in track.GetAdjacentCells(point).Where(c => c.Value is WALL)) {
-				foreach (Cell<char> possibleMove2 in track.GetAdjacentCells(possibleMove1).Where(c => c.Value is TRACK or END && c.Index != point)) {
-					if (track.GetAdjacentCells(possibleMove2).Any(cell => routeIndex > codePath.GetValueOrDefault(cell.Index, -1))) {
+			foreach (Cell<char> possibleMove1 in track.GetAdjacentsAsCells(point).Where(c => c.Value is WALL)) {
+				foreach (Cell<char> possibleMove2 in track.GetAdjacentsAsCells(possibleMove1).Where(c => c.Value is TRACK or END && c.Index != point)) {
+					if (track.GetAdjacentsAsCells(possibleMove2).Any(cell => routeIndex > codePath.GetValueOrDefault(cell.Index, -1))) {
 						yield return new(point, possibleMove1, possibleMove2);
 					}
 				}
@@ -133,7 +133,7 @@ public static partial class Day20 {
 	private static int FindTimeSaving(this Cheat cheat, char[,] track, Dictionary<Point, int> codePath, List<Point> route)
 	{
 		int firstIndex = cheat.Start == Point.Zero
-			? route.Index().First(p => (track.GetAdjacentCells(p.Item).Select(c => c.Index).Contains(cheat.Move1))).Index
+			? route.Index().First(p => (track.GetAdjacentsAsCells(p.Item).Select(c => c.Index).Contains(cheat.Move1))).Index
 			: codePath[cheat.Start] + 1;
 		int secondIndex = codePath[cheat.End];
 

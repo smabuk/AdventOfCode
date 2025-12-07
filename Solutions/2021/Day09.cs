@@ -26,7 +26,7 @@ public class Day09 {
 
 	static bool IsLowPoint(int[,] array, int col, int row) {
 		int currValue = array[col, row];
-		foreach ((_, _, int value) in array.GetAdjacentCells(col, row)) {
+		foreach ((_, _, int value) in array.GetAdjacentsAsCells(col, row)) {
 			if (value <= currValue) {
 				return false;
 			}
@@ -43,7 +43,7 @@ public class Day09 {
 			.Indexes()
 			.Where(cell => IsLowPoint(heightMap, cell.X, cell.Y))
 			.AsPoints()
-			.Select(location => 
+			.Select(location =>
 				new Basin(location, GetAdjacentBasinPoints(location, heightMap, [location]))
 				.Locations
 				.Count)
@@ -53,7 +53,7 @@ public class Day09 {
 	}
 
 	static List<Point> GetAdjacentBasinPoints(Point p, int[,] array, List<Point> knownPoints) {
-		foreach ((int x, int y, int value) in array.GetAdjacentCells(p)) {
+		foreach ((int x, int y, int value) in array.GetAdjacentsAsCells(p)) {
 			Point newP = new(x, y);
 			if (!knownPoints.Contains(newP)) {
 				if (value < 9) {

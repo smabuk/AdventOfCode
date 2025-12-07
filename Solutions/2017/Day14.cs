@@ -63,7 +63,7 @@ file static class Day14Extensions
 		while (stack.Count > 0) {
 			(int currentCol, int currentRow) = stack.Pop();
 
-			foreach (Cell<char> adjacentCell in grid.GetAdjacentCells(currentCol, currentRow)) {
+			foreach (Cell<char> adjacentCell in grid.GetAdjacentsAsCells(currentCol, currentRow)) {
 				if (predicate(adjacentCell.Value) && !visited[adjacentCell.Col, adjacentCell.Row]) {
 					stack.Push((adjacentCell.Col, adjacentCell.Row));
 					visited[adjacentCell.Col, adjacentCell.Row] = true;

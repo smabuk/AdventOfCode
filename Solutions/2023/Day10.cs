@@ -125,7 +125,7 @@ public sealed partial class Day10 {
 			.Index;
 
 		Direction startingDirection = Direction.Left;
-		List<Cell<char>> adjacentCells = [.. pipe_maze.GetAdjacentCells(startingPosition)];
+		List<Cell<char>> adjacentCells = [.. pipe_maze.GetAdjacentsAsCells(startingPosition)];
 		foreach (Cell<char> cell in adjacentCells) {
 			if (cell.Value is STRAIGHT_LEFT_RIGHT or BEND_BOTTOM_LEFT or BEND_TOP_LEFT && startingPosition.X > cell.X) {
 				startingDirection = Direction.Left;
@@ -245,7 +245,7 @@ file static class Day10Helpers
 			}
 
 			pipe_maze[point.X, point.Y] = fillValue;
-			foreach (Cell<char> adjacent in pipe_maze.GetAdjacentCells(point)) {
+			foreach (Cell<char> adjacent in pipe_maze.GetAdjacentsAsCells(point)) {
 				queue.Enqueue(adjacent.Index);
 			}
 		}

@@ -98,7 +98,7 @@ public class Day15 {
 		while (priorityQueue.Count > 0) {
 			Cell<int> cell = priorityQueue.Dequeue();
 
-			foreach ((int x, int y, int value) in grid.GetAdjacentCells(cell.Index)) {
+			foreach ((int x, int y, int value) in grid.GetAdjacentsAsCells(cell.Index)) {
 				Cell<int> neighbour = new(x, y, value);
 				if (!costs.ContainsKey(neighbour.Index)) {
 					int cost = costs[cell.Index] + neighbour.Value;

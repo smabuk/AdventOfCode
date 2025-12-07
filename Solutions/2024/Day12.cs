@@ -81,7 +81,7 @@ file static partial class Day12Extensions
 			Point plot = plotQueue.Dequeue();
 			plots.Add(plot);
 
-			foreach (Cell<char> adjacentPlot in farm.GetAdjacentCells(plot)) {
+			foreach (Cell<char> adjacentPlot in farm.GetAdjacentsAsCells(plot)) {
 				if (visited.DoesNotContain(adjacentPlot) && adjacentPlot.Value == initialPlot.Value) {
 					plotQueue.Enqueue(adjacentPlot.Index);
 					_ = visited.Add(adjacentPlot.Index);

@@ -51,7 +51,7 @@ public static partial class Day10
 
 	private static IEnumerable<Trail> NextPositions(this int[,] map, Trail trail)
 		=> map
-			.GetAdjacentCells(trail.EndPoint)
+			.GetAdjacentsAsCells(trail.EndPoint)
 			.Where(next => next.Value == trail.End + 1)
 			.Select(next => trail with { EndPoint = next.Index, End = next.Value, Route = [.. trail.Route, next] });
 	

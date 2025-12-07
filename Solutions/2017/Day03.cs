@@ -31,7 +31,7 @@ public sealed partial class Day03 {
 
 		foreach (Point point in start.SpiralPoints()) {
 			grid[point.X, point.Y] = grid
-				.GetAdjacentCells(point, includeDiagonals: true)
+				.GetAdjacentsAsCells(point, includeDiagonals: true)
 				.Sum(cell => cell.Value);
 
 			if (grid[point.X, point.Y] > target) {

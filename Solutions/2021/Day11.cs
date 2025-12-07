@@ -59,11 +59,11 @@ public class Day11 {
 	private static int CalculateAdjacentChanges(int col, int row, int[,] grid, HashSet<Point> flashedPoints) {
 		int flashes = 0;
 
-		foreach ((int x, int y, _) in grid.GetAdjacentCells(col, row, includeDiagonals: true)) {
+		foreach ((int x, int y, _) in grid.GetAdjacentsAsCells(col, row, includeDiagonals: true)) {
 			grid[x, y]++;
 		}
 
-		foreach ((int x, int y, int energyValue) in grid.GetAdjacentCells(col, row, includeDiagonals: true)) {
+		foreach ((int x, int y, int energyValue) in grid.GetAdjacentsAsCells(col, row, includeDiagonals: true)) {
 			if (energyValue > 9 && flashedPoints.Add(new(x, y))) {
 				flashes += 1 + CalculateAdjacentChanges(x, y, grid, flashedPoints);
 			}

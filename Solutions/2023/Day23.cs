@@ -56,7 +56,7 @@ file static class Day23Helpers
 					continue;
 				}
 
-				if (map.GetAdjacentCells(current).Where(adj => adj.Value != FOREST).Count() >= 3) {
+				if (map.GetAdjacentsAsCells(current).Where(adj => adj.Value != FOREST).Count() >= 3) {
 					points.Add(current);
 				}
 			}
@@ -131,7 +131,7 @@ file static class Day23Helpers
 			yield break;
 		}
 
-		foreach (Cell<char> item in _map.GetAdjacentCells(current).Where(adj => adj.Value != FOREST)) {
+		foreach (Cell<char> item in _map.GetAdjacentsAsCells(current).Where(adj => adj.Value != FOREST)) {
 			yield return item.Index;
 		}
 	}

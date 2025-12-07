@@ -51,7 +51,7 @@ public sealed partial class Day12 {
 		int currentCost = _costs[point];
 
 		_elevationMap
-			.GetAdjacentCells(point)
+			.GetAdjacentsAsCells(point)
 			.ToList()
 			.ForEach(adj => CalculateAdjacent(adj.Index));
 

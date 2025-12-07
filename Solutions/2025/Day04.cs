@@ -26,7 +26,7 @@ public partial class Day04 {
 			.ForEachCell()
 			.Where(position => position.Value is PAPER_ROLL &&
 					_diagram
-						.GetAdjacentCells(position, includeDiagonals: true)
+						.GetAdjacentsAsCells(position, includeDiagonals: true)
 						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4)
 			.Count();
 
@@ -46,7 +46,7 @@ public partial class Day04 {
 				.ForEachCell()
 				.Where(position => position.Value is PAPER_ROLL &&
 					diagram
-						.GetAdjacentCells(position, includeDiagonals: true)
+						.GetAdjacentsAsCells(position, includeDiagonals: true)
 						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4);
 
 			foreach (Cell<char> roll in accesible) {

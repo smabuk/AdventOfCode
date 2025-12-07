@@ -33,7 +33,7 @@ public sealed partial class Day21 {
 		for (int i = 0; i < noOfSteps; i++) {
 			HashSet<Point> nextPlots = []; 
 			foreach (var plot in plots) {
-				nextPlots = [.. nextPlots, .. garden.GetAdjacentCells(plot).Where(p => p.Value != ROCK).Select(p => p.Index)];
+				nextPlots = [.. nextPlots, .. garden.GetAdjacentsAsCells(plot).Where(p => p.Value != ROCK).Select(p => p.Index)];
 			}
 			plots = [.. nextPlots];
 		}
@@ -49,7 +49,7 @@ public sealed partial class Day21 {
 		for (int i = 0; i < noOfSteps; i++) {
 			HashSet<Point> nextPlots = [];
 			foreach (var plot in plots) {
-				nextPlots = [.. nextPlots, .. garden.GetAdjacentCells(plot).Where(p => p.Value != ROCK).Select(p => p.Index)];
+				nextPlots = [.. nextPlots, .. garden.GetAdjacentsAsCells(plot).Where(p => p.Value != ROCK).Select(p => p.Index)];
 			}
 			plots = [.. nextPlots];
 		}
