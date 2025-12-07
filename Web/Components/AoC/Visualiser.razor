@@ -1,8 +1,26 @@
 ﻿@if (HasVisualiser) {
-	<details>
-		<summary>Visualiser</summary>
-		<div class="visualiser-output">@((MarkupString)Output)</div>
-	</details>
+	@if (OutputHistory.Count > 0) {
+		<details>
+			<summary>Visualiser</summary>
+			<div class="visualiser-container">
+				<div class="visualiser-output">@((MarkupString)CurrentOutput)</div>
+				@if (OutputHistory.Count > 1) {
+					<div class="visualiser-controls">
+						<button @onclick="PlayPause" class="control-button">
+							@(IsPlaying ? "⏸" : "▶")
+						</button>
+						<input type="range"
+							   min="0"
+							   max="@(OutputHistory.Count - 1)"
+							   @bind="CurrentIndex"
+							   @bind:event="oninput"
+							   class="timeline-slider" />
+						<span class="frame-counter">@(CurrentIndex + 1) / @OutputHistory.Count</span>
+					</div>
+				}
+			</div>
+		</details>
+	}
 }
 
 @code {
@@ -10,7 +28,27 @@
 	[Parameter] public int Day { get; set; }
 	[Parameter] public int ProblemNo { get; set; }
 
-	public string Output { get; set; } = "";
+	private List<string> OutputHistory { get; set; } = [];
+	private int _currentIndex = 0;
+	private bool IsPlaying = false;
+	private System.Threading.Timer? _playTimer;
+
+	public int CurrentIndex
+	{
+		get => _currentIndex;
+		set
+		{
+			if (_currentIndex != value && value >= 0 && value < OutputHistory.Count) {
+				_currentIndex = value;
+				StateHasChanged();
+			}
+		}
+	}
+
+	public string CurrentOutput => OutputHistory.Count > 0 && CurrentIndex < OutputHistory.Count
+		? OutputHistory[CurrentIndex]
+		: "";
+
 	public bool HasVisualiser { get; private set; } = false;
 
 	protected override Task OnInitializedAsync()
@@ -21,7 +59,11 @@
 	protected override Task OnParametersSetAsync()
 	{
 		HasVisualiser = SolutionRouter.HasVisualiser(Year, Day, ProblemNo);
-		Output = "";
+		OutputHistory.Clear();
+		_currentIndex = 0;
+		IsPlaying = false;
+		_playTimer?.Dispose();
+		_playTimer = null;
 		return base.OnParametersSetAsync();
 	}
 
@@ -32,23 +74,61 @@
 		}
 
 		if (clearScreen) {
-			Output = "";
+			// OutputHistory.Clear();
+			// _currentIndex = 0;
 		}
+
+		string newOutput = OutputHistory.Count > 0 && !clearScreen
+			? OutputHistory[^1]
+			: "";
 
 		if (lines[0] is "markup") {
-			Output += string.Join(Environment.NewLine, lines[1..]);
-			Output = System.Text.RegularExpressions.Regex.Replace(Output, @"\[([^\]]+)\]([^\[]*)\[/\]", "<span style='color: $1;'>$2</span>");
+			string processedOutput = string.Join(Environment.NewLine, lines[1..]);
+			processedOutput = System.Text.RegularExpressions.Regex.Replace(
+				processedOutput,
+				@"\[([^\]]+)\]([^\[]*)\[/\]",
+				"<span style='color: $1;'>$2</span>");
+			newOutput += processedOutput;
 		} else {
-			Output += string.Join(Environment.NewLine, lines);
-
+			newOutput += string.Join(Environment.NewLine, lines);
 		}
 
-		Output += Environment.NewLine;
+		newOutput += Environment.NewLine;
 
-		// Task.Delay(20);
+		OutputHistory.Add(newOutput);
+		_currentIndex = OutputHistory.Count - 1;
+
 		StateHasChanged();
 	}
 
+	private void PlayPause()
+	{
+		IsPlaying = !IsPlaying;
 
+		if (IsPlaying) {
+			_playTimer = new System.Threading.Timer(async _ =>
+			{
+				await InvokeAsync(() =>
+				{
+					if (CurrentIndex < OutputHistory.Count - 1) {
+						CurrentIndex++;
+						StateHasChanged();
+					} else {
+						IsPlaying = false;
+						_playTimer?.Dispose();
+						_playTimer = null;
+						StateHasChanged();
+					}
+				});
+			}, null, 0, 100); // 100ms between frames
+		} else {
+			_playTimer?.Dispose();
+			_playTimer = null;
+		}
+	}
 
+	public void Dispose()
+	{
+		_playTimer?.Dispose();
+	}
 }

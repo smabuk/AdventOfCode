@@ -21,10 +21,10 @@ public partial class Day07
 
 		int tachyonSplits = 0;
 
-		//VisualiseGrid(diagram, "Initial:");
+		VisualiseGridWithMarkup(diagram, "Initial:", true);
 
-		VisualiseStrings(["Final:", diagram.RowAsString(0)]);
-		VisualiseStringWithMarkup(diagram.RowAsString(0).Replace(START, BEAM), ($"{START}", $"{BEAM}"), ($"{BEAM}", "[red]"));
+		//VisualiseStrings(["Final:", diagram.RowAsString(0)]);
+		//VisualiseStringWithMarkup(diagram.RowAsString(0).Replace(START, BEAM), ($"{START}", $"{BEAM}"), ($"{BEAM}", "[red]"));
 
 		for (int rowIdx = 1; rowIdx < diagram.RowsCount; rowIdx++) {
 			for (int colIdx = 0; colIdx < diagram.ColsCount; colIdx++) {
@@ -40,11 +40,10 @@ public partial class Day07
 				}
 			}
 
-			VisualiseStringWithMarkup(diagram.RowAsString(rowIdx), ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
-			VisualiseStringWithMarkup(diagram.RowAsString(rowIdx).Replace(SPLITTER, SPACE), ($"{BEAM}", "[red]"));
+			VisualiseGridWithMarkup(diagram, "Final:", true, ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
+			//VisualiseStringWithMarkup(diagram.RowAsString(rowIdx), ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
+			//VisualiseStringWithMarkup(diagram.RowAsString(rowIdx).Replace(SPLITTER, SPACE), ($"{BEAM}", "[red]"));
 		}
-
-		//VisualiseGridWithMarkup(diagram, "Final:", false, ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
 
 		return tachyonSplits;
 	}

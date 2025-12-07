@@ -1,6 +1,5 @@
 ﻿details,
-.visualiser-output
-{
+.visualiser-output {
 	color: #e83e8c;
 
 	summary {
@@ -9,18 +8,110 @@
 	}
 }
 
+.visualiser-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 10px;
+}
+
 .visualiser-output {
 	display: inline-block;
-	font-size: large;
+	width: 100%;
+	min-height: 70vh;
+	max-height: 90vh;
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+/*	background-color: #1e1e1e;*/
+/*	color: #d4d4d4;*/
+	font-family: 'Consolas', 'Courier New', monospace;
+	font-size: 14px;
 	line-height: 1.1;
-	height: 400px;
-	width: 95%;
-	overflow-x: auto;
-	white-space: pre;
-	overflow-wrap: normal;
-	background-color: var(--bg-color);
+	overflow: auto;
+	white-space: pre-wrap;
 	scrollbar-width: thin;
 	border: 1px solid var(--text-color);
+}
+
+.visualiser-controls {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px;
+	background-color: #f5f5f5;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+.control-button {
+	width: 40px;
+	height: 40px;
+	font-size: 20px;
+	border: none;
+	border-radius: 4px;
+	background-color: #007acc;
+	color: white;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+}
+
+	.control-button:hover {
+		background-color: #005a9e;
+	}
+
+	.control-button:active {
+		background-color: #004578;
+	}
+
+.timeline-slider {
+	flex: 1;
+	height: 8px;
+	-webkit-appearance: none;
+	appearance: none;
+	background: #ddd;
+	outline: none;
+	border-radius: 4px;
+}
+
+	.timeline-slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 20px;
+		height: 20px;
+		background: #007acc;
+		cursor: pointer;
+		border-radius: 50%;
+		transition: background-color 0.2s;
+	}
+
+		.timeline-slider::-webkit-slider-thumb:hover {
+			background: #005a9e;
+		}
+
+	.timeline-slider::-moz-range-thumb {
+		width: 20px;
+		height: 20px;
+		background: #007acc;
+		cursor: pointer;
+		border-radius: 50%;
+		border: none;
+		transition: background-color 0.2s;
+	}
+
+		.timeline-slider::-moz-range-thumb:hover {
+			background: #005a9e;
+		}
+
+.frame-counter {
+	font-family: 'Consolas', 'Courier New', monospace;
+	font-size: 14px;
+	color: #333;
+	min-width: 80px;
+	text-align: right;
 }
 
 @media (prefers-color-scheme: dark) {
