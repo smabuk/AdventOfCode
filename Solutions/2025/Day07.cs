@@ -12,9 +12,10 @@ public partial class Day07 {
 	private const char SPACE    = '.';
 	private const char SPLITTER = '^';
 	private const char START    = 'S';
-	private static readonly Point SPLIT_LEFT  = new(-1, 0);
-	private static readonly Point SPLIT_RIGHT = new( 1, 0);
-	private static readonly Point NEXT_ROW    = new( 0, 1);
+	private static readonly Point SPLIT_LEFT  = new(-1,  0);
+	private static readonly Point SPLIT_RIGHT = new( 1,  0);
+	private static readonly Point NEXT_ROW    = new( 0,  1);
+	private static readonly Point PREV_ROW    = new( 0, -1);
 	private static readonly Point[] SPLIT_LEFT_AND_RIGHT = [SPLIT_LEFT, SPLIT_RIGHT];
 
 	public static int Part1(string[] input)
@@ -23,21 +24,22 @@ public partial class Day07 {
 
 		int tachyonSplits = 0;
 
-		Point tachyonStart = new(diagram.Row(0).Index().First(x => x.Item == START).Index, 1);
-		diagram[tachyonStart] = BEAM;
+		Point tachyonStart = new(diagram.Find(START) ?? throw new ApplicationException("Start not found."));
+		diagram[tachyonStart + NEXT_ROW] = BEAM;
 
 		VisualiseGrid(diagram, "Initial:");
 
 		for (int rowIdx = 2; rowIdx < diagram.RowsCount; rowIdx++) {
 			for (int colIdx = 0; colIdx < diagram.ColsCount; colIdx++) {
-				if (diagram[colIdx, rowIdx] is SPLITTER && diagram[colIdx, rowIdx - 1] is BEAM) {
-					diagram[colIdx - 1, rowIdx] = BEAM;
-					diagram[colIdx + 1, rowIdx] = BEAM;
+				Point cell = new(colIdx, rowIdx);
+				if (diagram[cell] is SPLITTER && diagram[cell + PREV_ROW] is BEAM) {
+					diagram[cell + SPLIT_LEFT] = BEAM;
+					diagram[cell + SPLIT_RIGHT] = BEAM;
 					tachyonSplits++;
 				}
 
-				if (diagram[colIdx, rowIdx] is SPACE && diagram[colIdx, rowIdx - 1] is BEAM) {
-					diagram[colIdx, rowIdx] = BEAM;
+				if (diagram[cell] is SPACE && diagram[cell + PREV_ROW] is BEAM) {
+					diagram[cell] = BEAM;
 				}
 			}
 
@@ -52,35 +54,36 @@ public partial class Day07 {
 		Grid<char> diagram = input.To2dGrid();
 		Grid<long> timelineCounts = new(diagram.ColsCount, diagram.RowsCount);
 
-		Point tachyonStart = new(diagram.Row(0).Index().First(x => x.Item == START).Index, 1);
-		timelineCounts[tachyonStart] = 1;
+		Point tachyonStart = new(diagram.Find(START) ?? throw new ApplicationException("Start not found."));
+		timelineCounts[tachyonStart + NEXT_ROW] = 1;
 
-		foreach (Cell<char> cell in diagram.ForEachCell().Where(cell => cell.Row > 0 && cell.Row < diagram.ColsCount)) {
-			long currentTimelines = timelineCounts[cell.Index];
-			if (currentTimelines == 0) {
-				continue;
-			}
+		for (int rowIdx = 1; rowIdx < diagram.RowsCount - 1; rowIdx++) {
+			for (int colIdx = 0; colIdx < diagram.ColsCount; colIdx++) {
+				Point cell = new(colIdx, rowIdx);
+				long currentTimelines = timelineCounts[cell];
+				if (currentTimelines == 0) {
+					continue;
+				}
 
-			Point nextCell = cell.Index + NEXT_ROW;
+				Point nextCell = cell + NEXT_ROW;
 
-			switch (diagram[nextCell]) {
-				case SPLITTER:
-					foreach (Point split in SPLIT_LEFT_AND_RIGHT) {
-						if (timelineCounts.IsInBounds(nextCell + split)) {
-							timelineCounts[nextCell + split] += currentTimelines;
+				switch (diagram[nextCell]) {
+					case SPLITTER:
+						foreach (Point split in SPLIT_LEFT_AND_RIGHT) {
+							if (timelineCounts.IsInBounds(nextCell + split)) {
+								timelineCounts[nextCell + split] += currentTimelines;
+							}
 						}
-					}
-
-					break;
-				case SPACE:
-					timelineCounts[nextCell] += currentTimelines;
-					break;
-				default:
-					break;
+						break;
+					case SPACE:
+						timelineCounts[nextCell] += currentTimelines;
+						break;
+					default:
+						break;
+				}
 			}
-
 		}
 
-		return timelineCounts.Row(diagram.RowsCount - 1).Sum();
+		return timelineCounts[.., ^1].Sum();
 	}
 }
