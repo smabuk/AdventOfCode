@@ -108,6 +108,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 			bool hasInitVisualiserMethod = HasInitVisualiserMethod(classSymbol);
 			bool hasVisualiseField = HasVisualiseField(classSymbol);
 			bool hasVisualiseGridMethod = HasVisualiseGridMethod(classSymbol);
+			bool hasVisualiseGridWithMarkupMethod = HasVisualiseGridWithMarkupMethod(classSymbol);
 			bool hasVisualiseStringMethod = HasVisualiseStringMethod(classSymbol);
 			bool hasVisualiseStringsMethod = HasVisualiseStringsMethod(classSymbol);
 
@@ -123,6 +124,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 				!hasInitVisualiserMethod,
 				!hasVisualiseField,
 				!hasVisualiseGridMethod,
+				!hasVisualiseGridWithMarkupMethod,
 				!hasVisualiseStringMethod,
 				!hasVisualiseStringsMethod);
 
@@ -136,6 +138,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 		bool generateInitVisualiser,
 		bool generateVisualiseField,
 		bool generateVisualiseGrid,
+		bool generateVisualiseGridWithMarkup,
 		bool generateVisualiseString,
 		bool generateVisualiseStrings)
 	{
@@ -158,11 +161,11 @@ public class VisualiserGenerator : IIncrementalGenerator
 					/// <summary>
 					/// Visualises a 2D char grid with a title.
 					/// </summary>
-					protected static void VisualiseGrid(Grid<char> grid, string title, bool clearScreen = false)
+					protected static void VisualiseGrid(Grid<char> grid, string title, bool clearScreen = false, params IEnumerable<(string Value, string Replacement)> replacements)
 					{
 						if (_visualise is not null)
 						{
-							string[] output = ["", title, .. grid.AsStrings()];
+							string[] output = ["", title, .. grid.AsStrings(replacements)];
 							_visualise?.Invoke(output, clearScreen);
 						}
 					}
@@ -170,11 +173,74 @@ public class VisualiserGenerator : IIncrementalGenerator
 					/// <summary>
 					/// Visualises a 2D char grid with a title.
 					/// </summary>
-					protected static void VisualiseGrid(char[,] grid, string title, bool clearScreen = false)
+					protected static void VisualiseGrid(char[,] grid, string title, bool clearScreen = false, params IEnumerable<(string Value, string Replacement)> replacements)
 					{
 						if (_visualise is not null)
 						{
-							string[] output = ["", title, .. grid.AsStrings()];
+							string[] output = ["", title, .. grid.AsStrings(replacements)];
+							_visualise?.Invoke(output, clearScreen);
+						}
+					}
+				"""
+			: "";
+
+		string visualiseGridWithMarkupMethod = generateVisualiseGridWithMarkup
+			? """
+
+					/// <summary>
+					/// Displays the specified character grid with optional markup applied to selected items, using the configured
+					/// visualisation mechanism.
+					/// </summary>
+					/// <remarks>If the configured visualisation mechanism supports markup, the specified items in the grid will be
+					/// displayed using the provided colours. Otherwise, the grid is displayed without markup. This method has no effect if
+					/// no visualisation mechanism is configured.</remarks>
+					/// <param name="grid">The grid of characters to be visualised.</param>
+					/// <param name="title">The title to display above the grid.</param>
+					/// <param name="clearScreen">true to clear the screen before displaying the grid; otherwise, false.</param>
+					/// <param name="markups">A list of tuples specifying which characters in the grid should be highlighted and the colour to use for each. If
+					/// the visualisation mechanism does not support markup, this parameter is ignored.</param>
+					protected static void VisualiseGridWithMarkup(Grid<char> grid, string title, bool clearScreen = false, params IEnumerable<(string Item, string Replacement)> replacements)
+					{
+						if (_visualise is not null) {
+							replacements = _visualise.IsCapableOfMarkup()
+								? [.. replacements.Select(m => (m.Replacement is ['[', .., ']'] ? ($"{m.Item}", $"{m.Replacement}{m.Item}[/]") : m))]
+								: [.. replacements.Where(m => m.Replacement is not ['[', .., ']'])];
+
+							string[] start = _visualise.IsCapableOfMarkup()
+								? ["markup"]
+								: [""];
+
+							string[] output = [.. start, title, .. grid.AsStrings(replacements)];
+
+							_visualise?.Invoke(output, clearScreen);
+						}
+					}
+
+					/// <summary>
+					/// Displays the specified character grid with optional markup applied to selected items, using the configured
+					/// visualisation mechanism.
+					/// </summary>
+					/// <remarks>If the configured visualisation mechanism supports markup, the specified items in the grid will be
+					/// displayed using the provided colours. Otherwise, the grid is displayed without markup. This method has no effect if
+					/// no visualisation mechanism is configured.</remarks>
+					/// <param name="grid">The grid of characters to be visualised.</param>
+					/// <param name="title">The title to display above the grid.</param>
+					/// <param name="clearScreen">true to clear the screen before displaying the grid; otherwise, false.</param>
+					/// <param name="markups">A list of tuples specifying which characters in the grid should be highlighted and the colour to use for each. If
+					/// the visualisation mechanism does not support markup, this parameter is ignored.</param>
+					protected static void VisualiseGridWithMarkup(char[,] grid, string title, bool clearScreen = false, params IEnumerable<(string Item, string Replacement)> replacements)
+					{
+						if (_visualise is not null) {
+							replacements = _visualise.IsCapableOfMarkup()
+								? [.. replacements.Select(m => (m.Replacement is ['[', .. , ']'] ? ($"{m.Item}", $"{m.Replacement}{m.Item}[/]") : m))]
+								: [.. replacements.Where(m => m.Replacement is not ['[', .., ']'])];
+
+							string[] start = _visualise.IsCapableOfMarkup()
+								? ["markup"]
+								: [""];
+
+							string[] output = [.. start, title, .. grid.AsStrings(replacements)];
+
 							_visualise?.Invoke(output, clearScreen);
 						}
 					}
@@ -226,6 +292,7 @@ public class VisualiserGenerator : IIncrementalGenerator
 			{{initVisualiserMethod}}
 			{{visualiseField}}
 			{{visualiseGridMethod}}
+			{{visualiseGridWithMarkupMethod}}
 			{{visualiseStringMethod}}
 			{{visualiseStringsMethod}}
 			}
@@ -247,6 +314,13 @@ public class VisualiserGenerator : IIncrementalGenerator
 	}
 
 	private static bool HasVisualiseGridMethod(INamedTypeSymbol classSymbol)
+	{
+		return classSymbol.GetMembers("VisualiseGrid")
+			.OfType<IMethodSymbol>()
+			.Any();
+	}
+
+	private static bool HasVisualiseGridWithMarkupMethod(INamedTypeSymbol classSymbol)
 	{
 		return classSymbol.GetMembers("VisualiseGrid")
 			.OfType<IMethodSymbol>()

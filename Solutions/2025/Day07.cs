@@ -43,7 +43,7 @@ public partial class Day07 {
 				}
 			}
 
-			VisualiseGrid(diagram, "");
+			VisualiseGridWithMarkup(diagram, "", true, ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
 		}
 
 		return tachyonSplits;
@@ -86,4 +86,6 @@ public partial class Day07 {
 
 		return timelineCounts.BottomEdge().Sum();
 	}
+
+
 }
