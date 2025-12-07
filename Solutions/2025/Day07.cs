@@ -24,6 +24,8 @@ public partial class Day07 {
 
 		VisualiseGrid(diagram, "Initial:");
 
+		VisualiseStrings(["Final:", diagram.RowAsString(0), diagram.RowAsString(1)]);
+
 		for (int rowIdx = 2; rowIdx < diagram.RowsCount; rowIdx++) {
 			for (int colIdx = 0; colIdx < diagram.ColsCount; colIdx++) {
 				Point cell = new(colIdx, rowIdx);
@@ -38,9 +40,10 @@ public partial class Day07 {
 				}
 			}
 
-			VisualiseGridWithMarkup(diagram, "", true, ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
+			VisualiseString(diagram.RowAsString(rowIdx));
 		}
 
+		VisualiseGridWithMarkup(diagram, "Final:", false, ($"{SPLITTER}", "[lime]"), ($"{BEAM}", "[red]"));
 		return tachyonSplits;
 	}
 
@@ -78,6 +81,4 @@ public partial class Day07 {
 
 		return timelineCounts.BottomEdge().Sum();
 	}
-
-
 }
