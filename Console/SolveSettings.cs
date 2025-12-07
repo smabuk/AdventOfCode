@@ -24,9 +24,13 @@ internal sealed class SolveSettings : CommandSettings
 	[DefaultValue(false)]
 	public bool Visual { get; init; }
 
-	[CommandOption("--visual-time <TIMESPAN>")]
-	[Description("Time to wait for visuals (format: hh:mm:ss.ms). Default is 00:00:00.300")]
-	public TimeSpan VisualTime { get; init; } = new TimeSpan(0, 0, 0, 0, 300);
+	[CommandOption("--vt|--visual-time <TIMESPAN>")]
+	[Description("Time to wait for visuals (format: hh:mm:ss.ms). Default is 00:00:00.100")]
+	public TimeSpan VisualTime { get; init; } = new TimeSpan(0, 0, 0, 0, 100);
+
+	[CommandOption("--vd|--visual-delay <MILLISECONDS>")]
+	[Description("Time to wait for visuals in milliseconds. Overrides --visual-time if specified.")]
+	public int? VisualDelayMs { get; init; }
 
 	[CommandOption("--download")]
 	[Description("Download the puzzle input.")]

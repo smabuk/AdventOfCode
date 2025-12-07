@@ -12,14 +12,16 @@
 		bool showVisuals = settings.Visual;
 		bool isDebug = settings.Debug;
 		bool isDownload = settings.Download;
-		TimeSpan visualsTime = settings.VisualTime;
+		TimeSpan visualsTime = settings.VisualDelayMs.HasValue 
+			? TimeSpan.FromMilliseconds(settings.VisualDelayMs.Value) 
+			: settings.VisualTime;
 		object[] solutionArgs = ParseSolutionArgs(settings.SolutionArgs);
 
 		int noOfDays = date.Year >= 2025 ? 12 : 25;
 		long totalTime = Stopwatch.GetTimestamp();
 
 		if (date.Month == 12 && date.Day <= noOfDays) {
-			await GetInputDataAndSolve(date.Year, date.Day, phase, _consoleLock, showVisuals, isDebug, isDownload, solutionArgs);
+			await GetInputDataAndSolve(date.Year, date.Day, phase, _consoleLock, showVisuals, isDebug, isDownload, visualsTime, solutionArgs);
 		} else {
 			DateOnly dateNow = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-5));
 			for (int day = 1; day <= noOfDays; day++) {
@@ -67,7 +69,7 @@
 		return [.. solutionArgs];
 	}
 
-	private static async Task GetInputDataAndSolve(int year, int day, int? phase, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, params object[]? args)
+	private static async Task GetInputDataAndSolve(int year, int day, int? phase, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, TimeSpan visualsTime = default, params object[]? args)
 	{
 		string[]? input = await Program.GetInputData(year, day, isDownload);
 		string title = GetProblemDescription(year, day) ?? $"";
@@ -80,6 +82,9 @@
 				{
 					lock (consolelock) {
 						VisualiseOutput(s, b);
+						if (visualsTime > TimeSpan.Zero) {
+							Thread.Sleep(visualsTime);
+						}
 					}
 				}) : null;
 
