@@ -12,19 +12,18 @@ public partial class Day05
 	private static List<FreshRange> _freshIdRanges = [];
 	private static List<Ingredient> _ingredients = [];
 
-	[Init]
-	public static void LoadDatabase(string[] input)
+	[Init] public static void LoadDatabase(string[] input)
 	{
 		_freshIdRanges = [.. input
 			.TakeWhile(i => i.HasNonWhiteSpaceContent())
 			.As<FreshRange>()
+			.MergeOverlapping()
 			];
 
 		_ingredients = [.. input
-			.Skip(_freshIdRanges.Count + 1)
+			.SkipWhile(i => i.HasNonWhiteSpaceContent())
+			.Skip(1)
 			.As<Ingredient>()];
-
-		_freshIdRanges = _freshIdRanges.MergeOverlapping();
 	}
 
 	public static  int Part1() => _ingredients.Count(IsFresh);

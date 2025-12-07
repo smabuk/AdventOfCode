@@ -33,7 +33,7 @@ public partial class Day04 {
 	public static int Part2()
 	{
 		Grid<char> diagram = _diagram.Copy();
-		Grid<char> newDiagram = diagram.Copy();
+		Grid<char> newDiagram;
 
 		int count = 0;
 		int newCount = 0;
@@ -50,7 +50,7 @@ public partial class Day04 {
 						.Count(adjacent => adjacent.Value is PAPER_ROLL) < 4);
 
 			foreach (Cell<char> roll in accesible) {
-				newDiagram.SetValue(REMOVE, roll.Index);
+				newDiagram[roll.Index] = REMOVE;
 				count++;
 				newCount++;
 			}

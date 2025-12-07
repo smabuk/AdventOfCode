@@ -12,10 +12,10 @@ public partial class Day07 {
 	private const char SPACE    = '.';
 	private const char SPLITTER = '^';
 	private const char START    = 'S';
-	private static readonly Point SPLIT_LEFT  = new(-1,  0);
-	private static readonly Point SPLIT_RIGHT = new( 1,  0);
 	private static readonly Point NEXT_ROW    = new( 0,  1);
 	private static readonly Point PREV_ROW    = new( 0, -1);
+	private static readonly Point SPLIT_LEFT  = new(-1,  0);
+	private static readonly Point SPLIT_RIGHT = new( 1,  0);
 	private static readonly Point[] SPLIT_LEFT_AND_RIGHT = [SPLIT_LEFT, SPLIT_RIGHT];
 
 	public static int Part1(string[] input)
@@ -84,6 +84,6 @@ public partial class Day07 {
 			}
 		}
 
-		return timelineCounts[.., ^1].Sum();
+		return timelineCounts.BottomEdge().Sum();
 	}
 }

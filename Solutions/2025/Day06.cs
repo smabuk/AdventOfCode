@@ -12,7 +12,8 @@ public partial class Day06
 {
 	[Init]
 	public static void LoadOperators(string[] input)
-		=> _operators = [.. input[^1].TrimmedSplit().Select(op => op is "+" ? Add : Mul)];
+		=> _operators = [.. input[^1].TrimmedSplit()
+			.Select(op => op switch {"+" => Add, "*" => Mul, _ => None })];
 
 	private static List<Operator> _operators = [];
 
@@ -67,6 +68,7 @@ public partial class Day06
 
 	public enum Operator
 	{
+		None,
 		Add,
 		Mul,
 	}
