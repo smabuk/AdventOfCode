@@ -11,48 +11,38 @@ namespace AdventOfCode.Solutions._2025;
 [Description("Playground")]
 public partial class Day08
 {
+	private static Dictionary<double, JunctionBoxPair> _distances = [];
+	private static int _junctionBoxCount = 0;
+	private static List<double> _sortedDistances = [];
 
 	[Init]
 	public static void LoadJunctionBoxes(string[] input)
 	{
-		_junctionBoxes = [.. input.Select(n => n.As<JunctionBox>())];
+		_junctionBoxCount = input.Length;
 
 		_distances
-			= _junctionBoxes
+			= input
+			.Select(JunctionBox.Parse)
 			.Combinations(2)
-			.ToDictionary(jbs => jbs[0].EuclideanDistance(jbs[1]), jbs => new JunctionBoxPair(jbs[0], jbs[1]));
+			.Select(jbs => new JunctionBoxPair(jbs[0], jbs[1]))
+			.ToDictionary(jbp => jbp.EuclideanDistance(), jbp => jbp);
 
 		_sortedDistances = [.. _distances.Keys.OrderBy(d => d)];
 	}
 
-	private static List<JunctionBox> _junctionBoxes = [];
-	private static Dictionary<double, JunctionBoxPair> _distances = [];
-	private static List<double> _sortedDistances = [];
-
 	public static long Part1(string[] _, object[]? args)
 	{
-		int noOfPairs = GetArgument(args, 1, 1000);
-
-		Circuits circuits
-			= ConnectCircuits<Circuits>((currentCircuits, pairsProcessed) => pairsProcessed >= noOfPairs);
-
-		List<int> orderCircuitCounts = [
-			.. circuits.Select(circuit => circuit.Count).OrderDescending().Take(3)
-			];
-
-		return orderCircuitCounts[0] * orderCircuitCounts[1] * orderCircuitCounts[2];
+		return ConnectCircuitsNTimes(GetArgument(args, 1, 1000))
+			.Select(circuit => circuit.Count)
+			.ProductOfTop3();
 	}
 
-	public static long Part2()
-	{
-		JunctionBoxPair lastPair = ConnectCircuits<JunctionBoxPair>(
-			(currentCircuits, _) => currentCircuits.Count == 1 && currentCircuits[0].Count == _junctionBoxes.Count
-		);
+	public static long Part2() => ConnectCircuitsUntilFullyConnected().XProductOfLastPair();
 
-		return lastPair.First.X * lastPair.Second.X;
-	}
 
-	internal record JunctionBoxPair(JunctionBox First, JunctionBox Second);
+
+	private static Circuits ConnectCircuitsNTimes(int n) => ConnectCircuits<Circuits>((currentCircuits, pairsProcessed) => pairsProcessed >= n);
+	private static JunctionBoxPair ConnectCircuitsUntilFullyConnected() => ConnectCircuits<JunctionBoxPair>((currentCircuits, _) => currentCircuits.Count == 1 && currentCircuits[0].Count == _junctionBoxCount);
 
 	// Violates all laws of C# generics by returning different types based on use case,
 	// but it works and it makes the calling side cleaner.
@@ -100,26 +90,43 @@ public partial class Day08
 		return (T)result;
 	}
 
-	[GenerateIParsable]
-	internal partial record struct JunctionBox(int X, int Y, int Z)
+	internal record struct JunctionBox(int X, int Y, int Z);
+	internal sealed record JunctionBoxPair(JunctionBox First, JunctionBox Second);
+}
+
+file static partial class Day08Extensions
+{
+	extension(IEnumerable<int> numbers)
+	{
+		public long ProductOfTop3()
+			=> numbers
+			.OrderDescending()
+			.ToArray() is [int n1, int n2, int n3, ..]
+				? n1 * n2 * n3
+				: 0;
+	}
+
+	extension(JunctionBoxPair pair)
+	{
+		public long XProductOfLastPair() => pair.First.X * pair.Second.X;
+	}
+
+	extension(JunctionBoxPair junctionBoxPair)
+	{
+		public double EuclideanDistance()
+		{
+			double x1 = junctionBoxPair.First.X, y1 = junctionBoxPair.First.Y, z1 = junctionBoxPair.First.Z;
+			double x2 = junctionBoxPair.Second.X, y2 = junctionBoxPair.Second.Y, z2 = junctionBoxPair.Second.Z;
+			return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2) + Math.Pow(z2 - z1, 2));
+		}
+	}
+
+	extension(JunctionBox)
 	{
 		public static JunctionBox Parse(string s)
 		{
 			int[] numbers = [.. s.AsNumbers<int>()];
 			return new(numbers[0], numbers[1], numbers[2]);
-		}
-	}
-}
-
-file static partial class Day08Extensions
-{
-	extension(JunctionBox junctionBox)
-	{
-		public double EuclideanDistance(JunctionBox other)
-		{
-			double x1 = junctionBox.X, y1 = junctionBox.Y, z1 = junctionBox.Z;
-			double x2 = other.X, y2 = other.Y, z2 = other.Z;
-			return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2) + Math.Pow(z2 - z1, 2));
 		}
 	}
 }
