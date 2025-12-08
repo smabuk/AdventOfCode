@@ -1,8 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2025;
 
-[SupportTestOutput]
 public partial class Tests_08_Playground
-
 {
 	const int DAY = 08;
 
