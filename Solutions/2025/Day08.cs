@@ -66,8 +66,54 @@ public partial class Day08
 		return orderCircuitCounts[0] * orderCircuitCounts[1] * orderCircuitCounts[2];
 	}
 
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2()
+	{
+		const int NOT_FOUND = -1;
 
+		Dictionary<double, (Point3d First, Point3d Second)> distances
+			= _junctionBoxes
+			.Combinations(2)
+			.Where(jbs => jbs.First() != jbs.Last())
+			.ToDictionary(jbs => jbs.First().EuclideanDistance(jbs.Last()), jbs => (jbs.First(), jbs.Last()));
+
+		List<double> sortedDistances = [.. distances.Keys.OrderBy(d => d)];
+		List<List<Point3d>> circuits = [];
+		(Point3d First, Point3d Second) lastPair = default;
+
+		int i = 0;
+		while (!(circuits.Count == 1 && circuits[0].Count == _junctionBoxes.Count)) {
+			double distance = sortedDistances[i];
+			(Point3d first, Point3d second) = distances[sortedDistances[i]];
+
+			int firstCircuitIndex = NOT_FOUND;
+			int secondCircuitIndex = NOT_FOUND;
+
+			for (int j = 0; j < circuits.Count; j++) {
+				if (circuits[j].Contains(first)) {
+					firstCircuitIndex = j;
+				}
+				if (circuits[j].Contains(second)) {
+					secondCircuitIndex = j;
+				}
+			}
+
+			if (firstCircuitIndex == NOT_FOUND && secondCircuitIndex == NOT_FOUND) {        // Neither in any circuit - create new circuit
+				circuits.Add([first, second]);
+			} else if (firstCircuitIndex != NOT_FOUND && secondCircuitIndex == NOT_FOUND) { // Only first is in a circuit - add second to it
+				circuits[firstCircuitIndex].Add(second);
+			} else if (firstCircuitIndex == NOT_FOUND && secondCircuitIndex != NOT_FOUND) { // Only second is in a circuit - add first to it
+				circuits[secondCircuitIndex].Add(first);
+			} else if (firstCircuitIndex != secondCircuitIndex) {                           // Both in different circuits - merge them
+				circuits[firstCircuitIndex].AddRange(circuits[secondCircuitIndex]);
+				circuits.RemoveAt(secondCircuitIndex);
+			}
+
+			lastPair = (first, second);
+			i++;
+		}
+
+		return lastPair.First.X * lastPair.Second.X;
+	}
 }
 
 file static partial class Day08Extensions

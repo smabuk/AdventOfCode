@@ -37,4 +37,12 @@ public partial class Tests_08_Playground
 		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input, noOfPairs), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	[Theory]
+	[InlineData(TEST_DATA, 25272)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }
