@@ -1,4 +1,4 @@
-﻿using JunctionBox = Smab.Helpers.Point3d;
+﻿using static AdventOfCode.Solutions._2025.Day08;
 
 namespace AdventOfCode.Solutions._2025;
 
@@ -47,15 +47,15 @@ public partial class Day08
 	public static long Part2()
 	{
 		List<HashSet<JunctionBox>> circuits = [];
-		(JunctionBox First, JunctionBox Second) lastPair = default;
+		JunctionBox first = default, second = default;
 
 		int i = 0;
 		while (!(circuits.Count == 1 && circuits[0].Count == _junctionBoxes.Count)) {
-			lastPair = _distances[_sortedDistances[i++]];
-			circuits = CalculateCircuits(circuits, lastPair.First, lastPair.Second);
+			(first, second) = _distances[_sortedDistances[i++]];
+			circuits = CalculateCircuits(circuits, first, second);
 		}
 
-		return lastPair.First.X * lastPair.Second.X;
+		return first.X * second.X;
 	}
 
 	private static List<HashSet<JunctionBox>> CalculateCircuits(List<HashSet<JunctionBox>> inputCircuits, JunctionBox first, JunctionBox second)
@@ -84,6 +84,15 @@ public partial class Day08
 		}
 
 		return circuits;
+	}
+
+	[GenerateIParsable] internal partial record struct JunctionBox(int X, int Y, int Z)
+	{
+		public static JunctionBox Parse(string s)
+		{
+			int[] numbers = [.. s.AsNumbers<int>()];
+			return new(numbers[0], numbers[1], numbers[2]);
+		}
 	}
 }
 

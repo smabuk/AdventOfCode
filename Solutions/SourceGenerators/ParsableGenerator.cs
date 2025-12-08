@@ -104,7 +104,9 @@ public class ParsableGenerator : IIncrementalGenerator
 
 			string namespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
 			string typeName = typeSymbol.Name;
-			string typeKeyword = typeDeclaration.Keyword.Text; // "class", "record", "struct"
+
+			// Determine the full type keyword(s) - handles "record struct", "record class", "record", "class", "struct"
+			string typeKeyword = GetTypeKeyword(typeSymbol);
 
 			// Get containing types (for nested types)
 			List<(string Name, string Keyword)> containingTypes = [];
@@ -144,6 +146,23 @@ public class ParsableGenerator : IIncrementalGenerator
 
 			context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
 		}
+	}
+
+	private static string GetTypeKeyword(INamedTypeSymbol typeSymbol)
+	{
+		// Check if it's a record type (record class or record struct)
+		bool isRecord = typeSymbol.IsRecord;
+		bool isStruct = typeSymbol.TypeKind == TypeKind.Struct;
+		bool isClass = typeSymbol.TypeKind == TypeKind.Class;
+
+		return (isRecord, isStruct, isClass) switch
+		{
+			(true, true, _) => "record struct",
+			(true, _, true) => "record class",
+			(true, _, _) => "record",
+			(false, true, _) => "struct",
+			_ => "class"
+		};
 	}
 
 	private static string GenerateSource(string namespaceName, string typeName, string typeKeyword,
