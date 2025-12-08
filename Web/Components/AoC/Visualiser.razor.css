@@ -1,6 +1,6 @@
 ﻿details,
 .visualiser-output {
-	color: #e83e8c;
+/*	color: #e83e8c;*/
 
 	summary {
 		font-weight: bold;
@@ -23,9 +23,9 @@
 	padding: 12px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-/*	background-color: #1e1e1e;*/
-/*	color: #d4d4d4;*/
-	font-family: 'Consolas', 'Courier New', monospace;
+	background-color: #1e1e1e;
+	color: #d4d4d4;
+/*	font-family: 'Consolas', 'Courier New', monospace;*/
 	font-size: 14px;
 	line-height: 1.1;
 	overflow: auto;
