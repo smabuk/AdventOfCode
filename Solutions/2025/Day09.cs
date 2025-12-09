@@ -7,85 +7,86 @@ namespace AdventOfCode.Solutions._2025;
 /// https://adventofcode.com/2025/day/09
 /// </summary>
 [Description("Movie Theater")]
-[GenerateVisualiser]
 public partial class Day09
 {
+	public static long Part1(string[] input)
+		=> input
+		.Select(Tile.Parse)
+		.Combinations(2)
+		.Max(tiles => tiles.Area());
 
-	[Init]
-	public static void LoadTiles(string[] input)
+	public static long Part2(string[] input)
 	{
-		_redTiles = [.. input.As<Tile>()];
-		_redTileSet = [.. _redTiles.Select(t => t.Position)];
+		Polygon polygon = Polygon.Build([.. input.Select(Tile.Parse)]);
 
-		List<LineSegment> edges = [.. _redTiles
-			.Select((tile, i) => new LineSegment(
-				tile.Position,
-				_redTiles[(i + 1) % _redTiles.Count].Position))];
-		_polygon = new Polygon(edges);
-	}
-
-	private static List<Tile> _redTiles = [];
-	private static HashSet<Point> _redTileSet = [];
-	private static Polygon _polygon = new([]);
-	private static readonly Dictionary<Point, bool> _pointCache = [];
-
-	public static long Part1() => _redTiles.Combinations(2).Max(tiles => tiles.Area());
-
-	public static long Part2()
-	{
-		return _redTiles
+		return polygon
+			.Vertices
 			.Combinations(2)
-			.NotWhere(x => x[0].X == x[1].X || x[0].Y == x[1].Y)
-			.Where(x => IsRectangleValid(x[0], x[1]))
-			.Max(x => x.Area());
-
+			.Where(tiles => IsRectangleValid(tiles[0], tiles[1], polygon, []))
+			.Max(tiles => tiles.Area());
 	}
+
+
 
 	/// <summary>
-	/// Checks if a rectangle is valid by verifying all four edges are inside or on the polygon
+	/// Determines whether a rectangle defined by two corner tiles is valid according to polygon edge constraints.
 	/// </summary>
-	private static bool IsRectangleValid(Tile corner1, Tile corner2)
+	/// <remarks>A rectangle is considered valid if all four of its edges either lie on the polygon edge or are
+	/// entirely contained within the polygon. Both corner tiles must be specified; their order does not affect the
+	/// result.</remarks>
+	/// <param name="corner1">The first corner tile of the rectangle. Specifies one vertex of the rectangle to validate.</param>
+	/// <param name="corner2">The second corner tile of the rectangle. Specifies the opposite vertex of the rectangle to validate.</param>
+	/// <param name="polygon">The polygon to validate against.</param>
+	/// <param name="pointCache">Cache for point-in-polygon checks.</param>
+	/// <returns>true if the rectangle formed by the specified corners is valid; otherwise, false.</returns>
+	private static bool IsRectangleValid(Tile corner1, Tile corner2, Polygon polygon, Dictionary<Point, bool> pointCache)
 	{
 		int minX = Math.Min(corner1.X, corner2.X);
 		int maxX = Math.Max(corner1.X, corner2.X);
 		int minY = Math.Min(corner1.Y, corner2.Y);
 		int maxY = Math.Max(corner1.Y, corner2.Y);
 
-		// Create the four edges of the rectangle
 		LineSegment topEdge = new(new Point(minX, minY), new Point(maxX, minY));
 		LineSegment bottomEdge = new(new Point(minX, maxY), new Point(maxX, maxY));
 		LineSegment leftEdge = new(new Point(minX, minY), new Point(minX, maxY));
 		LineSegment rightEdge = new(new Point(maxX, minY), new Point(maxX, maxY));
 
-		// Check if all four edges are valid (lie on polygon edge or entirely inside polygon)
-		return IsEdgeValid(topEdge) && IsEdgeValid(bottomEdge) && IsEdgeValid(leftEdge) && IsEdgeValid(rightEdge);
+		return IsEdgeValid(topEdge, polygon, pointCache)
+			&& IsEdgeValid(bottomEdge, polygon, pointCache)
+			&& IsEdgeValid(leftEdge, polygon, pointCache)
+			&& IsEdgeValid(rightEdge, polygon, pointCache);
 	}
 
 	/// <summary>
-	/// Checks if a rectangle edge is valid within the polygon
-	/// An edge is valid if its endpoints are inside/on the polygon and it doesn't cross outside
+	/// Determines whether the specified edge is valid with respect to the polygon's boundaries and interior.
 	/// </summary>
-	private static bool IsEdgeValid(LineSegment edge)
+	/// <remarks>An edge is considered valid if both endpoints are inside or on the polygon and the edge does not
+	/// cross any polygon boundary except where it is collinear with a polygon edge. Collinear edges that overlap the
+	/// polygon boundary are permitted.</remarks>
+	/// <param name="edge">The line segment to validate. Both endpoints must be inside or on the polygon, and the edge must not improperly
+	/// cross any polygon edge.</param>
+	/// <param name="polygon">The polygon to validate against.</param>
+	/// <param name="pointCache">Cache for point-in-polygon checks.</param>
+	/// <returns>true if the edge is entirely within or on the polygon and does not cross any polygon edge; otherwise, false.</returns>
+	private static bool IsEdgeValid(LineSegment edge, Polygon polygon, Dictionary<Point, bool> pointCache)
 	{
 		// Check if both endpoints are inside or on the polygon
-		if (!IsPointInsideOrOnPolygon(edge.Start)) {
+		if (!IsPointInsideOrOnPolygon(edge.Start, polygon, pointCache)) {
 			return false;
 		}
 
-		if (!IsPointInsideOrOnPolygon(edge.End)) {
+		if (!IsPointInsideOrOnPolygon(edge.End, polygon, pointCache)) {
 			return false;
 		}
 
 		// Check if the edge crosses any polygon edge improperly
-		foreach (LineSegment polygonEdge in _polygon.Edges) {
-			// If segments are collinear, they might overlap which is fine (edge on polygon boundary)
+		foreach (LineSegment polygonEdge in polygon.Edges) {
 			if (AreSegmentsCollinear(edge, polygonEdge)) {
 				continue;
 			}
 
 			// Check for non-collinear intersection (crossing)
 			if (DoSegmentsIntersect(edge, polygonEdge)) {
-				// Non-collinear intersection means edge crosses the polygon boundary
 				return false;
 			}
 		}
@@ -94,8 +95,13 @@ public partial class Day09
 	}
 
 	/// <summary>
-	/// Checks if two line segments intersect (using orientation method)
+	/// Determines whether two line segments intersect at a single point, excluding cases where the segments are collinear.
 	/// </summary>
+	/// <remarks>This method does not consider collinear segments as intersecting. To check for collinear overlap,
+	/// use a separate method such as AreSegmentsCollinear.</remarks>
+	/// <param name="seg1">The first line segment to test for intersection.</param>
+	/// <param name="seg2">The second line segment to test for intersection.</param>
+	/// <returns>true if the segments intersect at a single point; otherwise, false.</returns>
 	private static bool DoSegmentsIntersect(LineSegment seg1, LineSegment seg2)
 	{
 		Point p1 = seg1.Start, p2 = seg1.End;
@@ -117,8 +123,13 @@ public partial class Day09
 	}
 
 	/// <summary>
-	/// Checks if two segments are collinear (lie on the same infinite line)
+	/// Determines whether two line segments are collinear, meaning all endpoints lie on the same straight line.
 	/// </summary>
+	/// <remarks>This method checks whether all four endpoints of the provided segments are collinear. It does not
+	/// verify whether the segments overlap or intersect; it only tests for collinearity.</remarks>
+	/// <param name="seg1">The first line segment to evaluate for collinearity.</param>
+	/// <param name="seg2">The second line segment to evaluate for collinearity.</param>
+	/// <returns>true if both endpoints of seg2 are collinear with seg1; otherwise, false.</returns>
 	private static bool AreSegmentsCollinear(LineSegment seg1, LineSegment seg2)
 	{
 		// Check if all four points are collinear
@@ -129,44 +140,59 @@ public partial class Day09
 	}
 
 	/// <summary>
-	/// Calculates the cross product of vectors (p2-p1) and (p3-p1)
+	/// Calculates the signed area of the parallelogram formed by three points in a two-dimensional plane.
 	/// </summary>
+	/// <remarks>This method is commonly used to determine the relative orientation of three points, such as in
+	/// computational geometry algorithms for convex hulls or polygon winding. The magnitude of the result corresponds to
+	/// twice the area of the triangle formed by the points.</remarks>
+	/// <param name="p1">The first point, representing the origin of the vectors.</param>
+	/// <param name="p2">The second point, representing the end of the first vector.</param>
+	/// <param name="p3">The third point, representing the end of the second vector.</param>
+	/// <returns>A signed 64-bit integer representing the cross product of the vectors defined by the points. A positive value
+	/// indicates a counterclockwise turn, a negative value indicates a clockwise turn, and zero indicates collinearity.</returns>
 	private static long CrossProduct(Point p1, Point p2, Point p3)
 		=> ((p2.X - p1.X) * (long)(p3.Y - p1.Y)) - ((p2.Y - p1.Y) * (long)(p3.X - p1.X));
 
 	/// <summary>
-	/// Checks if a point is inside or on the polygon (with caching)
+	/// Determines whether the specified point lies inside or on the boundary of the polygon.
 	/// </summary>
-	private static bool IsPointInsideOrOnPolygon(Point point)
+	/// <remarks>This method considers a point to be inside the polygon if it is strictly within the area or exactly
+	/// on any edge. Points that coincide with designated red tiles are also treated as inside. The result is cached for
+	/// improved performance on repeated queries.</remarks>
+	/// <param name="point">The point to test for inclusion within or on the polygon.</param>
+	/// <param name="polygon">The polygon to validate against.</param>
+	/// <param name="pointCache">Cache for point-in-polygon checks.</param>
+	/// <returns>true if the point is inside the polygon or on its boundary; otherwise, false.</returns>
+	private static bool IsPointInsideOrOnPolygon(Point point, Polygon polygon, Dictionary<Point, bool> pointCache)
 	{
 		// Check cache first
-		if (_pointCache.TryGetValue(point, out bool cached)) {
+		if (pointCache.TryGetValue(point, out bool cached)) {
 			return cached;
 		}
 
-		// Check if it's a red tile
-		if (_redTileSet.Contains(point)) {
-			_pointCache[point] = true;
-			return true;
-		}
-
 		// Check if it's on any polygon edge
-		foreach (LineSegment edge in _polygon.Edges) {
+		foreach (LineSegment edge in polygon.Edges) {
 			if (IsPointOnSegment(point, edge)) {
-				_pointCache[point] = true;
+				pointCache[point] = true;
 				return true;
 			}
 		}
 
 		// Use ray casting to check if inside
-		bool result = IsPointInsidePolygon(point);
-		_pointCache[point] = result;
+		bool result = IsPointInsidePolygon(point, polygon);
+		pointCache[point] = result;
 		return result;
 	}
 
 	/// <summary>
-	/// Checks if a point lies on a line segment
+	/// Determines whether a specified point lies exactly on a given line segment.
 	/// </summary>
+	/// <remarks>This method considers the point to be on the segment only if it is collinear with the segment and
+	/// within the segment's bounding box. The comparison is exact; floating-point inaccuracies may affect results if used
+	/// with non-integer coordinates.</remarks>
+	/// <param name="point">The point to test for inclusion on the line segment.</param>
+	/// <param name="segment">The line segment against which to test the point.</param>
+	/// <returns>true if the point lies on the segment, including its endpoints; otherwise, false.</returns>
 	private static bool IsPointOnSegment(Point point, LineSegment segment)
 	{
 		// Check collinearity using cross product
@@ -185,15 +211,19 @@ public partial class Day09
 	}
 
 	/// <summary>
-	/// Uses ray casting algorithm to determine if a point is inside the polygon
+	/// Determines whether the specified point lies within the polygon defined by the positions of the red tiles.
 	/// </summary>
-	private static bool IsPointInsidePolygon(Point point)
+	/// <remarks>The polygon is formed by connecting the positions of all red tiles in order. The method uses the
+	/// ray casting algorithm and assumes the polygon is simple (non-self-intersecting).</remarks>
+	/// <param name="point">The point to test for inclusion within the polygon.</param>
+	/// <returns>true if the point is inside the polygon; otherwise, false.</returns>
+	private static bool IsPointInsidePolygon(Point point, Polygon polygon)
 	{
 		int intersections = 0;
 
-		for (int i = 0; i < _redTiles.Count; i++) {
-			Point vertex1 = _redTiles[i].Position;
-			Point vertex2 = _redTiles[(i + 1) % _redTiles.Count].Position;
+		for (int i = 0; i < polygon.Vertices.Count; i++) {
+			Point vertex1 = polygon.Vertices[i].Position;
+			Point vertex2 = polygon.Vertices[(i + 1) % polygon.Vertices.Count].Position;
 
 			// Check if ray from point going right intersects this edge
 			if ((vertex1.Y > point.Y) != (vertex2.Y > point.Y)) {
@@ -210,15 +240,9 @@ public partial class Day09
 		return (intersections % 2) == 1;
 	}
 
-	/// <summary>
-	/// Represents a polygon as a collection of line segment edges
-	/// </summary>
-	private sealed record Polygon(List<LineSegment> Edges);
+	internal sealed record Polygon(List<Tile> Vertices, List<LineSegment> Edges);
 
-	/// <summary>
-	/// Represents a line segment between two points
-	/// </summary>
-	private readonly record struct LineSegment(Point Start, Point End);
+	internal readonly record struct LineSegment(Point Start, Point End);
 
 	[GenerateIParsable]
 	internal sealed partial record Tile(Point Position)
@@ -241,5 +265,10 @@ file static partial class Day09TileExtensions
 	extension(Tile[] tiles)
 	{
 		public long Area() => tiles[0].Area(tiles[1]);
+	}
+
+	extension(Polygon polygon)
+	{
+		public static Polygon Build(List<Tile> redTiles) => new([.. redTiles], [.. redTiles.Select((tile, i) => new LineSegment(tile.Position, redTiles[(i + 1) % redTiles.Count].Position))]);
 	}
 }
