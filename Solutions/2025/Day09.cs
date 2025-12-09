@@ -16,48 +16,29 @@ public partial class Day09
 	{
 		_redTiles = [.. input.As<Tile>()];
 		_redTileSet = [.. _redTiles.Select(t => t.Position)];
+
+		List<LineSegment> edges = [.. _redTiles
+			.Select((tile, i) => new LineSegment(
+				tile.Position,
+				_redTiles[(i + 1) % _redTiles.Count].Position))];
+		_polygon = new Polygon(edges);
 	}
 
 	private static List<Tile> _redTiles = [];
 	private static HashSet<Point> _redTileSet = [];
-	private static readonly List<LineSegment> _polygonEdges = [];
+	private static Polygon _polygon = new([]);
 	private static readonly Dictionary<Point, bool> _pointCache = [];
 
 	public static long Part1() => _redTiles.Combinations(2).Max(tiles => tiles.Area());
 
 	public static long Part2()
 	{
-		// Build polygon edges as line segments
-		for (int i = 0; i < _redTiles.Count; i++) {
-			Point start = _redTiles[i].Position;
-			Point end = _redTiles[(i + 1) % _redTiles.Count].Position;
-			_polygonEdges.Add(new LineSegment(start, end));
-		}
+		return _redTiles
+			.Combinations(2)
+			.NotWhere(x => x[0].X == x[1].X || x[0].Y == x[1].Y)
+			.Where(x => IsRectangleValid(x[0], x[1]))
+			.Max(x => x.Area());
 
-		long maximumArea = 0;
-
-		// Try all pairs of red tiles as potential opposite corners
-		for (int i = 0; i < _redTiles.Count; i++) {
-			for (int j = i + 1; j < _redTiles.Count; j++) {
-				Tile tile1 = _redTiles[i];
-				Tile tile2 = _redTiles[j];
-
-				// Skip if they can't form a proper rectangle (need different X and Y)
-				if (tile1.X == tile2.X || tile1.Y == tile2.Y) {
-					continue;
-				}
-
-				// Check if rectangle is valid by checking its four edges
-				if (IsRectangleValid(tile1, tile2)) {
-					long area = tile1.Area(tile2);
-					if (area > maximumArea) {
-						maximumArea = area;
-					}
-				}
-			}
-		}
-
-		return maximumArea;
 	}
 
 	/// <summary>
@@ -81,7 +62,7 @@ public partial class Day09
 	}
 
 	/// <summary>
-	/// Checks if a rectangle edge is valid
+	/// Checks if a rectangle edge is valid within the polygon
 	/// An edge is valid if its endpoints are inside/on the polygon and it doesn't cross outside
 	/// </summary>
 	private static bool IsEdgeValid(LineSegment edge)
@@ -96,7 +77,7 @@ public partial class Day09
 		}
 
 		// Check if the edge crosses any polygon edge improperly
-		foreach (LineSegment polygonEdge in _polygonEdges) {
+		foreach (LineSegment polygonEdge in _polygon.Edges) {
 			// If segments are collinear, they might overlap which is fine (edge on polygon boundary)
 			if (AreSegmentsCollinear(edge, polygonEdge)) {
 				continue;
@@ -151,9 +132,7 @@ public partial class Day09
 	/// Calculates the cross product of vectors (p2-p1) and (p3-p1)
 	/// </summary>
 	private static long CrossProduct(Point p1, Point p2, Point p3)
-	{
-		return ((long)(p2.X - p1.X) * (long)(p3.Y - p1.Y)) - ((long)(p2.Y - p1.Y) * (long)(p3.X - p1.X));
-	}
+		=> ((p2.X - p1.X) * (long)(p3.Y - p1.Y)) - ((p2.Y - p1.Y) * (long)(p3.X - p1.X));
 
 	/// <summary>
 	/// Checks if a point is inside or on the polygon (with caching)
@@ -172,7 +151,7 @@ public partial class Day09
 		}
 
 		// Check if it's on any polygon edge
-		foreach (LineSegment edge in _polygonEdges) {
+		foreach (LineSegment edge in _polygon.Edges) {
 			if (IsPointOnSegment(point, edge)) {
 				_pointCache[point] = true;
 				return true;
@@ -230,6 +209,11 @@ public partial class Day09
 		// Point is inside if odd number of intersections
 		return (intersections % 2) == 1;
 	}
+
+	/// <summary>
+	/// Represents a polygon as a collection of line segment edges
+	/// </summary>
+	private sealed record Polygon(List<LineSegment> Edges);
 
 	/// <summary>
 	/// Represents a line segment between two points
