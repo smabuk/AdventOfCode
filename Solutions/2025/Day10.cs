@@ -17,57 +17,37 @@ public partial class Day10
 
 	public static int Part1()
 	{
-		int fewestTotalPresses = 0;
-		VisualiseString("");
-		foreach (Machine machine in _machines) {
-			int presses = 0;
-			Machine newMachine = machine;
-
-			while (newMachine.IsNotStarted) {
-				presses++;
-
-				IEnumerable<Button[]> buttons = machine.Buttons.Permute(presses);
-				foreach (Button[] buttonCombo in buttons) {
-					newMachine = machine;
-					foreach (Button button in buttonCombo) {
-						newMachine = newMachine.PressButton(button);
-					}
-
-					if (newMachine.IsStarted) {
-						fewestTotalPresses += presses;
-						VisualiseString($"Machine reached desired state in {presses,2} presses {newMachine.DesiredLightState}.");
-						break;
-					}
-				}
-			}
-		}
-
-		return fewestTotalPresses;
+		return _machines
+			.Pipe(machine => VisualiseString($""))
+			.Select(machine => Enumerable.Range(1, int.MaxValue)
+				.Select(presses => (
+					Presses: presses,
+					Result: machine.Buttons
+						.Permute(presses)
+						.Select(buttonCombo => buttonCombo
+							.Aggregate(machine, (currentMachine, button) => currentMachine.PressButton(button)))
+						.FirstOrDefault(resultMachine => resultMachine.IsStarted)))
+				.First(x => x.Result is not null)
+				.Pipe(x => VisualiseString($"Machine reached desired state in {x.Presses,2} presses {x.Result!.DesiredLightState}.")))
+			.Sum(x => x.Presses);
 	}
 
 	public static int Part2()
 	{
-		int fewestTotalPresses = 0;
-		int count = 0;
-		VisualiseString("");
-		VisualiseString($"Total Machines: {_machines.Count}");
-		foreach (Machine machine in _machines) {
-			int presses = machine.FindMinimumPressesForJoltage();
-			fewestTotalPresses += presses;
-			count++;
-			VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
-		}
-
-		return fewestTotalPresses;
+		return _machines
+			.Pipe(machine => VisualiseString($""))
+			.Select((machine, index) => machine
+				.FindMinimumPressesForJoltage()
+				.Pipe(presses => VisualiseString($"{index,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.")))
+			.Sum();
 	}
 
 	private sealed partial record Machine(string DesiredLightState, List<Button> Buttons, int[] Joltages)
 	{
+		public int[] CurrentJoltageState { get; init; } = new int[Joltages.Length];
 		public string CurrentLightState { get; init; } = new('.', DesiredLightState.Length);
 		public bool IsStarted => CurrentLightState == DesiredLightState;
 		public bool IsNotStarted => CurrentLightState != DesiredLightState;
-
-		public int[] CurrentJoltageState { get; init; } = new int[Joltages.Length];
 
 		public Machine PressButton(Button button)
 		{
@@ -80,14 +60,21 @@ public partial class Day10
 		}
 
 		/// <summary>
-		/// Finds minimum button presses using Google OR-Tools solver
+		/// Finds the minimum total number of button presses required to achieve the target joltage configuration.
 		/// </summary>
+		/// <remarks>This method uses a linear programming solver to determine the optimal combination of button
+		/// presses. Each button may affect one or more joltages, and the solution ensures that all target joltages are met
+		/// exactly. The method minimizes the total number of presses across all buttons.</remarks>
+		/// <returns>The minimum number of button presses needed to reach the specified joltage values using the available buttons.</returns>
+		/// <exception cref="ApplicationException">Thrown if the solver cannot be created or if no solution exists for the current joltage configuration.</exception>
 		public int FindMinimumPressesForJoltage()
 		{
 			int numJoltages = Joltages.Length;
 			int numButtons = Buttons.Count;
 
 			// Create the linear solver with CBC backend
+			// CBP stands for Coin-or branch and cut mixed integer programming solver.
+			// SCIP is used here; ensure that the OR-Tools installation includes SCIP support.
 			using Solver solver = Solver.CreateSolver("SCIP") ?? throw new ApplicationException("Could not create solver.");
 
 			// Create integer variables for button press counts
@@ -150,8 +137,4 @@ public partial class Day10
 		public static Button Parse(string s) => new([.. s.AsNumbers<int>()]);
 		public override string ToString() => $"({string.Join(',', Values)})";
 	}
-}
-
-file static class Day10_Extensions
-{
 }
