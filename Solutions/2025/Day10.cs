@@ -49,11 +49,17 @@ public partial class Day10
 		int count = 0;
 		VisualiseString("");
 		VisualiseString($"Total Machines: {_machines.Count}");
-		foreach (Machine machine in _machines) {
-			int presses = machine.FindMinimumPressesForJoltage();
-			count++;
-			fewestTotalPresses += presses;
-			VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
+		try {
+			foreach (Machine machine in _machines) {
+				int presses = machine.FindMinimumPressesForJoltage();
+				fewestTotalPresses += presses;
+				count++;
+				VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
+			}
+		}
+		catch (Exception ex) {
+			VisualiseString($"{ex.Message}");
+			throw;
 		}
 
 		return fewestTotalPresses;
