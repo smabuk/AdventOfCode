@@ -18,11 +18,13 @@ public sealed partial class DayXX {
 		_instructions = input.As<Instruction>();
 	}
 
+	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
 	private static string Solution1(string[] input) {
 		List<Instruction> instructions = [.. input.As<Instruction>()];
 		return "** Solution not written yet **";
 	}
 
+	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
 	private static string Solution2(string[] input) {
 		List<Instruction> instructions = [.. input.As<Instruction>()];
 		return "** Solution not written yet **";

@@ -22,11 +22,11 @@ public sealed partial class Day17 {
 	private static IEnumerable<ClayVein> _veins = [];
 	private static char[,] _ground = new char[0,0];
 	private static int minX = int.MaxValue;
-	private static int minY = 0;
+	private static readonly int minY = 0;
 	private static int maxX = int.MinValue;
 	private static int maxY = int.MinValue;
 	private static int xOffset = int.MinValue;
-	
+
 	private static void LoadScan(string[] input, Action<string[], bool>? visualise = null) {
 		_veins = input.Select(ClayVein.Parse);
 

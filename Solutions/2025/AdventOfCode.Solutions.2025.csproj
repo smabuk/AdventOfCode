@@ -6,14 +6,6 @@
 		<NoWarn>$(NoWarn);MSB3270</NoWarn>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Google.OrTools" />
 		<PackageReference Include="Smab.Helpers" />

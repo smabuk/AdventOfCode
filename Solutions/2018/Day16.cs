@@ -171,7 +171,7 @@ public sealed partial class Day16 {
 
 	}
 
-	private static string[] instructionTypes = [
+	private static readonly string[] instructionTypes = [
 			"addr",
 			"addi",
 			"mulr",
@@ -401,7 +401,7 @@ public sealed partial class Day16 {
 
 	private record Sample(int[] Before, int[] After, Instruction Instruction)
 	{
-		public static Sample Parse(string[] input) 
+		public static Sample Parse(string[] input)
 			=> new([.. input[0][9..^1].Split(", ").As<int>()], [.. input[2][9..^1].Split(", ").As<int>()], Instruction.Parse(input[1]));
 	}
 }

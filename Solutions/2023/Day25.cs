@@ -14,10 +14,10 @@ public sealed partial class Day25
 	{
 		Apparatus apparatus = string.Join(Environment.NewLine, input).As<Apparatus>();
 
-		int group1Size = 0;
-		int group2Size = 0;
+		int group1Size;
+		int group2Size;
 
-		string output = apparatus.ToDot();
+		//string output = apparatus.ToDot();
 		if (input.Length == 13) {
 			// Test Input
 			apparatus.RemoveEdge(["hfx", "pzl"]);
