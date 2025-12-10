@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2025;
+﻿using Google.OrTools.LinearSolver;
+
+namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
 /// Day 10: Factory
@@ -50,24 +52,10 @@ public partial class Day10
 		VisualiseString("");
 		VisualiseString($"Total Machines: {_machines.Count}");
 		foreach (Machine machine in _machines) {
-			try {
-				int presses = machine.FindMinimumPressesForJoltage();
-				fewestTotalPresses += presses;
-				count++;
-				VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
-			}
-			catch (Exception ex) {
-				VisualiseString($"{ex.Message}");
-				if (ex.InnerException is not null) {
-					VisualiseString($"Inner Exception: {ex.InnerException.Message}");
-				}
-				if (_machines.Count is 167 && machine.ToString() is "[..........] ((0,3,4,7,9)) ((0,1,9)) ((1,2,3,4,5)) ((0,1,3,7,8)) ((1,3,4,5,6,7,9)) ((0,1,2,4,5,6,7,8)) ((0,1,2,3,5,6,8)) ((1,2,4,5,8,9)) ((0,4,5,6,7)) ((0,2,3,5,8,9)) ((0,2,6,7,8,9)) {0,0,0,0,0,0,0,0,0,0}") {
-					VisualiseString($"returning known value {18011} as this is probably running on an unsupported CPU.");
-					return 18011;
-				}
-
-				throw;
-			}
+			int presses = machine.FindMinimumPressesForJoltage();
+			fewestTotalPresses += presses;
+			count++;
+			VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
 		}
 
 		return fewestTotalPresses;
@@ -92,70 +80,55 @@ public partial class Day10
 		}
 
 		/// <summary>
-		/// Finds minimum button presses using Z3 SMT solver
+		/// Finds minimum button presses using Google OR-Tools solver
 		/// </summary>
 		public int FindMinimumPressesForJoltage()
 		{
 			int numJoltages = Joltages.Length;
 			int numButtons = Buttons.Count;
 
-			// Create Z3 context and optimizer
-			using Microsoft.Z3.Context ctx = new();
-			using Microsoft.Z3.Optimize opt = ctx.MkOptimize();
+			// Create the linear solver with CBC backend
+			using Solver solver = Solver.CreateSolver("SCIP") ?? throw new ApplicationException("Could not create solver.");
 
 			// Create integer variables for button press counts
-			Microsoft.Z3.IntExpr[] buttonVars = new Microsoft.Z3.IntExpr[numButtons];
+			Variable[] buttonVars = new Variable[numButtons];
 			for (int i = 0; i < numButtons; i++) {
-				buttonVars[i] = ctx.MkIntConst($"button_{i}");
-				// Constraint: button presses >= 0
-				opt.Assert(ctx.MkGe(buttonVars[i], ctx.MkInt(0)));
+				// Variable with lower bound 0, upper bound infinity
+				buttonVars[i] = solver.MakeIntVar(0.0, double.PositiveInfinity, $"button_{i}");
 			}
 
 			// Add constraints: for each joltage, sum of affecting buttons = target
 			for (int j = 0; j < numJoltages; j++) {
-				List<Microsoft.Z3.ArithExpr> terms = [];
+				Constraint constraint = solver.MakeConstraint(Joltages[j], Joltages[j], $"joltage_{j}");
 
 				for (int b = 0; b < numButtons; b++) {
 					if (Buttons[b].Values.Contains(j)) {
-						terms.Add(buttonVars[b]);
-					}
-				}
-
-				if (terms.Count > 0) {
-					Microsoft.Z3.ArithExpr sum = terms.Count == 1
-						? terms[0]
-						: ctx.MkAdd([.. terms]);
-					opt.Assert(ctx.MkEq(sum, ctx.MkInt(Joltages[j])));
-				} else {
-					// No buttons affect this joltage
-					if (Joltages[j] != 0) {
-						throw new ApplicationException("No solution found for joltage configuration.");
+						constraint.SetCoefficient(buttonVars[b], 1);
 					}
 				}
 			}
 
 			// Objective: minimize sum of all button presses
-			Microsoft.Z3.ArithExpr totalPresses = ctx.MkAdd(buttonVars);
-			_ = opt.MkMinimize(totalPresses);
+			Objective objective = solver.Objective();
+			for (int i = 0; i < numButtons; i++) {
+				objective.SetCoefficient(buttonVars[i], 1);
+			}
+			objective.SetMinimization();
 
 			// Solve
-			Microsoft.Z3.Status status = opt.Check();
+			Solver.ResultStatus resultStatus = solver.Solve();
 
-			if (status is Microsoft.Z3.Status.SATISFIABLE) {
-				Microsoft.Z3.Model model = opt.Model;
+			if (resultStatus == Solver.ResultStatus.OPTIMAL) {
 				int total = 0;
 
 				for (int i = 0; i < numButtons; i++) {
-					Microsoft.Z3.Expr value = model.Evaluate(buttonVars[i], true);
-					if (value is Microsoft.Z3.IntNum intNum) {
-						total += intNum.Int;
-					}
+					total += (int)Math.Round(buttonVars[i].SolutionValue());
 				}
 
 				return total;
 			}
 
-			throw new ApplicationException("No solution found for joltage configuration.");
+			throw new ApplicationException($"No solution found for joltage configuration. Status: {resultStatus}");
 		}
 
 		public static Machine Parse(string s)

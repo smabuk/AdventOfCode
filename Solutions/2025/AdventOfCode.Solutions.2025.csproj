@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Z3" />
+		<PackageReference Include="Google.OrTools" />
 		<PackageReference Include="Smab.Helpers" />
 		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
 	</ItemGroup>
