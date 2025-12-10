@@ -29,7 +29,7 @@
 	font-size: 14px;
 	line-height: 1.1;
 	overflow: auto;
-	white-space: pre-wrap;
+	white-space: pre;
 	scrollbar-width: thin;
 	border: 1px solid var(--text-color);
 }
