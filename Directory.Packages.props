@@ -9,6 +9,7 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.Z3" Version="4.12.2" />
     <PackageVersion Include="Spectre.Console" Version="0.54.0" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.53.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />

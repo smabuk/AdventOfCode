@@ -16,6 +16,7 @@ public partial class Day10
 	public static int Part1()
 	{
 		int fewestTotalPresses = 0;
+		VisualiseString("");
 		foreach (Machine machine in _machines) {
 			int presses = 0;
 			Machine newMachine = machine;
@@ -32,7 +33,7 @@ public partial class Day10
 
 					if (newMachine.IsStarted) {
 						fewestTotalPresses += presses;
-						VisualiseString($"Machine reached desired state {newMachine.DesiredLightState} in {presses} presses.");
+						VisualiseString($"Machine reached desired state in {presses,2} presses {newMachine.DesiredLightState}.");
 						break;
 					}
 				}
@@ -46,13 +47,13 @@ public partial class Day10
 	{
 		int fewestTotalPresses = 0;
 		int count = 0;
+		VisualiseString("");
 		VisualiseString($"Total Machines: {_machines.Count}");
 		foreach (Machine machine in _machines) {
-			VisualiseString($"Processing Machine {count + 1}/{_machines.Count}...{DateTime.Now}");
 			int presses = machine.FindMinimumPressesForJoltage();
-			fewestTotalPresses += presses;
 			count++;
-			VisualiseString($"{count}/{_machines.Count} Machine reached desired joltage state {{{string.Join(',', machine.Joltages)}}} in {presses} presses.");
+			fewestTotalPresses += presses;
+			VisualiseString($"{count,3}/{_machines.Count,3} Machine reached desired joltage state in {presses,3} presses {{{string.Join(',', machine.Joltages)}}}.");
 		}
 
 		return fewestTotalPresses;
@@ -65,8 +66,6 @@ public partial class Day10
 		public bool IsNotStarted => CurrentLightState != DesiredLightState;
 
 		public int[] CurrentJoltageState { get; init; } = new int[Joltages.Length];
-		public bool IsCorrectJoltage => CurrentJoltageState.SequenceEqual(Joltages);
-		public bool IsNotCorrectJoltage => !CurrentJoltageState.SequenceEqual(Joltages);
 
 		public Machine PressButton(Button button)
 		{
@@ -78,115 +77,71 @@ public partial class Day10
 			return this with { CurrentLightState = new string(newLightState) };
 		}
 
-		public Machine PressJoltageButton(Button button)
-		{
-			int[] newJoltageState = [.. CurrentJoltageState];
-			foreach (int joltageIndex in button.Values) {
-				newJoltageState[joltageIndex]++;
-			}
-
-			return this with { CurrentJoltageState = newJoltageState };
-		}
-
 		/// <summary>
-		/// Finds minimum button presses using Dijkstra on button press count state space
-		/// Guaranteed to find optimal solution with aggressive pruning
+		/// Finds minimum button presses using Z3 SMT solver
 		/// </summary>
 		public int FindMinimumPressesForJoltage()
 		{
 			int numJoltages = Joltages.Length;
 			int numButtons = Buttons.Count;
 
-			// Dijkstra with state = button press counts (not joltage values!)
-			PriorityQueue<int[], int> queue = new();
-			HashSet<string> visited = [];
+			// Create Z3 context and optimizer
+			using Microsoft.Z3.Context ctx = new();
+			using Microsoft.Z3.Optimize opt = ctx.MkOptimize();
 
-			int[] startCounts = new int[numButtons];
-			queue.Enqueue(startCounts, 0);
+			// Create integer variables for button press counts
+			Microsoft.Z3.IntExpr[] buttonVars = new Microsoft.Z3.IntExpr[numButtons];
+			for (int i = 0; i < numButtons; i++) {
+				buttonVars[i] = ctx.MkIntConst($"button_{i}");
+				// Constraint: button presses >= 0
+				opt.Assert(ctx.MkGe(buttonVars[i], ctx.MkInt(0)));
+			}
 
-			int maxTarget = Joltages.Max();
+			// Add constraints: for each joltage, sum of affecting buttons = target
+			for (int j = 0; j < numJoltages; j++) {
+				List<Microsoft.Z3.ArithExpr> terms = [];
 
-			while (queue.Count > 0) {
-				int[] currentCounts = queue.Dequeue();
-				int totalPresses = currentCounts.Sum();
-
-				// Compute resulting joltages
-				int[] resultingJoltages = new int[numJoltages];
 				for (int b = 0; b < numButtons; b++) {
-					foreach (int idx in Buttons[b].Values) {
-						resultingJoltages[idx] += currentCounts[b];
+					if (Buttons[b].Values.Contains(j)) {
+						terms.Add(buttonVars[b]);
 					}
 				}
 
-				// Check if we reached the goal
-				if (resultingJoltages.SequenceEqual(Joltages)) {
-					return totalPresses;
-				}
-
-				// Create state key for visited check
-				string stateKey = string.Join(",", currentCounts);
-				if (visited.Contains(stateKey)) {
-					continue;
-				}
-				_ = visited.Add(stateKey);
-
-				// Prune: if any joltage is already over target, skip
-				bool overshot = false;
-				for (int i = 0; i < numJoltages; i++) {
-					if (resultingJoltages[i] > Joltages[i]) {
-						overshot = true;
-						break;
-					}
-				}
-				if (overshot) {
-					continue;
-				}
-
-				// Prune: if total presses exceeds reasonable bound, skip
-				if (totalPresses > maxTarget * 2) {
-					continue;
-				}
-
-				// Try pressing each button one more time
-				for (int b = 0; b < numButtons; b++) {
-					int[] nextCounts = [.. currentCounts];
-					nextCounts[b]++;
-
-					// Check if this would overshoot any target
-					bool wouldOvershoot = false;
-					foreach (int idx in Buttons[b].Values) {
-						if (resultingJoltages[idx] >= Joltages[idx]) {
-							wouldOvershoot = true;
-							break;
-						}
-					}
-
-					if (!wouldOvershoot) {
-						int nextTotal = totalPresses + 1;
-
-						// Heuristic: max remaining deficit
-						int maxDeficit = 0;
-						foreach (int idx in Buttons[b].Values) {
-							int deficit = Joltages[idx] - resultingJoltages[idx] - 1;
-							if (deficit > maxDeficit) {
-								maxDeficit = deficit;
-							}
-						}
-						for (int i = 0; i < numJoltages; i++) {
-							if (!Buttons[b].Values.Contains(i)) {
-								int deficit = Joltages[i] - resultingJoltages[i];
-								if (deficit > maxDeficit) {
-									maxDeficit = deficit;
-								}
-							}
-						}
-
-						queue.Enqueue(nextCounts, nextTotal + maxDeficit);
+				if (terms.Count > 0) {
+					Microsoft.Z3.ArithExpr sum = terms.Count == 1
+						? terms[0]
+						: ctx.MkAdd([.. terms]);
+					opt.Assert(ctx.MkEq(sum, ctx.MkInt(Joltages[j])));
+				} else {
+					// No buttons affect this joltage
+					if (Joltages[j] != 0) {
+						throw new ApplicationException("No solution found for joltage configuration.");
 					}
 				}
 			}
 
-			return -1;
+			// Objective: minimize sum of all button presses
+			Microsoft.Z3.ArithExpr totalPresses = ctx.MkAdd(buttonVars);
+			_ = opt.MkMinimize(totalPresses);
+
+			// Solve
+			Microsoft.Z3.Status status = opt.Check();
+
+			if (status is Microsoft.Z3.Status.SATISFIABLE) {
+				Microsoft.Z3.Model model = opt.Model;
+				int total = 0;
+
+				for (int i = 0; i < numButtons; i++) {
+					Microsoft.Z3.Expr value = model.Evaluate(buttonVars[i], true);
+					if (value is Microsoft.Z3.IntNum intNum) {
+						total += intNum.Int;
+					}
+				}
+
+				return total;
+			}
+
+			throw new ApplicationException("No solution found for joltage configuration.");
 		}
 
 		public static Machine Parse(string s)
