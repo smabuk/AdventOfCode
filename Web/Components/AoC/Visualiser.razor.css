@@ -1,6 +1,6 @@
 ﻿details,
 .visualiser-output {
-/*	color: #e83e8c;*/
+	/*	color: #e83e8c;*/
 
 	summary {
 		font-weight: bold;
@@ -25,13 +25,42 @@
 	border-radius: 4px;
 	background-color: #1e1e1e;
 	color: #d4d4d4;
-/*	font-family: 'Consolas', 'Courier New', monospace;*/
+	/*	font-family: 'Consolas', 'Courier New', monospace;*/
 	font-size: 14px;
 	line-height: 1.1;
 	overflow: auto;
 	white-space: pre;
 	scrollbar-width: thin;
 	border: 1px solid var(--text-color);
+}
+
+	.visualiser-output.canvas-mode {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		position: relative;
+	}
+
+.drawing-canvas {
+	max-width: 100%;
+	max-height: calc(90vh - 40px);
+	border: 1px solid #444;
+	border-radius: 2px;
+	background-color: #1e1e1e;
+}
+
+.text-overlay {
+	margin-top: 10px;
+	padding: 8px;
+	background-color: rgba(30, 30, 30, 0.9);
+	color: #d4d4d4;
+	font-family: 'Consolas', 'Courier New', monospace;
+	font-size: 12px;
+	border-radius: 4px;
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .visualiser-controls {

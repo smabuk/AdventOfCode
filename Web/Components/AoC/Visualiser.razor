@@ -3,7 +3,33 @@
 		<details>
 			<summary>Visualiser</summary>
 			<div class="visualiser-container">
-				<div class="visualiser-output">@((MarkupString)CurrentOutput)</div>
+				@if (CurrentFrame.HasDrawing) {
+					<div class="visualiser-output canvas-mode">
+						<svg width="@CurrentFrame.CanvasWidth"
+							 height="@CurrentFrame.CanvasHeight"
+							 viewBox="0 0 @CurrentFrame.CanvasWidth @CurrentFrame.CanvasHeight"
+							 class="drawing-canvas">
+							<rect width="100%" height="100%" fill="#1e1e1e" />
+							@foreach (DrawingCommand cmd in CurrentFrame.DrawingCommands) {
+								@if (cmd.Type == DrawingCommandType.Line) {
+									<line x1="@cmd.X1" y1="@cmd.Y1"
+										  x2="@cmd.X2" y2="@cmd.Y2"
+										  stroke="@cmd.Colour"
+										  stroke-width="1" />
+								} else if (cmd.Type == DrawingCommandType.Point) {
+									<circle cx="@cmd.X1" cy="@cmd.Y1"
+											r="2"
+											fill="@cmd.Colour" />
+								}
+							}
+						</svg>
+						@if (!string.IsNullOrEmpty(CurrentFrame.TextOutput)) {
+							<div class="text-overlay">@((MarkupString)CurrentFrame.TextOutput)</div>
+						}
+					</div>
+				} else {
+					<div class="visualiser-output">@((MarkupString)CurrentFrame.TextOutput)</div>
+				}
 				@if (OutputHistory.Count > 1) {
 					<div class="visualiser-controls">
 						<button @onclick="PlayPause" class="control-button">
@@ -28,10 +54,17 @@
 	[Parameter] public int Day { get; set; }
 	[Parameter] public int ProblemNo { get; set; }
 
-	private List<string> OutputHistory { get; set; } = [];
+	private List<VisualiserFrame> OutputHistory { get; set; } = [];
 	private int _currentIndex = 0;
 	private bool IsPlaying = false;
 	private System.Threading.Timer? _playTimer;
+
+	private int _canvasWidth = 800;
+	private int _canvasHeight = 600;
+	private double _currentX = 0;
+	private double _currentY = 0;
+	private string _currentColour = "white";
+	private List<DrawingCommand> _currentDrawingCommands = [];
 
 	public int CurrentIndex
 	{
@@ -45,9 +78,9 @@
 		}
 	}
 
-	public string CurrentOutput => OutputHistory.Count > 0 && CurrentIndex < OutputHistory.Count
+	public VisualiserFrame CurrentFrame => OutputHistory.Count > 0 && CurrentIndex < OutputHistory.Count
 		? OutputHistory[CurrentIndex]
-		: "";
+		: new VisualiserFrame("", [], 800, 600);
 
 	public bool HasVisualiser { get; private set; } = false;
 
@@ -64,9 +97,20 @@
 		IsPlaying = false;
 		_playTimer?.Dispose();
 		_playTimer = null;
+		_canvasWidth = 800;
+		_canvasHeight = 600;
+		_currentX = 0;
+		_currentY = 0;
+		_currentColour = "white";
+		_currentDrawingCommands = [];
 		return base.OnParametersSetAsync();
 	}
 
+	/// <summary>
+	/// Process visualiser output lines, supporting text, markup, and drawing commands
+	/// </summary>
+	/// <param name="lines">Array of output lines or drawing commands</param>
+	/// <param name="clearScreen">Whether to clear the existing screen content</param>
 	public void VisualiseOutput(string[] lines, bool clearScreen = false)
 	{
 		if (lines is null or []) {
@@ -74,28 +118,115 @@
 		}
 
 		if (clearScreen) {
-			// OutputHistory.Clear();
-			// _currentIndex = 0;
+			_currentDrawingCommands = [];
+			_currentX = 0;
+			_currentY = 0;
 		}
 
-		string newOutput = OutputHistory.Count > 0 && !clearScreen
-			? OutputHistory[^1]
+		string textOutput = OutputHistory.Count > 0 && !clearScreen
+			? OutputHistory[^1].TextOutput
 			: "";
 
-		if (lines[0] is "markup") {
-			string processedOutput = string.Join(Environment.NewLine, lines[1..]);
-			processedOutput = System.Text.RegularExpressions.Regex.Replace(
-				processedOutput,
-				@"\[([^\]]+)\]([^\[]*)\[/\]",
-				"<span style='color: $1;'>$2</span>");
-			newOutput += processedOutput;
-		} else {
-			newOutput += string.Join(Environment.NewLine, lines);
+		List<DrawingCommand> drawingCommands = clearScreen || OutputHistory.Count == 0
+			? []
+			: [.. OutputHistory[^1].DrawingCommands];
+
+		bool hasDrawingCommands = false;
+		bool processed = false ;
+
+		foreach (string line in lines) {
+			if (string.IsNullOrWhiteSpace(line)) {
+				continue;
+			}
+
+			string[] parts = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+			if (parts.Length == 0) {
+				continue;
+			}
+
+			switch (parts[0].ToLowerInvariant()) {
+				case "canvas":
+					if (parts.Length >= 3 &&
+						int.TryParse(parts[1], out int width) &&
+						int.TryParse(parts[2], out int height)) {
+						_canvasWidth = width;
+						_canvasHeight = height;
+						hasDrawingCommands = true;
+					}
+					break;
+
+				case "colour":
+				case "color":
+					if (parts.Length >= 2) {
+						_currentColour = parts[1];
+					}
+					break;
+
+				case "move":
+					if (parts.Length >= 3 &&
+						double.TryParse(parts[1], out double moveX) &&
+						double.TryParse(parts[2], out double moveY)) {
+						_currentX = moveX;
+						_currentY = moveY;
+						hasDrawingCommands = true;
+					}
+					break;
+
+				case "line":
+					if (parts.Length >= 5 &&
+						double.TryParse(parts[1], out double x1) &&
+						double.TryParse(parts[2], out double y1) &&
+						double.TryParse(parts[3], out double x2) &&
+						double.TryParse(parts[4], out double y2)) {
+						drawingCommands.Add(new DrawingCommand(
+							DrawingCommandType.Line, x1, y1, x2, y2, _currentColour));
+						_currentX = x2;
+						_currentY = y2;
+						hasDrawingCommands = true;
+					}
+					break;
+
+				case "point":
+					if (parts.Length >= 3 &&
+						double.TryParse(parts[1], out double pointX) &&
+						double.TryParse(parts[2], out double pointY)) {
+						drawingCommands.Add(new DrawingCommand(
+							DrawingCommandType.Point, pointX, pointY, 0, 0, _currentColour));
+						hasDrawingCommands = true;
+					}
+					break;
+
+				case "markup":
+					string processedOutput = string.Join(Environment.NewLine, lines[1..]);
+					processedOutput = System.Text.RegularExpressions.Regex.Replace(
+						processedOutput,
+						@"\[([^\]]+)\]([^\[]*)\[/\]",
+						"<span style='color: $1;'>$2</span>");
+					textOutput += processedOutput + Environment.NewLine;
+					processed = true;
+					break;
+
+				default:
+					if (!hasDrawingCommands) {
+						textOutput += line + Environment.NewLine;
+					}
+					break;
+			}
+
+			if (processed) {
+				break;
+			}
 		}
 
-		newOutput += Environment.NewLine;
+		VisualiserFrame newFrame = new VisualiserFrame(
+			textOutput,
+			drawingCommands,
+			_canvasWidth,
+			_canvasHeight
+		);
 
-		OutputHistory.Add(newOutput);
+		OutputHistory.Add(newFrame);
 		_currentIndex = OutputHistory.Count - 1;
 
 		StateHasChanged();
@@ -120,7 +251,7 @@
 						StateHasChanged();
 					}
 				});
-			}, null, 0, 100); // 100ms between frames
+			}, null, 0, 100);
 		} else {
 			_playTimer?.Dispose();
 			_playTimer = null;
