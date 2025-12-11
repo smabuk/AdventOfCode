@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Google.OrTools" />
+		<!--<PackageReference Include="Google.OrTools" />-->
 		<PackageReference Include="Smab.Helpers" />
 		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
 	</ItemGroup>
