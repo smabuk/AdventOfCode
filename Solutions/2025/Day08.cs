@@ -90,7 +90,7 @@ public partial class Day08
 		return (T)result;
 	}
 
-	internal record struct JunctionBox(int X, int Y, int Z);
+	[GenerateIParsable] internal partial record struct JunctionBox(int X, int Y, int Z);
 	internal sealed record JunctionBoxPair(JunctionBox First, JunctionBox Second);
 }
 
@@ -118,15 +118,6 @@ file static partial class Day08Extensions
 			double x1 = junctionBoxPair.First.X, y1 = junctionBoxPair.First.Y, z1 = junctionBoxPair.First.Z;
 			double x2 = junctionBoxPair.Second.X, y2 = junctionBoxPair.Second.Y, z2 = junctionBoxPair.Second.Z;
 			return Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2) + Math.Pow(z2 - z1, 2));
-		}
-	}
-
-	extension(JunctionBox)
-	{
-		public static JunctionBox Parse(string s)
-		{
-			int[] numbers = [.. s.AsNumbers<int>()];
-			return new(numbers[0], numbers[1], numbers[2]);
 		}
 	}
 }

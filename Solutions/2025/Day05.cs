@@ -34,19 +34,8 @@ public partial class Day05
 	static long Length(FreshRange range) => range.Length;
 
 
-	[GenerateIParsable] internal sealed partial record FreshRange(long Start, long End)
-	{
-		public static FreshRange Parse(string s)
-		{
-			long[] numbers = [.. s.AsNumbers<long>(separator: '-')];
-			return new FreshRange(numbers[0], numbers[1]);
-		}
-	};
-
-	[GenerateIParsable] internal sealed partial record Ingredient(long Id)
-	{
-		public static Ingredient Parse(string s) => new(s.As<long>());
-	}
+	[GenerateIParsable(SplitChars = "-")] internal sealed partial record FreshRange(long Start, long End);
+	[GenerateIParsable] internal sealed partial record Ingredient(long Id);
 
 }
 

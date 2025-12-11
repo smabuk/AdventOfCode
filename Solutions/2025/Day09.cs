@@ -241,11 +241,7 @@ public partial class Day09
 
 	internal readonly record struct LineSegment(Point Start, Point End);
 
-	[GenerateIParsable]
-	internal sealed partial record Tile(Point Position)
-	{
-		public static Tile Parse(string s) => new(Point.Parse(s));
-	}
+	[GenerateIParsable] internal sealed partial record Tile(Point Position);
 }
 
 file static partial class Day09TileExtensions

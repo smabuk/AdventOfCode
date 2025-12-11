@@ -18,7 +18,7 @@ public partial class Day02
 		);
 
 	[Init]
-	public static void LoadInstructions(string[] input)
+	public static void LoadRanges(string[] input)
 		=> _ranges = [.. input[0].Split(',').Select(ParseToRange)];
 
 	private static LongRange ParseToRange(string s)

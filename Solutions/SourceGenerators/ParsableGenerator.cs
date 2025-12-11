@@ -32,6 +32,23 @@ public class ParsableGenerator : IIncrementalGenerator
 		[global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
 		internal sealed class GenerateIParsableAttribute : global::System.Attribute
 		{
+			/// <summary>
+			/// Gets or sets the characters to use for splitting the input string when multiple constructor parameters exist.
+			/// Default is ' ' and ','.
+			/// </summary>
+			public string SplitChars { get; set; } = " ,";
+
+			/// <summary>
+			/// Gets or sets the regex pattern to use for splitting the input string.
+			/// If specified, this takes precedence over SplitChars.
+			/// </summary>
+			public string? SplitPattern { get; set; }
+
+			/// <summary>
+			/// Gets or sets whether to remove empty entries after splitting.
+			/// Default is true.
+			/// </summary>
+			public bool RemoveEmptyEntries { get; set; } = true;
 		}
 		""";
 
@@ -100,6 +117,9 @@ public class ParsableGenerator : IIncrementalGenerator
 			string namespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
 			string typeName = typeSymbol.Name;
 
+			// Extract split configuration from attribute
+			SplitConfiguration splitConfig = GetSplitConfiguration(typeDeclaration, semanticModel);
+
 			// Determine the full type keyword(s) - handles "record struct", "record class", "record", "class", "struct"
 			string typeKeyword = GetTypeKeyword(typeSymbol);
 
@@ -138,7 +158,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			//}
 
 			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList,
-				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable);
+				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig);
 
 			// Use full type path for unique filename
 			string fileName = containingTypes.Count > 0
@@ -166,6 +186,56 @@ public class ParsableGenerator : IIncrementalGenerator
 		};
 	}
 
+	private class SplitConfiguration(string splitChars, string? splitPattern, bool removeEmptyEntries)
+	{
+		public string SplitChars { get; } = splitChars;
+		public string? SplitPattern { get; } = splitPattern;
+		public bool RemoveEmptyEntries { get; } = removeEmptyEntries;
+	}
+
+	private static SplitConfiguration GetSplitConfiguration(TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
+	{
+		string splitChars = " ,";
+		string? splitPattern = null;
+		bool removeEmptyEntries = true;
+
+		foreach (AttributeListSyntax attributeListSyntax in typeDeclaration.AttributeLists) {
+			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes) {
+				if (semanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol) {
+					continue;
+				}
+
+				if (attributeSymbol.ContainingType.ToDisplayString() != AttributeName) {
+					continue;
+				}
+
+				// Extract attribute arguments
+				if (attributeSyntax.ArgumentList is null) {
+					continue;
+				}
+
+				foreach (AttributeArgumentSyntax argument in attributeSyntax.ArgumentList.Arguments) {
+					string? propertyName = argument.NameEquals?.Name.Identifier.Text;
+					if (propertyName is null) {
+						continue;
+					}
+
+					if (propertyName == "SplitChars" && argument.Expression is LiteralExpressionSyntax splitCharsLiteral) {
+						splitChars = splitCharsLiteral.Token.ValueText;
+					} else if (propertyName == "SplitPattern" && argument.Expression is LiteralExpressionSyntax splitPatternLiteral) {
+						splitPattern = splitPatternLiteral.Token.ValueText;
+					} else if (propertyName == "RemoveEmptyEntries" && argument.Expression is LiteralExpressionSyntax removeEmptyLiteral) {
+						if (bool.TryParse(removeEmptyLiteral.Token.ValueText, out bool value)) {
+							removeEmptyEntries = value;
+						}
+					}
+				}
+			}
+		}
+
+		return new SplitConfiguration(splitChars, splitPattern, removeEmptyEntries);
+	}
+
 	// Get the types of the properties in the constructor of the containing class/struct/record
 	private static IEnumerable<string> GetRecordParameterTypes(INamedTypeSymbol typeSymbol)
 	{
@@ -191,7 +261,7 @@ public class ParsableGenerator : IIncrementalGenerator
 	}
 
 	private static string GenerateSource(string namespaceName, string typeName, string typeKeyword,
-		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface)
+		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface, SplitConfiguration splitConfig)
 	{
 		// Build opening declarations for nested types
 		StringBuilder containingTypesOpen = new();
@@ -213,7 +283,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			? $$"""
 				{{indent}}	public static {{typeName}} Parse(string s)
 				{{indent}}	{
-				{{indent}}	{{CreateNewFromConstructorParamaters(constructorParametersList)}};
+				{{CreateNewFromConstructorParameters(typeName, constructorParametersList, splitConfig, indent)}}
 				{{indent}}	}
 				"""
 			: generateParse && !generateParseWithProvider
@@ -256,12 +326,23 @@ public class ParsableGenerator : IIncrementalGenerator
 			? $$"""{{indent}}	// Parameters: {{string.Join(", ", constructorParametersList)}}"""
 			: "";
 
+		// Add necessary using statements based on split configuration
+		bool needsRegex = !string.IsNullOrEmpty(splitConfig.SplitPattern);
+		bool needsLinq = constructorParametersList.Length > 1 && needsRegex && splitConfig.RemoveEmptyEntries;
+		string additionalUsings = "";
+		if (needsRegex) {
+			additionalUsings += "using System.Text.RegularExpressions;\n";
+		}
+		if (needsLinq) {
+			additionalUsings += "using System.Linq;\n";
+		}
+
 		return $$"""
 			// <auto-generated/>
 			#nullable enable
 
 			using System.Diagnostics.CodeAnalysis;
-
+			{{additionalUsings}}
 			namespace {{namespaceName}};
 
 			{{containingTypesOpen}}{{indent}}partial {{typeKeyword}} {{typeName}}{{interfaceDeclaration}}
@@ -275,32 +356,54 @@ public class ParsableGenerator : IIncrementalGenerator
 			""";
 	}
 
-	private static string CreateNewFromConstructorParamaters(string[] constructorParametersList)
+	private static string CreateNewFromConstructorParameters(string typeName, string[] constructorParametersList, SplitConfiguration splitConfig, string indent)
 	{
 		if (constructorParametersList == null || constructorParametersList.Length == 0) {
-			return "\treturn new()";
-		}
-
-		List<string> parameters = [];
-		foreach (string parameterType in constructorParametersList) {
-			string parameter = parameterType switch {
-				"string" => "s",
-				_ => $"{parameterType}.Parse(s)"
-			};
-			parameters.Add(parameter);
+			return $"{indent}\t\treturn new();";
 		}
 
 		if (constructorParametersList.Length == 1) {
-			return $"\treturn new({parameters[0]})";
+			string parameter = constructorParametersList[0] switch
+			{
+				"string" => "s",
+				_ => $"{constructorParametersList[0]}.Parse(s)"
+			};
+			return $"{indent}\t\treturn new({parameter});";
 		}
 
-
-
+		// Multiple parameters - need to split the input string
 		StringBuilder sb = new();
-		_ = sb.Append("\treturn new(");
-		_ = sb.Append(string.Join(", ", parameters.Select(p => $"{p}")));
 
-		_ = sb.Append(")");
+		// Generate split logic
+		if (!string.IsNullOrEmpty(splitConfig.SplitPattern)) {
+			// Use Regex.Split
+			string options = splitConfig.RemoveEmptyEntries ? ", RegexOptions.None" : ", RegexOptions.None";
+			_ = sb.AppendLine($"{indent}\t\tstring[] parts = Regex.Split(s, @\"{splitConfig.SplitPattern}\"{options});");
+			if (splitConfig.RemoveEmptyEntries) {
+				_ = sb.AppendLine($"{indent}\t\tparts = parts.Where(p => !string.IsNullOrWhiteSpace(p)).ToArray();");
+			}
+		} else {
+			// Use string.Split with characters
+			string splitCharsArray = string.Join(", ", splitConfig.SplitChars.Select(c => $"'{c}'"));
+			string splitOptions = splitConfig.RemoveEmptyEntries
+				? ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries"
+				: ", StringSplitOptions.TrimEntries";
+			_ = sb.AppendLine($"{indent}\t\tstring[] parts = s.Split([{splitCharsArray}]{splitOptions});");
+		}
+
+		// Generate parameter parsing
+		List<string> parameterExpressions = [];
+		for (int i = 0; i < constructorParametersList.Length; i++) {
+			string parameterType = constructorParametersList[i];
+			string expression = parameterType switch
+			{
+				"string" => $"parts[{i}]",
+				_ => $"{parameterType}.Parse(parts[{i}])"
+			};
+			parameterExpressions.Add(expression);
+		}
+
+		_ = sb.Append($"{indent}\t\treturn new {typeName}({string.Join(", ", parameterExpressions)});");
 		return sb.ToString();
 	}
 	private static string GetIndent(int level) => new('\t', level);
