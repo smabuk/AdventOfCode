@@ -12,28 +12,43 @@ public partial class Day11
 {
 
 	[Init]
-	public static void LoadServerRack(string[] input)
-	{
-		_serverRack = input.Select(i => i.AsConnection()).ToDictionary();
-	}
+	public static void LoadServerRack(string[] input) => _serverRack = input.Select(i => i.AsConnection()).ToDictionary();
 
 	private static Dictionary<Device, HashSet<Device>> _serverRack = [];
 
 	public static int Part1() => _serverRack.FindAllPaths(new("you"), new("out")).Count();
 
+	/// <summary>
+	/// Counts the total number of distinct paths through the server rack that traverse specified waypoints in two
+	/// different orders.
+	/// </summary>
+	/// <remarks>This method calculates the number of paths that traverse the waypoints 'fft' and 'dac' in both 'svr
+	/// → fft → dac → out' and 'svr → dac → fft → out' orders, then returns their sum. The result can be used to analyze
+	/// connectivity or redundancy in the server rack's directed acyclic graph (DAG) structure.</remarks>
+	/// <returns>The total number of distinct paths from the 'svr' device to the 'out' device that pass through both 'fft' and 'dac'
+	/// devices, considering both possible waypoint orders.</returns>
 	public static long Part2()
 	{
-		Device start = new("svr");
+		Device svr = new("svr");
+		Device dac = new("dac");
+		Device fft = new("fft");
 		Device target = new("out");
-		Device requiredDevice1 = new("dac");
-		Device requiredDevice2 = new("fft");
 
-		IEnumerable<List<Device>> allPaths = _serverRack.FindAllPaths(start, target);
+		VisualiseString("");
+		VisualiseString("=== DAG Path Counting ===");
 
-		int pathCount = allPaths.Count(path =>
-			path.Contains(requiredDevice1) && path.Contains(requiredDevice2));
+		// Count paths: svr → fft → dac → out
+		long pathsViaFftThenDac = _serverRack.CountPathsViaWaypoints(svr, target, fft, dac);
+		VisualiseString($"Paths svr → fft → dac → out: {pathsViaFftThenDac:N0}");
 
-		return pathCount;
+		// Count paths: svr → dac → fft → out
+		long pathsViaDacThenFft = _serverRack.CountPathsViaWaypoints(svr, target, dac, fft);
+		VisualiseString($"Paths svr → dac → fft → out: {pathsViaDacThenFft:N0}");
+
+		long total = pathsViaFftThenDac + pathsViaDacThenFft;
+		VisualiseString($"Total: {total:N0}");
+
+		return total;
 	}
 
 	[GenerateIParsable]
@@ -47,16 +62,141 @@ file static partial class Day11Extensions
 {
 	extension(Dictionary<Device, HashSet<Device>> rack)
 	{
+		/// <summary>
+		/// Calculates the total number of distinct paths from the specified start device to the end device that pass through
+		/// both waypoint devices in order.
+		/// </summary>
+		/// <remarks>Paths are counted only if they traverse the waypoints in the specified order: start → waypoint1 →
+		/// waypoint2 → end. If there are no paths between any consecutive devices in this sequence, the result is
+		/// 0.</remarks>
+		/// <param name="start">The device from which each path begins.</param>
+		/// <param name="end">The device at which each path ends.</param>
+		/// <param name="waypoint1">The first waypoint device that each path must pass through after leaving the start device.</param>
+		/// <param name="waypoint2">The second waypoint device that each path must pass through after passing through the first waypoint.</param>
+		/// <returns>The number of distinct paths from the start device to the end device that pass through both waypoints in sequence.
+		/// Returns 0 if no such path exists.</returns>
+		public long CountPathsViaWaypoints(Device start, Device end, Device waypoint1, Device waypoint2)
+		{
+			long pathsToWp1 = rack.CountPathsDAG(start, waypoint1);
+			if (pathsToWp1 == 0) {
+				return 0;
+			}
+
+			long pathsWp1ToWp2 = rack.CountPathsDAG(waypoint1, waypoint2);
+			if (pathsWp1ToWp2 == 0) {
+				return 0;
+			}
+
+			long pathsWp2ToEnd = rack.CountPathsDAG(waypoint2, end);
+			if (pathsWp2ToEnd == 0) {
+				return 0;
+			}
+
+			return pathsToWp1 * pathsWp1ToWp2 * pathsWp2ToEnd;
+		}
+
+		/// <summary>
+		/// Calculates the total number of distinct paths from the specified start device to the end device in a directed
+		/// acyclic graph (DAG) of devices.
+		/// </summary>
+		/// <remarks>This method assumes the underlying graph of devices is acyclic. If the graph contains cycles, the
+		/// result may be incorrect.</remarks>
+		/// <param name="start">The device from which to begin counting paths. Must be a valid node in the DAG.</param>
+		/// <param name="end">The destination device for which paths are counted. Must be a valid node in the DAG.</param>
+		/// <returns>The number of distinct paths from the start device to the end device. Returns 0 if no such path exists.</returns>
+		public long CountPathsDAG(Device start, Device end)
+			=> CountPathsDAGRecursive(rack, start, end, [], []);
+
+		/// <summary>
+		/// Recursively counts the number of distinct paths from the specified starting device to the target device in a
+		/// directed acyclic graph (DAG).
+		/// </summary>
+		/// <remarks>This method assumes the input graph is a DAG. If cycles are detected, they are ignored and do not
+		/// contribute to the path count. The method uses memoization to improve performance for large graphs.</remarks>
+		/// <param name="graph">A dictionary representing the DAG, where each key is a device and its value is a set of neighboring devices
+		/// directly reachable from it.</param>
+		/// <param name="current">The device from which to start counting paths.</param>
+		/// <param name="target">The destination device for which all distinct paths from the current device are counted.</param>
+		/// <param name="dp">A dictionary used for memoization, mapping devices to the number of paths from that device to the target. This
+		/// optimizes repeated subproblem calculations.</param>
+		/// <param name="visited">A set of devices currently in the recursion stack, used to detect cycles and prevent infinite recursion.</param>
+		/// <returns>The total number of distinct paths from the current device to the target device. Returns 0 if no such path exists.</returns>
+		private static long CountPathsDAGRecursive(
+			Dictionary<Device, HashSet<Device>> graph,
+			Device current,
+			Device target,
+			Dictionary<Device, long> dp,
+			HashSet<Device> visited)
+		{
+			if (current.Equals(target)) {
+				return 1;
+			}
+
+			// Check if already computed
+			if (dp.TryGetValue(current, out long cached)) {
+				return cached;
+			}
+
+			// Detect cycles (shouldn't happen in DAG but be safe)
+			if (visited.Contains(current)) {
+				return 0;
+			}
+
+			_ = visited.Add(current);
+			long pathCount = 0;
+
+			if (graph.TryGetValue(current, out HashSet<Device>? neighbors)) {
+				foreach (Device next in neighbors) {
+					pathCount += CountPathsDAGRecursive(graph, next, target, dp, visited);
+				}
+			}
+
+			_ = visited.Remove(current);
+			dp[current] = pathCount;
+
+			return pathCount;
+		}
+
+		/// <summary>
+		/// Finds all possible paths between the specified start and target devices within the rack network.
+		/// </summary>
+		/// <remarks>The method limits the maximum path length to 200 devices and the total number of paths explored
+		/// to 100,000,000 to prevent excessive resource usage. Paths will not revisit the same device within a single path.
+		/// If the start device is not present in the rack, the method returns an empty collection.</remarks>
+		/// <param name="start">The device from which to begin searching for paths.</param>
+		/// <param name="target">The device to which all paths should lead.</param>
+		/// <returns>An enumerable collection of lists, where each list represents a distinct path from the start device to the target
+		/// device. If no paths are found, the collection is empty.</returns>
+		/// <exception cref="ApplicationException">Thrown if the exploration limit is reached before all possible paths are found.</exception>
 		public IEnumerable<List<Device>> FindAllPaths(Device start, Device target)
 		{
+			if (!rack.ContainsKey(start)) {
+				return [];
+			}
+
 			List<List<Device>> paths = [];
 			Queue<List<Device>> queue = new();
 			queue.Enqueue([start]);
-			while (queue.Count > 0) {
+
+			int maxPathLength = 200;
+			long maxPathsToExplore = 100_000_000;
+			long pathsExplored = 0;
+
+			while (queue.Count > 0 && pathsExplored < maxPathsToExplore) {
 				List<Device> path = queue.Dequeue();
+				pathsExplored++;
+
+				if (path.Count > maxPathLength) {
+					continue;
+				}
+
 				Device lastDevice = path.Last();
 				if (lastDevice.Equals(target)) {
 					paths.Add(path);
+					continue;
+				}
+
+				if (!rack.ContainsKey(lastDevice)) {
 					continue;
 				}
 
@@ -64,6 +204,10 @@ file static partial class Day11Extensions
 					List<Device> newPath = [.. path, connectedTo];
 					queue.Enqueue(newPath);
 				}
+			}
+
+			if (pathsExplored >= maxPathsToExplore) {
+				throw new ApplicationException($"WARNING: Hit exploration limit for {start.Name} → {target.Name}. Found {paths.Count} paths so far.");
 			}
 
 			return paths;
