@@ -43,21 +43,23 @@ public class ParsableGenerator : IIncrementalGenerator
 			/// Gets or sets the regex pattern to use for splitting the input string.
 			/// If specified, this takes precedence over SplitChars.
 			/// </summary>
+			[global::System.Diagnostics.CodeAnalysis.StringSyntax("Regex")]
 			public string? SplitPattern { get; set; }
 
-		/// <summary>
-		/// Gets or sets whether to remove empty entries after splitting.
-		/// Default is true.
-		/// </summary>
-		public bool RemoveEmptyEntries { get; set; } = true;
+			/// <summary>
+			/// Gets or sets whether to remove empty entries after splitting.
+			/// Default is true.
+			/// </summary>
+			public bool RemoveEmptyEntries { get; set; } = true;
 
-		/// <summary>
-		/// Gets or sets the regex pattern with named capture groups for parsing complex multi-parameter scenarios.
-		/// Named groups should match constructor parameter names.
-		/// Example: @"(?<Name>\w+):\s*(?<Values>[\d,\s]+)"
-		/// When specified, this takes precedence over simple splitting.
-		/// </summary>
-		public string? CapturePattern { get; set; }
+			/// <summary>
+			/// Gets or sets the regex pattern with named capture groups for parsing complex multi-parameter scenarios.
+			/// Named groups should match constructor parameter names.
+			/// Example: @"(?<Name>\w+):\s*(?<Values>[\d,\s]+)"
+			/// When specified, this takes precedence over simple splitting.
+			/// </summary>
+			[global::System.Diagnostics.CodeAnalysis.StringSyntax("Regex")]
+			public string? CapturePattern { get; set; }
 		}
 		""";
 
