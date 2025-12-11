@@ -26,4 +26,29 @@ public partial class Tests_11_Reactor
 		_ = int.TryParse(SolveProblem(YEAR, DAY, PART1, input), out int actual);
 		actual.ShouldBe(expected);
 	}
+
+	private const string TEST_DATA2 =
+		"""
+		svr: aaa bbb
+		aaa: fft
+		fft: ccc
+		bbb: tty
+		tty: ccc
+		ccc: ddd eee
+		ddd: hub
+		hub: fff
+		eee: dac
+		dac: fff
+		fff: ggg hhh
+		ggg: out
+		hhh: out
+		""";
+
+	[Theory]
+	[InlineData(TEST_DATA2, 2)]
+	public void Part2(string input, int expected)
+	{
+		_ = int.TryParse(SolveProblem(YEAR, DAY, PART2, input), out int actual);
+		actual.ShouldBe(expected);
+	}
 }

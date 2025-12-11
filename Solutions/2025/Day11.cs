@@ -8,16 +8,33 @@ namespace AdventOfCode.Solutions._2025;
 /// </summary>
 [Description("Reactor")]
 [GenerateVisualiser]
-public partial class Day11 {
+public partial class Day11
+{
 
 	[Init]
 	public static void LoadServerRack(string[] input)
-		=> _serverRack = input.Select(i => i.AsConnection()).ToDictionary();
+	{
+		_serverRack = input.Select(i => i.AsConnection()).ToDictionary();
+	}
+
 	private static Dictionary<Device, HashSet<Device>> _serverRack = [];
 
 	public static int Part1() => _serverRack.FindAllPaths(new("you"), new("out")).Count();
 
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static long Part2()
+	{
+		Device start = new("svr");
+		Device target = new("out");
+		Device requiredDevice1 = new("dac");
+		Device requiredDevice2 = new("fft");
+
+		IEnumerable<List<Device>> allPaths = _serverRack.FindAllPaths(start, target);
+
+		int pathCount = allPaths.Count(path =>
+			path.Contains(requiredDevice1) && path.Contains(requiredDevice2));
+
+		return pathCount;
+	}
 
 	[GenerateIParsable]
 	internal sealed partial record Device(string Name)
@@ -35,12 +52,10 @@ file static partial class Day11Extensions
 			List<List<Device>> paths = [];
 			Queue<List<Device>> queue = new();
 			queue.Enqueue([start]);
-			while (queue.Count > 0)
-			{
+			while (queue.Count > 0) {
 				List<Device> path = queue.Dequeue();
 				Device lastDevice = path.Last();
-				if (lastDevice.Equals(target))
-				{
+				if (lastDevice.Equals(target)) {
 					paths.Add(path);
 					continue;
 				}
