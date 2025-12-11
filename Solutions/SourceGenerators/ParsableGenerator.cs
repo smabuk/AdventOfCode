@@ -499,6 +499,16 @@ public class ParsableGenerator : IIncrementalGenerator
 			}
 		}
 
+		// Check for HashSet<T>
+		if (typeString.StartsWith("HashSet<") || typeString.StartsWith("System.Collections.Generic.HashSet<")) {
+			int startIndex = typeString.IndexOf('<') + 1;
+			int endIndex = typeString.LastIndexOf('>');
+			if (endIndex > startIndex) {
+				elementType = typeString.Substring(startIndex, endIndex - startIndex);
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -537,6 +547,9 @@ public class ParsableGenerator : IIncrementalGenerator
 			collectionCreation = elementType == "string" ? "parts" : parseExpression;
 		} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
 			// List<T> type
+			collectionCreation = elementType == "string" ? "[.. parts]" : $"[.. {parseExpression}]";
+		} else if (parameterType.StartsWith("HashSet<") || parameterType.StartsWith("System.Collections.Generic.HashSet<")) {
+			// HashSet<T> type
 			collectionCreation = elementType == "string" ? "[.. parts]" : $"[.. {parseExpression}]";
 		} else {
 			// IEnumerable<T> type
@@ -632,6 +645,8 @@ public class ParsableGenerator : IIncrementalGenerator
 				collectionCreation = $"{valueVar}Parts";
 			} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
 				collectionCreation = $"[.. {valueVar}Parts]";
+			} else if (parameterType.StartsWith("HashSet<") || parameterType.StartsWith("System.Collections.Generic.HashSet<")) {
+				collectionCreation = $"[.. {valueVar}Parts]";
 			} else {
 				collectionCreation = $"{valueVar}Parts";
 			}
@@ -658,6 +673,8 @@ public class ParsableGenerator : IIncrementalGenerator
 			_ = sb.Append($"{indent}\t\t{elementType}[] {varName}Parsed = [.. {varName}List];");
 		} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
 			_ = sb.Append($"{indent}\t\tList<{elementType}> {varName}Parsed = {varName}List;");
+		} else if (parameterType.StartsWith("HashSet<") || parameterType.StartsWith("System.Collections.Generic.HashSet<")) {
+			_ = sb.Append($"{indent}\t\tHashSet<{elementType}> {varName}Parsed = [.. {varName}List];");
 		} else {
 			_ = sb.Append($"{indent}\t\tIEnumerable<{elementType}> {varName}Parsed = {varName}List;");
 		}
@@ -671,6 +688,8 @@ public class ParsableGenerator : IIncrementalGenerator
 			return $"{elementType}[]";
 		} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
 			return $"List<{elementType}>";
+		} else if (parameterType.StartsWith("HashSet<") || parameterType.StartsWith("System.Collections.Generic.HashSet<")) {
+			return $"HashSet<{elementType}>";
 		} else {
 			return $"IEnumerable<{elementType}>";
 		}
