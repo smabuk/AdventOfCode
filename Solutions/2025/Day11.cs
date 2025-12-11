@@ -12,41 +12,34 @@ public partial class Day11
 {
 
 	[Init]
-	public static void LoadServerRack(string[] input) => _serverRack = input.Select(i => i.AsConnection()).ToDictionary();
+	public static void LoadServerRack(string[] input)
+		=> _serverRack = input.Select(i => i.AsConnection()).ToDictionary();
 
 	private static Dictionary<Device, HashSet<Device>> _serverRack = [];
 
 	public static int Part1() => _serverRack.FindAllPaths(new("you"), new("out")).Count();
 
-	/// <summary>
-	/// Counts the total number of distinct paths through the server rack that traverse specified waypoints in two
-	/// different orders.
-	/// </summary>
-	/// <remarks>This method calculates the number of paths that traverse the waypoints 'fft' and 'dac' in both 'svr
-	/// → fft → dac → out' and 'svr → dac → fft → out' orders, then returns their sum. The result can be used to analyze
-	/// connectivity or redundancy in the server rack's directed acyclic graph (DAG) structure.</remarks>
-	/// <returns>The total number of distinct paths from the 'svr' device to the 'out' device that pass through both 'fft' and 'dac'
-	/// devices, considering both possible waypoint orders.</returns>
 	public static long Part2()
 	{
 		Device svr = new("svr");
 		Device dac = new("dac");
 		Device fft = new("fft");
-		Device target = new("out");
+		Device end = new("out");
 
 		VisualiseString("");
 		VisualiseString("=== DAG Path Counting ===");
 
+		// One of these is guaranteed to fail or we would have loops
+
 		// Count paths: svr → fft → dac → out
-		long pathsViaFftThenDac = _serverRack.CountPathsViaWaypoints(svr, target, fft, dac);
-		VisualiseString($"Paths svr → fft → dac → out: {pathsViaFftThenDac:N0}");
+		long total = _serverRack.CountPathsViaWaypoints(svr, end, fft, dac);
+		VisualiseString($"Paths svr → fft → dac → out: {total:N0}");
 
-		// Count paths: svr → dac → fft → out
-		long pathsViaDacThenFft = _serverRack.CountPathsViaWaypoints(svr, target, dac, fft);
-		VisualiseString($"Paths svr → dac → fft → out: {pathsViaDacThenFft:N0}");
-
-		long total = pathsViaFftThenDac + pathsViaDacThenFft;
-		VisualiseString($"Total: {total:N0}");
+		if (total == 0) {
+			// Count paths: svr → dac → fft → out
+			total = _serverRack.CountPathsViaWaypoints(svr, end, dac, fft);
+			VisualiseString($"Paths svr → dac → fft → out: {total:N0}");
+		}
 
 		return total;
 	}
@@ -78,34 +71,18 @@ file static partial class Day11Extensions
 		public long CountPathsViaWaypoints(Device start, Device end, Device waypoint1, Device waypoint2)
 		{
 			long pathsToWp1 = rack.CountPathsDAG(start, waypoint1);
-			if (pathsToWp1 == 0) {
-				return 0;
-			}
+			if (pathsToWp1 == 0) { return 0; }
 
 			long pathsWp1ToWp2 = rack.CountPathsDAG(waypoint1, waypoint2);
-			if (pathsWp1ToWp2 == 0) {
-				return 0;
-			}
+			if (pathsWp1ToWp2 == 0) { return 0; }
 
 			long pathsWp2ToEnd = rack.CountPathsDAG(waypoint2, end);
-			if (pathsWp2ToEnd == 0) {
-				return 0;
-			}
+			if (pathsWp2ToEnd == 0) { return 0; }
 
 			return pathsToWp1 * pathsWp1ToWp2 * pathsWp2ToEnd;
 		}
 
-		/// <summary>
-		/// Calculates the total number of distinct paths from the specified start device to the end device in a directed
-		/// acyclic graph (DAG) of devices.
-		/// </summary>
-		/// <remarks>This method assumes the underlying graph of devices is acyclic. If the graph contains cycles, the
-		/// result may be incorrect.</remarks>
-		/// <param name="start">The device from which to begin counting paths. Must be a valid node in the DAG.</param>
-		/// <param name="end">The destination device for which paths are counted. Must be a valid node in the DAG.</param>
-		/// <returns>The number of distinct paths from the start device to the end device. Returns 0 if no such path exists.</returns>
-		public long CountPathsDAG(Device start, Device end)
-			=> CountPathsDAGRecursive(rack, start, end, [], []);
+		public long CountPathsDAG(Device start, Device end) => CountPathsDAGRecursive(rack, start, end, [], []);
 
 		/// <summary>
 		/// Recursively counts the number of distinct paths from the specified starting device to the target device in a
@@ -128,25 +105,15 @@ file static partial class Day11Extensions
 			Dictionary<Device, long> dp,
 			HashSet<Device> visited)
 		{
-			if (current.Equals(target)) {
-				return 1;
-			}
-
-			// Check if already computed
-			if (dp.TryGetValue(current, out long cached)) {
-				return cached;
-			}
-
-			// Detect cycles (shouldn't happen in DAG but be safe)
-			if (visited.Contains(current)) {
-				return 0;
-			}
+			if (current.Equals(target)) { return 1; }
+			if (dp.TryGetValue(current, out long cached)) { return cached; }
+			if (visited.Contains(current)) { return 0; }
 
 			_ = visited.Add(current);
 			long pathCount = 0;
 
-			if (graph.TryGetValue(current, out HashSet<Device>? neighbors)) {
-				foreach (Device next in neighbors) {
+			if (graph.TryGetValue(current, out HashSet<Device>? nextDevices)) {
+				foreach (Device next in nextDevices) {
 					pathCount += CountPathsDAGRecursive(graph, next, target, dp, visited);
 				}
 			}
