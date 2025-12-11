@@ -1,8 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+
 using System.Collections.Immutable;
 using System.Text;
+using System.Linq;
 
 namespace AdventOfCode.SourceGenerators;
 
@@ -63,20 +65,16 @@ public class ParsableGenerator : IIncrementalGenerator
 	{
 		TypeDeclarationSyntax typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
 
-		foreach (AttributeListSyntax attributeListSyntax in typeDeclarationSyntax.AttributeLists)
-		{
-			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
-			{
-				if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
-				{
+		foreach (AttributeListSyntax attributeListSyntax in typeDeclarationSyntax.AttributeLists) {
+			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes) {
+				if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol) {
 					continue;
 				}
 
 				INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
 				string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-				if (fullName == AttributeName)
-				{
+				if (fullName == AttributeName) {
 					return typeDeclarationSyntax;
 				}
 			}
@@ -87,18 +85,15 @@ public class ParsableGenerator : IIncrementalGenerator
 
 	private static void Execute(Compilation compilation, ImmutableArray<TypeDeclarationSyntax> types, SourceProductionContext context)
 	{
-		if (types.IsDefaultOrEmpty)
-		{
+		if (types.IsDefaultOrEmpty) {
 			return;
 		}
 
-		foreach (TypeDeclarationSyntax typeDeclaration in types.Distinct())
-		{
+		foreach (TypeDeclarationSyntax typeDeclaration in types.Distinct()) {
 			context.CancellationToken.ThrowIfCancellationRequested();
 
 			SemanticModel semanticModel = compilation.GetSemanticModel(typeDeclaration.SyntaxTree);
-			if (semanticModel.GetDeclaredSymbol(typeDeclaration) is not INamedTypeSymbol typeSymbol)
-			{
+			if (semanticModel.GetDeclaredSymbol(typeDeclaration) is not INamedTypeSymbol typeSymbol) {
 				continue;
 			}
 
@@ -111,8 +106,8 @@ public class ParsableGenerator : IIncrementalGenerator
 			// Get containing types (for nested types)
 			List<(string Name, string Keyword)> containingTypes = [];
 			INamedTypeSymbol? containingType = typeSymbol.ContainingType;
-			while (containingType is not null)
-			{
+			INamedTypeSymbol containingTypeSymbol = default!;
+			while (containingType is not null) {
 				string containingKeyword = containingType.TypeKind switch
 				{
 					TypeKind.Class => "partial class",
@@ -120,9 +115,16 @@ public class ParsableGenerator : IIncrementalGenerator
 					_ => "partial class"
 				};
 
+				if (containingType.TypeKind is TypeKind.Class or TypeKind.Struct) {
+					containingTypeSymbol = containingType;
+				}
+
 				containingTypes.Insert(0, (containingType.Name, containingKeyword));
 				containingType = containingType.ContainingType;
 			}
+
+			// Get constructor parameter types
+			string[] constructorParametersList = [.. GetRecordParameterTypes(typeSymbol)];
 
 			// Check which methods already exist
 			bool hasParseMethod = HasParseStringMethod(typeSymbol);
@@ -131,12 +133,11 @@ public class ParsableGenerator : IIncrementalGenerator
 			bool implementsIParsable = ImplementsIParsable(typeSymbol);
 
 			// Skip generation if both methods already exist
-			if (hasParseMethod && hasParseStringWithProviderMethod && hasTryParseMethod && implementsIParsable)
-			{
-				continue;
-			}
+			//if (hasParseMethod && hasParseStringWithProviderMethod && hasTryParseMethod && implementsIParsable) {
+			//	continue;
+			//}
 
-			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes,
+			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList,
 				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable);
 
 			// Use full type path for unique filename
@@ -165,16 +166,39 @@ public class ParsableGenerator : IIncrementalGenerator
 		};
 	}
 
+	// Get the types of the properties in the constructor of the containing class/struct/record
+	private static IEnumerable<string> GetRecordParameterTypes(INamedTypeSymbol typeSymbol)
+	{
+		// return record properties needed for new RecordType(param1, param2)
+		if (typeSymbol is null || !typeSymbol.IsRecord) {
+			return [];
+		}
+
+		// For records, look for the primary constructor and get its parameter types
+		IMethodSymbol? primaryConstructor = typeSymbol.Constructors
+			.FirstOrDefault(c => c.Parameters.Length > 0 && !c.IsImplicitlyDeclared);
+
+		if (primaryConstructor is not null) {
+			return primaryConstructor.Parameters
+				.Select(p => p.Type.ToDisplayString());
+		}
+
+		// Fallback: get public properties (works for positional records)
+		return typeSymbol.GetMembers()
+			.OfType<IPropertySymbol>()
+			.Where(p => p.DeclaredAccessibility == Accessibility.Public && !p.IsStatic)
+			.Select(p => p.Type.ToDisplayString());
+	}
+
 	private static string GenerateSource(string namespaceName, string typeName, string typeKeyword,
-		List<(string Name, string Keyword)> containingTypes, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface)
+		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface)
 	{
 		// Build opening declarations for nested types
 		StringBuilder containingTypesOpen = new();
 		StringBuilder containingTypesClose = new();
 		int baseIndent = 0;
 
-		foreach ((string name, string keyword) in containingTypes)
-		{
+		foreach ((string name, string keyword) in containingTypes) {
 			_ = containingTypesOpen.AppendLine($"{GetIndent(baseIndent)}{keyword} {name}");
 			_ = containingTypesOpen.AppendLine($"{GetIndent(baseIndent)}{{");
 			_ = containingTypesClose.Insert(0, $"{GetIndent(baseIndent)}}}");
@@ -185,19 +209,26 @@ public class ParsableGenerator : IIncrementalGenerator
 		string indent = GetIndent(baseIndent);
 		string interfaceDeclaration = addIParsableInterface ? $" : IParsable<{typeName}>" : "";
 
-		string parseMethod = generateParse && !generateParseWithProvider
+		string parseMethod = generateParse && generateParseWithProvider
 			? $$"""
-				{{indent}}	public static {{typeName}} Parse(string s) => {{typeName}}.Parse(s, null);
+				{{indent}}	public static {{typeName}} Parse(string s)
+				{{indent}}	{
+				{{indent}}	{{CreateNewFromConstructorParamaters(constructorParametersList)}};
+				{{indent}}	}
 				"""
-			: "";
+			: generateParse && !generateParseWithProvider
+				? $$"""
+					{{indent}}	public static {{typeName}} Parse(string s) => {{typeName}}.Parse(s, null);
+					"""
+				: "";
 
-		string parseMethodWithProvider = generateParseWithProvider && !generateParse
+		string parseMethodWithProvider = generateParseWithProvider
 			? $$"""
 				{{indent}}	public static {{typeName}} Parse(string s, IFormatProvider? provider) => {{typeName}}.Parse(s);
 				"""
 			: "";
 
-		string tryParseMethod = generateTryParse && !(generateParse && generateParseWithProvider)
+		string tryParseMethod = generateTryParse
 			? $$"""
 				{{indent}}	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out {{typeName}} result)
 				{{indent}}	{
@@ -221,6 +252,10 @@ public class ParsableGenerator : IIncrementalGenerator
 				"""
 			: "";
 
+		string parameterTypesComment = constructorParametersList.Length > 0
+			? $$"""{{indent}}	// Parameters: {{string.Join(", ", constructorParametersList)}}"""
+			: "";
+
 		return $$"""
 			// <auto-generated/>
 			#nullable enable
@@ -231,6 +266,7 @@ public class ParsableGenerator : IIncrementalGenerator
 
 			{{containingTypesOpen}}{{indent}}partial {{typeKeyword}} {{typeName}}{{interfaceDeclaration}}
 			{{indent}}{
+			{{parameterTypesComment}}
 			{{parseMethod}}
 			{{parseMethodWithProvider}}
 			{{tryParseMethod}}
@@ -239,6 +275,34 @@ public class ParsableGenerator : IIncrementalGenerator
 			""";
 	}
 
+	private static string CreateNewFromConstructorParamaters(string[] constructorParametersList)
+	{
+		if (constructorParametersList == null || constructorParametersList.Length == 0) {
+			return "\treturn new()";
+		}
+
+		List<string> parameters = [];
+		foreach (string parameterType in constructorParametersList) {
+			string parameter = parameterType switch {
+				"string" => "s",
+				_ => $"{parameterType}.Parse(s)"
+			};
+			parameters.Add(parameter);
+		}
+
+		if (constructorParametersList.Length == 1) {
+			return $"\treturn new({parameters[0]})";
+		}
+
+
+
+		StringBuilder sb = new();
+		_ = sb.Append("\treturn new(");
+		_ = sb.Append(string.Join(", ", parameters.Select(p => $"{p}")));
+
+		_ = sb.Append(")");
+		return sb.ToString();
+	}
 	private static string GetIndent(int level) => new('\t', level);
 
 	private static bool HasParseStringMethod(INamedTypeSymbol typeSymbol)

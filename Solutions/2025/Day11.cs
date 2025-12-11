@@ -44,11 +44,7 @@ public partial class Day11
 		return total;
 	}
 
-	[GenerateIParsable]
-	internal sealed partial record Device(string Name)
-	{
-		public static Device Parse(string s) => new(s);
-	}
+	[GenerateIParsable] internal sealed partial record Device(string Name);
 }
 
 file static partial class Day11Extensions
