@@ -558,7 +558,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		StringBuilder sb = new();
 
 		// Match validation with descriptive error
-		_ = sb.AppendLine($"{indent}\t\tvar match = Regex.Match(s, @\"{splitConfig.CapturePattern}\");");
+		_ = sb.AppendLine($"{indent}\t\tMatch match = Regex.Match(s, @\"{splitConfig.CapturePattern}\");");
 		_ = sb.AppendLine($"{indent}\t\tif (!match.Success)");
 		_ = sb.AppendLine($"{indent}\t\t{{");
 		_ = sb.AppendLine($"{indent}\t\t\tthrow new FormatException($\"Input string '{{s}}' does not match expected pattern.\");");
