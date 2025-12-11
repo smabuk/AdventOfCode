@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Linq;
 
@@ -44,11 +45,19 @@ public class ParsableGenerator : IIncrementalGenerator
 			/// </summary>
 			public string? SplitPattern { get; set; }
 
-			/// <summary>
-			/// Gets or sets whether to remove empty entries after splitting.
-			/// Default is true.
-			/// </summary>
-			public bool RemoveEmptyEntries { get; set; } = true;
+		/// <summary>
+		/// Gets or sets whether to remove empty entries after splitting.
+		/// Default is true.
+		/// </summary>
+		public bool RemoveEmptyEntries { get; set; } = true;
+
+		/// <summary>
+		/// Gets or sets the regex pattern with named capture groups for parsing complex multi-parameter scenarios.
+		/// Named groups should match constructor parameter names.
+		/// Example: @"(?<Name>\w+):\s*(?<Values>[\d,\s]+)"
+		/// When specified, this takes precedence over simple splitting.
+		/// </summary>
+		public string? CapturePattern { get; set; }
 		}
 		""";
 
@@ -143,8 +152,9 @@ public class ParsableGenerator : IIncrementalGenerator
 				containingType = containingType.ContainingType;
 			}
 
-			// Get constructor parameter types
+			// Get constructor parameter types and names
 			string[] constructorParametersList = [.. GetRecordParameterTypes(typeSymbol)];
+			(string Name, string Type)[] constructorParameters = [.. GetRecordParameters(typeSymbol)];
 
 			// Check which methods already exist
 			bool hasParseMethod = HasParseStringMethod(typeSymbol);
@@ -157,7 +167,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			//	continue;
 			//}
 
-			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList,
+			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList, constructorParameters,
 				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig);
 
 			// Use full type path for unique filename
@@ -186,11 +196,12 @@ public class ParsableGenerator : IIncrementalGenerator
 		};
 	}
 
-	private class SplitConfiguration(string splitChars, string? splitPattern, bool removeEmptyEntries)
+	private class SplitConfiguration(string splitChars, string? splitPattern, bool removeEmptyEntries, string? capturePattern)
 	{
 		public string SplitChars { get; } = splitChars;
 		public string? SplitPattern { get; } = splitPattern;
 		public bool RemoveEmptyEntries { get; } = removeEmptyEntries;
+		public string? CapturePattern { get; } = capturePattern;
 	}
 
 	private static SplitConfiguration GetSplitConfiguration(TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
@@ -198,6 +209,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		string splitChars = " ,";
 		string? splitPattern = null;
 		bool removeEmptyEntries = true;
+		string? capturePattern = null;
 
 		foreach (AttributeListSyntax attributeListSyntax in typeDeclaration.AttributeLists) {
 			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes) {
@@ -228,12 +240,14 @@ public class ParsableGenerator : IIncrementalGenerator
 						if (bool.TryParse(removeEmptyLiteral.Token.ValueText, out bool value)) {
 							removeEmptyEntries = value;
 						}
+					} else if (propertyName == "CapturePattern" && argument.Expression is LiteralExpressionSyntax capturePatternLiteral) {
+						capturePattern = capturePatternLiteral.Token.ValueText;
 					}
 				}
 			}
 		}
 
-		return new SplitConfiguration(splitChars, splitPattern, removeEmptyEntries);
+		return new SplitConfiguration(splitChars, splitPattern, removeEmptyEntries, capturePattern);
 	}
 
 	// Get the types of the properties in the constructor of the containing class/struct/record
@@ -260,8 +274,31 @@ public class ParsableGenerator : IIncrementalGenerator
 			.Select(p => p.Type.ToDisplayString());
 	}
 
+	// Get both names and types of constructor parameters
+	private static IEnumerable<(string Name, string Type)> GetRecordParameters(INamedTypeSymbol typeSymbol)
+	{
+		if (typeSymbol is null || !typeSymbol.IsRecord) {
+			return [];
+		}
+
+		// For records, look for the primary constructor
+		IMethodSymbol? primaryConstructor = typeSymbol.Constructors
+			.FirstOrDefault(c => c.Parameters.Length > 0 && !c.IsImplicitlyDeclared);
+
+		if (primaryConstructor is not null) {
+			return primaryConstructor.Parameters
+				.Select(p => (p.Name, p.Type.ToDisplayString()));
+		}
+
+		// Fallback: get public properties
+		return typeSymbol.GetMembers()
+			.OfType<IPropertySymbol>()
+			.Where(p => p.DeclaredAccessibility == Accessibility.Public && !p.IsStatic)
+			.Select(p => (p.Name, p.Type.ToDisplayString()));
+	}
+
 	private static string GenerateSource(string namespaceName, string typeName, string typeKeyword,
-		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface, SplitConfiguration splitConfig)
+		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface, SplitConfiguration splitConfig)
 	{
 		// Build opening declarations for nested types
 		StringBuilder containingTypesOpen = new();
@@ -283,7 +320,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			? $$"""
 				{{indent}}	public static {{typeName}} Parse(string s)
 				{{indent}}	{
-				{{CreateNewFromConstructorParameters(typeName, constructorParametersList, splitConfig, indent)}}
+				{{CreateNewFromConstructorParameters(typeName, constructorParametersList, constructorParameters, splitConfig, indent)}}
 				{{indent}}	}
 				"""
 			: generateParse && !generateParseWithProvider
@@ -327,8 +364,8 @@ public class ParsableGenerator : IIncrementalGenerator
 			: "";
 
 		// Add necessary using statements based on split configuration and parameter types
-		bool needsRegex = !string.IsNullOrEmpty(splitConfig.SplitPattern);
-		bool needsLinq = constructorParametersList.Length > 1 && needsRegex && splitConfig.RemoveEmptyEntries;
+		bool needsRegex = !string.IsNullOrEmpty(splitConfig.SplitPattern) || !string.IsNullOrEmpty(splitConfig.CapturePattern);
+		bool needsLinq = (constructorParametersList.Length > 1 && needsRegex && splitConfig.RemoveEmptyEntries) || !string.IsNullOrEmpty(splitConfig.CapturePattern);
 
 		// Check if any parameter is a collection type that needs LINQ
 		foreach (string paramType in constructorParametersList) {
@@ -366,10 +403,15 @@ public class ParsableGenerator : IIncrementalGenerator
 			""";
 	}
 
-	private static string CreateNewFromConstructorParameters(string typeName, string[] constructorParametersList, SplitConfiguration splitConfig, string indent)
+	private static string CreateNewFromConstructorParameters(string typeName, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent)
 	{
 		if (constructorParametersList == null || constructorParametersList.Length == 0) {
 			return $"{indent}\t\treturn new();";
+		}
+
+		// Check if capture pattern is specified - takes precedence for multi-parameter scenarios
+		if (!string.IsNullOrEmpty(splitConfig.CapturePattern)) {
+			return GenerateCaptureParsing(typeName, constructorParameters, splitConfig, indent);
 		}
 
 		if (constructorParametersList.Length == 1) {
@@ -377,7 +419,7 @@ public class ParsableGenerator : IIncrementalGenerator
 
 			// Check if it's a collection type
 			if (IsCollectionType(parameterType, out string? elementType)) {
-				return GenerateCollectionParsing(typeName, parameterType, elementType, splitConfig, indent);
+				return GenerateCollectionParsing(typeName, parameterType, elementType!, splitConfig, indent);
 			}
 
 			// Simple single parameter
@@ -483,7 +525,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		string parseExpression = elementType switch
 		{
 			"string" => "parts",
-			_ => $"parts.Select({elementType}.Parse)"
+			_ => $"parts.Select({elementType}.Parse).ToArray()"
 		};
 
 		// Generate collection creation based on parameter type
@@ -501,6 +543,135 @@ public class ParsableGenerator : IIncrementalGenerator
 
 		_ = sb.Append($"{indent}\t\treturn new {typeName}({collectionCreation});");
 		return sb.ToString();
+	}
+
+	private static string GenerateCaptureParsing(string typeName, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent)
+	{
+		StringBuilder sb = new();
+
+		// Match validation with descriptive error
+		_ = sb.AppendLine($"{indent}\t\tvar match = Regex.Match(s, @\"{splitConfig.CapturePattern}\");");
+		_ = sb.AppendLine($"{indent}\t\tif (!match.Success)");
+		_ = sb.AppendLine($"{indent}\t\t{{");
+		_ = sb.AppendLine($"{indent}\t\t\tthrow new FormatException($\"Input string '{{s}}' does not match expected pattern.\");");
+		_ = sb.AppendLine($"{indent}\t\t}}");
+		_ = sb.AppendLine();
+
+		List<string> paramExpressions = [];
+
+		foreach ((string name, string type) in constructorParameters) {
+			// Validate capture group exists
+			_ = sb.AppendLine($"{indent}\t\tif (!match.Groups[\"{name}\"].Success)");
+			_ = sb.AppendLine($"{indent}\t\t{{");
+			_ = sb.AppendLine($"{indent}\t\t\tthrow new FormatException($\"Required capture group '{name}' not found in input.\");");
+			_ = sb.AppendLine($"{indent}\t\t}}");
+			_ = sb.AppendLine();
+
+			// Generate parsing with error context
+			if (IsCollectionType(type, out string? elementType)) {
+				string varName = $"{name.ToLower()}Value";
+				_ = sb.AppendLine($"{indent}\t\tstring {varName} = match.Groups[\"{name}\"].Value;");
+
+				// Collection parsing with element-level error handling
+				string parseLogic = GenerateSafeCollectionParsing(name, varName, elementType!, type, splitConfig, indent);
+				_ = sb.AppendLine(parseLogic);
+				paramExpressions.Add($"{name.ToLower()}Parsed");
+			} else {
+				string parseExpr = GenerateSafeValueParsing(name, type, indent);
+				_ = sb.AppendLine(parseExpr);
+				paramExpressions.Add($"{name.ToLower()}Parsed");
+			}
+		}
+
+		_ = sb.AppendLine();
+		_ = sb.Append($"{indent}\t\treturn new {typeName}({string.Join(", ", paramExpressions)});");
+		return sb.ToString();
+	}
+
+	private static string GenerateSafeValueParsing(string paramName, string paramType, string indent)
+	{
+		string varName = paramName.ToLower();
+
+		if (paramType == "string") {
+			return $"{indent}\t\tstring {varName}Parsed = match.Groups[\"{paramName}\"].Value;";
+		}
+
+		StringBuilder sb = new();
+		_ = sb.AppendLine($"{indent}\t\t{paramType} {varName}Parsed;");
+		_ = sb.AppendLine($"{indent}\t\ttry");
+		_ = sb.AppendLine($"{indent}\t\t{{");
+		_ = sb.AppendLine($"{indent}\t\t\t{varName}Parsed = {paramType}.Parse(match.Groups[\"{paramName}\"].Value);");
+		_ = sb.AppendLine($"{indent}\t\t}}");
+		_ = sb.AppendLine($"{indent}\t\tcatch (Exception ex)");
+		_ = sb.AppendLine($"{indent}\t\t{{");
+		_ = sb.Append($"{indent}\t\t\tthrow new FormatException($\"Failed to parse '{paramName}' value '{{{{match.Groups[\\\"{paramName}\\\"].Value}}}}' as {paramType}.\", ex);");
+		_ = sb.AppendLine($"{indent}\t\t}}");
+		return sb.ToString();
+	}
+
+	private static string GenerateSafeCollectionParsing(string paramName, string valueVar, string elementType, string parameterType, SplitConfiguration splitConfig, string indent)
+	{
+		StringBuilder sb = new();
+
+		// Split the captured value
+		string splitCharsArray = string.Join(", ", splitConfig.SplitChars.Select(c => $"'{c}'"));
+		string splitOptions = splitConfig.RemoveEmptyEntries
+			? "StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries"
+			: "StringSplitOptions.TrimEntries";
+
+		_ = sb.AppendLine($"{indent}\t\tstring[] {valueVar}Parts = {valueVar}.Split([{splitCharsArray}], {splitOptions});");
+
+		string varName = paramName.ToLower();
+
+		if (elementType == "string") {
+			// Determine collection type for string elements
+			string collectionCreation;
+			if (parameterType.EndsWith("[]")) {
+				collectionCreation = $"{valueVar}Parts";
+			} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
+				collectionCreation = $"[.. {valueVar}Parts]";
+			} else {
+				collectionCreation = $"{valueVar}Parts";
+			}
+			_ = sb.Append($"{indent}\t\t{GetCollectionTypeForVariable(parameterType, elementType)} {varName}Parsed = {collectionCreation};");
+			return sb.ToString();
+		}
+
+		// Parse with error handling for each element
+		_ = sb.AppendLine($"{indent}\t\tList<{elementType}> {varName}List = [];");
+		_ = sb.AppendLine($"{indent}\t\tfor (int i = 0; i < {valueVar}Parts.Length; i++)");
+		_ = sb.AppendLine($"{indent}\t\t{{");
+		_ = sb.AppendLine($"{indent}\t\t\ttry");
+		_ = sb.AppendLine($"{indent}\t\t\t{{");
+		_ = sb.AppendLine($"{indent}\t\t\t\t{varName}List.Add({elementType}.Parse({valueVar}Parts[i]));");
+		_ = sb.AppendLine($"{indent}\t\t\t}}");
+		_ = sb.AppendLine($"{indent}\t\t\tcatch (Exception ex)");
+		_ = sb.AppendLine($"{indent}\t\t\t{{");
+		_ = sb.AppendLine($"{indent}\t\t\t\tthrow new FormatException($\"Failed to parse '{paramName}[{{i}}]' value '{{{valueVar}Parts[i]}}' as {elementType}.\", ex);");
+		_ = sb.AppendLine($"{indent}\t\t\t}}");
+		_ = sb.AppendLine($"{indent}\t\t}}");
+
+		// Create appropriate collection type
+		if (parameterType.EndsWith("[]")) {
+			_ = sb.Append($"{indent}\t\t{elementType}[] {varName}Parsed = [.. {varName}List];");
+		} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
+			_ = sb.Append($"{indent}\t\tList<{elementType}> {varName}Parsed = {varName}List;");
+		} else {
+			_ = sb.Append($"{indent}\t\tIEnumerable<{elementType}> {varName}Parsed = {varName}List;");
+		}
+
+		return sb.ToString();
+	}
+
+	private static string GetCollectionTypeForVariable(string parameterType, string elementType)
+	{
+		if (parameterType.EndsWith("[]")) {
+			return $"{elementType}[]";
+		} else if (parameterType.StartsWith("List<") || parameterType.StartsWith("System.Collections.Generic.List<")) {
+			return $"List<{elementType}>";
+		} else {
+			return $"IEnumerable<{elementType}>";
+		}
 	}
 
 	private static string GetIndent(int level) => new('\t', level);
