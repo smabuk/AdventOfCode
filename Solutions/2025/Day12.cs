@@ -60,14 +60,101 @@ public partial class Day12
 	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	/// <summary>
-	/// Solve using Google OR-Tools CP-SAT solver with optimized model
+	/// Generate all unique transformations (rotations and flips) of a shape
 	/// </summary>
-	private static (bool canFit, Grid<int>? placement) CanFitPresentsWithCPSAT(Region region)
+	private static List<Grid<char>> GetAllTransformations(Grid<char> shape)
+	{
+		HashSet<string> seen = [];
+		List<Grid<char>> unique = [];
+
+		for (int rotation = 0; rotation < 4; rotation++) {
+			Grid<char> current = shape.Rotate(90 * rotation);
+			if (seen.Add(current.AsStringWithNewLines())) {
+				unique.Add(current);
+			}
+
+			Grid<char> flipped = current.FlipHorizontally();
+			if (seen.Add(flipped.AsStringWithNewLines())) {
+				unique.Add(flipped);
+			}
+		}
+
+		return unique;
+	}
+
+	/// <summary>
+	/// Fast greedy placement heuristic for large problems
+	/// </summary>
+	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region)
+	{
+		if (!IsThereEnoughSpace(region, out List<int> presentIndices)) {
+			return (false, null);
+		}
+
+		bool[,] occupied = new bool[region.Width, region.Length];
+		Grid<int> placementGrid = new(region.Width, region.Length);
+		placementGrid = placementGrid.Fill(-1);
+
+		// Sort presents by size (largest first) for better packing
+		List<int> sortedIndices = [.. presentIndices.OrderByDescending(idx => CountShapeCells(_shapes[idx].Shape))];
+
+		for (int presentIdx = 0; presentIdx < sortedIndices.Count; presentIdx++) {
+			int shapeIndex = sortedIndices[presentIdx];
+			List<Grid<char>> transformations = _transformationsCache[shapeIndex];
+			bool placed = false;
+
+			// Try each transformation
+			foreach (Grid<char> shape in transformations) {
+				if (placed) {
+					break;
+				}
+
+				// Try each position
+				for (int col = 0; col <= region.Width - shape.Width; col++) {
+					if (placed) {
+						break;
+					}
+					for (int row = 0; row <= region.Length - shape.Height; row++) {
+						// Check if this placement is valid
+						bool canPlace = true;
+						for (int dc = 0; dc < shape.Width && canPlace; dc++) {
+							for (int dr = 0; dr < shape.Height && canPlace; dr++) {
+								if (shape[dc, dr] != EMPTY && occupied[col + dc, row + dr]) {
+									canPlace = false;
+								}
+							}
+						}
+
+						if (canPlace) {
+							// Place the present
+							for (int dc = 0; dc < shape.Width; dc++) {
+								for (int dr = 0; dr < shape.Height; dr++) {
+									if (shape[dc, dr] != EMPTY) {
+										occupied[col + dc, row + dr] = true;
+										placementGrid[col + dc, row + dr] = presentIdx;
+									}
+								}
+							}
+							placed = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!placed) {
+				return (false, null); // Couldn't place this present
+			}
+		}
+
+		return (true, placementGrid); // All presents placed successfully
+	}
+
+	private static bool IsThereEnoughSpace(Region region, out List<int> presentIndices)
 	{
 		// Quick check: do we have enough space?
 		int totalRequiredCells = 0;
-		List<int> presentIndices = [];
-
+		presentIndices = [];
 		for (int shapeIndex = 0; shapeIndex < region.QuantitiesOfShapes.Length; shapeIndex++) {
 			for (int count = 0; count < region.QuantitiesOfShapes[shapeIndex]; count++) {
 				int size = CountShapeCells(_shapes[shapeIndex].Shape);
@@ -78,6 +165,18 @@ public partial class Day12
 
 		int totalAvailableCells = region.Length * region.Width;
 		if (totalRequiredCells > totalAvailableCells) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Solve using Google OR-Tools CP-SAT solver with optimized model
+	/// </summary>
+	private static (bool canFit, Grid<int>? placement) CanFitPresentsWithCPSAT(Region region)
+	{
+		if (!IsThereEnoughSpace(region, out List<int> presentIndices)) {
 			return (false, null);
 		}
 
@@ -203,97 +302,6 @@ public partial class Day12
 		return (false, null);
 	}
 
-	/// <summary>
-	/// Fast greedy placement heuristic for large problems
-	/// </summary>
-	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region)
-	{
-		// Quick check: do we have enough space?
-		int totalRequiredCells = 0;
-		List<int> presentIndices = [];
-
-		for (int shapeIndex = 0; shapeIndex < region.QuantitiesOfShapes.Length; shapeIndex++) {
-			for (int count = 0; count < region.QuantitiesOfShapes[shapeIndex]; count++) {
-				int size = CountShapeCells(_shapes[shapeIndex].Shape);
-				totalRequiredCells += size;
-				presentIndices.Add(shapeIndex);
-			}
-		}
-
-		int totalAvailableCells = region.Length * region.Width;
-		if (totalRequiredCells > totalAvailableCells) {
-			return (false, null);
-		}
-
-		bool[,] occupied = new bool[region.Width, region.Length];
-		Grid<int> placementGrid = new(region.Width, region.Length);
-		placementGrid = placementGrid.Fill(-1);
-
-		// Sort presents by size (largest first) for better packing
-		List<int> sortedIndices = [.. presentIndices.OrderByDescending(idx => CountShapeCells(_shapes[idx].Shape))];
-
-		for (int presentIdx = 0; presentIdx < sortedIndices.Count; presentIdx++) {
-			int shapeIndex = sortedIndices[presentIdx];
-			List<Grid<char>> transformations = _transformationsCache[shapeIndex];
-			bool placed = false;
-
-			// Try each transformation
-			foreach (Grid<char> shape in transformations) {
-				if (placed) {
-					break;
-				}
-
-				// Try each position
-				for (int col = 0; col <= region.Width - shape.Width; col++) {
-					if (placed) {
-						break;
-					}
-					for (int row = 0; row <= region.Length - shape.Height; row++) {
-						// Check if this placement is valid
-						bool canPlace = true;
-						for (int dc = 0; dc < shape.Width && canPlace; dc++) {
-							for (int dr = 0; dr < shape.Height && canPlace; dr++) {
-								if (shape[dc, dr] != EMPTY && occupied[col + dc, row + dr]) {
-									canPlace = false;
-								}
-							}
-						}
-
-						if (canPlace) {
-							// Place the present
-							for (int dc = 0; dc < shape.Width; dc++) {
-								for (int dr = 0; dr < shape.Height; dr++) {
-									if (shape[dc, dr] != EMPTY) {
-										occupied[col + dc, row + dr] = true;
-										placementGrid[col + dc, row + dr] = presentIdx;
-									}
-								}
-							}
-							placed = true;
-							break;
-						}
-					}
-				}
-			}
-
-			if (!placed) {
-				return (false, null); // Couldn't place this present
-			}
-		}
-
-		return (true, placementGrid); // All presents placed successfully
-	}
-
-	/// <summary>
-	/// Displays a visual representation of the specified placement within the given region using the configured
-	/// visualisation mechanism.
-	/// </summary>
-	/// <remarks>The visual output may use color markup and block characters if the visualisation target supports
-	/// markup; otherwise, it uses plain characters. The appearance and format of the visualisation depend on the
-	/// capabilities of the configured visualisation delegate.</remarks>
-	/// <param name="region">The region in which to display the placement. Defines the bounds and dimensions for the visualisation.</param>
-	/// <param name="placement">A grid mapping each cell in the region to an integer index representing a present or item. A value of -1 indicates
-	/// an empty cell.</param>
 	private static void VisualisePlacement(Region region, Grid<int> placement)
 	{
 		const string CHARS = "abcdefghijklmnopqrstuvwxyz";
@@ -343,54 +351,11 @@ public partial class Day12
 	}
 
 	/// <summary>
-	/// Generate all unique transformations (rotations and flips) of a shape
-	/// </summary>
-	private static List<Grid<char>> GetAllTransformations(Grid<char> shape)
-	{
-		HashSet<string> seen = [];
-		List<Grid<char>> unique = [];
-
-		Grid<char> current = shape;
-		for (int rotation = 0; rotation < 4; rotation++) {
-			string key = GridToString(current);
-			if (seen.Add(key)) {
-				unique.Add(current);
-			}
-
-			Grid<char> flipped = current.FlipHorizontally();
-			key = GridToString(flipped);
-			if (seen.Add(key)) {
-				unique.Add(flipped);
-			}
-
-			current = current.Rotate(90);
-		}
-
-		return unique;
-	}
-
-	/// <summary>
-	/// Convert grid to string for deduplication
-	/// </summary>
-	private static string GridToString(Grid<char> grid)
-	{
-		StringBuilder sb = new();
-		for (int row = 0; row < grid.Height; row++) {
-			for (int col = 0; col < grid.Width; col++) {
-				_ = sb.Append(grid[col, row]);
-			}
-			_ = sb.Append(Environment.NewLine);
-		}
-		return sb.ToString();
-	}
-
-	/// <summary>
 	/// Count number of filled cells in a shape
 	/// </summary>
 	private static int CountShapeCells(Grid<char> shape) => shape.Values().Count(val => val is not EMPTY);
 
-	[GenerateIParsable]
-	private sealed partial record Region(int Width, int Length, int[] QuantitiesOfShapes)
+	[GenerateIParsable] private sealed partial record Region(int Width, int Length, int[] QuantitiesOfShapes)
 	{
 		public static Region Parse(string s)
 		{
@@ -401,8 +366,7 @@ public partial class Day12
 		public override string ToString() => $"Region {Width,2}x{Length,2}: ({string.Join(", ", QuantitiesOfShapes)})";
 	}
 
-	[GenerateIParsable]
-	private sealed partial record PresentShape(int Index, Grid<char> Shape)
+	[GenerateIParsable] private sealed partial record PresentShape(int Index, Grid<char> Shape)
 	{
 		public static PresentShape Parse(string s)
 		{
