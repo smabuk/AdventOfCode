@@ -36,15 +36,19 @@ public partial class Day12
 
 	public static int Part1()
 	{
-		VisualiseString("");
-		return _regions
-			.Select(region =>
-			{
-				bool canFit = CanFitPresentsWithCPSAT(region);
-				VisualiseString(canFit ? $"YES: {region}" : $" NO: {region}");
-				return canFit;
-			})
-			.Count(canFit => canFit);
+		int count = 0;
+		foreach (Region region in _regions) {
+			(bool canFit, Grid<int>? placement) = CanFitPresentsWithCPSAT(region);
+			if (canFit) {
+				count++;
+				if (placement is not null) {
+					VisualisePlacement(region, placement);
+				}
+			} else {
+				//VisualiseString($" NO: {region}");
+			}
+		}
+		return count;
 	}
 
 	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
@@ -52,7 +56,7 @@ public partial class Day12
 	/// <summary>
 	/// Solve using Google OR-Tools CP-SAT solver with optimized model
 	/// </summary>
-	private static bool CanFitPresentsWithCPSAT(Region region)
+	private static (bool canFit, Grid<int>? placement) CanFitPresentsWithCPSAT(Region region)
 	{
 		// Quick check: do we have enough space?
 		int totalRequiredCells = 0;
@@ -68,7 +72,7 @@ public partial class Day12
 
 		int totalAvailableCells = region.Length * region.Width;
 		if (totalRequiredCells > totalAvailableCells) {
-			return false;
+			return (false, null);
 		}
 
 		// For very large problems, use a simpler heuristic check
@@ -81,7 +85,7 @@ public partial class Day12
 		CpModel model = new();
 
 		// For each present, enumerate all valid placements (but limit the number)
-		List<List<(int row, int col, int transformIdx, List<(int r, int c)> occupiedCells)>> presentPlacements = [];
+		List<List<(int col, int row, int transformIdx, List<(int c, int r)> occupiedCells)>> presentPlacements = [];
 		int totalPlacements = 0;
 
 		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
@@ -94,18 +98,18 @@ public partial class Day12
 				Grid<char> shape = transformations[transformIdx];
 
 				// For each possible position
-				for (int startRow = 0; startRow <= region.Length - shape.Height; startRow++) {
-					for (int startCol = 0; startCol <= region.Width - shape.Width; startCol++) {
+				for (int startCol = 0; startCol <= region.Width - shape.Width; startCol++) {
+					for (int startRow = 0; startRow <= region.Length - shape.Height; startRow++) {
 						// Collect occupied cells for this placement
-						List<(int r, int c)> occupied = [];
-						for (int dr = 0; dr < shape.Height; dr++) {
-							for (int dc = 0; dc < shape.Width; dc++) {
-								if (shape[dr, dc] != EMPTY) {
-									occupied.Add((startRow + dr, startCol + dc));
+						List<(int c, int r)> occupied = [];
+						for (int dc = 0; dc < shape.Width; dc++) {
+							for (int dr = 0; dr < shape.Height; dr++) {
+								if (shape[dc, dr] != EMPTY) {
+									occupied.Add((startCol + dc, startRow + dr));
 								}
 							}
 						}
-						placements.Add((startRow, startCol, transformIdx, occupied));
+						placements.Add((startCol, startRow, transformIdx, occupied));
 						totalPlacements++;
 
 						// If we're generating too many placements, fall back to greedy
@@ -135,14 +139,14 @@ public partial class Day12
 		}
 
 		// Constraint: each cell can be occupied by at most one present
-		Dictionary<(int row, int col), List<BoolVar>> cellOccupation = [];
+		Dictionary<(int col, int row), List<BoolVar>> cellOccupation = [];
 
 		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
 			for (int placementIdx = 0; placementIdx < presentPlacements[presentIdx].Count; placementIdx++) {
-				List<(int r, int c)> occupiedCells = presentPlacements[presentIdx][placementIdx].occupiedCells;
+				List<(int c, int r)> occupiedCells = presentPlacements[presentIdx][placementIdx].occupiedCells;
 				BoolVar placementVar = presentPlacementVars[presentIdx][placementIdx];
 
-				foreach ((int r, int c) cell in occupiedCells) {
+				foreach ((int c, int r) cell in occupiedCells) {
 					if (!cellOccupation.TryGetValue(cell, out List<BoolVar>? value)) {
 						value = [];
 						cellOccupation[cell] = value;
@@ -153,7 +157,7 @@ public partial class Day12
 			}
 		}
 
-		foreach (KeyValuePair<(int row, int col), List<BoolVar>> kvp in cellOccupation) {
+		foreach (KeyValuePair<(int col, int row), List<BoolVar>> kvp in cellOccupation) {
 			if (kvp.Value.Count > 0) {
 				_ = model.Add(LinearExpr.Sum(kvp.Value) <= 1);
 			}
@@ -166,20 +170,47 @@ public partial class Day12
 		};
 		CpSolverStatus status = solver.Solve(model);
 
-		return status is CpSolverStatus.Optimal or CpSolverStatus.Feasible;
+		if (status is CpSolverStatus.Optimal or CpSolverStatus.Feasible) {
+			// Extract placement for visualization
+			Grid<int> placementGrid = new(region.Width, region.Length);
+			for (int c = 0; c < region.Width; c++) {
+				for (int r = 0; r < region.Length; r++) {
+					placementGrid[c, r] = -1; // Empty
+				}
+			}
+
+			for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
+				for (int placementIdx = 0; placementIdx < presentPlacements[presentIdx].Count; placementIdx++) {
+					if (solver.Value(presentPlacementVars[presentIdx][placementIdx]) == 1) {
+						List<(int c, int r)> occupiedCells = presentPlacements[presentIdx][placementIdx].occupiedCells;
+						foreach ((int c, int r) in occupiedCells) {
+							placementGrid[c, r] = presentIdx;
+						}
+						break;
+					}
+				}
+			}
+
+			return (true, placementGrid);
+		}
+
+		return (false, null);
 	}
 
 	/// <summary>
 	/// Fast greedy placement heuristic for large problems
 	/// </summary>
-	private static bool TryGreedyPlacement(Region region, List<int> presentIndices)
+	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region, List<int> presentIndices)
 	{
-		bool[,] occupied = new bool[region.Length, region.Width];
+		bool[,] occupied = new bool[region.Width, region.Length];
+		Grid<int> placementGrid = new(region.Width, region.Length);
+		placementGrid = placementGrid.Fill(-1);
 
 		// Sort presents by size (largest first) for better packing
 		List<int> sortedIndices = [.. presentIndices.OrderByDescending(idx => CountShapeCells(_shapes[idx].Shape))];
 
-		foreach (int shapeIndex in sortedIndices) {
+		for (int presentIdx = 0; presentIdx < sortedIndices.Count; presentIdx++) {
+			int shapeIndex = sortedIndices[presentIdx];
 			List<Grid<char>> transformations = _transformationsCache[shapeIndex];
 			bool placed = false;
 
@@ -190,16 +221,16 @@ public partial class Day12
 				}
 
 				// Try each position
-				for (int row = 0; row <= region.Length - shape.Height; row++) {
+				for (int col = 0; col <= region.Width - shape.Width; col++) {
 					if (placed) {
 						break;
 					}
-					for (int col = 0; col <= region.Width - shape.Width; col++) {
+					for (int row = 0; row <= region.Length - shape.Height; row++) {
 						// Check if this placement is valid
 						bool canPlace = true;
-						for (int dr = 0; dr < shape.Height && canPlace; dr++) {
-							for (int dc = 0; dc < shape.Width && canPlace; dc++) {
-								if (shape[dr, dc] != EMPTY && occupied[row + dr, col + dc]) {
+						for (int dc = 0; dc < shape.Width && canPlace; dc++) {
+							for (int dr = 0; dr < shape.Height && canPlace; dr++) {
+								if (shape[dc, dr] != EMPTY && occupied[col + dc, row + dr]) {
 									canPlace = false;
 								}
 							}
@@ -207,10 +238,11 @@ public partial class Day12
 
 						if (canPlace) {
 							// Place the present
-							for (int dr = 0; dr < shape.Height; dr++) {
-								for (int dc = 0; dc < shape.Width; dc++) {
-									if (shape[dr, dc] != EMPTY) {
-										occupied[row + dr, col + dc] = true;
+							for (int dc = 0; dc < shape.Width; dc++) {
+								for (int dr = 0; dr < shape.Height; dr++) {
+									if (shape[dc, dr] != EMPTY) {
+										occupied[col + dc, row + dr] = true;
+										placementGrid[col + dc, row + dr] = presentIdx;
 									}
 								}
 							}
@@ -222,11 +254,71 @@ public partial class Day12
 			}
 
 			if (!placed) {
-				return false; // Couldn't place this present
+				return (false, null); // Couldn't place this present
 			}
 		}
 
-		return true; // All presents placed successfully
+		return (true, placementGrid); // All presents placed successfully
+	}
+
+	/// <summary>
+	/// Displays a visual representation of the specified placement within the given region using the configured
+	/// visualisation mechanism.
+	/// </summary>
+	/// <remarks>The visual output may use color markup and block characters if the visualisation target supports
+	/// markup; otherwise, it uses plain characters. The appearance and format of the visualisation depend on the
+	/// capabilities of the configured visualisation delegate.</remarks>
+	/// <param name="region">The region in which to display the placement. Defines the bounds and dimensions for the visualisation.</param>
+	/// <param name="placement">A grid mapping each cell in the region to an integer index representing a present or item. A value of -1 indicates
+	/// an empty cell.</param>
+	private static void VisualisePlacement(Region region, Grid<int> placement)
+	{
+		const string CHARS = "abcdefghijklmnopqrstuvwxyz";
+		const char BLOCK = Utf16Chars.BlockElements.FULL_BLOCK;
+		string[] COLOURS = [
+			"[#FF0000]", "[#00FF00]", "[#0000FF]", "[#FFFF00]", "[#FF00FF]", "[#00FFFF]",
+			"[#FFA500]", "[#800080]", "[#008000]", "[#000080]", "[#FF6347]", "[#4682B4]",
+			"[#32CD32]", "[#FF1493]", "[#00CED1]", "[#FFD700]", "[#DC143C]", "[#00FA9A]",
+			"[#9370DB]", "[#FF4500]", "[#2E8B57]", "[#D2691E]", "[#5F9EA0]", "[#FF69B4]",
+			"[#CD5C5C]", "[#4169E1]", "[#8B008B]", "[#556B2F]", "[#FF8C00]", "[#9932CC]",
+			"[#8B0000]", "[#E9967A]", "[#8FBC8F]", "[#483D8B]", "[#2F4F4F]", "[#00CED1]",
+			"[#9400D3]", "[#FF1493]", "[#00BFFF]", "[#696969]", "[#1E90FF]", "[#B22222]",
+			"[#FFFACD]", "[#ADD8E6]", "[#F08080]", "[#E0FFFF]", "[#90EE90]", "[#FFB6C1]",
+			"[#FFA07A]", "[#20B2AA]", "[#87CEFA]", "[#778899]", "[#B0C4DE]", "[#FFFFE0]",
+			"[#00FF00]", "[#32CD32]", "[#FAF0E6]", "[#FF00FF]", "[#800000]", "[#66CDAA]",
+			"[#0000CD]", "[#BA55D3]", "[#9370DB]", "[#3CB371]", "[#7B68EE]", "[#00FA9A]"
+		];
+
+		string[] displayGrid = new string[region.Length];
+		HashSet<int> presentsSeen = [];
+		StringBuilder sb = new();
+		for (int r = 0; r < region.Length; r++) {
+			sb = new();
+			for (int c = 0; c < region.Width; c++) {
+				int presentIdx = placement[c, r];
+				if (presentIdx != -1) {
+					_ = presentsSeen.Add(presentIdx);
+					string cell = _visualise.IsCapableOfMarkup()
+						? $"{COLOURS[presentIdx % COLOURS.Length]}{BLOCK}[/]"
+						: $"{CHARS[presentIdx % CHARS.Length]}";
+					_ = sb.Append(cell);
+				} else {
+					_ = sb.Append($"{EMPTY}");
+				}
+			}
+			displayGrid[r] = sb.ToString();
+		}
+
+		if (_visualise is not null) {
+
+			string[] start = _visualise.IsCapableOfMarkup()
+				? ["markup"]
+				: [""];
+
+			string[] output = [.. start, $"{region}", .. displayGrid];
+
+			_visualise?.Invoke(output, true);
+		}
 	}
 
 	/// <summary>
@@ -264,7 +356,7 @@ public partial class Day12
 		StringBuilder sb = new();
 		for (int row = 0; row < grid.Height; row++) {
 			for (int col = 0; col < grid.Width; col++) {
-				_ = sb.Append(grid[row, col]);
+				_ = sb.Append(grid[col, row]);
 			}
 			_ = sb.Append(Environment.NewLine);
 		}
@@ -285,7 +377,7 @@ public partial class Day12
 			return new Region(int.Parse(parts[0]), int.Parse(parts[1]), [.. parts[2..].As<int>()]);
 		}
 
-		public override string ToString() => $"Region {Width,2}x{Length,2}: [{string.Join(", ", QuantitiesOfShapes)}]";
+		public override string ToString() => $"Region {Width,2}x{Length,2}: ({string.Join(", ", QuantitiesOfShapes)})";
 	}
 
 	[GenerateIParsable]
