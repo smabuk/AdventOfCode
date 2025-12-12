@@ -1,4 +1,4 @@
-﻿//using Google.OrTools.LinearSolver;
+﻿using Google.OrTools.LinearSolver;
 
 namespace AdventOfCode.Solutions._2025;
 
@@ -83,54 +83,54 @@ public partial class Day10
 		/// <exception cref="ApplicationException">Thrown if the solver cannot be created or if no solution exists for the current joltage configuration.</exception>
 		public int FindMinimumPressesForJoltage()
 		{
-			throw new ApplicationException("Z3 or OR-Tools are causing me issues on my web host");
-			//int numJoltages = Joltages.Length;
-			//int numButtons = Buttons.Count;
+			//throw new ApplicationException("Z3 or OR-Tools are causing me issues on my web host");
+			int numJoltages = Joltages.Length;
+			int numButtons = Buttons.Count;
 
-			//// Create the linear solver with CBC backend
-			//// CBP stands for Coin-or branch and cut mixed integer programming solver.
-			//// SCIP is used here; ensure that the OR-Tools installation includes SCIP support.
-			//using Solver solver = Solver.CreateSolver("SCIP") ?? throw new ApplicationException("Could not create solver.");
+			// Create the linear solver with CBC backend
+			// CBP stands for Coin-or branch and cut mixed integer programming solver.
+			// SCIP is used here; ensure that the OR-Tools installation includes SCIP support.
+			using Solver solver = Solver.CreateSolver("SCIP") ?? throw new ApplicationException("Could not create solver.");
 
-			//// Create integer variables for button press counts
-			//Variable[] buttonVars = new Variable[numButtons];
-			//for (int i = 0; i < numButtons; i++) {
-			//	// Variable with lower bound 0, upper bound infinity
-			//	buttonVars[i] = solver.MakeIntVar(0.0, double.PositiveInfinity, $"button_{i}");
-			//}
+			// Create integer variables for button press counts
+			Variable[] buttonVars = new Variable[numButtons];
+			for (int i = 0; i < numButtons; i++) {
+				// Variable with lower bound 0, upper bound infinity
+				buttonVars[i] = solver.MakeIntVar(0.0, double.PositiveInfinity, $"button_{i}");
+			}
 
-			//// Add constraints: for each joltage, sum of affecting buttons = target
-			//for (int j = 0; j < numJoltages; j++) {
-			//	Constraint constraint = solver.MakeConstraint(Joltages[j], Joltages[j], $"joltage_{j}");
+			// Add constraints: for each joltage, sum of affecting buttons = target
+			for (int j = 0; j < numJoltages; j++) {
+				Constraint constraint = solver.MakeConstraint(Joltages[j], Joltages[j], $"joltage_{j}");
 
-			//	for (int b = 0; b < numButtons; b++) {
-			//		if (Buttons[b].Values.Contains(j)) {
-			//			constraint.SetCoefficient(buttonVars[b], 1);
-			//		}
-			//	}
-			//}
+				for (int b = 0; b < numButtons; b++) {
+					if (Buttons[b].Values.Contains(j)) {
+						constraint.SetCoefficient(buttonVars[b], 1);
+					}
+				}
+			}
 
-			//// Objective: minimize sum of all button presses
-			//Objective objective = solver.Objective();
-			//for (int i = 0; i < numButtons; i++) {
-			//	objective.SetCoefficient(buttonVars[i], 1);
-			//}
-			//objective.SetMinimization();
+			// Objective: minimize sum of all button presses
+			Objective objective = solver.Objective();
+			for (int i = 0; i < numButtons; i++) {
+				objective.SetCoefficient(buttonVars[i], 1);
+			}
+			objective.SetMinimization();
 
-			//// Solve
-			//Solver.ResultStatus resultStatus = solver.Solve();
+			// Solve
+			Solver.ResultStatus resultStatus = solver.Solve();
 
-			//if (resultStatus == Solver.ResultStatus.OPTIMAL) {
-			//	int total = 0;
+			if (resultStatus == Solver.ResultStatus.OPTIMAL) {
+				int total = 0;
 
-			//	for (int i = 0; i < numButtons; i++) {
-			//		total += (int)Math.Round(buttonVars[i].SolutionValue());
-			//	}
+				for (int i = 0; i < numButtons; i++) {
+					total += (int)Math.Round(buttonVars[i].SolutionValue());
+				}
 
-			//	return total;
-			//}
+				return total;
+			}
 
-			//throw new ApplicationException($"No solution found for joltage configuration. Status: {resultStatus}");
+			throw new ApplicationException($"No solution found for joltage configuration. Status: {resultStatus}");
 		}
 
 		public static Machine Parse(string s)

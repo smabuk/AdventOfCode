@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions._2025;
+﻿using Google.OrTools.Sat;
+
+namespace AdventOfCode.Solutions._2025;
 
 /// <summary>
 /// Day 12: Christmas Tree Farm
@@ -21,6 +23,7 @@ public partial class Day12
 			.Select(shapeLines => PresentShape.Parse(string.Join(Environment.NewLine, shapeLines)))];
 		_regions = [.. input.Skip(sectionStart).As<Region>()];
 
+		// Pre-compute all transformations for each shape
 		_transformationsCache.Clear();
 		for (int i = 0; i < _shapes.Count; i++) {
 			_transformationsCache[i] = GetAllTransformations(_shapes[i].Shape);
@@ -31,30 +34,40 @@ public partial class Day12
 	private static List<Region> _regions = [];
 	private static readonly Dictionary<int, List<Grid<char>>> _transformationsCache = [];
 
-	public static int Part1() => _regions.AsParallel().Count(CanFitPresents);
+	public static int Part1()
+	{
+		int count = 0;
+
+		VisualiseString("");
+		foreach (Region region in _regions) {
+			if (CanFitPresentsWithCPSAT(region)) {
+				count++;
+				VisualiseString($"YES: {region}");
+			} else {
+				VisualiseString($" NO: {region}");
+			}
+		}
+
+		return count;
+		return _regions.AsParallel().Count(CanFitPresentsWithCPSAT);
+	}
 
 	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
 
 	/// <summary>
-	/// Determines if all presents can fit in the given region
+	/// Solve using Google OR-Tools CP-SAT solver
 	/// </summary>
-	private static bool CanFitPresents(Region region)
+	private static bool CanFitPresentsWithCPSAT(Region region)
 	{
-		VisualiseString($"Region: {region}");
-		char[,] grid = new char[region.Length, region.Width];
-		for (int row = 0; row < region.Length; row++) {
-			for (int col = 0; col < region.Width; col++) {
-				grid[row, col] = EMPTY;
-			}
-		}
-
-		List<(int ShapeIndex, int ShapeSize)> presentsToPlace = [];
+		// Quick check: do we have enough space?
 		int totalRequiredCells = 0;
+		List<int> presentIndices = [];
+
 		for (int shapeIndex = 0; shapeIndex < region.QuantitiesOfShapes.Length; shapeIndex++) {
 			for (int count = 0; count < region.QuantitiesOfShapes[shapeIndex]; count++) {
 				int size = CountShapeCells(_shapes[shapeIndex].Shape);
-				presentsToPlace.Add((shapeIndex, size));
 				totalRequiredCells += size;
+				presentIndices.Add(shapeIndex);
 			}
 		}
 
@@ -63,45 +76,89 @@ public partial class Day12
 			return false;
 		}
 
-		presentsToPlace.Sort((a, b) => b.ShapeSize.CompareTo(a.ShapeSize));
+		// Create CP-SAT model
+		CpModel model = new();
 
-		return Backtrack(grid, presentsToPlace, 0, totalRequiredCells);
-	}
+		// For each present, enumerate all valid placements
+		List<List<(int row, int col, int transformIdx, List<(int r, int c)> occupiedCells)>> presentPlacements = [];
 
-	/// <summary>
-	/// Backtracking solver to place presents on the grid (optimized)
-	/// NOTE: This is an NP-complete problem - may timeout on very large inputs
-	/// See Day12_Note.md for details on complexity and potential solutions
-	/// </summary>
-	private static bool Backtrack(char[,] grid, List<(int ShapeIndex, int ShapeSize)> presentsToPlace, int presentIndex, int remainingCells)
-	{
-		if (presentIndex == presentsToPlace.Count) {
-			return true;
+		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
+			int shapeIndex = presentIndices[presentIdx];
+			List<Grid<char>> transformations = _transformationsCache[shapeIndex];
+			List<(int, int, int, List<(int, int)>)> placements = [];
+
+			// For each transformation
+			for (int transformIdx = 0; transformIdx < transformations.Count; transformIdx++) {
+				Grid<char> shape = transformations[transformIdx];
+
+				// For each possible position
+				for (int startRow = 0; startRow <= region.Length - shape.Height; startRow++) {
+					for (int startCol = 0; startCol <= region.Width - shape.Width; startCol++) {
+						// Collect occupied cells for this placement
+						List<(int r, int c)> occupied = [];
+						for (int dr = 0; dr < shape.Height; dr++) {
+							for (int dc = 0; dc < shape.Width; dc++) {
+								if (shape[dr, dc] != EMPTY) {
+									occupied.Add((startRow + dr, startCol + dc));
+								}
+							}
+						}
+						placements.Add((startRow, startCol, transformIdx, occupied));
+					}
+				}
+			}
+			presentPlacements.Add(placements);
 		}
 
-		(int shapeIndex, int shapeSize) = presentsToPlace[presentIndex];
-		List<Grid<char>> transformations = _transformationsCache[shapeIndex];
-		int gridRows = grid.GetLength(0);
-		int gridCols = grid.GetLength(1);
+		// Create boolean variables: one for each possible placement of each present
+		List<List<BoolVar>> presentPlacementVars = [];
+		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
+			List<BoolVar> placementVars = [];
+			for (int placementIdx = 0; placementIdx < presentPlacements[presentIdx].Count; placementIdx++) {
+				BoolVar isChosen = model.NewBoolVar($"present_{presentIdx}_placement_{placementIdx}");
+				placementVars.Add(isChosen);
+			}
+			presentPlacementVars.Add(placementVars);
+		}
 
-		foreach (Grid<char> transformation in transformations) {
-			int maxRow = gridRows - transformation.Height + 1;
-			int maxCol = gridCols - transformation.Width + 1;
+		// Constraint: each present must choose exactly one placement
+		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
+			_ = model.Add(LinearExpr.Sum(presentPlacementVars[presentIdx]) == 1);
+		}
 
-			for (int row = 0; row < maxRow; row++) {
-				for (int col = 0; col < maxCol; col++) {
-					if (CanPlaceShapeFast(grid, transformation, row, col, gridRows, gridCols)) {
-						PlaceShapeFast(grid, transformation, row, col);
-						if (Backtrack(grid, presentsToPlace, presentIndex + 1, remainingCells - shapeSize)) {
-							return true;
-						}
-						RemoveShapeFast(grid, transformation, row, col);
+		// Constraint: each cell can be occupied by at most one present
+		Dictionary<(int row, int col), List<BoolVar>> cellOccupation = [];
+
+		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
+			for (int placementIdx = 0; placementIdx < presentPlacements[presentIdx].Count; placementIdx++) {
+				List<(int r, int c)> occupiedCells = presentPlacements[presentIdx][placementIdx].occupiedCells;
+				BoolVar placementVar = presentPlacementVars[presentIdx][placementIdx];
+
+				foreach ((int r, int c) cell in occupiedCells) {
+					if (!cellOccupation.TryGetValue(cell, out List<BoolVar>? value)) {
+						value = [];
+						cellOccupation[cell] = value;
 					}
+
+					value.Add(placementVar);
 				}
 			}
 		}
 
-		return false;
+		foreach (KeyValuePair<(int row, int col), List<BoolVar>> kvp in cellOccupation) {
+			if (kvp.Value.Count > 0) {
+				_ = model.Add(LinearExpr.Sum(kvp.Value) <= 1);
+			}
+		}
+
+		// Solve
+		CpSolver solver = new()
+		{
+			StringParameters = "max_time_in_seconds:10.0" // 10 second timeout per region
+		};
+		CpSolverStatus status = solver.Solve(model);
+
+		return status is CpSolverStatus.Optimal or CpSolverStatus.Feasible;
 	}
 
 	/// <summary>
@@ -180,64 +237,6 @@ public partial class Day12
 			_ = sb.Append(Environment.NewLine);
 		}
 		return sb.ToString();
-	}
-
-	/// <summary>
-	/// Check if a shape can be placed at the given position (optimized)
-	/// </summary>
-	private static bool CanPlaceShapeFast(char[,] grid, Grid<char> shape, int startRow, int startCol, int gridRows, int gridCols)
-	{
-		for (int row = 0; row < shape.Height; row++) {
-			for (int col = 0; col < shape.Width; col++) {
-				if (shape[row, col] != EMPTY && grid[startRow + row, startCol + col] != EMPTY) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/// <summary>
-	/// Place a shape on the grid at the given position (optimized)
-	/// </summary>
-	private static void PlaceShapeFast(char[,] grid, Grid<char> shape, int startRow, int startCol)
-	{
-		for (int row = 0; row < shape.Height; row++) {
-			for (int col = 0; col < shape.Width; col++) {
-				if (shape[row, col] != EMPTY) {
-					grid[startRow + row, startCol + col] = '#';
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Remove a shape from the grid at the given position (optimized)
-	/// </summary>
-	private static void RemoveShapeFast(char[,] grid, Grid<char> shape, int startRow, int startCol)
-	{
-		for (int row = 0; row < shape.Height; row++) {
-			for (int col = 0; col < shape.Width; col++) {
-				if (shape[row, col] != EMPTY) {
-					grid[startRow + row, startCol + col] = EMPTY;
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Find the first empty cell in the grid (for smarter placement ordering)
-	/// </summary>
-	private static (int Row, int Col) FindFirstEmpty(char[,] grid, int gridRows, int gridCols)
-	{
-		for (int row = 0; row < gridRows; row++) {
-			for (int col = 0; col < gridCols; col++) {
-				if (grid[row, col] == EMPTY) {
-					return (row, col);
-				}
-			}
-		}
-		return (-1, -1);
 	}
 
 	/// <summary>
