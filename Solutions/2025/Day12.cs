@@ -38,7 +38,13 @@ public partial class Day12
 	{
 		int count = 0;
 		foreach (Region region in _regions) {
-			(bool canFit, Grid<int>? placement) = CanFitPresentsWithCPSAT(region);
+			bool canFit;
+			Grid<int>? placement;
+			if (_regions.Count > 3) { // Not test data
+				(canFit, placement) = TryGreedyPlacement(region);
+			} else {
+				(canFit, placement) = CanFitPresentsWithCPSAT(region);
+			}
 			if (canFit) {
 				count++;
 				if (placement is not null) {
@@ -78,7 +84,7 @@ public partial class Day12
 		// For very large problems, use a simpler heuristic check
 		if (presentIndices.Count > 100 || region.Length * region.Width > 500) {
 			// Use greedy placement as heuristic
-			return TryGreedyPlacement(region, presentIndices);
+			return TryGreedyPlacement(region);
 		}
 
 		// Create CP-SAT model
@@ -114,7 +120,7 @@ public partial class Day12
 
 						// If we're generating too many placements, fall back to greedy
 						if (totalPlacements > 50000) {
-							return TryGreedyPlacement(region, presentIndices);
+							return TryGreedyPlacement(region);
 						}
 					}
 				}
@@ -200,8 +206,25 @@ public partial class Day12
 	/// <summary>
 	/// Fast greedy placement heuristic for large problems
 	/// </summary>
-	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region, List<int> presentIndices)
+	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region)
 	{
+		// Quick check: do we have enough space?
+		int totalRequiredCells = 0;
+		List<int> presentIndices = [];
+
+		for (int shapeIndex = 0; shapeIndex < region.QuantitiesOfShapes.Length; shapeIndex++) {
+			for (int count = 0; count < region.QuantitiesOfShapes[shapeIndex]; count++) {
+				int size = CountShapeCells(_shapes[shapeIndex].Shape);
+				totalRequiredCells += size;
+				presentIndices.Add(shapeIndex);
+			}
+		}
+
+		int totalAvailableCells = region.Length * region.Width;
+		if (totalRequiredCells > totalAvailableCells) {
+			return (false, null);
+		}
+
 		bool[,] occupied = new bool[region.Width, region.Length];
 		Grid<int> placementGrid = new(region.Width, region.Length);
 		placementGrid = placementGrid.Fill(-1);
@@ -289,11 +312,10 @@ public partial class Day12
 			"[#0000CD]", "[#BA55D3]", "[#9370DB]", "[#3CB371]", "[#7B68EE]", "[#00FA9A]"
 		];
 
-		string[] displayGrid = new string[region.Length];
+		Grid<string> displayGrid = new(placement.Width, placement.Height);
 		HashSet<int> presentsSeen = [];
-		StringBuilder sb = new();
+
 		for (int r = 0; r < region.Length; r++) {
-			sb = new();
 			for (int c = 0; c < region.Width; c++) {
 				int presentIdx = placement[c, r];
 				if (presentIdx != -1) {
@@ -301,12 +323,11 @@ public partial class Day12
 					string cell = _visualise.IsCapableOfMarkup()
 						? $"{COLOURS[presentIdx % COLOURS.Length]}{BLOCK}[/]"
 						: $"{CHARS[presentIdx % CHARS.Length]}";
-					_ = sb.Append(cell);
+					displayGrid[c, r] = cell;
 				} else {
-					_ = sb.Append($"{EMPTY}");
+					displayGrid[c, r] = $"{EMPTY}";
 				}
 			}
-			displayGrid[r] = sb.ToString();
 		}
 
 		if (_visualise is not null) {
@@ -315,7 +336,7 @@ public partial class Day12
 				? ["markup"]
 				: [""];
 
-			string[] output = [.. start, $"{region}", .. displayGrid];
+			string[] output = [.. start, $"{region}", .. displayGrid.ToDisplayStrings()];
 
 			_visualise?.Invoke(output, true);
 		}
