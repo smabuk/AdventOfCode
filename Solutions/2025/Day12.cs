@@ -36,26 +36,21 @@ public partial class Day12
 
 	public static int Part1()
 	{
-		int count = 0;
-
 		VisualiseString("");
-		foreach (Region region in _regions) {
-			if (CanFitPresentsWithCPSAT(region)) {
-				count++;
-				VisualiseString($"YES: {region}");
-			} else {
-				VisualiseString($" NO: {region}");
-			}
-		}
-
-		return count;
-		return _regions.AsParallel().Count(CanFitPresentsWithCPSAT);
+		return _regions
+			.Select(region =>
+			{
+				bool canFit = CanFitPresentsWithCPSAT(region);
+				VisualiseString(canFit ? $"YES: {region}" : $" NO: {region}");
+				return canFit;
+			})
+			.Count(canFit => canFit);
 	}
 
-	public static string Part2() => NO_SOLUTION_WRITTEN_MESSAGE;
+	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
 	/// <summary>
-	/// Solve using Google OR-Tools CP-SAT solver
+	/// Solve using Google OR-Tools CP-SAT solver with optimized model
 	/// </summary>
 	private static bool CanFitPresentsWithCPSAT(Region region)
 	{
@@ -76,11 +71,18 @@ public partial class Day12
 			return false;
 		}
 
+		// For very large problems, use a simpler heuristic check
+		if (presentIndices.Count > 100 || region.Length * region.Width > 500) {
+			// Use greedy placement as heuristic
+			return TryGreedyPlacement(region, presentIndices);
+		}
+
 		// Create CP-SAT model
 		CpModel model = new();
 
-		// For each present, enumerate all valid placements
+		// For each present, enumerate all valid placements (but limit the number)
 		List<List<(int row, int col, int transformIdx, List<(int r, int c)> occupiedCells)>> presentPlacements = [];
+		int totalPlacements = 0;
 
 		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
 			int shapeIndex = presentIndices[presentIdx];
@@ -104,6 +106,12 @@ public partial class Day12
 							}
 						}
 						placements.Add((startRow, startCol, transformIdx, occupied));
+						totalPlacements++;
+
+						// If we're generating too many placements, fall back to greedy
+						if (totalPlacements > 50000) {
+							return TryGreedyPlacement(region, presentIndices);
+						}
 					}
 				}
 			}
@@ -115,7 +123,7 @@ public partial class Day12
 		for (int presentIdx = 0; presentIdx < presentIndices.Count; presentIdx++) {
 			List<BoolVar> placementVars = [];
 			for (int placementIdx = 0; placementIdx < presentPlacements[presentIdx].Count; placementIdx++) {
-				BoolVar isChosen = model.NewBoolVar($"present_{presentIdx}_placement_{placementIdx}");
+				BoolVar isChosen = model.NewBoolVar($"p{presentIdx}_{placementIdx}");
 				placementVars.Add(isChosen);
 			}
 			presentPlacementVars.Add(placementVars);
@@ -151,14 +159,74 @@ public partial class Day12
 			}
 		}
 
-		// Solve
+		// Solve with tight timeout and parallel workers
 		CpSolver solver = new()
 		{
-			StringParameters = "max_time_in_seconds:10.0" // 10 second timeout per region
+			StringParameters = "max_time_in_seconds:2.0, num_search_workers:8, log_search_progress:false"
 		};
 		CpSolverStatus status = solver.Solve(model);
 
 		return status is CpSolverStatus.Optimal or CpSolverStatus.Feasible;
+	}
+
+	/// <summary>
+	/// Fast greedy placement heuristic for large problems
+	/// </summary>
+	private static bool TryGreedyPlacement(Region region, List<int> presentIndices)
+	{
+		bool[,] occupied = new bool[region.Length, region.Width];
+
+		// Sort presents by size (largest first) for better packing
+		List<int> sortedIndices = [.. presentIndices.OrderByDescending(idx => CountShapeCells(_shapes[idx].Shape))];
+
+		foreach (int shapeIndex in sortedIndices) {
+			List<Grid<char>> transformations = _transformationsCache[shapeIndex];
+			bool placed = false;
+
+			// Try each transformation
+			foreach (Grid<char> shape in transformations) {
+				if (placed) {
+					break;
+				}
+
+				// Try each position
+				for (int row = 0; row <= region.Length - shape.Height; row++) {
+					if (placed) {
+						break;
+					}
+					for (int col = 0; col <= region.Width - shape.Width; col++) {
+						// Check if this placement is valid
+						bool canPlace = true;
+						for (int dr = 0; dr < shape.Height && canPlace; dr++) {
+							for (int dc = 0; dc < shape.Width && canPlace; dc++) {
+								if (shape[dr, dc] != EMPTY && occupied[row + dr, col + dc]) {
+									canPlace = false;
+								}
+							}
+						}
+
+						if (canPlace) {
+							// Place the present
+							for (int dr = 0; dr < shape.Height; dr++) {
+								for (int dc = 0; dc < shape.Width; dc++) {
+									if (shape[dr, dc] != EMPTY) {
+										occupied[row + dr, col + dc] = true;
+									}
+								}
+							}
+							placed = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!placed) {
+				return false; // Couldn't place this present
+			}
+		}
+
+		return true; // All presents placed successfully
 	}
 
 	/// <summary>
@@ -176,52 +244,16 @@ public partial class Day12
 				unique.Add(current);
 			}
 
-			Grid<char> flipped = FlipHorizontal(current);
+			Grid<char> flipped = current.FlipHorizontally();
 			key = GridToString(flipped);
 			if (seen.Add(key)) {
 				unique.Add(flipped);
 			}
 
-			current = Rotate90(current);
+			current = current.Rotate(90);
 		}
 
 		return unique;
-	}
-
-	/// <summary>
-	/// Rotate grid 90 degrees clockwise
-	/// </summary>
-	private static Grid<char> Rotate90(Grid<char> grid)
-	{
-		int rows = grid.Height;
-		int cols = grid.Width;
-		char[,] rotated = new char[cols, rows];
-
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				rotated[col, rows - 1 - row] = grid[row, col];
-			}
-		}
-
-		return rotated.To2dGrid();
-	}
-
-	/// <summary>
-	/// Flip grid horizontally
-	/// </summary>
-	private static Grid<char> FlipHorizontal(Grid<char> grid)
-	{
-		int rows = grid.Height;
-		int cols = grid.Width;
-		char[,] flipped = new char[rows, cols];
-
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				flipped[row, cols - 1 - col] = grid[row, col];
-			}
-		}
-
-		return flipped.To2dGrid();
 	}
 
 	/// <summary>
@@ -242,18 +274,7 @@ public partial class Day12
 	/// <summary>
 	/// Count number of filled cells in a shape
 	/// </summary>
-	private static int CountShapeCells(Grid<char> shape)
-	{
-		int count = 0;
-		for (int row = 0; row < shape.Height; row++) {
-			for (int col = 0; col < shape.Width; col++) {
-				if (shape[row, col] != EMPTY) {
-					count++;
-				}
-			}
-		}
-		return count;
-	}
+	private static int CountShapeCells(Grid<char> shape) => shape.Values().Count(val => val is not EMPTY);
 
 	[GenerateIParsable]
 	private sealed partial record Region(int Width, int Length, int[] QuantitiesOfShapes)
@@ -276,7 +297,5 @@ public partial class Day12
 			int index = int.Parse(parts[0][..^1]);
 			return new PresentShape(index, parts[1..].To2dGrid());
 		}
-
-		//public override string ToString() => $"Shape {Index}: {Shape}";
 	}
 }
