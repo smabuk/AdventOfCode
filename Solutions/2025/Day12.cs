@@ -12,6 +12,7 @@ public partial class Day12
 {
 
 	private const char EMPTY = '.';
+	private static readonly List<int> ROTATIONS = [0, 90, 180, 270];
 
 	[Init]
 	public static void LoadChristmasTreeFarm(string[] input)
@@ -24,71 +25,60 @@ public partial class Day12
 		_regions = [.. input.Skip(sectionStart).As<Region>()];
 
 		// Pre-compute all transformations for each shape
-		_transformationsCache.Clear();
-		for (int i = 0; i < _shapes.Count; i++) {
-			_transformationsCache[i] = GetAllTransformations(_shapes[i].Shape);
-		}
+		_transformationsCache = _shapes
+			.ToDictionary(shape => shape.Index, shape => GetAllTransformations(shape.Shape));
+
 	}
 
 	private static List<PresentShape> _shapes = [];
 	private static List<Region> _regions = [];
-	private static readonly Dictionary<int, List<Grid<char>>> _transformationsCache = [];
+	private static Dictionary<int, List<Grid<char>>> _transformationsCache = [];
 
 	public static int Part1()
 	{
 		int count = 0;
+
 		foreach (Region region in _regions) {
 			bool canFit;
 			Grid<int>? placement;
 			if (_regions.Count > 3) { // Not test data
-				(canFit, placement) = TryGreedyPlacement(region);
+				canFit = TryGreedyPlacement(region, out placement);
 			} else {
-				(canFit, placement) = CanFitPresentsWithCPSAT(region);
+				canFit = CanFitPresentsWithCPSAT(region, out placement);
 			}
-			if (canFit) {
+			if (canFit && placement is not null) {
 				count++;
-				if (placement is not null) {
-					VisualisePlacement(region, placement);
-				}
+				VisualisePlacement(region, placement);
 			} else {
-				//VisualiseString($" NO: {region}");
+				//VisualiseString($"{region} NO FIT:");
 			}
 		}
+
 		return count;
 	}
 
 	public static string Part2() => "⭐ CONGRATULATIONS ⭐";
 
+
+
+
 	/// <summary>
 	/// Generate all unique transformations (rotations and flips) of a shape
 	/// </summary>
 	private static List<Grid<char>> GetAllTransformations(Grid<char> shape)
-	{
-		HashSet<string> seen = [];
-		List<Grid<char>> unique = [];
-
-		for (int rotation = 0; rotation < 4; rotation++) {
-			Grid<char> current = shape.Rotate(90 * rotation);
-			if (seen.Add(current.AsStringWithNewLines())) {
-				unique.Add(current);
-			}
-
-			Grid<char> flipped = current.FlipHorizontally();
-			if (seen.Add(flipped.AsStringWithNewLines())) {
-				unique.Add(flipped);
-			}
-		}
-
-		return unique;
-	}
+		=> [.. ROTATIONS
+			.Select(rotation => shape.Rotate(rotation))
+			.SelectMany(rotatedShape => new[] { rotatedShape, rotatedShape.FlipHorizontally() })
+			.DistinctBy(g => g.AsStringWithNewLines())];
 
 	/// <summary>
 	/// Fast greedy placement heuristic for large problems
 	/// </summary>
-	private static (bool success, Grid<int>? placement) TryGreedyPlacement(Region region)
+	private static bool TryGreedyPlacement(Region region, [NotNullWhen(true)] out Grid<int>? placement)
 	{
+		placement = null;
 		if (!IsThereEnoughSpace(region, out List<int> presentIndices)) {
-			return (false, null);
+			return false;
 		}
 
 		bool[,] occupied = new bool[region.Width, region.Length];
@@ -105,15 +95,12 @@ public partial class Day12
 
 			// Try each transformation
 			foreach (Grid<char> shape in transformations) {
-				if (placed) {
-					break;
-				}
+				if (placed) { break; }
 
 				// Try each position
 				for (int col = 0; col <= region.Width - shape.Width; col++) {
-					if (placed) {
-						break;
-					}
+					if (placed) { break; }
+
 					for (int row = 0; row <= region.Length - shape.Height; row++) {
 						// Check if this placement is valid
 						bool canPlace = true;
@@ -142,48 +129,42 @@ public partial class Day12
 				}
 			}
 
-			if (!placed) {
-				return (false, null); // Couldn't place this present
+			if (placed is false) {
+				return false; // Couldn't place this present
 			}
 		}
 
-		return (true, placementGrid); // All presents placed successfully
+		placement = placementGrid.Copy();
+		return true; // All presents placed successfully
 	}
 
 	private static bool IsThereEnoughSpace(Region region, out List<int> presentIndices)
 	{
-		// Quick check: do we have enough space?
-		int totalRequiredCells = 0;
-		presentIndices = [];
-		for (int shapeIndex = 0; shapeIndex < region.QuantitiesOfShapes.Length; shapeIndex++) {
-			for (int count = 0; count < region.QuantitiesOfShapes[shapeIndex]; count++) {
-				int size = CountShapeCells(_shapes[shapeIndex].Shape);
-				totalRequiredCells += size;
-				presentIndices.Add(shapeIndex);
-			}
-		}
+		// Build list of present indices and total required cells
+		presentIndices = [.. Enumerable
+			.Range(0, region.QuantitiesOfShapes.Length)
+			.SelectMany(shapeIndex => Enumerable.Repeat(shapeIndex, region.QuantitiesOfShapes[shapeIndex]))];
 
+		int totalRequiredCells = presentIndices.Sum(idx => CountShapeCells(_shapes[idx].Shape));
 		int totalAvailableCells = region.Length * region.Width;
-		if (totalRequiredCells > totalAvailableCells) {
-			return false;
-		}
 
-		return true;
+		return totalRequiredCells <= totalAvailableCells;
 	}
 
 	/// <summary>
 	/// Solve using Google OR-Tools CP-SAT solver with optimized model
 	/// </summary>
-	private static (bool canFit, Grid<int>? placement) CanFitPresentsWithCPSAT(Region region)
+	private static bool CanFitPresentsWithCPSAT(Region region, [NotNullWhen(true)] out Grid<int>? placement)
 	{
+		placement = null;
 		if (!IsThereEnoughSpace(region, out List<int> presentIndices)) {
-			return (false, null);
+			return false;
 		}
 
 		// For very large problems, use a simpler heuristic check
 		if (presentIndices.Count > 100 || region.Length * region.Width > 500) {
 			// Use greedy placement as heuristic
-			return TryGreedyPlacement(region);
+			return TryGreedyPlacement(region, out placement);
 		}
 
 		// Create CP-SAT model
@@ -219,7 +200,7 @@ public partial class Day12
 
 						// If we're generating too many placements, fall back to greedy
 						if (totalPlacements > 50000) {
-							return TryGreedyPlacement(region);
+							return TryGreedyPlacement(region, out placement);
 						}
 					}
 				}
@@ -296,15 +277,16 @@ public partial class Day12
 				}
 			}
 
-			return (true, placementGrid);
+			placement = placementGrid.Copy();
+			return true;
 		}
 
-		return (false, null);
+		return false;
 	}
 
 	private static void VisualisePlacement(Region region, Grid<int> placement)
 	{
-		const string CHARS = "abcdefghijklmnopqrstuvwxyz";
+		const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		const char BLOCK = Utf16Chars.BlockElements.FULL_BLOCK;
 		string[] COLOURS = [
 			"[#FF0000]", "[#00FF00]", "[#0000FF]", "[#FFFF00]", "[#FF00FF]", "[#00FFFF]",
@@ -355,7 +337,8 @@ public partial class Day12
 	/// </summary>
 	private static int CountShapeCells(Grid<char> shape) => shape.Values().Count(val => val is not EMPTY);
 
-	[GenerateIParsable] private sealed partial record Region(int Width, int Length, int[] QuantitiesOfShapes)
+	[GenerateIParsable]
+	private sealed partial record Region(int Width, int Length, int[] QuantitiesOfShapes)
 	{
 		public static Region Parse(string s)
 		{
@@ -366,7 +349,8 @@ public partial class Day12
 		public override string ToString() => $"Region {Width,2}x{Length,2}: ({string.Join(", ", QuantitiesOfShapes)})";
 	}
 
-	[GenerateIParsable] private sealed partial record PresentShape(int Index, Grid<char> Shape)
+	[GenerateIParsable]
+	private sealed partial record PresentShape(int Index, Grid<char> Shape)
 	{
 		public static PresentShape Parse(string s)
 		{
