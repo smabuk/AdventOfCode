@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
 namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 	private static bool TryGetDayTypeInfo(int year, int day,[NotNullWhen(true)] out TypeInfo? typeInfo)
 	{

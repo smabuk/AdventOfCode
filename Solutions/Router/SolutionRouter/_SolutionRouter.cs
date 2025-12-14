@@ -1,4 +1,4 @@
 ﻿namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 }

@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 	public static IEnumerable<SolutionPhaseResult> SolveDay(int year, int day, string[]? input, int? problemNo = null, Action<string[], bool>? visualise = null, params object[]? args)
 	{

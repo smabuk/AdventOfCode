@@ -12,12 +12,12 @@
 		bool showVisuals = settings.Visual;
 		bool isDebug = settings.Debug;
 		bool isDownload = settings.Download;
-		TimeSpan visualsTime = settings.VisualDelayMs.HasValue 
-			? TimeSpan.FromMilliseconds(settings.VisualDelayMs.Value) 
+		TimeSpan visualsTime = settings.VisualDelayMs.HasValue
+			? TimeSpan.FromMilliseconds(settings.VisualDelayMs.Value)
 			: settings.VisualTime;
 		object[] solutionArgs = ParseSolutionArgs(settings.SolutionArgs);
 
-		int noOfDays = date.Year >= 2025 ? 12 : 25;
+		int noOfDays = GetNoOfDays(date.Year);
 		long totalTime = Stopwatch.GetTimestamp();
 
 		if (date.Month == 12 && date.Day <= noOfDays) {

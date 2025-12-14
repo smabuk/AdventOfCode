@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 	public static bool HasVisualiser(int year, int day, int part)
 	{

@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 	public static string? GetProblemDescription(int year, int day)
 	{

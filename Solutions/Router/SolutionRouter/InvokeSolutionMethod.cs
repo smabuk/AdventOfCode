@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Solutions;
 
-static public partial class SolutionRouter {
+public static partial class SolutionRouter {
 
 	private static SolutionPhaseResult InvokeSolutionMethod(string phase, object input, object[]? args, MethodInfo method, Action<string[], bool>? visualise) {
 		input = (input as string[]).StripTrailingBlankLineOrDefault();

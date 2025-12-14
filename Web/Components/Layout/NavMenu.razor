@@ -46,7 +46,7 @@
 	[Parameter] public int Year { get; set; }
 
 	public string NavTitle => $"Advent of Code {(Year == 0 ? "" : Year)} ";
-	public int noOfDays => Year >= 2025 ? 12 : 25;
+	public int noOfDays => SolutionRouter.GetNoOfDays(Year);
 	bool summaryYearExists => Session?.HasSummary(Year) ?? false;
 
 	protected override void OnInitialized()

@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode.Solutions;
-static public partial class SolutionRouter
+public static partial class SolutionRouter
 {
 	private static SolutionPhaseResult InvokePhase(string phase, string[] input, object[]? args, MethodInfo[] methods, Action<string[], bool>? visualise)
 	{
