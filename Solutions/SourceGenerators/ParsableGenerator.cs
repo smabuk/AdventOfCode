@@ -12,6 +12,7 @@ namespace AdventOfCode.SourceGenerators;
 /// <summary>
 /// Source generator that automatically generates IParsable&lt;T&gt; boilerplate methods
 /// for types marked with [GenerateIParsable] attribute.
+/// Supports both non-generic and generic types with IParsable&lt;T&gt; constraints.
 /// </summary>
 [Generator]
 public class ParsableGenerator : IIncrementalGenerator
@@ -29,6 +30,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		/// The type must implement Parse(string s, IFormatProvider? provider).
 		/// The generator will create Parse(string s) and TryParse(...) methods automatically.
 		/// The generator will add the IParsable&lt;T&gt; interface to the type as well.
+		/// For generic types, all type parameters must be constrained to IParsable&lt;T&gt;.
 		/// </summary>
 		[global::System.AttributeUsage(global::System.AttributeTargets.Class | global::System.AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
 		internal sealed class GenerateIParsableAttribute : global::System.Attribute
@@ -128,6 +130,9 @@ public class ParsableGenerator : IIncrementalGenerator
 			string namespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
 			string typeName = typeSymbol.Name;
 
+			// Extract generic type parameters
+			GenericTypeInfo genericInfo = GetGenericTypeInfo(typeSymbol);
+
 			// Extract split configuration from attribute
 			SplitConfiguration splitConfig = GetSplitConfiguration(typeDeclaration, semanticModel);
 
@@ -170,7 +175,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			//}
 
 			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList, constructorParameters,
-				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig);
+				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig, genericInfo);
 
 			// Use full type path for unique filename
 			string fileName = containingTypes.Count > 0
@@ -204,6 +209,73 @@ public class ParsableGenerator : IIncrementalGenerator
 		public string? SplitPattern { get; } = splitPattern;
 		public bool RemoveEmptyEntries { get; } = removeEmptyEntries;
 		public string? CapturePattern { get; } = capturePattern;
+	}
+
+	private class GenericTypeInfo(string typeParameters, string typeArguments, string whereConstraints)
+	{
+		public string TypeParameters { get; } = typeParameters; // <T> or <T, U>
+		public string TypeArguments { get; } = typeArguments;   // T or T, U
+		public string WhereConstraints { get; } = whereConstraints; // where T : IParsable<T>
+		public bool IsGeneric => !string.IsNullOrEmpty(TypeParameters);
+	}
+
+	private static GenericTypeInfo GetGenericTypeInfo(INamedTypeSymbol typeSymbol)
+	{
+		if (!typeSymbol.IsGenericType || typeSymbol.TypeParameters.Length == 0) {
+			return new GenericTypeInfo("", "", "");
+		}
+
+		string[] typeParamNames = [.. typeSymbol.TypeParameters.Select(tp => tp.Name)];
+		string typeParameters = $"<{string.Join(", ", typeParamNames)}>";
+		string typeArguments = string.Join(", ", typeParamNames);
+
+		// Build where constraints
+		List<string> whereConstraints = [];
+		foreach (ITypeParameterSymbol typeParam in typeSymbol.TypeParameters) {
+			List<string> constraints = [];
+
+			// Check for existing IParsable<T> constraint
+			bool hasParsableConstraint = typeParam.ConstraintTypes.Any(ct =>
+				ct is INamedTypeSymbol nts &&
+				nts.Name == "IParsable" &&
+				nts.IsGenericType &&
+				nts.TypeArguments.Length == 1);
+
+			// Always add IParsable<T> constraint since we'll be calling T.Parse
+			if (!hasParsableConstraint) {
+				constraints.Add($"IParsable<{typeParam.Name}>");
+			}
+
+			// Add other constraints
+			foreach (ITypeSymbol constraintType in typeParam.ConstraintTypes) {
+				if (constraintType is INamedTypeSymbol nts &&
+					!(nts.Name == "IParsable" && nts.IsGenericType)) {
+					constraints.Add(constraintType.ToDisplayString());
+				} else if (constraintType is INamedTypeSymbol nts2 && nts2.Name == "IParsable" && nts2.IsGenericType) {
+					constraints.Add($"IParsable<{typeParam.Name}>");
+				}
+			}
+
+			if (typeParam.HasReferenceTypeConstraint) {
+				constraints.Insert(0, "class");
+			}
+
+			if (typeParam.HasValueTypeConstraint) {
+				constraints.Insert(0, "struct");
+			}
+
+			if (typeParam.HasConstructorConstraint) {
+				constraints.Add("new()");
+			}
+
+			if (constraints.Count > 0) {
+				whereConstraints.Add($"where {typeParam.Name} : {string.Join(", ", constraints)}");
+			}
+		}
+
+		string whereClause = whereConstraints.Count > 0 ? $" {string.Join(" ", whereConstraints)}" : "";
+
+		return new GenericTypeInfo(typeParameters, typeArguments, whereClause);
 	}
 
 	private static SplitConfiguration GetSplitConfiguration(TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
@@ -300,7 +372,7 @@ public class ParsableGenerator : IIncrementalGenerator
 	}
 
 	private static string GenerateSource(string namespaceName, string typeName, string typeKeyword,
-		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface, SplitConfiguration splitConfig)
+		List<(string Name, string Keyword)> containingTypes, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, bool generateParse, bool generateParseWithProvider, bool generateTryParse, bool addIParsableInterface, SplitConfiguration splitConfig, GenericTypeInfo genericInfo)
 	{
 		// Build opening declarations for nested types
 		StringBuilder containingTypesOpen = new();
@@ -316,30 +388,31 @@ public class ParsableGenerator : IIncrementalGenerator
 		}
 
 		string indent = GetIndent(baseIndent);
-		string interfaceDeclaration = addIParsableInterface ? $" : IParsable<{typeName}>" : "";
+		string typeNameWithGenerics = genericInfo.IsGeneric ? $"{typeName}{genericInfo.TypeParameters}" : typeName;
+		string interfaceDeclaration = addIParsableInterface ? $" : IParsable<{typeNameWithGenerics}>" : "";
 
 		string parseMethod = generateParse && generateParseWithProvider
 			? $$"""
-				{{indent}}	public static {{typeName}} Parse(string s)
+				{{indent}}	public static {{typeNameWithGenerics}} Parse(string s)
 				{{indent}}	{
-				{{CreateNewFromConstructorParameters(typeName, constructorParametersList, constructorParameters, splitConfig, indent)}}
+				{{CreateNewFromConstructorParameters(typeName, constructorParametersList, constructorParameters, splitConfig, indent, genericInfo)}}
 				{{indent}}	}
 				"""
 			: generateParse && !generateParseWithProvider
 				? $$"""
-					{{indent}}	public static {{typeName}} Parse(string s) => {{typeName}}.Parse(s, null);
+					{{indent}}	public static {{typeNameWithGenerics}} Parse(string s) => {{typeName}}.Parse(s, null);
 					"""
 				: "";
 
 		string parseMethodWithProvider = generateParseWithProvider
 			? $$"""
-				{{indent}}	public static {{typeName}} Parse(string s, IFormatProvider? provider) => {{typeName}}.Parse(s);
+				{{indent}}	public static {{typeNameWithGenerics}} Parse(string s, IFormatProvider? provider) => {{typeNameWithGenerics}}.Parse(s);
 				"""
 			: "";
 
 		string tryParseMethod = generateTryParse
 			? $$"""
-				{{indent}}	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out {{typeName}} result)
+				{{indent}}	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out {{typeNameWithGenerics}} result)
 				{{indent}}	{
 				{{indent}}		if (string.IsNullOrWhiteSpace(s))
 				{{indent}}		{
@@ -349,7 +422,7 @@ public class ParsableGenerator : IIncrementalGenerator
 
 				{{indent}}		try
 				{{indent}}		{
-				{{indent}}			result = {{typeName}}.Parse(s, provider);
+				{{indent}}			result = {{typeNameWithGenerics}}.Parse(s, provider);
 				{{indent}}			return true;
 				{{indent}}		}
 				{{indent}}		catch
@@ -387,7 +460,7 @@ public class ParsableGenerator : IIncrementalGenerator
 			{{(needsLinq ? "using System.Linq;" : "")}}
 			namespace {{namespaceName}};
 
-			{{containingTypesOpen}}{{indent}}partial {{typeKeyword}} {{typeName}}{{interfaceDeclaration}}
+			{{containingTypesOpen}}{{indent}}partial {{typeKeyword}} {{typeNameWithGenerics}}{{interfaceDeclaration}}{{genericInfo.WhereConstraints}}
 			{{indent}}{
 			{{parameterTypesComment}}
 			{{parseMethod}}
@@ -398,15 +471,17 @@ public class ParsableGenerator : IIncrementalGenerator
 			""";
 	}
 
-	private static string CreateNewFromConstructorParameters(string typeName, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent)
+	private static string CreateNewFromConstructorParameters(string typeName, string[] constructorParametersList, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent, GenericTypeInfo genericInfo)
 	{
+		string typeNameWithGenerics = genericInfo.IsGeneric ? $"{typeName}<{genericInfo.TypeArguments}>" : typeName;
+
 		if (constructorParametersList == null || constructorParametersList.Length == 0) {
 			return $"{indent}\t\treturn new();";
 		}
 
 		// Check if capture pattern is specified - takes precedence for multi-parameter scenarios
 		if (!string.IsNullOrEmpty(splitConfig.CapturePattern)) {
-			return GenerateCaptureParsing(typeName, constructorParameters, splitConfig, indent);
+			return GenerateCaptureParsing(typeNameWithGenerics, constructorParameters, splitConfig, indent, genericInfo);
 		}
 
 		if (constructorParametersList.Length == 1) {
@@ -414,7 +489,12 @@ public class ParsableGenerator : IIncrementalGenerator
 
 			// Check if it's a collection type
 			if (IsCollectionType(parameterType, out string? elementType)) {
-				return GenerateCollectionParsing(typeName, parameterType, elementType!, splitConfig, indent);
+				return GenerateCollectionParsing(typeNameWithGenerics, parameterType, elementType!, splitConfig, indent, genericInfo);
+			}
+
+			// Check if parameter type is a generic type parameter (needs IParsable<T>.Parse)
+			if (genericInfo.IsGeneric && genericInfo.TypeArguments.Split(',').Select(t => t.Trim()).Contains(parameterType)) {
+				return $"{indent}\t\treturn new({parameterType}.Parse(s, null));";
 			}
 
 			// Simple single parameter
@@ -448,17 +528,27 @@ public class ParsableGenerator : IIncrementalGenerator
 
 		// Generate parameter parsing
 		List<string> parameterExpressions = [];
+		string[] genericTypeParams = genericInfo.IsGeneric
+			? [.. genericInfo.TypeArguments.Split(',').Select(t => t.Trim())]
+			: [];
+
 		for (int i = 0; i < constructorParametersList.Length; i++) {
 			string parameterType = constructorParametersList[i];
-			string expression = parameterType switch
-			{
-				"string" => $"parts[{i}]",
-				_ => $"{parameterType}.Parse(parts[{i}])"
-			};
-			parameterExpressions.Add(expression);
+
+			// Check if this is a generic type parameter
+			if (genericTypeParams.Contains(parameterType)) {
+				parameterExpressions.Add($"{parameterType}.Parse(parts[{i}], null)");
+			} else {
+				string expression = parameterType switch
+				{
+					"string" => $"parts[{i}]",
+					_ => $"{parameterType}.Parse(parts[{i}])"
+				};
+				parameterExpressions.Add(expression);
+			}
 		}
 
-		_ = sb.Append($"{indent}\t\treturn new {typeName}({string.Join(", ", parameterExpressions)});");
+		_ = sb.Append($"{indent}\t\treturn new {typeNameWithGenerics}({string.Join(", ", parameterExpressions)});");
 		return sb.ToString();
 	}
 
@@ -505,7 +595,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		return false;
 	}
 
-	private static string GenerateCollectionParsing(string typeName, string parameterType, string elementType, SplitConfiguration splitConfig, string indent)
+	private static string GenerateCollectionParsing(string typeName, string parameterType, string elementType, SplitConfiguration splitConfig, string indent, GenericTypeInfo genericInfo)
 	{
 		StringBuilder sb = new();
 
@@ -526,10 +616,18 @@ public class ParsableGenerator : IIncrementalGenerator
 			_ = sb.AppendLine($"{indent}\t\tstring[] parts = s.Split([{splitCharsArray}]{splitOptions});");
 		}
 
+		// Check if element type is a generic type parameter
+		string[] genericTypeParams = genericInfo.IsGeneric
+			? [.. genericInfo.TypeArguments.Split(',').Select(t => t.Trim())]
+			: [];
+
 		// Generate element parsing based on element type
+		// For generic type parameters, use IParsable<T>.Parse
 		string parseExpression = elementType switch
 		{
 			"string" => "parts",
+			_ when genericTypeParams.Contains(elementType) => $"parts.Select(p => {elementType}.Parse(p, null)).ToArray()",
+			_ when IsSimpleTypeName(elementType) => $"parts.Select(p => {elementType}.Parse(p, null)).ToArray()",
 			_ => $"parts.Select({elementType}.Parse).ToArray()"
 		};
 
@@ -553,7 +651,17 @@ public class ParsableGenerator : IIncrementalGenerator
 		return sb.ToString();
 	}
 
-	private static string GenerateCaptureParsing(string typeName, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent)
+	private static bool IsSimpleTypeName(string typeName)
+	{
+		// Check if the type name is a simple identifier (T, U, TValue, etc.) without dots or generic markers
+		return !string.IsNullOrEmpty(typeName) &&
+			   !typeName.Contains('.') &&
+			   !typeName.Contains('<') &&
+			   !typeName.Contains('>') &&
+			   char.IsUpper(typeName[0]);
+	}
+
+	private static string GenerateCaptureParsing(string typeName, (string Name, string Type)[] constructorParameters, SplitConfiguration splitConfig, string indent, GenericTypeInfo genericInfo)
 	{
 		StringBuilder sb = new();
 
@@ -581,11 +689,11 @@ public class ParsableGenerator : IIncrementalGenerator
 				_ = sb.AppendLine($"{indent}\t\tstring {varName} = match.Groups[\"{name}\"].Value;");
 
 				// Collection parsing with element-level error handling
-				string parseLogic = GenerateSafeCollectionParsing(name, varName, elementType!, type, splitConfig, indent);
+				string parseLogic = GenerateSafeCollectionParsing(name, varName, elementType!, type, splitConfig, indent, genericInfo);
 				_ = sb.AppendLine(parseLogic);
 				paramExpressions.Add($"{name.ToLower()}Parsed");
 			} else {
-				string parseExpr = GenerateSafeValueParsing(name, type, indent);
+				string parseExpr = GenerateSafeValueParsing(name, type, indent, genericInfo);
 				_ = sb.AppendLine(parseExpr);
 				paramExpressions.Add($"{name.ToLower()}Parsed");
 			}
@@ -596,7 +704,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		return sb.ToString();
 	}
 
-	private static string GenerateSafeValueParsing(string paramName, string paramType, string indent)
+	private static string GenerateSafeValueParsing(string paramName, string paramType, string indent, GenericTypeInfo genericInfo)
 	{
 		string varName = paramName.ToLower();
 
@@ -604,11 +712,23 @@ public class ParsableGenerator : IIncrementalGenerator
 			return $"{indent}\t\tstring {varName}Parsed = match.Groups[\"{paramName}\"].Value;";
 		}
 
+		// Check if this is a generic type parameter
+		string[] genericTypeParams = genericInfo.IsGeneric
+			? [.. genericInfo.TypeArguments.Split(',').Select(t => t.Trim())]
+			: [];
+
 		StringBuilder sb = new();
 		_ = sb.AppendLine($"{indent}\t\t{paramType} {varName}Parsed;");
 		_ = sb.AppendLine($"{indent}\t\ttry");
 		_ = sb.AppendLine($"{indent}\t\t{{");
-		_ = sb.AppendLine($"{indent}\t\t\t{varName}Parsed = {paramType}.Parse(match.Groups[\"{paramName}\"].Value);");
+
+		// For generic type parameters, use IParsable<T>.Parse
+		if (genericTypeParams.Contains(paramType) || IsSimpleTypeName(paramType)) {
+			_ = sb.AppendLine($"{indent}\t\t\t{varName}Parsed = {paramType}.Parse(match.Groups[\"{paramName}\"].Value, null);");
+		} else {
+			_ = sb.AppendLine($"{indent}\t\t\t{varName}Parsed = {paramType}.Parse(match.Groups[\"{paramName}\"].Value);");
+		}
+
 		_ = sb.AppendLine($"{indent}\t\t}}");
 		_ = sb.AppendLine($"{indent}\t\tcatch (Exception ex)");
 		_ = sb.AppendLine($"{indent}\t\t{{");
@@ -617,7 +737,7 @@ public class ParsableGenerator : IIncrementalGenerator
 		return sb.ToString();
 	}
 
-	private static string GenerateSafeCollectionParsing(string paramName, string valueVar, string elementType, string parameterType, SplitConfiguration splitConfig, string indent)
+	private static string GenerateSafeCollectionParsing(string paramName, string valueVar, string elementType, string parameterType, SplitConfiguration splitConfig, string indent, GenericTypeInfo genericInfo)
 	{
 		StringBuilder sb = new();
 
@@ -647,13 +767,25 @@ public class ParsableGenerator : IIncrementalGenerator
 			return sb.ToString();
 		}
 
+		// Check if element type is a generic type parameter
+		string[] genericTypeParams = genericInfo.IsGeneric
+			? [.. genericInfo.TypeArguments.Split(',').Select(t => t.Trim())]
+			: [];
+
 		// Parse with error handling for each element
 		_ = sb.AppendLine($"{indent}\t\tList<{elementType}> {varName}List = [];");
 		_ = sb.AppendLine($"{indent}\t\tfor (int i = 0; i < {valueVar}Parts.Length; i++)");
 		_ = sb.AppendLine($"{indent}\t\t{{");
 		_ = sb.AppendLine($"{indent}\t\t\ttry");
 		_ = sb.AppendLine($"{indent}\t\t\t{{");
-		_ = sb.AppendLine($"{indent}\t\t\t\t{varName}List.Add({elementType}.Parse({valueVar}Parts[i]));");
+
+		// For generic type parameters, use IParsable<T>.Parse
+		if (genericTypeParams.Contains(elementType) || IsSimpleTypeName(elementType)) {
+			_ = sb.AppendLine($"{indent}\t\t\t\t{varName}List.Add({elementType}.Parse({valueVar}Parts[i], null));");
+		} else {
+			_ = sb.AppendLine($"{indent}\t\t\t\t{varName}List.Add({elementType}.Parse({valueVar}Parts[i]));");
+		}
+
 		_ = sb.AppendLine($"{indent}\t\t\t}}");
 		_ = sb.AppendLine($"{indent}\t\t\tcatch (Exception ex)");
 		_ = sb.AppendLine($"{indent}\t\t\t{{");

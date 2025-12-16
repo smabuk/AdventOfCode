@@ -72,6 +72,10 @@
 	private static async Task GetInputDataAndSolve(int year, int day, int? phase, Lock consolelock, bool showVisuals = false, bool isDebug = false, bool isDownload = false, TimeSpan visualsTime = default, params object[]? args)
 	{
 		string[]? input = await Program.GetInputData(year, day, isDownload);
+		if (year is TEST_YEAR) {
+			input ??= [""];
+		}
+
 		string title = GetProblemDescription(year, day) ?? $"";
 
 		lock (consolelock) {

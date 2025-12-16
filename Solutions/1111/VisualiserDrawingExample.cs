@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Solutions._2025;
+﻿namespace AdventOfCode.Solutions._1111;
 
 /// <summary>
 /// Example demonstrating the drawing capabilities of the visualiser component.

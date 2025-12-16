@@ -22,4 +22,6 @@ public static class GlobalConstants
 	public const string NO_PARAMETERS_MESSAGE = "* NO PARAMETERS *";
 	public const string NO_SOLUTION_MESSAGE = "* No solution *";
 	public const string NO_SOLUTION_WRITTEN_MESSAGE = "** Solution not written yet **";
+
+	public const int TEST_YEAR = 1111;
 }

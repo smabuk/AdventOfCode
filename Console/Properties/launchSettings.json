@@ -21,6 +21,13 @@
       "environmentVariables": {
         "AoCData": "..\\..\\..\\..\\Data"
       }
+    },
+    "Examples (1111)": {
+      "commandName": "Project",
+      "commandLineArgs": "1111",
+      "environmentVariables": {
+        "AoCData": "..\\..\\..\\..\\Data"
+      }
     }
   }
 }
