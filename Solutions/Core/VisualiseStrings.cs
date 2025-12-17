@@ -5,7 +5,7 @@ public static class VisualiseStringsExtensions
 	{
 		if (visualise is not null) {
 			string[] output = ["", title, .. strings];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
+			visualise?.Invoke(output, false);
 		}
 	}
 }

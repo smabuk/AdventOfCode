@@ -7,7 +7,7 @@ public static class VisualiseGridExtensions
 	{
 		if (visualise is not null) {
 			string[] output = ["", title, .. grid.AsStrings()];
-			_ = Task.Run(() => visualise?.Invoke(output, false));
+			visualise?.Invoke(output, false);
 		}
 	}
 }
