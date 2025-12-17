@@ -9,6 +9,7 @@ namespace AdventOfCode.Solutions._2016;
 /// https://adventofcode.com/2016/day/08
 /// </summary>
 [Description("Two-Factor Authentication")]
+[GenerateVisualiser]
 public sealed partial class Day08 {
 
 	[Init]
@@ -44,7 +45,8 @@ public sealed partial class Day08 {
 		.IdentifyMessage();
 }
 
-file static class Day08Extensions
+[GenerateVisualiser]
+file static partial class Day08Extensions
 {
 	public static char[,] ExecuteInstructions(this char[,] screenInput, Action<string[], bool>? visualise)
 	{
@@ -58,6 +60,14 @@ file static class Day08Extensions
 
 		screen.VisualiseGrid($"Final", visualise);
 		return screen;
+	}
+
+	public static void VisualiseGrid(this char[,] grid, string title, Action<string[], bool>? visualise)
+	{
+		if (visualise is not null) {
+			string[] output = ["", title, .. grid.AsStrings([($"{ON}", $"{Utf16Chars.BlockElements.FULL_BLOCK}")])];
+			visualise?.Invoke(output, visualise.IsWebOutput());
+		}
 	}
 }
 

@@ -11,6 +11,7 @@ namespace AdventOfCode.Solutions._2017;
 /// https://adventofcode.com/2017/day/19
 /// </summary>
 [Description("A Series of Tubes")]
+[GenerateVisualiser]
 public sealed partial class Day19 {
 
 	[Init]
@@ -64,6 +65,14 @@ file static class Day19Extensions
 		}
 
 		return (path, steps);
+	}
+
+	public static void VisualiseGrid(this char[,] grid, string title, Action<string[], bool>? visualise)
+	{
+		if (visualise is not null) {
+			string[] output = ["", title, .. grid.AsStrings()];
+			visualise?.Invoke(output, false);
+		}
 	}
 }
 
