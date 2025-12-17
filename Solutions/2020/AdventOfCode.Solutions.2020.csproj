@@ -16,4 +16,9 @@
 		<PackageReference Include="Smab.Helpers" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\SourceGenerators\AdventOfCode.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<Using Include="AdventOfCode.SourceGenerators" />
+	</ItemGroup>
+
 </Project>
