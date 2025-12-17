@@ -10,7 +10,7 @@ namespace AdventOfCode.Solutions._2016;
 /// </summary>
 [Description("Two-Factor Authentication")]
 [GenerateVisualiser]
-public sealed partial class Day08 {
+public partial class Day08 {
 
 	[Init]
 	public static   void  Init(string[] input) => LoadInstructions(input);
@@ -45,7 +45,6 @@ public sealed partial class Day08 {
 		.IdentifyMessage();
 }
 
-[GenerateVisualiser]
 file static partial class Day08Extensions
 {
 	public static char[,] ExecuteInstructions(this char[,] screenInput, Action<string[], bool>? visualise)

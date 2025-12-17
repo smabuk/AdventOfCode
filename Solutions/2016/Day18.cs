@@ -8,7 +8,7 @@ namespace AdventOfCode.Solutions._2016;
 /// </summary>
 [Description("Like a Rogue")]
 [GenerateVisualiser]
-public sealed partial class Day18 {
+public partial class Day18 {
 
 	public static string Part1(string[] input, params object[]? args)
 	{

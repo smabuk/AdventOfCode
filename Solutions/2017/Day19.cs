@@ -12,7 +12,7 @@ namespace AdventOfCode.Solutions._2017;
 /// </summary>
 [Description("A Series of Tubes")]
 [GenerateVisualiser]
-public sealed partial class Day19 {
+public partial class Day19 {
 
 	[Init]
 	public static   void  Init(string[] input, Action<string[], bool>? visualise = null) => LoadRoutingDiagram(input, visualise);
