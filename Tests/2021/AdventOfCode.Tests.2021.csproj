@@ -22,4 +22,9 @@
 		<ProjectReference Include="..\..\Solutions\Router\AdventOfCode.Solutions.Router.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\Solutions\SourceGenerators\AdventOfCode.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<Using Include="AdventOfCode.SourceGenerators" />
+	</ItemGroup>
+
 </Project>
