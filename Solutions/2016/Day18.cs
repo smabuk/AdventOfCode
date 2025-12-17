@@ -7,20 +7,21 @@ namespace AdventOfCode.Solutions._2016;
 /// https://adventofcode.com/2016/day/18
 /// </summary>
 [Description("Like a Rogue")]
+[GenerateVisualiser]
 public sealed partial class Day18 {
 
-	public static string Part1(string[] input, Action<string[], bool>? visualise = null, params object[]? args)
+	public static string Part1(string[] input, params object[]? args)
 	{
 		int noOfRows = GetArgument<int>(args, argumentNumber: 1, defaultResult: 40);
-		return Solve(input, noOfRows, visualise).ToString();
+		return Solve(input, noOfRows).ToString();
 	}
 
 	public static string Part2(string[] input) => Solve(input, 400_000).ToString();
 
-	private static int Solve(string[] input, int noOfRows, Action<string[], bool>? visualise = null) {
+	private static int Solve(string[] input, int noOfRows) {
 		string[] room = [..input[0].RoomRows().Take(noOfRows)];
-		if (noOfRows < 50) {
-			room.VisualiseStrings("Final", visualise);
+		if (_visualise.IsTestOutput()) {
+			VisualiseStrings(room, "Final");
 		}
 		return room.Sum(r => r.Count(c => c == SAFE));
 	}
@@ -57,7 +58,7 @@ file static class Day18Extensions
 		}
 
 		return SAFE;
-	} 
+	}
 }
 
 internal sealed partial class Day18Types
