@@ -5,6 +5,11 @@ public static class VisualiserExtensions
 	extension(Action<string[], bool>? action)
 	{
 		/// <summary>
+		/// Determines whether the current action supports drawing in its output.
+		/// </summary>
+		/// <returns>true if the action is capable of drawing output; otherwise, false.</returns>
+		public bool IsCapableOfDrawing() => action.IsWebOutput();
+		/// <summary>
 		/// Determines whether the current action supports markup in its output.
 		/// </summary>
 		/// <returns>true if the action is capable of producing markup output; otherwise, false.</returns>
