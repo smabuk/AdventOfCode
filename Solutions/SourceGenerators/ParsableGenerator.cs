@@ -3,9 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Linq;
 
 namespace AdventOfCode.SourceGenerators;
 
@@ -72,118 +70,72 @@ public class ParsableGenerator : IIncrementalGenerator
 			"GenerateIParsableAttribute.g.cs",
 			SourceText.From(AttributeSource, Encoding.UTF8)));
 
-		// Register syntax receiver to find types with [GenerateParsable] attribute
-		IncrementalValuesProvider<TypeDeclarationSyntax> typeDeclarations = context.SyntaxProvider
-			.CreateSyntaxProvider(
-				predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
-				transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-			.Where(static m => m is not null)!;
-
-		// Combine with compilation
-		IncrementalValueProvider<(Compilation, ImmutableArray<TypeDeclarationSyntax>)> compilationAndTypes
-			= context.CompilationProvider.Combine(typeDeclarations.Collect());
+		// Use ForAttributeWithMetadataName for efficient attribute lookup
+		IncrementalValuesProvider<GeneratorAttributeSyntaxContext> typeDeclarations = context.SyntaxProvider
+			.ForAttributeWithMetadataName(
+				fullyQualifiedMetadataName: AttributeName,
+				predicate: static (node, _) => node is TypeDeclarationSyntax,
+				transform: static (context, _) => context);
 
 		// Generate source
-		context.RegisterSourceOutput(compilationAndTypes,
-			static (spc, source) => Execute(source.Item1, source.Item2, spc));
+		context.RegisterSourceOutput(typeDeclarations,
+			static (spc, source) => Execute(source, spc));
 	}
 
-	private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
-		=> node is TypeDeclarationSyntax { AttributeLists.Count: > 0 };
-
-	private static TypeDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+	private static void Execute(GeneratorAttributeSyntaxContext context, SourceProductionContext sourceContext)
 	{
-		TypeDeclarationSyntax typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
+		sourceContext.CancellationToken.ThrowIfCancellationRequested();
 
-		foreach (AttributeListSyntax attributeListSyntax in typeDeclarationSyntax.AttributeLists) {
-			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes) {
-				if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol) {
-					continue;
-				}
-
-				INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
-				string fullName = attributeContainingTypeSymbol.ToDisplayString();
-
-				if (fullName == AttributeName) {
-					return typeDeclarationSyntax;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private static void Execute(Compilation compilation, ImmutableArray<TypeDeclarationSyntax> types, SourceProductionContext context)
-	{
-		if (types.IsDefaultOrEmpty) {
+		if (context.TargetSymbol is not INamedTypeSymbol typeSymbol) {
 			return;
 		}
 
-		foreach (TypeDeclarationSyntax typeDeclaration in types.Distinct()) {
-			context.CancellationToken.ThrowIfCancellationRequested();
+		string namespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
+		string typeName = typeSymbol.Name;
 
-			SemanticModel semanticModel = compilation.GetSemanticModel(typeDeclaration.SyntaxTree);
-			if (semanticModel.GetDeclaredSymbol(typeDeclaration) is not INamedTypeSymbol typeSymbol) {
-				continue;
-			}
+		// Extract generic type parameters
+		GenericTypeInfo genericInfo = GetGenericTypeInfo(typeSymbol);
 
-			string namespaceName = typeSymbol.ContainingNamespace.ToDisplayString();
-			string typeName = typeSymbol.Name;
+		// Extract split configuration from attribute
+		SplitConfiguration splitConfig = GetSplitConfiguration(context.Attributes[0]);
 
-			// Extract generic type parameters
-			GenericTypeInfo genericInfo = GetGenericTypeInfo(typeSymbol);
+		// Determine the full type keyword(s) - handles "record struct", "record class", "record", "class", "struct"
+		string typeKeyword = GetTypeKeyword(typeSymbol);
 
-			// Extract split configuration from attribute
-			SplitConfiguration splitConfig = GetSplitConfiguration(typeDeclaration, semanticModel);
+		// Get containing types (for nested types)
+		List<(string Name, string Keyword)> containingTypes = [];
+		INamedTypeSymbol? containingType = typeSymbol.ContainingType;
+		while (containingType is not null) {
+			string containingKeyword = containingType.TypeKind switch
+			{
+				TypeKind.Class => "partial class",
+				TypeKind.Struct => "partial struct",
+				_ => "partial class"
+			};
 
-			// Determine the full type keyword(s) - handles "record struct", "record class", "record", "class", "struct"
-			string typeKeyword = GetTypeKeyword(typeSymbol);
-
-			// Get containing types (for nested types)
-			List<(string Name, string Keyword)> containingTypes = [];
-			INamedTypeSymbol? containingType = typeSymbol.ContainingType;
-			INamedTypeSymbol containingTypeSymbol = default!;
-			while (containingType is not null) {
-				string containingKeyword = containingType.TypeKind switch
-				{
-					TypeKind.Class => "partial class",
-					TypeKind.Struct => "partial struct",
-					_ => "partial class"
-				};
-
-				if (containingType.TypeKind is TypeKind.Class or TypeKind.Struct) {
-					containingTypeSymbol = containingType;
-				}
-
-				containingTypes.Insert(0, (containingType.Name, containingKeyword));
-				containingType = containingType.ContainingType;
-			}
-
-			// Get constructor parameter types and names
-			string[] constructorParametersList = [.. GetRecordParameterTypes(typeSymbol)];
-			(string Name, string Type)[] constructorParameters = [.. GetRecordParameters(typeSymbol)];
-
-			// Check which methods already exist
-			bool hasParseMethod = HasParseStringMethod(typeSymbol);
-			bool hasParseStringWithProviderMethod = HasParseStringWithProviderMethod(typeSymbol);
-			bool hasTryParseMethod = HasTryParseMethod(typeSymbol);
-			bool implementsIParsable = ImplementsIParsable(typeSymbol);
-
-			// Skip generation if both methods already exist
-			//if (hasParseMethod && hasParseStringWithProviderMethod && hasTryParseMethod && implementsIParsable) {
-			//	continue;
-			//}
-
-			string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList, constructorParameters,
-				!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig, genericInfo);
-
-			// Use full type path for unique filename
-			string fileName = containingTypes.Count > 0
-				? $"{string.Join(".", containingTypes.Select(t => t.Name))}.{typeName}.g.cs"
-				: $"{typeName}.g.cs";
-
-			context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
+			containingTypes.Insert(0, (containingType.Name, containingKeyword));
+			containingType = containingType.ContainingType;
 		}
+
+		// Get constructor parameter types and names
+		string[] constructorParametersList = [.. GetRecordParameterTypes(typeSymbol)];
+		(string Name, string Type)[] constructorParameters = [.. GetRecordParameters(typeSymbol)];
+
+		// Check which methods already exist
+		bool hasParseMethod = HasParseStringMethod(typeSymbol);
+		bool hasParseStringWithProviderMethod = HasParseStringWithProviderMethod(typeSymbol);
+		bool hasTryParseMethod = HasTryParseMethod(typeSymbol);
+		bool implementsIParsable = ImplementsIParsable(typeSymbol);
+
+		string source = GenerateSource(namespaceName, typeName, typeKeyword, containingTypes, constructorParametersList, constructorParameters,
+			!hasParseMethod, !hasParseStringWithProviderMethod, !hasTryParseMethod, !implementsIParsable, splitConfig, genericInfo);
+
+		// Use full type path for unique filename
+		string fileName = containingTypes.Count > 0
+			? $"{string.Join(".", containingTypes.Select(t => t.Name))}.{typeName}.g.cs"
+			: $"{typeName}.g.cs";
+
+		sourceContext.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
 	}
 
 	private static string GetTypeKeyword(INamedTypeSymbol typeSymbol)
@@ -278,46 +230,27 @@ public class ParsableGenerator : IIncrementalGenerator
 		return new GenericTypeInfo(typeParameters, typeArguments, whereClause);
 	}
 
-	private static SplitConfiguration GetSplitConfiguration(TypeDeclarationSyntax typeDeclaration, SemanticModel semanticModel)
+	private static SplitConfiguration GetSplitConfiguration(AttributeData attributeData)
 	{
 		string splitChars = " ,";
 		string? splitPattern = null;
 		bool removeEmptyEntries = true;
 		string? capturePattern = null;
 
-		foreach (AttributeListSyntax attributeListSyntax in typeDeclaration.AttributeLists) {
-			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes) {
-				if (semanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol) {
-					continue;
-				}
+		// Extract attribute arguments from AttributeData
+		foreach (System.Collections.Generic.KeyValuePair<string, TypedConstant> arg in attributeData.NamedArguments) {
+			string propertyName = arg.Key;
+			TypedConstant value = arg.Value;
 
-				if (attributeSymbol.ContainingType.ToDisplayString() != AttributeName) {
-					continue;
-				}
-
-				// Extract attribute arguments
-				if (attributeSyntax.ArgumentList is null) {
-					continue;
-				}
-
-				foreach (AttributeArgumentSyntax argument in attributeSyntax.ArgumentList.Arguments) {
-					string? propertyName = argument.NameEquals?.Name.Identifier.Text;
-					if (propertyName is null) {
-						continue;
-					}
-
-					if (propertyName == "SplitChars" && argument.Expression is LiteralExpressionSyntax splitCharsLiteral) {
-						splitChars = splitCharsLiteral.Token.ValueText;
-					} else if (propertyName == "SplitPattern" && argument.Expression is LiteralExpressionSyntax splitPatternLiteral) {
-						splitPattern = splitPatternLiteral.Token.ValueText;
-					} else if (propertyName == "RemoveEmptyEntries" && argument.Expression is LiteralExpressionSyntax removeEmptyLiteral) {
-						if (bool.TryParse(removeEmptyLiteral.Token.ValueText, out bool value)) {
-							removeEmptyEntries = value;
-						}
-					} else if (propertyName == "CapturePattern" && argument.Expression is LiteralExpressionSyntax capturePatternLiteral) {
-						capturePattern = capturePatternLiteral.Token.ValueText;
-					}
-				}
+			// Check the Value property of TypedConstant (not the TypedConstant itself)
+			if (propertyName == "SplitChars" && value.Value is string sc) {
+				splitChars = sc;
+			} else if (propertyName == "SplitPattern" && value.Value is string sp) {
+				splitPattern = sp;
+			} else if (propertyName == "RemoveEmptyEntries" && value.Value is bool ree) {
+				removeEmptyEntries = ree;
+			} else if (propertyName == "CapturePattern" && value.Value is string cp) {
+				capturePattern = cp;
 			}
 		}
 

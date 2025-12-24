@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System.Collections.Immutable;
+
 using System.Text;
 
 namespace AdventOfCode.SourceGenerators;
@@ -39,91 +39,47 @@ public class TestOutputGenerator : IIncrementalGenerator
 			"SupportTestOutputAttribute.g.cs",
 			SourceText.From(AttributeSource, Encoding.UTF8)));
 
-		// Register syntax receiver to find classes with [SupportTestOutput] attribute
-		IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
-			.CreateSyntaxProvider(
-				predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
-				transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-			.Where(static m => m is not null)!;
-
-		// Combine with compilation
-		IncrementalValueProvider<(Compilation, ImmutableArray<ClassDeclarationSyntax>)> compilationAndClasses
-			= context.CompilationProvider.Combine(classDeclarations.Collect());
+		// Use ForAttributeWithMetadataName for efficient attribute lookup
+		IncrementalValuesProvider<GeneratorAttributeSyntaxContext> classDeclarations = context.SyntaxProvider
+			.ForAttributeWithMetadataName(
+				fullyQualifiedMetadataName: AttributeName,
+				predicate: static (node, _) => node is ClassDeclarationSyntax,
+				transform: static (context, _) => context);
 
 		// Generate source
-		context.RegisterSourceOutput(compilationAndClasses,
-			static (spc, source) => Execute(source.Item1, source.Item2, spc));
+		context.RegisterSourceOutput(classDeclarations,
+			static (spc, source) => Execute(source, spc));
 	}
 
-	private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
-		=> node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
-
-	private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+	private static void Execute(GeneratorAttributeSyntaxContext context, SourceProductionContext sourceContext)
 	{
-		ClassDeclarationSyntax classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+		sourceContext.CancellationToken.ThrowIfCancellationRequested();
 
-		foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
-		{
-			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
-			{
-				if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
-				{
-					continue;
-				}
-
-				INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
-				string fullName = attributeContainingTypeSymbol.ToDisplayString();
-
-				if (fullName == AttributeName)
-				{
-					return classDeclarationSyntax;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
-	{
-		if (classes.IsDefaultOrEmpty)
-		{
+		if (context.TargetSymbol is not INamedTypeSymbol classSymbol) {
 			return;
 		}
 
-		foreach (ClassDeclarationSyntax classDeclaration in classes.Distinct())
-		{
-			context.CancellationToken.ThrowIfCancellationRequested();
+		string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+		string className = classSymbol.Name;
 
-			SemanticModel semanticModel = compilation.GetSemanticModel(classDeclaration.SyntaxTree);
-			if (semanticModel.GetDeclaredSymbol(classDeclaration) is not INamedTypeSymbol classSymbol)
-			{
-				continue;
-			}
+		// Check if constructor already has ITestOutputHelper parameter
+		bool hasTestOutputHelperParameter = HasTestOutputHelperParameter(classSymbol);
 
-			string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
-			string className = classSymbol.Name;
+		// Check if Callback method already exists
+		bool hasCallbackMethod = HasCallbackMethod(classSymbol);
 
-			// Check if constructor already has ITestOutputHelper parameter
-			bool hasTestOutputHelperParameter = HasTestOutputHelperParameter(classSymbol);
-
-			// Check if Callback method already exists
-			bool hasCallbackMethod = HasCallbackMethod(classSymbol);
-
-			// Skip generation if both already exist
-			if (hasTestOutputHelperParameter && hasCallbackMethod)
-			{
-				continue;
-			}
-
-			string source = GenerateSource(
-				namespaceName,
-				className,
-				!hasTestOutputHelperParameter,
-				!hasCallbackMethod);
-
-			context.AddSource($"{className}.TestOutput.g.cs", SourceText.From(source, Encoding.UTF8));
+		// Skip generation if both already exist
+		if (hasTestOutputHelperParameter && hasCallbackMethod) {
+			return;
 		}
+
+		string source = GenerateSource(
+			namespaceName,
+			className,
+			!hasTestOutputHelperParameter,
+			!hasCallbackMethod);
+
+		sourceContext.AddSource($"{className}.TestOutput.g.cs", SourceText.From(source, Encoding.UTF8));
 	}
 
 	private static string GenerateSource(
