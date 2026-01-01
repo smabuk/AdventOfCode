@@ -8,6 +8,8 @@
 	<ItemGroup>
 		<PackageReference Include="Smab.Helpers" />
 		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
+		<PackageReference Include="Smab.Helpers.IParsableSourceGenerator" />
+		<Using Include="Smab.Helpers.IParsableSourceGenerator" />
 	</ItemGroup>
 
 	<ItemGroup>
