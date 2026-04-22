@@ -15,128 +15,107 @@ public partial class Day09
 		.Combinations(2)
 		.Max(tiles => tiles.Area());
 
+	/// <summary>
+	/// Finds the largest axis-aligned rectangle whose opposite corners are both polygon vertices
+	/// and which fits entirely within the polygon.
+	/// Uses coordinate compression with a 2D prefix sum for O(1) subgrid validation,
+	/// giving O(n²) overall vs the original O(n³–n⁴).
+	/// </summary>
+	/// <param name="input">The puzzle input lines, each parsed as a <see cref="Tile"/>.</param>
+	/// <returns>The area of the largest valid rectangle.</returns>
 	public static long Part2(string[] input)
 	{
 		Polygon polygon = Polygon.Build([.. input.Select(Tile.Parse)]);
 		Dictionary<Point, bool> pointCache = [];
+		(bool[,] grid, int[] xs, int[] ys) = BuildInteriorGrid(polygon, pointCache);
+		int[,] prefixSum = BuildPrefixSum(grid);
 		return polygon
 			.Vertices
 			.Combinations(2)
-			.Where(tiles => IsRectangleValid(tiles[0], tiles[1], polygon, pointCache))
-			.Max(tiles => tiles.Area());
+			.Where(pair => IsRectangleInsideGrid(pair[0], pair[1], xs, ys, prefixSum))
+			.Max(pair => pair.Area());
 	}
 
 
 
 	/// <summary>
-	/// Determines whether a rectangle defined by two corner tiles is valid according to polygon edge constraints.
+	/// Builds a compressed interior grid from the polygon's vertices.
 	/// </summary>
-	/// <remarks>A rectangle is considered valid if all four of its edges either lie on the polygon edge or are
-	/// entirely contained within the polygon. Both corner tiles must be specified; their order does not affect the
-	/// result.</remarks>
-	/// <param name="corner1">The first corner tile of the rectangle. Specifies one vertex of the rectangle to validate.</param>
-	/// <param name="corner2">The second corner tile of the rectangle. Specifies the opposite vertex of the rectangle to validate.</param>
-	/// <param name="polygon">The polygon to validate against.</param>
+	/// <remarks>
+	/// Extracts all unique X and Y coordinates from the polygon vertices and uses them as cell boundaries.
+	/// For each compressed cell, a sample point one unit inside the top-left corner is tested against the polygon
+	/// using <see cref="IsPointInsideOrOnPolygon"/>. The returned <paramref name="xs"/> and <paramref name="ys"/> arrays
+	/// are the sorted unique vertex coordinates; cell <c>(c, r)</c> spans <c>[xs[c], xs[c+1]] × [ys[r], ys[r+1]]</c>.
+	/// </remarks>
+	/// <param name="polygon">The polygon whose interior is to be sampled.</param>
 	/// <param name="pointCache">Cache for point-in-polygon checks.</param>
-	/// <returns>true if the rectangle formed by the specified corners is valid; otherwise, false.</returns>
-	private static bool IsRectangleValid(Tile corner1, Tile corner2, Polygon polygon, Dictionary<Point, bool> pointCache)
+	/// <returns>
+	/// A tuple of the interior grid indexed [col, row], the sorted unique X coordinates, and the sorted unique Y coordinates.
+	/// </returns>
+	private static (bool[,] Grid, int[] Xs, int[] Ys) BuildInteriorGrid(Polygon polygon, Dictionary<Point, bool> pointCache)
 	{
-		int minX = Math.Min(corner1.X, corner2.X);
-		int maxX = Math.Max(corner1.X, corner2.X);
-		int minY = Math.Min(corner1.Y, corner2.Y);
-		int maxY = Math.Max(corner1.Y, corner2.Y);
+		int[] xs = [.. polygon.Vertices.Select(t => t.X).Distinct().Order()];
+		int[] ys = [.. polygon.Vertices.Select(t => t.Y).Distinct().Order()];
 
-		LineSegment topEdge = new(new Point(minX, minY), new Point(maxX, minY));
-		LineSegment bottomEdge = new(new Point(minX, maxY), new Point(maxX, maxY));
-		LineSegment leftEdge = new(new Point(minX, minY), new Point(minX, maxY));
-		LineSegment rightEdge = new(new Point(maxX, minY), new Point(maxX, maxY));
+		int cols = xs.Length - 1;
+		int rows = ys.Length - 1;
+		bool[,] grid = new bool[cols, rows];
 
-		return IsEdgeValid(topEdge, polygon, pointCache)
-			&& IsEdgeValid(bottomEdge, polygon, pointCache)
-			&& IsEdgeValid(leftEdge, polygon, pointCache)
-			&& IsEdgeValid(rightEdge, polygon, pointCache);
-	}
-
-	/// <summary>
-	/// Determines whether the specified edge is valid with respect to the polygon's boundaries and interior.
-	/// </summary>
-	/// <remarks>An edge is considered valid if both endpoints are inside or on the polygon and the edge does not
-	/// cross any polygon boundary except where it is collinear with a polygon edge. Collinear edges that overlap the
-	/// polygon boundary are permitted.</remarks>
-	/// <param name="edge">The line segment to validate. Both endpoints must be inside or on the polygon, and the edge must not improperly
-	/// cross any polygon edge.</param>
-	/// <param name="polygon">The polygon to validate against.</param>
-	/// <param name="pointCache">Cache for point-in-polygon checks.</param>
-	/// <returns>true if the edge is entirely within or on the polygon and does not cross any polygon edge; otherwise, false.</returns>
-	private static bool IsEdgeValid(LineSegment edge, Polygon polygon, Dictionary<Point, bool> pointCache)
-	{
-		// Check if both endpoints are inside or on the polygon
-		if (!IsPointInsideOrOnPolygon(edge.Start, polygon, pointCache)) {
-			return false;
-		}
-
-		if (!IsPointInsideOrOnPolygon(edge.End, polygon, pointCache)) {
-			return false;
-		}
-
-		// Check if the edge crosses any polygon edge improperly
-		foreach (LineSegment polygonEdge in polygon.Edges) {
-			if (AreSegmentsCollinear(edge, polygonEdge)) {
-				continue;
-			}
-
-			// Check for non-collinear intersection (crossing)
-			if (DoSegmentsIntersect(edge, polygonEdge)) {
-				return false;
+		for (int c = 0; c < cols; c++) {
+			for (int r = 0; r < rows; r++) {
+				// Sample one unit inside the top-left corner of the cell
+				Point sample = new(xs[c] + 1, ys[r] + 1);
+				grid[c, r] = IsPointInsideOrOnPolygon(sample, polygon, pointCache);
 			}
 		}
 
-		return true;
+		return (grid, xs, ys);
 	}
 
 	/// <summary>
-	/// Determines whether two line segments intersect at a single point, excluding cases where the segments are collinear.
+	/// Builds a 2D prefix sum table from a boolean grid for O(1) rectangular region sum queries.
 	/// </summary>
-	/// <remarks>This method does not consider collinear segments as intersecting. To check for collinear overlap,
-	/// use a separate method such as AreSegmentsCollinear.</remarks>
-	/// <param name="seg1">The first line segment to test for intersection.</param>
-	/// <param name="seg2">The second line segment to test for intersection.</param>
-	/// <returns>true if the segments intersect at a single point; otherwise, false.</returns>
-	private static bool DoSegmentsIntersect(LineSegment seg1, LineSegment seg2)
+	/// <param name="grid">The source boolean grid, indexed [col, row].</param>
+	/// <returns>A <c>(cols+1) × (rows+1)</c> prefix sum table, also indexed [col, row].</returns>
+	private static int[,] BuildPrefixSum(bool[,] grid)
 	{
-		Point p1 = seg1.Start, p2 = seg1.End;
-		Point p3 = seg2.Start, p4 = seg2.End;
+		int cols = grid.GetLength(0);
+		int rows = grid.GetLength(1);
+		int[,] ps = new int[cols + 1, rows + 1];
 
-		long o1 = CrossProduct(p1, p2, p3);
-		long o2 = CrossProduct(p1, p2, p4);
-		long o3 = CrossProduct(p3, p4, p1);
-		long o4 = CrossProduct(p3, p4, p2);
-
-		// General case: segments intersect if orientations are different
-		if (((o1 > 0 && o2 < 0) || (o1 < 0 && o2 > 0)) &&
-			((o3 > 0 && o4 < 0) || (o3 < 0 && o4 > 0))) {
-			return true;
+		for (int c = 0; c < cols; c++) {
+			for (int r = 0; r < rows; r++) {
+				ps[c + 1, r + 1] = (grid[c, r] ? 1 : 0)
+					+ ps[c, r + 1] + ps[c + 1, r] - ps[c, r];
+			}
 		}
 
-		// Special cases: collinear points (handled separately by AreSegmentsCollinear check)
-		return false;
+		return ps;
 	}
 
 	/// <summary>
-	/// Determines whether two line segments are collinear, meaning all endpoints lie on the same straight line.
+	/// Determines in O(1) whether every compressed cell inside the axis-aligned rectangle
+	/// defined by two vertex tiles is marked as interior.
 	/// </summary>
-	/// <remarks>This method checks whether all four endpoints of the provided segments are collinear. It does not
-	/// verify whether the segments overlap or intersect; it only tests for collinearity.</remarks>
-	/// <param name="seg1">The first line segment to evaluate for collinearity.</param>
-	/// <param name="seg2">The second line segment to evaluate for collinearity.</param>
-	/// <returns>true if both endpoints of seg2 are collinear with seg1; otherwise, false.</returns>
-	private static bool AreSegmentsCollinear(LineSegment seg1, LineSegment seg2)
+	/// <param name="v1">The first corner vertex.</param>
+	/// <param name="v2">The opposite corner vertex.</param>
+	/// <param name="xs">Sorted unique X coordinates from the compressed grid.</param>
+	/// <param name="ys">Sorted unique Y coordinates from the compressed grid.</param>
+	/// <param name="prefixSum">Prefix sum table built from the interior grid.</param>
+	/// <returns><see langword="true"/> if all cells in the rectangle are interior; otherwise <see langword="false"/>.</returns>
+	private static bool IsRectangleInsideGrid(Tile v1, Tile v2, int[] xs, int[] ys, int[,] prefixSum)
 	{
-		// Check if all four points are collinear
-		long cross1 = CrossProduct(seg1.Start, seg1.End, seg2.Start);
-		long cross2 = CrossProduct(seg1.Start, seg1.End, seg2.End);
+		int c1 = Array.IndexOf(xs, Math.Min(v1.X, v2.X));
+		int c2 = Array.IndexOf(xs, Math.Max(v1.X, v2.X));
+		int r1 = Array.IndexOf(ys, Math.Min(v1.Y, v2.Y));
+		int r2 = Array.IndexOf(ys, Math.Max(v1.Y, v2.Y));
 
-		return cross1 == 0 && cross2 == 0;
+		if (c1 < 0 || c2 < 0 || r1 < 0 || r2 < 0) { return false; }
+		if (c1 == c2 || r1 == r2) { return false; } // degenerate rectangle
+
+		// Rectangle spans compressed cols [c1, c2-1] and rows [r1, r2-1]
+		int total = prefixSum[c2, r2] - prefixSum[c1, r2] - prefixSum[c2, r1] + prefixSum[c1, r1];
+		return total == (c2 - c1) * (r2 - r1);
 	}
 
 	/// <summary>
