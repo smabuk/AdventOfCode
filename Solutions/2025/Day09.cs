@@ -16,12 +16,15 @@ public partial class Day09
 		.Max(tiles => tiles.Area());
 
 	public static long Part2(string[] input)
-		=> Polygon.Build([.. input.Select(Tile.Parse)])
-			.Let(polygon => polygon
-				.Vertices
-				.Combinations(2)
-				.Where(tiles => IsRectangleValid(tiles[0], tiles[1], polygon, []))
-				.Max(tiles => tiles.Area()));
+	{
+		Polygon polygon = Polygon.Build([.. input.Select(Tile.Parse)]);
+		Dictionary<Point, bool> pointCache = [];
+		return polygon
+			.Vertices
+			.Combinations(2)
+			.Where(tiles => IsRectangleValid(tiles[0], tiles[1], polygon, pointCache))
+			.Max(tiles => tiles.Area());
+	}
 
 
 
