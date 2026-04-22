@@ -2,7 +2,7 @@
 {
 	private readonly Lock _consoleLock = new();
 
-	public override async Task<int> ExecuteAsync(CommandContext context, SolveSettings settings, CancellationToken cancellationToken)
+	protected override async Task<int> ExecuteAsync(CommandContext context, SolveSettings settings, CancellationToken cancellationToken)
 	{
 		Console.OutputEncoding = System.Text.Encoding.UTF8;
 		AnsiConsole.Reset();
