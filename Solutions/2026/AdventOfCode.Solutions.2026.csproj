@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>AdventOfCode.Solutions._2026</RootNamespace>
+		<PublishAot>True</PublishAot>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Smab.Helpers" />
+		<Using Static="true" Include="Smab.Helpers.ArgumentHelpers" />
+		<PackageReference Include="Smab.Helpers.IParsableSourceGenerator" />
+		<Using Include="Smab.Helpers.IParsableSourceGenerator" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\AdventOfCode.Solutions.Core.csproj" />
+		<Using Include="AdventOfCode.Solutions.Core" />
+		<Using Static="true" Include="AdventOfCode.Solutions.Core.GlobalConstants" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SourceGenerators\AdventOfCode.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<Using Include="AdventOfCode.SourceGenerators" />
+	</ItemGroup>
+
+</Project>
