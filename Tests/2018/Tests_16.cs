@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Tests.Year2018;
 
-public class Tests_16(Xunit.Abstractions.ITestOutputHelper output)
+public class Tests_16(ITestOutputHelper output)
 {
 	const int DAY = 16;
 
@@ -4031,7 +4031,7 @@ public class Tests_16(Xunit.Abstractions.ITestOutputHelper output)
 		10 2 1 2
 		5 2 1 1
 		4 1 0 0
-		
+
 		""", 9999)]
 	public void Part2(string input, int expected)
 	{

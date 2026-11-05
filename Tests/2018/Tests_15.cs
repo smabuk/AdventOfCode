@@ -1,6 +1,4 @@
-﻿using Xunit.Abstractions;
-
-namespace AdventOfCode.Tests.Year2018;
+﻿namespace AdventOfCode.Tests.Year2018;
 
 public class Tests_15_Beverage_Bandits(ITestOutputHelper testOutputHelper)
 {
