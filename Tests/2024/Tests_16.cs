@@ -45,7 +45,7 @@ public class Tests_16_Reindeer_Maze(ITestOutputHelper testOutputHelper)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
-		await Task.Delay(200); // Allow time to visualise
+		await Task.Delay(200, TestContext.Current.CancellationToken); // Allow time to visualise
 	}
 
 
@@ -90,7 +90,7 @@ public class Tests_16_Reindeer_Maze(ITestOutputHelper testOutputHelper)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
-		await Task.Delay(200); // Allow time to visualise
+		await Task.Delay(200, TestContext.Current.CancellationToken); // Allow time to visualise
 	}
 
 

@@ -26,7 +26,7 @@ public class Tests_14_Restroom_Redoubt(ITestOutputHelper testOutputHelper)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback), width, height), out int actual);
 		actual.ShouldBe(expected);
-		await Task.Delay(200); // Allow time to visualise
+		await Task.Delay(200, TestContext.Current.CancellationToken); // Allow time to visualise
 	}
 
 

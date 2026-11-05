@@ -25,7 +25,7 @@ public class Tests_08_Resonant_Collinearity(ITestOutputHelper testOutputHelper)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART1, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
-		await Task.Delay(500);
+		await Task.Delay(500, TestContext.Current.CancellationToken);
 	}
 
 	[Theory]
@@ -34,7 +34,7 @@ public class Tests_08_Resonant_Collinearity(ITestOutputHelper testOutputHelper)
 	{
 		_ = int.TryParse(SolutionRouter.SolveProblem(YEAR, DAY, PART2, input, new Action<string[], bool>(Callback)), out int actual);
 		actual.ShouldBe(expected);
-		await Task.Delay(500);
+		await Task.Delay(500, TestContext.Current.CancellationToken);
 	}
 
 
