@@ -7,6 +7,7 @@ namespace AdventOfCode.SharedUI;
 // This class should be registered as scoped DI service and then injected into Blazor
 // components for use.
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0016:Unguarded JS interop call", Justification = "<Pending>")]
 public class AocJsInterop(IJSRuntime jsRuntime) : IAsyncDisposable {
 	private readonly Lazy<Task<IJSObjectReference>> moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
 			"import", "./_content/AdventOfCode.SharedUI/aocJsInterop.js").AsTask());

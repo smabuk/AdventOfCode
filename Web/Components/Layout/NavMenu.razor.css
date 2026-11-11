@@ -1,4 +1,4 @@
-div {
+﻿div {
 	color: var(--sb-nav-text-color, #fff);
 }
 
@@ -29,6 +29,10 @@ div {
 .text-danger {
     cursor: not-allowed;
     pointer-events: none;
+}
+
+nav-menu {
+	display: contents;
 }
 
 #navbar-toggler {
@@ -80,6 +84,12 @@ div {
     .nav-item:last-of-type {
         padding-bottom: 1rem;
     }
+
+	.nav-item ::deep .nav-link:focus-visible {
+		outline: 2px solid #fff;
+		outline-offset: -2px;
+		box-shadow: none;
+	}
 
     .nav-item ::deep a {
         color: #d7d7d7;

@@ -49,8 +49,6 @@ app.UseHttpsRedirection();
 
 app.MapStaticAssets();
 
-app.UseAntiforgery();
-
 app.UseOutputCache();
 
 app.MapRazorComponents<App>()
