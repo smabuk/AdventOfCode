@@ -35,6 +35,7 @@
 		}
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "BL0016:Unguarded JS interop call", Justification = "<Pending>")]
 	private async Task CopyTextToClipboard()
 	{
 		await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", _articleElement);
